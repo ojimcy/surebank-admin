@@ -15,7 +15,6 @@ import {
   InputRightElement,
   Text,
   useColorModeValue,
-  useToast,
 } from '@chakra-ui/react';
 // Custom components
 import { HSeparator } from 'components/separator/Separator';
@@ -26,10 +25,13 @@ import { FcGoogle } from 'react-icons/fc';
 import { MdOutlineRemoveRedEye } from 'react-icons/md';
 import { RiEyeCloseLine } from 'react-icons/ri';
 import { useForm } from 'react-hook-form';
-import axios from 'axios';
+import { useHistory } from 'react-router-dom';
+import { useAuth } from 'contexts/AuthContext';
 
 function SignIn() {
-  const toast = useToast();
+  const history = useHistory();
+  const { login } = useAuth();
+  const { currentUser } = useAuth();
   // Chakra color mode
   const textColor = useColorModeValue('navy.700', 'white');
   const textColorSecondary = 'gray.400';
@@ -49,6 +51,10 @@ function SignIn() {
   const [show, setShow] = React.useState(false);
   const handleClick = () => setShow(!show);
 
+  if (currentUser) {
+    history.push('/admin');
+  }
+
   const {
     handleSubmit,
     register,
@@ -57,23 +63,9 @@ function SignIn() {
 
   const submitHandler = async (data) => {
     try {
-      const response = await axios.post('http://localhost:3001/v1/auth/login', {
-        email: data.email,
-        password: data.password,
-      });
-      const accessToken = response.data.tokens.access.token;
-      const refreshToken = response.data.tokens.refresh.token;
-      // Store the JWT token in session storage
-      localStorage.setItem('ACCESS_TOKEN_KEY', accessToken);
-      localStorage.setItem('REFRESH_TOKEN_KEY', refreshToken);
+      await login(data.email, data.password);
 
-      toast({
-        title: 'Logged in.',
-        status: 'success',
-        isClosable: true,
-        position: 'top-right',
-      });
-      // Redirect to the home page after successful login
+      history.push('/admin');
     } catch (error) {
       console.error(error);
     }
@@ -235,6 +227,7 @@ function SignIn() {
                 h="50"
                 mb="24px"
                 type="submit"
+                isLoading={isSubmitting}
               >
                 Sign In
               </Button>
