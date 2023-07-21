@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import 'assets/css/App.css';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { HashRouter, Route, Switch, Redirect } from 'react-router-dom';
 import AuthLayout from 'layouts/auth';
 import AdminLayout from 'layouts/admin';
@@ -21,6 +23,7 @@ ReactDOM.render(
               <Route path={`/admin`} component={WithAuth(AdminLayout)} />
               <Redirect from="/" to="/admin" />
             </Switch>
+            <ToastContainer />
           </HashRouter>
         </AuthProvider>
       </ThemeEditorProvider>

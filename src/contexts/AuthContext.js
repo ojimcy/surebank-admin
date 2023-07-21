@@ -34,6 +34,28 @@ export function AuthProvider({ children }) {
     }
   }, [initialToken]);
 
+  const signup = async (userData) => {
+    try {
+      const response = await axios.post(
+        'http://localhost:3001/v1/auth/register',
+        userData
+      );
+      const accessToken = response.data.tokens.access.token;
+      const refreshToken = response.data.tokens.refresh.token;
+      // Store the JWT token in session storage
+      localStorage.setItem('ACCESS_TOKEN_KEY', accessToken);
+      localStorage.setItem('REFRESH_TOKEN_KEY', refreshToken);
+
+      // Now, set the access token as the default authorization header for all axios requests
+      axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+
+      setCurrentUser(response.data.user);
+    } catch (error) {
+      console.error(error);
+      throw new Error(error.response?.data?.message || 'An error occurred');
+    }
+  };
+
   const login = async (email, password) => {
     try {
       const response = await axios.post('http://localhost:3001/v1/auth/login', {
@@ -51,7 +73,7 @@ export function AuthProvider({ children }) {
 
       setCurrentUser(response.data.user);
     } catch (error) {
-      console.error(error);
+      throw new Error(error.response?.data?.message || 'An error occurred');
     }
   };
 
@@ -69,7 +91,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ currentUser, login, logout }}>
+    <AuthContext.Provider value={{ currentUser, signup, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

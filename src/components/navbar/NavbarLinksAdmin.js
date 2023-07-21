@@ -20,6 +20,7 @@ import { MdNotificationsNone, MdInfoOutline } from 'react-icons/md';
 import routes from 'routes.js';
 import { useAuth } from 'contexts/AuthContext';
 import { useHistory } from 'react-router-dom';
+import { HSeparator } from 'components/separator/Separator';
 export default function HeaderLinks(props) {
   const { secondary } = props;
   // Chakra Color Mode
@@ -32,14 +33,14 @@ export default function HeaderLinks(props) {
     '14px 17px 40px 4px rgba(112, 144, 176, 0.06)'
   );
 
-  const history = useHistory()
+  const history = useHistory();
   const { currentUser, logout } = useAuth();
 
   // Function to handle logout
   const handleLogout = async () => {
     try {
-      await logout(); 
-      history.push('/auth/login'); 
+      await logout();
+      history.push('/auth/login');
     } catch (error) {
       console.error(error);
     }
@@ -123,23 +124,39 @@ export default function HeaderLinks(props) {
               👋&nbsp; Hey, {currentUser.firstName}
             </Text>
           </Flex>
+
           <Flex flexDirection="column" p="10px">
             <MenuItem
               _hover={{ bg: 'none' }}
               _focus={{ bg: 'none' }}
               borderRadius="8px"
               px="14px"
+              as="a"
+              href="/admin/profile"
             >
-              <Text fontSize="sm">Profile Settings</Text>
+              <Text fontSize="sm">My Profile</Text>
             </MenuItem>
             <MenuItem
               _hover={{ bg: 'none' }}
               _focus={{ bg: 'none' }}
               borderRadius="8px"
               px="14px"
+              as="a"
+              href="/admin/profile/edit"
             >
-              <Text fontSize="sm">Newsletter Settings</Text>
+              <Text fontSize="sm">Update Profile</Text>
             </MenuItem>
+            <MenuItem
+              _hover={{ bg: 'none' }}
+              _focus={{ bg: 'none' }}
+              borderRadius="8px"
+              px="14px"
+              as="a"
+              href="/admin/profile/users"
+            >
+              <Text fontSize="sm">Manage Users</Text>
+            </MenuItem>
+            <HSeparator />
             <MenuItem
               _hover={{ bg: 'none' }}
               _focus={{ bg: 'none' }}
@@ -148,7 +165,7 @@ export default function HeaderLinks(props) {
               px="14px"
               onClick={handleLogout}
             >
-              <Text fontSize="sm">Log out</Text>
+              <Text fontSize="sm">{currentUser ? 'Log Out' : 'Sign In'}</Text>
             </MenuItem>
           </Flex>
         </MenuList>

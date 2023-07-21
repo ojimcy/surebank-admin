@@ -7,6 +7,7 @@ import {
   Checkbox,
   Flex,
   FormControl,
+  FormErrorMessage,
   FormLabel,
   Heading,
   Icon,
@@ -27,11 +28,11 @@ import { RiEyeCloseLine } from 'react-icons/ri';
 import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router-dom';
 import { useAuth } from 'contexts/AuthContext';
+import { toast } from 'react-toastify';
 
 function SignIn() {
   const history = useHistory();
-  const { login } = useAuth();
-  const { currentUser } = useAuth();
+  const { currentUser, login } = useAuth();
   // Chakra color mode
   const textColor = useColorModeValue('navy.700', 'white');
   const textColorSecondary = 'gray.400';
@@ -64,10 +65,16 @@ function SignIn() {
   const submitHandler = async (data) => {
     try {
       await login(data.email, data.password);
-
+      toast.success('Signin successful!');
       history.push('/admin');
     } catch (error) {
-      console.error(error);
+      if (error) {
+        const errorMessage = error.message;
+        toast.error(errorMessage);
+      } else {
+        // Network error or other error
+        toast.error('An error occurred. Please try again later.');
+      }
     }
   };
 
@@ -161,6 +168,11 @@ function SignIn() {
                 size="lg"
                 {...register('email')}
               />
+              {errors.email && (
+                <FormErrorMessage>{errors.email.message}</FormErrorMessage>
+              )}
+            </FormControl>
+            <FormControl isInvalid={errors.email}>
               <FormLabel
                 ms="4px"
                 fontSize="sm"
@@ -191,47 +203,50 @@ function SignIn() {
                   />
                 </InputRightElement>
               </InputGroup>
-              <Flex justifyContent="space-between" align="center" mb="24px">
-                <FormControl display="flex" alignItems="center">
-                  <Checkbox
-                    id="remember-login"
-                    colorScheme="brandScheme"
-                    me="10px"
-                  />
-                  <FormLabel
-                    htmlFor="remember-login"
-                    mb="0"
-                    fontWeight="normal"
-                    color={textColor}
-                    fontSize="sm"
-                  >
-                    Keep me logged in
-                  </FormLabel>
-                </FormControl>
-                <NavLink to="/auth/forgot-password">
-                  <Text
-                    color={textColorBrand}
-                    fontSize="sm"
-                    w="124px"
-                    fontWeight="500"
-                  >
-                    Forgot password?
-                  </Text>
-                </NavLink>
-              </Flex>
-              <Button
-                fontSize="sm"
-                variant="brand"
-                fontWeight="500"
-                w="100%"
-                h="50"
-                mb="24px"
-                type="submit"
-                isLoading={isSubmitting}
-              >
-                Sign In
-              </Button>
+              {errors.password && (
+                <FormErrorMessage>{errors.password.message}</FormErrorMessage>
+              )}
             </FormControl>
+            <Flex justifyContent="space-between" align="center" mb="24px">
+              <FormControl display="flex" alignItems="center">
+                <Checkbox
+                  id="remember-login"
+                  colorScheme="brandScheme"
+                  me="10px"
+                />
+                <FormLabel
+                  htmlFor="remember-login"
+                  mb="0"
+                  fontWeight="normal"
+                  color={textColor}
+                  fontSize="sm"
+                >
+                  Keep me logged in
+                </FormLabel>
+              </FormControl>
+              <NavLink to="/auth/forgot-password">
+                <Text
+                  color={textColorBrand}
+                  fontSize="sm"
+                  w="124px"
+                  fontWeight="500"
+                >
+                  Forgot password?
+                </Text>
+              </NavLink>
+            </Flex>
+            <Button
+              fontSize="sm"
+              variant="brand"
+              fontWeight="500"
+              w="100%"
+              h="50"
+              mb="24px"
+              type="submit"
+              isLoading={isSubmitting}
+            >
+              Sign In
+            </Button>
           </form>
           <Flex
             flexDirection="column"
