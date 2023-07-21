@@ -1,6 +1,6 @@
-import React from "react";
+import React from 'react';
 
-import { Icon } from "@chakra-ui/react";
+import { Icon } from '@chakra-ui/react';
 import {
   MdBarChart,
   MdPerson,
@@ -8,14 +8,16 @@ import {
   MdLock,
   MdOutlineShoppingCart,
   MdOutlinePerson3,
-} from "react-icons/md";
+} from 'react-icons/md';
 
 // Admin Imports
-import MainDashboard from "views/admin/default";
-import Sales from "views/admin/sales";
-import Branches from "views/admin/branches";
+import MainDashboard from 'views/admin/default';
+import Sales from 'views/admin/sales';
+import Branches from 'views/admin/branches';
 import Profile from 'views/admin/profile';
 import Customers from 'views/admin/customers';
+import GetUsers from 'views/admin/users/all-users';
+import AddUser from 'views/admin/users/add-user';
 
 // Auth Imports
 import SignInCentered from 'views/auth/signIn';

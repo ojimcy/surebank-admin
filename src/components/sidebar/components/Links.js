@@ -1,17 +1,19 @@
-/* eslint-disable */
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-// chakra imports
-import { Box, Flex, HStack, Text, useColorModeValue } from '@chakra-ui/react';
-
-const hiddenRoutes = [
-  '/auth/sign-in',
-  '/auth/sign-up',
-  '/admin/user/create', // Add the route path you want to hide here
-];
+import {
+  Box,
+  Flex,
+  HStack,
+  Text,
+  useColorModeValue,
+  Icon,
+  useDisclosure,
+  Collapse,
+} from '@chakra-ui/react';
+import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 
 export function SidebarLinks(props) {
-  //   Chakra color mode
+  const [expandedCategories, setExpandedCategories] = useState([]);
   let location = useLocation();
   let activeColor = useColorModeValue('gray.700', 'white');
   let inactiveColor = useColorModeValue(
@@ -21,21 +23,33 @@ export function SidebarLinks(props) {
   let activeIcon = useColorModeValue('brand.500', 'white');
   let textColor = useColorModeValue('secondaryGray.500', 'white');
   let brandColor = useColorModeValue('brand.500', 'brand.400');
+  const { isOpen, onToggle } = useDisclosure();
 
   const { routes } = props;
 
-  // verifies if routeName is the one active (in browser input)
   const activeRoute = (routeName) => {
     return location.pathname.includes(routeName);
   };
 
-  // this function creates the links from the secondary accordions (for example auth -> sign-in -> default)
+   const toggleCategory = (categoryName) => {
+     setExpandedCategories((prevExpanded) => ({
+       ...prevExpanded,
+       [categoryName]: !prevExpanded[categoryName],
+     }));
+   };
+
+   const isCategoryExpanded = (categoryName) => {
+     return expandedCategories[categoryName];
+   };
+
+
   const createLinks = (routes) => {
     return routes.map((route, index) => {
       if (hiddenRoutes.includes(route.layout + route.path)) {
         return null;
       }
       if (route.category) {
+        const isExpanded = isCategoryExpanded(route.name);
         return (
           <>
             <Text
@@ -50,10 +64,13 @@ export function SidebarLinks(props) {
               pt="18px"
               pb="12px"
               key={index}
+              onClick={() => toggleCategory(route.name)} // Toggle the category visibility on click
+              cursor="pointer"
             >
-              {route.name}
+              {route.name}{' '}
+              <Icon as={isExpanded ? FaChevronUp : FaChevronDown} />
             </Text>
-            {createLinks(route.items)}
+            {isExpanded && createLinks(route.items)}
           </>
         );
       } else if (
@@ -61,6 +78,101 @@ export function SidebarLinks(props) {
         route.layout === '/auth' ||
         route.layout === '/rtl'
       ) {
+        if (route.subRoutes) {
+          return (
+            <Box key={index}>
+              <Box d="inline-flex" alignItems="center">
+                <HStack
+                  spacing={
+                    activeRoute(route.path.toLowerCase()) ? '22px' : '6px'
+                  }
+                  py="5px"
+                  ps="10px"
+                >
+                  <Flex alignItems="center" justifyContent="center">
+                    <Box
+                      color={
+                        activeRoute(route.path.toLowerCase())
+                          ? activeIcon
+                          : textColor
+                      }
+                      me="18px"
+                    >
+                      {route.icon}
+                    </Box>
+                    <Text
+                      fontSize="sm"
+                      color={textColor}
+                      fontWeight="bold"
+                      letterSpacing="wide"
+                      py="6px"
+                      pr="10px"
+                      cursor="pointer"
+                      _hover={{ color: textColor }}
+                      onClick={onToggle}
+                    >
+                      {route.name}
+                    </Text>
+                    <FaChevronDown
+                      cursor="pointer"
+                      color={textColor}
+                      onClick={onToggle}
+                    />
+                  </Flex>
+                </HStack>
+              </Box>
+
+              <Collapse in={isOpen}>
+                <Box ml={2} fontSize="sm">
+                  {route.subRoutes.map((subRoute, subIndex) => (
+                    <NavLink
+                      key={subIndex}
+                    to={`${route.layout}${subRoute.path}`}
+                    >
+                      <Flex
+                        alignItems="center"
+                        p={2}
+                      >
+                        {subRoute.icon && (
+                          <Box
+                            as={subRoute.icon}
+                            me="12px"
+                            color={
+                              activeRoute(
+                                `${route.layout}${subRoute.path}`.toLowerCase()
+                              )
+                                ? activeIcon
+                                : textColor
+                            }
+                          />
+                        )}
+                        <Text
+                          color={
+                            activeRoute(
+                              `${route.layout}${subRoute.path}`.toLowerCase()
+                            )
+                              ? activeColor
+                              : textColor
+                          }
+                          fontWeight={
+                            activeRoute(
+                              `${route.layout}${subRoute.path}`.toLowerCase()
+                            )
+                              ? 'bold'
+                              : 'normal'
+                          }
+                          ml="2rem"
+                        >
+                          {subRoute.name}
+                        </Text>
+                      </Flex>
+                    </NavLink>
+                  ))}
+                </Box>
+              </Collapse>
+            </Box>
+          );
+        }
         return (
           <NavLink key={index} to={route.layout + route.path}>
             {route.icon ? (
@@ -142,7 +254,7 @@ export function SidebarLinks(props) {
       }
     });
   };
-  //  BRAND
+
   return createLinks(routes);
 }
 
