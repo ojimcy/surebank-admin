@@ -10,6 +10,7 @@ import { ChakraProvider } from '@chakra-ui/react';
 import theme from 'theme/theme';
 import { ThemeEditorProvider } from '@hypertheme-editor/chakra-ui';
 import { AuthProvider } from 'contexts/AuthContext';
+import { AppProvider } from 'contexts/AppContext'; // 1. Import the AppProvider
 import WithAuth from 'utils/withAuth';
 
 ReactDOM.render(
@@ -17,14 +18,16 @@ ReactDOM.render(
     <React.StrictMode>
       <ThemeEditorProvider>
         <AuthProvider>
-          <HashRouter>
-            <Switch>
-              <Route path={`/auth`} component={AuthLayout} />
-              <Route path={`/admin`} component={WithAuth(AdminLayout)} />
-              <Redirect from="/" to="/admin" />
-            </Switch>
-            <ToastContainer />
-          </HashRouter>
+          <AppProvider>
+            <HashRouter>
+              <Switch>
+                <Route path={`/auth`} component={AuthLayout} />
+                <Route path={`/admin`} component={WithAuth(AdminLayout)} />
+                <Redirect from="/" to="/admin" />
+              </Switch>
+              <ToastContainer />
+            </HashRouter>
+          </AppProvider>
         </AuthProvider>
       </ThemeEditorProvider>
     </React.StrictMode>

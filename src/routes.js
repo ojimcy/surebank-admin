@@ -7,13 +7,15 @@ import {
   MdHome,
   MdLock,
   MdOutlineShoppingCart,
+  MdOutlinePerson3,
 } from "react-icons/md";
 
 // Admin Imports
 import MainDashboard from "views/admin/default";
-import NFTMarketplace from "views/admin/marketplace";
-import Profile from "views/admin/profile";
-import DataTables from "views/admin/dataTables";
+import Sales from "views/admin/sales";
+import Branches from "views/admin/branches";
+import Profile from 'views/admin/profile';
+import Customers from 'views/admin/customers';
 
 // Auth Imports
 import SignInCentered from 'views/auth/signIn';
@@ -28,9 +30,9 @@ const routes = [
     component: MainDashboard,
   },
   {
-    name: 'NFT Marketplace',
+    name: 'sales',
     layout: '/admin',
-    path: '/nft-marketplace',
+    path: '/sales',
     icon: (
       <Icon
         as={MdOutlineShoppingCart}
@@ -39,15 +41,15 @@ const routes = [
         color="inherit"
       />
     ),
-    component: NFTMarketplace,
+    component: Sales,
     secondary: true,
   },
   {
-    name: 'Data Tables',
+    name: 'Branches',
     layout: '/admin',
     icon: <Icon as={MdBarChart} width="20px" height="20px" color="inherit" />,
-    path: '/data-tables',
-    component: DataTables,
+    path: '/branches',
+    component: Branches,
   },
   {
     name: 'Profile',
@@ -55,6 +57,13 @@ const routes = [
     path: '/profile',
     icon: <Icon as={MdPerson} width="20px" height="20px" color="inherit" />,
     component: Profile,
+  },
+  {
+    name: 'Customers',
+    layout: '/admin',
+    path: '/customers',
+    icon: <Icon as={MdOutlinePerson3} width="20px" height="20px" color="inherit" />,
+    component: Customers,
   },
   {
     name: 'Sign In',
