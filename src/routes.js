@@ -16,8 +16,6 @@ import Sales from 'views/admin/sales';
 import Branches from 'views/admin/branches';
 import Profile from 'views/admin/profile';
 import Customers from 'views/admin/customers';
-import GetUsers from 'views/admin/users/all-users';
-import AddUser from 'views/admin/users/add-user';
 
 // Auth Imports
 import SignInCentered from 'views/auth/signIn';

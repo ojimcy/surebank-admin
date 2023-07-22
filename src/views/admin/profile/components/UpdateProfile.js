@@ -15,11 +15,14 @@ export default function UpdateProfile() {
   } = useForm();
 
   const submitHandler = async (userData) => {
-    const userId = currentUser.id;
+    const { email, firstName, lastName, address, phoneNumber } = userData;
     try {
       const response = await axiosService.patch('users/', {
-        userId,
-        userData,
+        email,
+        firstName,
+        lastName,
+        address,
+        phoneNumber,
       });
 
       toast.success('Profile updated successfully!');

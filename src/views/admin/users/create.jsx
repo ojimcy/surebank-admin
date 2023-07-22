@@ -8,7 +8,6 @@ import {
   AlertDialogOverlay,
   Box,
   Button,
-  Checkbox,
   Flex,
   FormControl,
   FormErrorMessage,
@@ -19,7 +18,6 @@ import {
   InputGroup,
   InputRightElement,
   Select,
-  Stack,
   Text,
   useColorModeValue,
 } from '@chakra-ui/react';
@@ -33,12 +31,10 @@ import Card from 'components/card/Card.js';
 import { useForm } from 'react-hook-form';
 import { MdOutlineRemoveRedEye } from 'react-icons/md';
 import { RiEyeCloseLine } from 'react-icons/ri';
-import { useAuth } from 'contexts/AuthContext';
 import axiosService from 'utils/axiosService';
 import { toast } from 'react-toastify';
 
 export default function CreateUser() {
-  const { currentUser } = useAuth();
   const history = useHistory();
   const brandStars = useColorModeValue('brand.500', 'brand.400');
   const textColor = useColorModeValue('navy.700', 'white');
@@ -73,9 +69,14 @@ export default function CreateUser() {
       await axiosService.post(`/users`, userData);
       toast.success('User has been created successfully!');
       history.push('/admin/users');
-    }  catch (error) {
-      if (error) {
-        const errorMessage = error.message;
+    } catch (error) {
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        // Backend error with a specific error message
+        const errorMessage = error.response.data.message;
         toast.error(errorMessage);
       } else {
         // Network error or other error
