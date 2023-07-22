@@ -1,0 +1,181 @@
+// Chakra imports
+import {
+  Box,
+  Grid,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  Button,
+  Spinner,
+  HStack,
+  Flex,
+  Text,
+  Spacer,
+  Stack,
+  FormControl,
+  Input,
+  TableContainer,
+} from '@chakra-ui/react';
+import React, { useEffect, useState } from 'react';
+import { NavLink } from 'react-router-dom';
+
+// Custom components
+
+// Assets
+import axiosService from 'utils/axiosService';
+import Card from 'components/card/Card.js';
+import { SearchIcon } from '@chakra-ui/icons';
+
+export default function Users() {
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const fetchUsers = async () => {
+    setLoading(true);
+    try {
+      const response = await axiosService.get('/users/');
+      setUsers(response.data.results);
+      setTotalPages(response.data.totalPages);
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers(currentPage);
+  }, [currentPage]);
+
+  const handleNextPageClick = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePreviousPageClick = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+      hour12: true,
+    }).format(date);
+  };
+
+  return (
+    <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
+      {/* Main Fields */}
+      <Grid
+        templateColumns={{
+          base: '1fr',
+          lg: '3.96fr',
+        }}
+        templateRows={{
+          base: 'repeat(1, 1fr)',
+          lg: '1fr',
+        }}
+        gap={{ base: '20px', xl: '20px' }}
+      >
+        <Card p={{ base: '30px', md: '30px', sm: '10px' }}>
+          <Flex>
+            <Text fontSize="2xl">Users</Text>
+            <Spacer />
+            <NavLink to="/admin/users/create">
+              <Button bgColor="blue.700" color="white">
+                Create User
+              </Button>
+            </NavLink>
+          </Flex>
+          <Box marginTop="30">
+            <Flex>
+              <Spacer />
+              <Box>
+                <Stack direction="row">
+                  <FormControl>
+                    <Input
+                      type="search"
+                      placeholder="Type a name"
+                      borderColor="black"
+                    />
+                  </FormControl>
+                  <Button bgColor="blue.700" color="white">
+                    <SearchIcon />
+                  </Button>
+                </Stack>
+              </Box>
+            </Flex>
+          </Box>
+          <Box marginTop="30">
+            {loading ? (
+              <Spinner />
+            ) : (
+              <TableContainer>
+                <Table variant="simple" bordered>
+                  <Thead>
+                    <Tr>
+                      <Th>User </Th>
+                      <Th>Status</Th>
+                      <Th>Last Updated </Th>
+                      <Th>Created Date </Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+                    {users.map((user) => (
+                      <Tr key={user.id}>
+                        <Td>
+                          <NavLink
+                            to={`/admin/profile/${user.id}`}
+                          >{`${user.firstName} ${user.lastName}`}</NavLink>{' '}
+                        </Td>
+                        <Td>{user.status}</Td>
+                        <Td>{formatDate(user.updatedAt)}</Td>
+                        <Td>{formatDate(user.createdAt)}</Td>
+                      </Tr>
+                    ))}
+                  </Tbody>
+                </Table>
+              </TableContainer>
+            )}
+            <HStack mt="4" justify="space-between" align="center">
+              {users && (
+                <Box>
+                  Showing {(currentPage - 1) * 10 + 1} to{' '}
+                  {Math.min(currentPage * 10, users.length)} of {users.length}{' '}
+                  entries
+                </Box>
+              )}
+              <HStack>
+                <Button
+                  disabled={currentPage === 1}
+                  onClick={handlePreviousPageClick}
+                >
+                  Previous Page
+                </Button>
+                <Button
+                  disabled={currentPage === totalPages}
+                  onClick={handleNextPageClick}
+                >
+                  Next Page
+                </Button>
+              </HStack>
+            </HStack>
+          </Box>
+        </Card>
+      </Grid>
+    </Box>
+  );
+}

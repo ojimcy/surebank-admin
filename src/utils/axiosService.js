@@ -4,8 +4,8 @@ import axios from 'axios';
 const baseURL = 'http://localhost:3001/v1/';
 
 const headers = { 'Content-Type': 'application/json' };
-if (localStorage.getItem('USER_TOKEN_KEY')) {
-  headers.Authorization = `Bearer ${localStorage.getItem('USER_TOKEN_KEY')}`;
+if (localStorage.getItem('ACCESS_TOKEN_KEY')) {
+  headers.Authorization = `Bearer ${localStorage.getItem('ACCESS_TOKEN_KEY')}`;
 }
 
 axios.interceptors.response.use(
