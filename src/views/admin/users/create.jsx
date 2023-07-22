@@ -18,6 +18,7 @@ import {
   Input,
   InputGroup,
   InputRightElement,
+  Select,
   Stack,
   Text,
   useColorModeValue,
@@ -264,70 +265,69 @@ export default function CreateUser() {
               </Box>
             </Flex>
 
-            <FormControl isInvalid={errors.address}>
-              <FormLabel
-                htmlFor="address"
-                display="flex"
-                ms="4px"
-                fontSize="sm"
-                fontWeight="500"
-                color={textColor}
-                mb="8px"
-              >
-                Address<Text color={brandStars}>*</Text>
-              </FormLabel>
-              <Input
-                isRequired={true}
-                variant="auth"
-                fontSize="sm"
-                ms={{ base: '0px', md: '0px' }}
-                type="text"
-                id="address"
-                mb="24px"
-                fontWeight="500"
-                size="lg"
-                {...register('address', {
-                  required: 'Address is required',
-                })}
-              />
-              <FormErrorMessage>
-                {errors.address && errors.address.message}
-              </FormErrorMessage>
-            </FormControl>
-            <FormControl mt={4}>
-              <FormLabel
-                htmlFor="role"
-                display="flex"
-                ms="4px"
-                fontSize="sm"
-                fontWeight="500"
-                mb="8px"
-              >
-                Role
-              </FormLabel>
-              {/* <Text fontSize="sm">Select one or more roles</Text> */}
-              <Stack>
-                <Checkbox
-                  value="admin"
-                  {...register('role')}
-                  id="admin"
-                  name="role"
-                  defaultChecked={currentUser.role?.includes('admin')}
-                >
-                  Admin
-                </Checkbox>
-                <Checkbox
-                  value="user"
-                  {...register('role')}
-                  id="user"
-                  name="role"
-                  defaultChecked={currentUser.role?.includes('user')}
-                >
-                  User
-                </Checkbox>
-              </Stack>
-            </FormControl>
-
+            <Flex
+              gap="20px"
+              marginBottom="20px"
+              flexDirection={{ base: 'column', md: 'row' }}
+            >
+              <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
+                <FormControl isInvalid={errors.address}>
+                  <FormLabel
+                    htmlFor="address"
+                    display="flex"
+                    ms="4px"
+                    fontSize="sm"
+                    fontWeight="500"
+                    color={textColor}
+                    mb="8px"
+                  >
+                    Address<Text color={brandStars}>*</Text>
+                  </FormLabel>
+                  <Input
+                    isRequired={true}
+                    variant="auth"
+                    fontSize="sm"
+                    ms={{ base: '0px', md: '0px' }}
+                    type="text"
+                    id="address"
+                    mb="24px"
+                    fontWeight="500"
+                    size="lg"
+                    {...register('address', {
+                      required: 'Address is required',
+                    })}
+                  />
+                  <FormErrorMessage>
+                    {errors.address && errors.address.message}
+                  </FormErrorMessage>
+                </FormControl>
+              </Box>
+              <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
+                <FormControl isInvalid={errors.branch}>
+                  <FormLabel
+                    htmlFor="address"
+                    display="flex"
+                    ms="4px"
+                    fontSize="sm"
+                    fontWeight="500"
+                    color={textColor}
+                    mb="8px"
+                  >
+                    Branch<Text color={brandStars}>*</Text>
+                  </FormLabel>
+                  <Select
+                    {...register('branch')}
+                    name="branch"
+                    defaultValue="Hq"
+                  >
+                    <option value="">Select a branch</option>
+                    <option value="Hq">HQ</option>
+                    <option value="lagos">Lagos</option>
+                    <option value="abuja">Abuja</option>
+                  </Select>
+                </FormControl>
+              </Box>
+            </Flex>
             <Flex
               gap="20px"
               marginTop="20px"
