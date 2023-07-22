@@ -2,7 +2,7 @@
 import { Box, Grid } from '@chakra-ui/react';
 
 // Custom components
-import Banner from 'views/admin/profile/components/Banner';
+import Banner from 'views/admin/users/components/Banner';
 
 // Assets
 import banner from 'assets/img/auth/banner.png';
@@ -10,7 +10,7 @@ import avatar from 'assets/img/avatars/avatar4.png';
 import React from 'react';
 import { useAuth } from 'contexts/AuthContext';
 
-export default function Overview() {
+export default function User() {
   const { currentUser } = useAuth();
   return (
     <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
