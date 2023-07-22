@@ -94,7 +94,7 @@ export default function Users() {
           <Flex>
             <Text fontSize="2xl">Users</Text>
             <Spacer />
-            <NavLink to="/admin/users/create">
+            <NavLink to="/admin/user/create">
               <Button bgColor="blue.700" color="white">
                 Create User
               </Button>

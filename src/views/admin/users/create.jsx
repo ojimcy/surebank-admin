@@ -1,71 +1,86 @@
 // Chakra imports
 import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
   Box,
-  Grid,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
   Button,
-  Spinner,
-  HStack,
+  Checkbox,
+  Flex,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+  Grid,
+  Icon,
+  Input,
+  InputGroup,
+  InputRightElement,
+  Stack,
+  Text,
+  useColorModeValue,
 } from '@chakra-ui/react';
-import React, { useEffect, useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
 // Custom components
 
 // Assets
-import axiosService from 'utils/axiosService';
 import Card from 'components/card/Card.js';
+import { useForm } from 'react-hook-form';
+import { MdOutlineRemoveRedEye } from 'react-icons/md';
+import { RiEyeCloseLine } from 'react-icons/ri';
+import { useAuth } from 'contexts/AuthContext';
+import axiosService from 'utils/axiosService';
+import { toast } from 'react-toastify';
 
 export default function CreateUser() {
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const { currentUser } = useAuth();
+  const history = useHistory();
+  const brandStars = useColorModeValue('brand.500', 'brand.400');
+  const textColor = useColorModeValue('navy.700', 'white');
+  const textColorSecondary = 'gray.400';
 
-  const fetchUsers = async () => {
-    setLoading(true);
+  const {
+    handleSubmit,
+    register,
+    formState: { errors, isSubmitting },
+  } = useForm();
+
+  const [show, setShow] = useState(false);
+  const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
+
+  const onCancel = () => {
+    setIsCancelDialogOpen(true);
+  };
+
+  const onCloseCancelDialog = () => {
+    setIsCancelDialogOpen(false);
+  };
+
+  const onConfirmCancel = () => {
+    setIsCancelDialogOpen(false);
+    history.push('/admin/users');
+  };
+
+  const handleClick = () => setShow(!show);
+
+  const submitHandler = async (userData) => {
     try {
-      const response = await axiosService.get('/users/');
-      setUsers(response.results);
-      setTotalPages(response.results.totalPages);
-      setLoading(false);
-    } catch (error) {
-      console.error(error);
+      await axiosService.post(`/users`, userData);
+      toast.success('User has been created successfully!');
+      history.push('/admin/users');
+    }  catch (error) {
+      if (error) {
+        const errorMessage = error.message;
+        toast.error(errorMessage);
+      } else {
+        // Network error or other error
+        toast.error('Something went wrong. Please try again later.');
+      }
     }
-  };
-
-  useEffect(() => {
-    fetchUsers(currentPage);
-  }, [currentPage]);
-
-  const handleNextPageClick = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const handlePreviousPageClick = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric',
-      second: 'numeric',
-      hour12: true,
-    }).format(date);
   };
 
   return (
@@ -82,56 +97,293 @@ export default function CreateUser() {
         }}
         gap={{ base: '20px', xl: '20px' }}
       >
-        <Card>
-          {loading ? (
-            <Spinner />
-          ) : (
-            <Table>
-              <Thead>
-                <Tr>
-                  <Th>User </Th>
-                  <Th>Status</Th>
-                  <Th>Last Updated </Th>
-                  <Th>Created Date </Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {users.map((user) => (
-                  <Tr key={user.id}>
-                    <Td>
-                      <NavLink
-                        to={`/admin/profile/${user.id}`}
-                      >{`${user.firstName} ${user.lastName}`}</NavLink>{' '}
-                    </Td>
-                    <Td>{user.status}</Td>
-                    <Td>{formatDate(user.updatedAt)}</Td>
-                    <Td>{formatDate(user.createdAt)}</Td>
-                  </Tr>
-                ))}
-              </Tbody>
-            </Table>
-          )}
-          <HStack mt="4" justify="space-between" align="center">
-            <Box>
-              Showing {(currentPage - 1) * 10 + 1} to{' '}
-              {Math.min(currentPage * 10, users.length)} of {users.length}{' '}
-              entries
-            </Box>
-            <HStack>
-              <Button
-                disabled={currentPage === 1}
-                onClick={handlePreviousPageClick}
+        <Card p={{ base: '30px', md: '30px', sm: '10px' }}>
+          <Text marginBottom="20px" fontSize="3xl" fontWeight="bold">
+            Create User
+          </Text>
+          <form onSubmit={handleSubmit(submitHandler)}>
+            <Flex
+              gap="20px"
+              marginBottom="20px"
+              flexDirection={{ base: 'column', md: 'row' }}
+            >
+              <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
+                <FormControl isInvalid={errors.firstName}>
+                  <FormLabel
+                    htmlFor="firstName"
+                    display="flex"
+                    ms="4px"
+                    fontSize="sm"
+                    fontWeight="500"
+                    color={textColor}
+                    mb="8px"
+                  >
+                    First Name<Text color={brandStars}>*</Text>
+                  </FormLabel>
+                  <Input
+                    isRequired={true}
+                    variant="auth"
+                    fontSize="sm"
+                    ms={{ base: '0px', md: '0px' }}
+                    type="text"
+                    id="firstName"
+                    mb="24px"
+                    fontWeight="500"
+                    size="lg"
+                    {...register('firstName', {
+                      required: 'Firsname is required',
+                    })}
+                  />
+                  <FormErrorMessage>
+                    {errors.firstName && errors.firstName.message}
+                  </FormErrorMessage>
+                </FormControl>
+              </Box>
+              <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
+                <FormControl isInvalid={errors.lastName}>
+                  <FormLabel
+                    htmlFor="lastName"
+                    display="flex"
+                    ms="4px"
+                    fontSize="sm"
+                    fontWeight="500"
+                    color={textColor}
+                    mb="8px"
+                  >
+                    Last Name<Text color={brandStars}>*</Text>
+                  </FormLabel>
+                  <Input
+                    isRequired={true}
+                    variant="auth"
+                    fontSize="sm"
+                    ms={{ base: '0px', md: '0px' }}
+                    type="text"
+                    id="lastName"
+                    mb="24px"
+                    fontWeight="500"
+                    size="lg"
+                    {...register('lastName', {
+                      required: 'Firsname is required',
+                    })}
+                  />
+                  <FormErrorMessage>
+                    {errors.lastName && errors.lastName.message}
+                  </FormErrorMessage>
+                </FormControl>
+              </Box>
+            </Flex>
+            <Flex
+              gap="20px"
+              marginBottom="20px"
+              flexDirection={{ base: 'column', md: 'row' }}
+            >
+              <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
+                <FormControl isInvalid={errors.email}>
+                  <FormLabel
+                    htmlFor="email"
+                    display="flex"
+                    ms="4px"
+                    fontSize="sm"
+                    fontWeight="500"
+                    color={textColor}
+                    mb="8px"
+                  >
+                    Email<Text color={brandStars}>*</Text>
+                  </FormLabel>
+                  <Input
+                    isRequired={true}
+                    variant="auth"
+                    fontSize="sm"
+                    ms={{ base: '0px', md: '0px' }}
+                    type="email"
+                    id="email"
+                    placeholder="mail@sample.com"
+                    mb="24px"
+                    fontWeight="500"
+                    size="lg"
+                    {...register('email', {
+                      required: 'Email is required',
+                      pattern: {
+                        value: /\S+@\S+\.\S+/,
+                        message: 'Invalid email address',
+                      },
+                    })}
+                  />
+                  <FormErrorMessage>
+                    {errors.email && errors.email.message}
+                  </FormErrorMessage>
+                </FormControl>
+              </Box>
+              <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
+                <FormControl isInvalid={errors.password}>
+                  <FormLabel
+                    ms="4px"
+                    fontSize="sm"
+                    fontWeight="500"
+                    color={textColor}
+                    display="flex"
+                    htmlFor="password"
+                  >
+                    Password<Text color={brandStars}>*</Text>
+                  </FormLabel>
+                  <InputGroup size="md">
+                    <Input
+                      isRequired={true}
+                      fontSize="sm"
+                      placeholder="Min. 8 characters"
+                      mb="24px"
+                      size="lg"
+                      type={show ? 'text' : 'password'}
+                      id="password"
+                      variant="auth"
+                      {...register('password', {
+                        required: 'Password is required',
+                        minLength: {
+                          value: 8,
+                          message: 'Minimum length should be 8',
+                        },
+                      })}
+                    />
+                    <InputRightElement
+                      display="flex"
+                      alignItems="center"
+                      mt="4px"
+                    >
+                      <Icon
+                        color={textColorSecondary}
+                        _hover={{ cursor: 'pointer' }}
+                        as={show ? RiEyeCloseLine : MdOutlineRemoveRedEye}
+                        onClick={handleClick}
+                      />
+                    </InputRightElement>
+                  </InputGroup>
+                  <FormErrorMessage>
+                    {errors.password && errors.password.message}
+                  </FormErrorMessage>
+                </FormControl>
+              </Box>
+            </Flex>
+
+            <FormControl isInvalid={errors.address}>
+              <FormLabel
+                htmlFor="address"
+                display="flex"
+                ms="4px"
+                fontSize="sm"
+                fontWeight="500"
+                color={textColor}
+                mb="8px"
               >
-                Previous Page
-              </Button>
-              <Button
-                disabled={currentPage === totalPages}
-                onClick={handleNextPageClick}
+                Address<Text color={brandStars}>*</Text>
+              </FormLabel>
+              <Input
+                isRequired={true}
+                variant="auth"
+                fontSize="sm"
+                ms={{ base: '0px', md: '0px' }}
+                type="text"
+                id="address"
+                mb="24px"
+                fontWeight="500"
+                size="lg"
+                {...register('address', {
+                  required: 'Address is required',
+                })}
+              />
+              <FormErrorMessage>
+                {errors.address && errors.address.message}
+              </FormErrorMessage>
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel
+                htmlFor="role"
+                display="flex"
+                ms="4px"
+                fontSize="sm"
+                fontWeight="500"
+                mb="8px"
               >
-                Next Page
-              </Button>
-            </HStack>
-          </HStack>
+                Role
+              </FormLabel>
+              {/* <Text fontSize="sm">Select one or more roles</Text> */}
+              <Stack>
+                <Checkbox
+                  value="admin"
+                  {...register('role')}
+                  id="admin"
+                  name="role"
+                  defaultChecked={currentUser.role?.includes('admin')}
+                >
+                  Admin
+                </Checkbox>
+                <Checkbox
+                  value="user"
+                  {...register('role')}
+                  id="user"
+                  name="role"
+                  defaultChecked={currentUser.role?.includes('user')}
+                >
+                  User
+                </Checkbox>
+              </Stack>
+            </FormControl>
+
+            <Flex
+              gap="20px"
+              marginTop="20px"
+              flexDirection={{ base: 'row' }}
+              justifyContent="center"
+            >
+              <Box width={{ base: '50%', md: '50%', sm: '50%' }}>
+                <Button
+                  colorScheme="red"
+                  variant="solid"
+                  fontWeight="500"
+                  w="100%"
+                  h="50"
+                  mb="24px"
+                  onClick={onCancel}
+                >
+                  Cancel
+                </Button>
+              </Box>
+              <Box width={{ base: '50%', md: '50%', sm: '50%' }}>
+                <Button
+                  colorScheme="green"
+                  variant="solid"
+                  w="100%"
+                  h="50"
+                  mb="24px"
+                  type="submit"
+                  isLoading={isSubmitting}
+                >
+                  Save
+                </Button>
+              </Box>
+            </Flex>
+            <AlertDialog
+              isOpen={isCancelDialogOpen}
+              onClose={onCloseCancelDialog}
+            >
+              <AlertDialogOverlay />
+              <AlertDialogContent>
+                <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                  Cancel Confirmation
+                </AlertDialogHeader>
+
+                <AlertDialogBody>
+                  Are you sure you want to cancel creating a new user?
+                </AlertDialogBody>
+
+                <AlertDialogFooter>
+                  <Button onClick={onCloseCancelDialog}>No</Button>
+                  <Button colorScheme="red" onClick={onConfirmCancel} ml={3}>
+                    Yes
+                  </Button>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </form>
         </Card>
       </Grid>
     </Box>
