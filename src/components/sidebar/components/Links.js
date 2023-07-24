@@ -7,8 +7,7 @@ import { Box, Flex, HStack, Text, useColorModeValue } from '@chakra-ui/react';
 const hiddenRoutes = [
   '/auth/sign-in',
   '/auth/sign-up',
-  '/admin/user/create',
-  '/admin/users/:id',
+  '/admin/user/create', // Add the route path you want to hide here
 ];
 
 export function SidebarLinks(props) {
