@@ -1,44 +1,138 @@
 // Chakra imports
-import { Box, SimpleGrid } from '@chakra-ui/react';
-import DevelopmentTable from 'views/admin/branches/components/DevelopmentTable';
-import CheckTable from 'views/admin/branches/components/CheckTable';
-import ColumnsTable from 'views/admin/branches/components/ColumnsTable';
-import ComplexTable from 'views/admin/branches/components/ComplexTable';
-import {
-  columnsDataDevelopment,
-  columnsDataCheck,
-  columnsDataColumns,
-  columnsDataComplex,
-} from 'views/admin/branches/variables/columnsData';
-import tableDataDevelopment from 'views/admin/branches/variables/tableDataDevelopment.json';
-import tableDataCheck from 'views/admin/branches/variables/tableDataCheck.json';
-import tableDataColumns from 'views/admin/branches/variables/tableDataColumns.json';
-import tableDataComplex from 'views/admin/branches/variables/tableDataComplex.json';
-import React from 'react';
+import { Box, Button, Flex, FormControl, FormLabel, Input, Spacer, Text } from '@chakra-ui/react';
+import React, { useState } from 'react';
+import Card from 'components/card/Card';
+import axiosService from 'utils/axiosService';
 
 export default function Settings() {
+
+  const [name, setName] = useState('');
+  const [address, setAddress] = useState('');
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [manager, setManager] = useState('');
+  const [message, setMessage] = useState('');
+  const [isError, setIsError] = useState(false);
+  const submitBranch = async (e) => {
+    e.preventDefault();
+    try {
+      const branchDetail = {
+        name,
+        address,
+        phone,
+        email,
+        manager,
+      };
+      const { data } = await axiosService.post('/branch/create', branchDetail);
+      setName('');
+      setAddress('');
+      setPhone('');
+      setEmail('');
+      setManager('');
+      if (!data.success) {
+        setMessage(data.message);
+        setIsError(true);
+        return;
+      } else {
+        setMessage(name + ' branch Successfully Created');
+        setIsError(false);
+        return;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   // Chakra Color Mode
   return (
-    <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
-      <SimpleGrid
-        mb="20px"
-        columns={{ sm: 1, md: 2 }}
-        spacing={{ base: '20px', xl: '20px' }}
-      >
-        <DevelopmentTable
-          columnsData={columnsDataDevelopment}
-          tableData={tableDataDevelopment}
-        />
-        <CheckTable columnsData={columnsDataCheck} tableData={tableDataCheck} />
-        <ColumnsTable
-          columnsData={columnsDataColumns}
-          tableData={tableDataColumns}
-        />
-        <ComplexTable
-          columnsData={columnsDataComplex}
-          tableData={tableDataComplex}
-        />
-      </SimpleGrid>
+    <Box pt={{ base: '180px', md: '80px', xl: '80px' }}>
+      <Card p={{ base: '30px', md: '30px', sm: '10px' }}>
+        <Text marginBottom="20px" fontSize="3xl" fontWeight="bold">
+          Create Branch
+        </Text>
+        <FormLabel color={isError ? 'red' : 'green'}>{message}</FormLabel>{' '}
+        <form onSubmit={submitBranch}>
+          <Flex
+            gap="20px"
+            marginBottom="20px"
+            flexDirection={{ base: 'column', md: 'row' }}
+          >
+            <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
+              <FormControl>
+                <FormLabel>Branch Name</FormLabel>
+                <Input
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  type="text"
+                  required
+                />
+              </FormControl>
+            </Box>
+            <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
+              <FormControl>
+                <FormLabel>Email</FormLabel>
+                <Input
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  type="email"
+                  required
+                />
+              </FormControl>
+            </Box>
+          </Flex>
+          <Flex
+            gap="20px"
+            marginBottom="20px"
+            flexDirection={{ base: 'column', md: 'row' }}
+          >
+            <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
+              <FormControl>
+                <FormLabel>Phone Number</FormLabel>
+                <Input
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  type="text"
+                  required
+                />
+              </FormControl>
+            </Box>
+            <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
+              <FormControl>
+                <FormLabel>Branch Address</FormLabel>
+                <Input
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  type="text"
+                  required
+                />
+              </FormControl>
+            </Box>
+          </Flex>
+          <Flex
+            gap="20px"
+            marginBottom="20px"
+            flexDirection={{ base: 'column', md: 'row' }}
+          >
+            <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
+              <FormControl>
+                <FormLabel>Branch Manager</FormLabel>
+                <Input
+                  value={manager}
+                  onChange={(e) => setManager(e.target.value)}
+                  type="text"
+                  required
+                />
+              </FormControl>
+            </Box>
+          </Flex>
+
+          <Flex marginTop="30">
+            <Spacer />
+            <Button bgColor="blue.700" color="white" type="submit">
+              Submit
+            </Button>
+          </Flex>
+        </form>
+      </Card>
     </Box>
   );
 }
