@@ -303,10 +303,11 @@ export default function CreateUser() {
                   </FormErrorMessage>
                 </FormControl>
               </Box>
+
               <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
-                <FormControl isInvalid={errors.branch}>
+                <FormControl isInvalid={errors.phoneNumber}>
                   <FormLabel
-                    htmlFor="address"
+                    htmlFor="phoneNumber"
                     display="flex"
                     ms="4px"
                     fontSize="sm"
@@ -314,21 +315,49 @@ export default function CreateUser() {
                     color={textColor}
                     mb="8px"
                   >
-                    Branch<Text color={brandStars}>*</Text>
+                    Phone Number<Text color={brandStars}>*</Text>
                   </FormLabel>
-                  <Select
-                    {...register('branch')}
-                    name="branch"
-                    defaultValue="Hq"
-                  >
-                    <option value="">Select a branch</option>
-                    <option value="Hq">HQ</option>
-                    <option value="lagos">Lagos</option>
-                    <option value="abuja">Abuja</option>
-                  </Select>
+                  <Input
+                    isRequired={true}
+                    variant="auth"
+                    fontSize="sm"
+                    ms={{ base: '0px', md: '0px' }}
+                    type="text"
+                    id="phoneNumber"
+                    mb="24px"
+                    fontWeight="500"
+                    size="lg"
+                    {...register('phoneNumber', {
+                      required: 'Phone number is required',
+                    })}
+                  />
+                  <FormErrorMessage>
+                    {errors.phoneNumber && errors.phoneNumber.message}
+                  </FormErrorMessage>
                 </FormControl>
               </Box>
             </Flex>
+            <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
+              <FormControl isInvalid={errors.branch}>
+                <FormLabel
+                  htmlFor="address"
+                  display="flex"
+                  ms="4px"
+                  fontSize="sm"
+                  fontWeight="500"
+                  color={textColor}
+                  mb="8px"
+                >
+                  Branch<Text color={brandStars}>*</Text>
+                </FormLabel>
+                <Select {...register('branch')} name="branch" defaultValue="Hq">
+                  <option value="">Select a branch</option>
+                  <option value="Hq">HQ</option>
+                  <option value="lagos">Lagos</option>
+                  <option value="abuja">Abuja</option>
+                </Select>
+              </FormControl>
+            </Box>
             <Flex
               gap="20px"
               marginTop="20px"

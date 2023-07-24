@@ -138,7 +138,7 @@ export default function Users() {
                       <Tr key={user.id}>
                         <Td>
                           <NavLink
-                            to={`/admin/profile/${user.id}`}
+                            to={`/admin/user/${user.id}`}
                           >{`${user.firstName} ${user.lastName}`}</NavLink>{' '}
                         </Td>
                         <Td>{user.status}</Td>

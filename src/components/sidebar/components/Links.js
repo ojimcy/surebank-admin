@@ -7,7 +7,9 @@ import { Box, Flex, HStack, Text, useColorModeValue } from '@chakra-ui/react';
 const hiddenRoutes = [
   '/auth/sign-in',
   '/auth/sign-up',
-  '/admin/user/create', // Add the route path you want to hide here
+  '/admin/user/create',
+  '/admin/user/:id',
+  '/admin/user/edit-user/:id',
 ];
 
 export function SidebarLinks(props) {
@@ -20,7 +22,7 @@ export function SidebarLinks(props) {
   );
   let activeIcon = useColorModeValue('brand.500', 'white');
   let textColor = useColorModeValue('secondaryGray.500', 'white');
-  let brandColor = useColorModeValue('brand.500', 'brand.400');
+  let brandColor = useColorModeValue('brand.500', 'brand.400');``
 
   const { routes } = props;
 

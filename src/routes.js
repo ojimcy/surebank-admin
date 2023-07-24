@@ -22,6 +22,8 @@ import SignInCentered from 'views/auth/signIn';
 import SignUpCentered from 'views/auth/signUp';
 import Users from "views/admin/users";
 import CreateUser from "views/admin/users/create";
+import User from 'views/admin/users/get-user';
+import EditUser from 'views/admin/users/edit';
 
 const routes = [
   {
@@ -81,11 +83,29 @@ const routes = [
   {
     name: 'Users',
     layout: '/admin',
+    path: '/user/edit-user/:id',
+    icon: (
+      <Icon as={MdOutlinePerson3} width="20px" height="20px" color="inherit" />
+    ),
+    component: EditUser,
+  },
+  {
+    name: 'Users',
+    layout: '/admin',
     path: '/user/create',
     icon: (
       <Icon as={MdOutlinePerson3} width="20px" height="20px" color="inherit" />
     ),
     component: CreateUser,
+  },
+  {
+    name: 'Users',
+    layout: '/admin',
+    path: '/user/:id',
+    icon: (
+      <Icon as={MdOutlinePerson3} width="20px" height="20px" color="inherit" />
+    ),
+    component: User,
   },
   {
     name: 'Sign In',
