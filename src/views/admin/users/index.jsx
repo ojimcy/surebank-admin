@@ -18,6 +18,14 @@ import {
   FormControl,
   Input,
   TableContainer,
+  IconButton,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
@@ -27,13 +35,17 @@ import { NavLink } from 'react-router-dom';
 // Assets
 import axiosService from 'utils/axiosService';
 import Card from 'components/card/Card.js';
-import { SearchIcon } from '@chakra-ui/icons';
+import { DeleteIcon, EditIcon, SearchIcon } from '@chakra-ui/icons';
+import { toast } from 'react-toastify';
 
 export default function Users() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -74,6 +86,35 @@ export default function Users() {
       second: 'numeric',
       hour12: true,
     }).format(date);
+  };
+
+  const handleDeleteIconClick = (userId) => {
+    setUserToDelete(userId);
+    setShowDeleteModal(true);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (userToDelete) {
+      handleDeleteUser(userToDelete);
+      setShowDeleteModal(false);
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setShowDeleteModal(false);
+  };
+
+  // Function to handle user deletion
+  const handleDeleteUser = async (userId) => {
+    try {
+      await axiosService.delete(`/users/${userId}`);
+      toast.success('User deleted successfully!');
+      // After successful deletion, refetch the users to update the list
+      fetchUsers();
+    } catch (error) {
+      console.error(error);
+      toast.error(error.response?.data?.message || 'An error occurred');
+    }
   };
 
   return (
@@ -131,6 +172,7 @@ export default function Users() {
                       <Th>Status</Th>
                       <Th>Last Updated </Th>
                       <Th>Created Date </Th>
+                      <Th>Action</Th>
                     </Tr>
                   </Thead>
                   <Tbody>
@@ -144,6 +186,25 @@ export default function Users() {
                         <Td>{user.status}</Td>
                         <Td>{formatDate(user.updatedAt)}</Td>
                         <Td>{formatDate(user.createdAt)}</Td>
+                        <Td>
+                          <HStack>
+                            {/* Edit user icon */}
+                            <NavLink to={`/admin/user/edit-user/${user.id}`}>
+                              <IconButton
+                                icon={<EditIcon />}
+                                colorScheme="blue"
+                                aria-label="Edit user"
+                              />
+                            </NavLink>
+                            {/* Delete user icon */}
+                            <IconButton
+                              icon={<DeleteIcon />}
+                              colorScheme="red"
+                              aria-label="Delete user"
+                              onClick={() => handleDeleteIconClick(user.id)}
+                            />
+                          </HStack>
+                        </Td>
                       </Tr>
                     ))}
                   </Tbody>
@@ -176,6 +237,23 @@ export default function Users() {
           </Box>
         </Card>
       </Grid>
+      {/* Delete confirmation modal */}
+      <Modal isOpen={showDeleteModal} onClose={handleDeleteCancel}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Delete User</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>Are you sure you want to delete this user?</ModalBody>
+          <ModalFooter>
+            <Button colorScheme="red" mr={3} onClick={handleDeleteConfirm}>
+              Delete
+            </Button>
+            <Button variant="ghost" onClick={handleDeleteCancel}>
+              Cancel
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 }

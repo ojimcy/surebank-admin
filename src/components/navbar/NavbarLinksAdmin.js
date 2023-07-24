@@ -142,20 +142,23 @@ export default function HeaderLinks(props) {
               borderRadius="8px"
               px="14px"
               as="a"
-              href="/admin/profile/edit"
+              href="/admin/profile"
             >
               <Text fontSize="sm">Update Profile</Text>
             </MenuItem>
-            <MenuItem
-              _hover={{ bg: 'none' }}
-              _focus={{ bg: 'none' }}
-              borderRadius="8px"
-              px="14px"
-              as="a"
-              href="/admin/profile/users"
-            >
-              <Text fontSize="sm">Manage Users</Text>
-            </MenuItem>
+            {currentUser.role === 'admin' ||
+              ('superAdmin' && (
+                <MenuItem
+                  _hover={{ bg: 'none' }}
+                  _focus={{ bg: 'none' }}
+                  borderRadius="8px"
+                  px="14px"
+                  as="a"
+                  href="/admin/users"
+                >
+                  <Text fontSize="sm">Manage Users</Text>
+                </MenuItem>
+              ))}
             <HSeparator />
             <MenuItem
               _hover={{ bg: 'none' }}
