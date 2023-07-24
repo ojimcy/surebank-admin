@@ -64,7 +64,7 @@ function SignUp() {
   const submitHandler = async (data) => {
     try {
       await signup(data);
-      toast.sucess('Signup successfully!');
+      toast.success('Signup successfully!');
       history.push('/auth/login');
     } catch (error) {
       if (error) {

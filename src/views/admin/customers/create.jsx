@@ -34,7 +34,7 @@ import { RiEyeCloseLine } from 'react-icons/ri';
 import axiosService from 'utils/axiosService';
 import { toast } from 'react-toastify';
 
-export default function CreateUser() {
+export default function Customer() {
   const history = useHistory();
   const brandStars = useColorModeValue('brand.500', 'brand.400');
   const textColor = useColorModeValue('navy.700', 'white');
@@ -60,7 +60,7 @@ export default function CreateUser() {
 
   const onConfirmCancel = () => {
     setIsCancelDialogOpen(false);
-    history.push('/admin/users');
+    history.push('/');
   };
 
   const handleClick = () => setShow(!show);
@@ -79,9 +79,9 @@ export default function CreateUser() {
 
   const submitHandler = async (userData) => {
     try {
-      await axiosService.post(`/users`, userData);
-      toast.success('User has been created successfully!');
-      history.push('/admin/users');
+      await axiosService.post(`/customer`, userData);
+      toast.success('Customer created successfully!');
+      history.push('/');
     } catch (error) {
       if (
         error.response &&
@@ -117,76 +117,6 @@ export default function CreateUser() {
             Create User
           </Text>
           <form onSubmit={handleSubmit(submitHandler)}>
-            <Flex
-              gap="20px"
-              marginBottom="20px"
-              flexDirection={{ base: 'column', md: 'row' }}
-            >
-              <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
-                <FormControl isInvalid={errors.firstName}>
-                  <FormLabel
-                    htmlFor="firstName"
-                    display="flex"
-                    ms="4px"
-                    fontSize="sm"
-                    fontWeight="500"
-                    color={textColor}
-                    mb="8px"
-                  >
-                    First Name<Text color={brandStars}>*</Text>
-                  </FormLabel>
-                  <Input
-                    isRequired={true}
-                    variant="auth"
-                    fontSize="sm"
-                    ms={{ base: '0px', md: '0px' }}
-                    type="text"
-                    id="firstName"
-                    mb="24px"
-                    fontWeight="500"
-                    size="lg"
-                    {...register('firstName', {
-                      required: 'Firsname is required',
-                    })}
-                  />
-                  <FormErrorMessage>
-                    {errors.firstName && errors.firstName.message}
-                  </FormErrorMessage>
-                </FormControl>
-              </Box>
-              <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
-                <FormControl isInvalid={errors.lastName}>
-                  <FormLabel
-                    htmlFor="lastName"
-                    display="flex"
-                    ms="4px"
-                    fontSize="sm"
-                    fontWeight="500"
-                    color={textColor}
-                    mb="8px"
-                  >
-                    Last Name<Text color={brandStars}>*</Text>
-                  </FormLabel>
-                  <Input
-                    isRequired={true}
-                    variant="auth"
-                    fontSize="sm"
-                    ms={{ base: '0px', md: '0px' }}
-                    type="text"
-                    id="lastName"
-                    mb="24px"
-                    fontWeight="500"
-                    size="lg"
-                    {...register('lastName', {
-                      required: 'Firsname is required',
-                    })}
-                  />
-                  <FormErrorMessage>
-                    {errors.lastName && errors.lastName.message}
-                  </FormErrorMessage>
-                </FormControl>
-              </Box>
-            </Flex>
             <Flex
               gap="20px"
               marginBottom="20px"
@@ -278,7 +208,76 @@ export default function CreateUser() {
                 </FormControl>
               </Box>
             </Flex>
-
+            <Flex
+              gap="20px"
+              marginBottom="20px"
+              flexDirection={{ base: 'column', md: 'row' }}
+            >
+              <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
+                <FormControl isInvalid={errors.firstName}>
+                  <FormLabel
+                    htmlFor="firstName"
+                    display="flex"
+                    ms="4px"
+                    fontSize="sm"
+                    fontWeight="500"
+                    color={textColor}
+                    mb="8px"
+                  >
+                    First Name<Text color={brandStars}>*</Text>
+                  </FormLabel>
+                  <Input
+                    isRequired={true}
+                    variant="auth"
+                    fontSize="sm"
+                    ms={{ base: '0px', md: '0px' }}
+                    type="text"
+                    id="firstName"
+                    mb="24px"
+                    fontWeight="500"
+                    size="lg"
+                    {...register('firstName', {
+                      required: 'Firsname is required',
+                    })}
+                  />
+                  <FormErrorMessage>
+                    {errors.firstName && errors.firstName.message}
+                  </FormErrorMessage>
+                </FormControl>
+              </Box>
+              <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
+                <FormControl isInvalid={errors.lastName}>
+                  <FormLabel
+                    htmlFor="lastName"
+                    display="flex"
+                    ms="4px"
+                    fontSize="sm"
+                    fontWeight="500"
+                    color={textColor}
+                    mb="8px"
+                  >
+                    Last Name<Text color={brandStars}>*</Text>
+                  </FormLabel>
+                  <Input
+                    isRequired={true}
+                    variant="auth"
+                    fontSize="sm"
+                    ms={{ base: '0px', md: '0px' }}
+                    type="text"
+                    id="lastName"
+                    mb="24px"
+                    fontWeight="500"
+                    size="lg"
+                    {...register('lastName', {
+                      required: 'Firsname is required',
+                    })}
+                  />
+                  <FormErrorMessage>
+                    {errors.lastName && errors.lastName.message}
+                  </FormErrorMessage>
+                </FormControl>
+              </Box>
+            </Flex>
             <Flex
               gap="20px"
               marginBottom="20px"
@@ -350,27 +349,67 @@ export default function CreateUser() {
                 </FormControl>
               </Box>
             </Flex>
-            <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
-              <FormControl isInvalid={errors.branch}>
-                <FormLabel
-                  htmlFor="address"
-                  display="flex"
-                  ms="4px"
-                  fontSize="sm"
-                  fontWeight="500"
-                  color={textColor}
-                  mb="8px"
-                >
-                  Branch<Text color={brandStars}>*</Text>
-                </FormLabel>
-                <Select {...register('branch')} name="branch" defaultValue="Hq">
-                  <option value="">Select a branch</option>
-                  <option value="Hq">HQ</option>
-                  <option value="lagos">Lagos</option>
-                  <option value="abuja">Abuja</option>
-                </Select>
-              </FormControl>
-            </Box>
+            <Flex
+              gap="20px"
+              marginBottom="20px"
+              flexDirection={{ base: 'column', md: 'row' }}
+            >
+              <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
+                <FormControl isInvalid={errors.branch}>
+                  <FormLabel
+                    htmlFor="address"
+                    display="flex"
+                    ms="4px"
+                    fontSize="sm"
+                    fontWeight="500"
+                    color={textColor}
+                    mb="8px"
+                  >
+                    Branch<Text color={brandStars}>*</Text>
+                  </FormLabel>
+                  <Select
+                    {...register('branchId')}
+                    name="branchId"
+                    defaultValue=""
+                  >
+                    <option value="" disabled>
+                      Select a branch
+                    </option>
+                    {branches &&
+                      branches.map((branch) => (
+                        <option key={branch.id} value={branch.id}>
+                          {branch.name}
+                        </option>
+                      ))}
+                  </Select>
+                </FormControl>
+              </Box>
+              <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
+                <FormControl isInvalid={errors.accountType}>
+                  <FormLabel
+                    htmlFor="address"
+                    display="flex"
+                    ms="4px"
+                    fontSize="sm"
+                    fontWeight="500"
+                    color={textColor}
+                    mb="8px"
+                  >
+                    Account Type<Text color={brandStars}>*</Text>
+                  </FormLabel>
+                  <Select
+                    {...register('accountType')}
+                    name="accountType"
+                    defaultValue="Hq"
+                  >
+                    <option value="">Select account rype</option>
+                    <option value="ds">DS</option>
+                    <option value="sb">SB</option>
+                  </Select>
+                </FormControl>
+              </Box>
+            </Flex>
+
             <Flex
               gap="20px"
               marginTop="20px"
@@ -415,7 +454,7 @@ export default function CreateUser() {
                 </AlertDialogHeader>
 
                 <AlertDialogBody>
-                  Are you sure you want to cancel creating a new user?
+                  Are you sure you want to cancel creating a new customer?
                 </AlertDialogBody>
 
                 <AlertDialogFooter>
