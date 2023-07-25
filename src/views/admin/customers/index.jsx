@@ -30,17 +30,19 @@ import Card from 'components/card/Card.js';
 import { SearchIcon } from '@chakra-ui/icons';
 
 export default function Customers() {
-  const [users, setUser] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [usersAccount, setUsersAccount] = useState({});
+  const [branchInfoMap, setBranchInfoMap] = useState({});
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-
+  // Fetch user information
   const fetchUserInfo = async () => {
     setLoading(true);
     try {
       const response = await axiosService.get('/users/');
-      setUser(response.data.results);
+      setUsers(response.data.results);
       setTotalPages(response.data.totalPages);
       setLoading(false);
     } catch (error) {
@@ -48,10 +50,71 @@ export default function Customers() {
     }
   };
 
+  // Fetch user account information for all users
+  const fetchAllUsersAccounts = async () => {
+    try {
+      const userAccountsPromises = users.map((user) =>
+        axiosService.get(`accounts/${user.id}`)
+      );
+      const userAccountsResponses = await Promise.all(userAccountsPromises);
+      const userAccountsData = userAccountsResponses.reduce((acc, response) => {
+        acc[response.data.userId] = response.data;
+        return acc;
+      }, {});
+      setUsersAccount(userAccountsData);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
+  // Fetch branch information for all branches
+  const fetchAllBranchInfo = async () => {
+    try {
+      const branchPromises = Object.values(usersAccount).map(
+        (account) => account.branchId
+      );
+      const branchResponses = await Promise.all(
+        branchPromises.map((branchId) =>
+          axiosService.get(`/branch/${branchId}`)
+        )
+      );
+      const branchData = branchResponses.reduce((acc, response, index) => {
+        acc[branchPromises[index]] = response.data;
+        return acc;
+      }, {});
+      setBranchInfoMap(branchData);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // useEffect to fetch user information and user account information on initial load and when currentPage changes
   useEffect(() => {
-    fetchUserInfo(currentPage);
+    fetchUserInfo();
   }, [currentPage]);
+
+  // useEffect to fetch user account information and branch information whenever users state is updated
+  useEffect(() => {
+    if (users.length > 0) {
+      fetchAllUsersAccounts();
+      fetchAllBranchInfo();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [users]);
+
+  // Combine user and account information for each customer
+  const getCustomerInfo = (user) => {
+    const account = usersAccount[user.id];
+    const branch = branchInfoMap[account?.branchId];
+    return {
+      id: user.id,
+      name: `${user.firstName} ${user.lastName}`,
+      status: user.status,
+      branch: user ? branch?.name || 'N/A' : 'N/A',
+      accountType: account ? account.accountType : 'N/A',
+      accountNumber: account ? account.accountNumber : 'N/A',
+    };
+  };
 
   const handleNextPageClick = () => {
     if (currentPage < totalPages) {
@@ -124,20 +187,22 @@ export default function Customers() {
                     </Tr>
                   </Thead>
                   <Tbody>
-                    {users.map((user) => (
-                      <Tr key={user.id}>
-                        <Td>
-                          <NavLink
-                            to={`/admin/customer/${user.id}`}
-                          >{`${user.firstName} ${user.lastName}`}</NavLink>{' '}
-                        </Td>
-                        <Td>{user.status}</Td>
-                        <Td>{user.branch}</Td>
-                        <Td>{user.branch}</Td>
-                        <Td>{user.createdAt}</Td>
-                        
-                      </Tr>
-                    ))}
+                    {users.map((user) => {
+                      const customer = getCustomerInfo(user);
+                      return (
+                        <Tr key={customer.id}>
+                          <Td>
+                            <NavLink to={`/admin/customer/${customer.id}`}>
+                              {customer.name}
+                            </NavLink>
+                          </Td>
+                          <Td>{customer.status}</Td>
+                          <Td>{customer.branch}</Td>
+                          <Td>{customer.accountType}</Td>
+                          <Td>{customer.accountNumber}</Td>
+                        </Tr>
+                      );
+                    })}
                   </Tbody>
                 </Table>
               </TableContainer>
@@ -146,8 +211,8 @@ export default function Customers() {
               {users && (
                 <Box>
                   Showing {(currentPage - 1) * 10 + 1} to{' '}
-                  {Math.min(currentPage * 10, users.length)} of{' '}
-                  {users.length} entries
+                  {Math.min(currentPage * 10, users.length)} of {users.length}{' '}
+                  entries
                 </Box>
               )}
               <HStack>

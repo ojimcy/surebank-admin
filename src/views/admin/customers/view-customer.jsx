@@ -24,14 +24,15 @@ import {
 } from '@chakra-ui/react';
 
 // Custom components
+import axiosService from 'utils/axiosService';
 
 // Assets
-import axiosService from 'utils/axiosService';
 import { AddIcon } from '@chakra-ui/icons';
 import { toast } from 'react-toastify';
 import Card from 'components/card/Card';
 import IconBox from 'components/icons/IconBox';
 import { MdAttachMoney, MdBarChart } from 'react-icons/md';
+import { formatNaira, formatDate } from 'utils/helper';
 
 export default function ViewCustomer() {
   const { id } = useParams();
@@ -47,11 +48,13 @@ export default function ViewCustomer() {
   const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
-    const fetchUserAccount = async () => {
-      setLoading(true);
+    const fetchCustomerDetails = async () => {
       try {
-        const response = await axiosService.get(`users/${id}`);
-        setUser(response.data);
+        setLoading(true);
+        const userResponse = await axiosService.get(`users/${id}`);
+        setUser(userResponse.data);
+        const accountResponse = await axiosService.get(`accounts/${id}`);
+        setUserAccount(accountResponse.data);
         setLoading(false);
       } catch (error) {
         console.error(error);
@@ -59,52 +62,59 @@ export default function ViewCustomer() {
         setLoading(false);
       }
     };
-    fetchUserAccount();
+    fetchCustomerDetails();
   }, [id]);
 
   useEffect(() => {
-    const fetchAccount = async () => {
-      try {
-        const response = await axiosService.get(`accounts/${id}`);
-        setUserAccount(response.data);
-      } catch (error) {
-        console.error(error);
-        toast.error(error.response?.data?.message || 'An error occurred');
-      }
-    };
-    fetchAccount();
-  }, [id]);
-
-  const fetchTransactions = async () => {
     if (!userAccount) {
       setTransactions([]);
       setTransactionsLoading(false);
       return;
     }
 
-    const accountNumber = userAccount.accountNumber;
-    setTransactionsLoading(true);
-    try {
-      const response = await axiosService.get(
-        `transactions/?accountNumber=${accountNumber}`
-      );
-      setTransactions(response.data);
-      setTransactionsLoading(false);
-    } catch (error) {
-      console.error(error);
-      toast.error(error.response?.data?.message || 'An error occurred');
-      setTransactionsLoading(false);
-    }
-  };
+    const fetchTransactions = async () => {
+      if (!userAccount) {
+        setTransactions([]);
+        setTransactionsLoading(false);
+        return;
+      }
 
-  useEffect(() => {
-    fetchTransactions(currentPage);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, userAccount, userAccount?.accountNumber, currentPage]);
-
-  useEffect(() => {
-    const getUserPackage = async () => {
+      const accountNumber = userAccount.accountNumber;
+      setTransactionsLoading(true);
       try {
+        const response = await axiosService.get(
+          `transactions/?accountNumber=${accountNumber}`
+        );
+
+        // Fetch user information for each transaction's operator
+        const transactionsWithOperator = await Promise.all(
+          response.data.map(async (transaction) => {
+            const operatorResponse = await axiosService.get(
+              `/users/${transaction.operatorId}`
+            );
+            const operator = operatorResponse.data;
+            return {
+              ...transaction,
+              operatorName: `${operator.firstName} ${operator.lastName}`,
+            };
+          })
+        );
+
+        setTransactions(transactionsWithOperator);
+        setTransactionsLoading(false);
+      } catch (error) {
+        console.error(error);
+        toast.error(error.response?.data?.message || 'An error occurred');
+        setTransactionsLoading(false);
+      }
+    };
+    fetchTransactions();
+  }, [userAccount]);
+
+  useEffect(() => {
+    const fetchUserPackage = async () => {
+      try {
+        setLoading(true);
         const response = await axiosService.get(
           `daily-savings/package?userId=${id}`
         );
@@ -116,7 +126,7 @@ export default function ViewCustomer() {
         setLoading(false);
       }
     };
-    getUserPackage();
+    fetchUserPackage();
   }, [id]);
 
   const handleNextPageClick = () => {
@@ -129,19 +139,6 @@ export default function ViewCustomer() {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
     }
-  };
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric',
-      second: 'numeric',
-      hour12: true,
-    }).format(date);
   };
 
   // Chakra Color Mode
@@ -197,12 +194,14 @@ export default function ViewCustomer() {
                       />
                       <Box px={6} py={4}>
                         <Grid templateColumns="repeat(1fr)" gap={1}>
-                          <Text>Account Type: {userAccount.accountType}</Text>
                           <Text fontWeight="bold" fontSize="1xl">
-                            Total: {userPackage?.totalContribution}
+                            Total: {formatNaira(userPackage?.totalContribution)}
                           </Text>
                           <Text fontWeight="bold">
-                            Daily: {userPackage?.amountPerDay}
+                            Daily: {formatNaira(userPackage?.amountPerDay)}
+                          </Text>
+                          <Text>
+                            Start date: {formatDate(userPackage?.startDate)}
                           </Text>
                         </Grid>
                       </Box>
@@ -242,10 +241,12 @@ export default function ViewCustomer() {
                       <Box px={6} py={4}>
                         <Grid templateColumns="repeat(1fr)" gap={1}>
                           <Text>Account Type: {userAccount.accountType}</Text>
-                          <Text fontWeight="bold" fontSize="3xl">
-                            {userAccount.availableBallance}
+                          <Text fontWeight="bold">
+                            Account Number: {userAccount.accountNumber}
                           </Text>
-                          <Text fontWeight="bold">{user.branch}</Text>
+                          <Text fontWeight="bold" fontSize="1xl">
+                            Balance {formatNaira(userAccount.availableBalance)}
+                          </Text>
                         </Grid>
                       </Box>
                     </Flex>
@@ -284,19 +285,19 @@ export default function ViewCustomer() {
                     <Table variant="simple">
                       <Thead>
                         <Tr>
-                          <Th>SN</Th>
-                          <Th>Amount</Th>
+                          <Th>Time</Th>
                           <Th>Direction </Th>
-                          <Th>Date</Th>
+                          <Th>Amount</Th>
+                          <Th>Operator</Th>
                         </Tr>
                       </Thead>
                       <Tbody>
                         {transactions.map((transaction) => (
                           <Tr key={transaction.id}>
-                            <Td>1</Td>
-                            <Td>{transaction.amount}</Td>
+                            <Td>{formatDate(transaction.date)}</Td>
                             <Td>{transaction.direction}</Td>
-                            <Td>{formatDate(transaction.createdAt)}</Td>
+                            <Td>{transaction.amount}</Td>
+                            <Td>{transaction.operatorName}</Td>
                           </Tr>
                         ))}
                       </Tbody>
