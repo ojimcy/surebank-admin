@@ -12,6 +12,8 @@ const hiddenRoutes = [
   '/admin/user/edit-user/:id',
   '/admin/customer/create',
   '/admin/customer/:id',
+  '/admin/deposit',
+  '/admin/withdraw',
 ];
 
 export function SidebarLinks(props) {
@@ -24,7 +26,8 @@ export function SidebarLinks(props) {
   );
   let activeIcon = useColorModeValue('brand.500', 'white');
   let textColor = useColorModeValue('secondaryGray.500', 'white');
-  let brandColor = useColorModeValue('brand.500', 'brand.400');``
+  let brandColor = useColorModeValue('brand.500', 'brand.400');
+  ``;
 
   const { routes } = props;
 

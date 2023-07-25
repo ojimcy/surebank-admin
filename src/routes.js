@@ -92,6 +92,24 @@ const routes = [
     ),
     component: ViewCustomer,
   },
+  {
+    name: 'Account',
+    layout: '/admin',
+    path: '/withdraw',
+    icon: (
+      <Icon as={MdOutlinePerson3} width="20px" height="20px" color="inherit" />
+    ),
+    component: ViewCustomer,
+  },
+  {
+    name: 'Account',
+    layout: '/admin',
+    path: '/deposit',
+    icon: (
+      <Icon as={MdOutlinePerson3} width="20px" height="20px" color="inherit" />
+    ),
+    component: ViewCustomer,
+  },
 
   {
     name: 'Users',

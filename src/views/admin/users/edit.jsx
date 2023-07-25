@@ -16,6 +16,7 @@ import { useForm } from 'react-hook-form';
 import axiosService from 'utils/axiosService';
 import { useParams, useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import BackButton from 'components/menu/BackButton';
 
 export default function EditUser() {
   const [user, setUser] = useState(null);
@@ -77,6 +78,7 @@ export default function EditUser() {
         gap={{ base: '20px', xl: '20px' }}
       >
         <Card>
+          <BackButton />
           <Flex w="50%" mx="auto" mt="26px">
             <form
               className="update-form"

@@ -46,6 +46,7 @@ const post = (url, data) => api.post(url, data);
 const patch = (url, data) => api.patch(url, data);
 const del = (url) => api.delete(url);
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default {
   get,
   post,

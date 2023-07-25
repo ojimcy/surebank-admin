@@ -28,6 +28,7 @@ import { NavLink } from 'react-router-dom';
 import axiosService from 'utils/axiosService';
 import Card from 'components/card/Card.js';
 import { SearchIcon } from '@chakra-ui/icons';
+import BackButton from 'components/menu/BackButton';
 
 export default function Customers() {
   const [users, setUsers] = useState([]);
@@ -99,7 +100,7 @@ export default function Customers() {
       fetchAllUsersAccounts();
       fetchAllBranchInfo();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [users]);
 
   // Combine user and account information for each customer
@@ -143,6 +144,7 @@ export default function Customers() {
         gap={{ base: '20px', xl: '20px' }}
       >
         <Card p={{ base: '30px', md: '30px', sm: '10px' }}>
+          <BackButton />
           <Flex>
             <Text fontSize="2xl">Customers</Text>
             <Spacer />

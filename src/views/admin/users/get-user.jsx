@@ -17,6 +17,7 @@ import {
 
 // Assets
 import axiosService from 'utils/axiosService';
+import BackButton from 'components/menu/BackButton';
 
 export default function User() {
   const { id } = useParams();
@@ -52,6 +53,7 @@ export default function User() {
         </Box>
       ) : (
         <Box pt={{ base: '180px', md: '80px', xl: '80px' }}>
+          <BackButton />
           <Grid
             mb="20px"
             gridTemplateColumns={{ xl: 'repeat(3, 1fr)', '2xl': '1fr 0.46fr' }}
