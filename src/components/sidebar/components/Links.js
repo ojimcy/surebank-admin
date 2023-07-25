@@ -10,6 +10,8 @@ const hiddenRoutes = [
   '/admin/user/create',
   '/admin/user/:id',
   '/admin/user/edit-user/:id',
+  '/admin/customer/create',
+  '/admin/customer/:id',
 ];
 
 export function SidebarLinks(props) {

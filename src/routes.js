@@ -24,6 +24,8 @@ import Users from "views/admin/users";
 import CreateUser from "views/admin/users/create";
 import User from 'views/admin/users/get-user';
 import EditUser from 'views/admin/users/edit';
+import CreateCustomer from 'views/admin/customers/create';
+import ViewCustomer from 'views/admin/customers/view-customer';
 
 const routes = [
   {
@@ -71,6 +73,26 @@ const routes = [
     ),
     component: Customers,
   },
+  {
+    name: 'Customers',
+    layout: '/admin',
+    path: '/customer/create',
+    icon: (
+      <Icon as={MdOutlinePerson3} width="20px" height="20px" color="inherit" />
+    ),
+    component: CreateCustomer,
+  },
+
+  {
+    name: 'Customer',
+    layout: '/admin',
+    path: '/customer/:id',
+    icon: (
+      <Icon as={MdOutlinePerson3} width="20px" height="20px" color="inherit" />
+    ),
+    component: ViewCustomer,
+  },
+
   {
     name: 'Users',
     layout: '/admin',

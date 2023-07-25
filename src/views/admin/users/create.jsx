@@ -34,7 +34,7 @@ import { RiEyeCloseLine } from 'react-icons/ri';
 import axiosService from 'utils/axiosService';
 import { toast } from 'react-toastify';
 
-export default function CreateUser() {
+export default function CreateCustomer() {
   const history = useHistory();
   const brandStars = useColorModeValue('brand.500', 'brand.400');
   const textColor = useColorModeValue('navy.700', 'white');
@@ -363,11 +363,21 @@ export default function CreateUser() {
                 >
                   Branch<Text color={brandStars}>*</Text>
                 </FormLabel>
-                <Select {...register('branch')} name="branch" defaultValue="Hq">
-                  <option value="">Select a branch</option>
-                  <option value="Hq">HQ</option>
-                  <option value="lagos">Lagos</option>
-                  <option value="abuja">Abuja</option>
+
+                <Select
+                  {...register('branchId')}
+                  name="branchId"
+                  defaultValue=""
+                >
+                  <option value="" disabled>
+                    Select a branch
+                  </option>
+                  {branches &&
+                    branches.map((branch) => (
+                      <option key={branch.id} value={branch.id}>
+                        {branch.name}
+                      </option>
+                    ))}
                 </Select>
               </FormControl>
             </Box>

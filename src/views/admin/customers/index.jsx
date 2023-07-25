@@ -18,14 +18,6 @@ import {
   FormControl,
   Input,
   TableContainer,
-  IconButton,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
@@ -35,23 +27,20 @@ import { NavLink } from 'react-router-dom';
 // Assets
 import axiosService from 'utils/axiosService';
 import Card from 'components/card/Card.js';
-import { DeleteIcon, EditIcon, SearchIcon } from '@chakra-ui/icons';
-import { toast } from 'react-toastify';
+import { SearchIcon } from '@chakra-ui/icons';
 
 export default function Customers() {
-  const [customers, setCustomers] = useState([]);
+  const [users, setUser] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [customerToDelete, setCustomerToDelete] = useState(null);
 
-  const fetchCustomers = async () => {
+  const fetchUserInfo = async () => {
     setLoading(true);
     try {
       const response = await axiosService.get('/users/');
-      setCustomers(response.data.results);
+      setUser(response.data.results);
       setTotalPages(response.data.totalPages);
       setLoading(false);
     } catch (error) {
@@ -59,8 +48,9 @@ export default function Customers() {
     }
   };
 
+
   useEffect(() => {
-    fetchCustomers(currentPage);
+    fetchUserInfo(currentPage);
   }, [currentPage]);
 
   const handleNextPageClick = () => {
@@ -72,48 +62,6 @@ export default function Customers() {
   const handlePreviousPageClick = () => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
-    }
-  };
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric',
-      second: 'numeric',
-      hour12: true,
-    }).format(date);
-  };
-
-  const handleDeleteIconClick = (customerId) => {
-    setCustomerToDelete(customerId);
-    setShowDeleteModal(true);
-  };
-
-  const handleDeleteConfirm = () => {
-    if (customerToDelete) {
-      handleDeleteCustomer(customerToDelete);
-      setShowDeleteModal(false);
-    }
-  };
-
-  const handleDeleteCancel = () => {
-    setShowDeleteModal(false);
-  };
-
-  // Function to handle user deletion
-  const handleDeleteCustomer = async (customerId) => {
-    try {
-      await axiosService.delete(`/users/${customerId}`);
-      toast.success('User deleted successfully!');
-      // After successful deletion, refetch the users to update the list
-      fetchCustomers();
-    } catch (error) {
-      console.error(error);
-      toast.error(error.response?.data?.message || 'An error occurred');
     }
   };
 
@@ -133,11 +81,11 @@ export default function Customers() {
       >
         <Card p={{ base: '30px', md: '30px', sm: '10px' }}>
           <Flex>
-            <Text fontSize="2xl">Users</Text>
+            <Text fontSize="2xl">Customers</Text>
             <Spacer />
-            <NavLink to="/admin/user/create">
+            <NavLink to="/admin/customer/create">
               <Button bgColor="blue.700" color="white">
-                Create User
+                Create Customers
               </Button>
             </NavLink>
           </Flex>
@@ -168,44 +116,26 @@ export default function Customers() {
                 <Table variant="simple" bordered>
                   <Thead>
                     <Tr>
-                      <Th>User </Th>
+                      <Th>Name </Th>
                       <Th>Status</Th>
                       <Th>Branch </Th>
                       <Th>Account Type </Th>
                       <Th>Account Number </Th>
-                      <Th>Action</Th>
                     </Tr>
                   </Thead>
                   <Tbody>
-                    {customers.map((user) => (
+                    {users.map((user) => (
                       <Tr key={user.id}>
                         <Td>
                           <NavLink
-                            to={`/admin/user/${user.id}`}
+                            to={`/admin/customer/${user.id}`}
                           >{`${user.firstName} ${user.lastName}`}</NavLink>{' '}
                         </Td>
                         <Td>{user.status}</Td>
-                        <Td>{formatDate(user.branch)}</Td>
-                        <Td>{formatDate(user.createdAt)}</Td>
-                        <Td>
-                          <HStack>
-                            {/* Edit user icon */}
-                            <NavLink to={`/admin/user/edit-user/${user.id}`}>
-                              <IconButton
-                                icon={<EditIcon />}
-                                colorScheme="blue"
-                                aria-label="Edit user"
-                              />
-                            </NavLink>
-                            {/* Delete user icon */}
-                            <IconButton
-                              icon={<DeleteIcon />}
-                              colorScheme="red"
-                              aria-label="Delete user"
-                              onClick={() => handleDeleteIconClick(user.id)}
-                            />
-                          </HStack>
-                        </Td>
+                        <Td>{user.branch}</Td>
+                        <Td>{user.branch}</Td>
+                        <Td>{user.createdAt}</Td>
+                        
                       </Tr>
                     ))}
                   </Tbody>
@@ -213,11 +143,11 @@ export default function Customers() {
               </TableContainer>
             )}
             <HStack mt="4" justify="space-between" align="center">
-              {customers && (
+              {users && (
                 <Box>
                   Showing {(currentPage - 1) * 10 + 1} to{' '}
-                  {Math.min(currentPage * 10, customers.length)} of{' '}
-                  {customers.length} entries
+                  {Math.min(currentPage * 10, users.length)} of{' '}
+                  {users.length} entries
                 </Box>
               )}
               <HStack>
@@ -238,23 +168,6 @@ export default function Customers() {
           </Box>
         </Card>
       </Grid>
-      {/* Delete confirmation modal */}
-      <Modal isOpen={showDeleteModal} onClose={handleDeleteCancel}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Delete Customer</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>Are you sure you want to delete this customer?</ModalBody>
-          <ModalFooter>
-            <Button colorScheme="red" mr={3} onClick={handleDeleteConfirm}>
-              Delete
-            </Button>
-            <Button variant="ghost" onClick={handleDeleteCancel}>
-              Cancel
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
     </Box>
   );
 }
