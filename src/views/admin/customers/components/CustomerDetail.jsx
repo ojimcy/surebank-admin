@@ -133,10 +133,18 @@ const MainCustomerDetails = ({ user, userAccount, userPackage }) => {
             alignItems="center"
             justifyContent="center"
           >
-            <Button as={NavLink} to={`/deposit`} colorScheme="green">
+            <Button
+              as={NavLink}
+              to={`/admin/transaction/deposit`}
+              colorScheme="green"
+            >
               <AddIcon /> Deposit
             </Button>
-            <Button as={NavLink} to={`/withdraw`} colorScheme="red">
+            <Button
+              as={NavLink}
+              to={`/admin/transaction/withdraw`}
+              colorScheme="red"
+            >
               Withdraw
             </Button>
           </Flex>

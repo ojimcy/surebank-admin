@@ -26,6 +26,7 @@ import User from 'views/admin/users/get-user';
 import EditUser from 'views/admin/users/edit';
 import CreateCustomer from 'views/admin/customers/create';
 import ViewCustomer from 'views/admin/customers/view-customer';
+import Deposit from 'views/admin/account/deposit';
 
 const routes = [
   {
@@ -95,7 +96,7 @@ const routes = [
   {
     name: 'Account',
     layout: '/admin',
-    path: '/withdraw',
+    path: '/transaction/withdraw',
     icon: (
       <Icon as={MdOutlinePerson3} width="20px" height="20px" color="inherit" />
     ),
@@ -104,11 +105,11 @@ const routes = [
   {
     name: 'Account',
     layout: '/admin',
-    path: '/deposit',
+    path: '/transaction/deposit',
     icon: (
       <Icon as={MdOutlinePerson3} width="20px" height="20px" color="inherit" />
     ),
-    component: ViewCustomer,
+    component: Deposit,
   },
 
   {
