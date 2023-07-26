@@ -1,28 +1,30 @@
 /* eslint-disable */
-import React from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import React from "react";
+import { NavLink, useLocation } from "react-router-dom";
 // chakra imports
-import { Box, Flex, HStack, Text, useColorModeValue } from '@chakra-ui/react';
+import { Box, Flex, HStack, Text, useColorModeValue } from "@chakra-ui/react";
 
 const hiddenRoutes = [
-  '/auth/sign-in',
-  '/auth/sign-up',
-  '/admin/user/create',
-  '/admin/user/:id',
-  '/admin/user/edit-user/:id',
+  "/auth/sign-in",
+  "/auth/sign-up",
+  "/admin/user/create",
+  "/admin/user/:id",
+  "/admin/user/edit-user/:id",
+  "/admin/branch/create",
 ];
 
 export function SidebarLinks(props) {
   //   Chakra color mode
   let location = useLocation();
-  let activeColor = useColorModeValue('gray.700', 'white');
+  let activeColor = useColorModeValue("gray.700", "white");
   let inactiveColor = useColorModeValue(
-    'secondaryGray.600',
-    'secondaryGray.600'
+    "secondaryGray.600",
+    "secondaryGray.600"
   );
-  let activeIcon = useColorModeValue('brand.500', 'white');
-  let textColor = useColorModeValue('secondaryGray.500', 'white');
-  let brandColor = useColorModeValue('brand.500', 'brand.400');``
+  let activeIcon = useColorModeValue("brand.500", "white");
+  let textColor = useColorModeValue("secondaryGray.500", "white");
+  let brandColor = useColorModeValue("brand.500", "brand.400");
+  ``;
 
   const { routes } = props;
 
@@ -41,13 +43,13 @@ export function SidebarLinks(props) {
         return (
           <>
             <Text
-              fontSize={'md'}
+              fontSize={"md"}
               color={activeColor}
               fontWeight="bold"
               mx="auto"
               ps={{
-                sm: '10px',
-                xl: '16px',
+                sm: "10px",
+                xl: "16px",
               }}
               pt="18px"
               pb="12px"
@@ -59,9 +61,9 @@ export function SidebarLinks(props) {
           </>
         );
       } else if (
-        route.layout === '/admin' ||
-        route.layout === '/auth' ||
-        route.layout === '/rtl'
+        route.layout === "/admin" ||
+        route.layout === "/auth" ||
+        route.layout === "/rtl"
       ) {
         return (
           <NavLink key={index} to={route.layout + route.path}>
@@ -69,7 +71,7 @@ export function SidebarLinks(props) {
               <Box>
                 <HStack
                   spacing={
-                    activeRoute(route.path.toLowerCase()) ? '22px' : '26px'
+                    activeRoute(route.path.toLowerCase()) ? "22px" : "26px"
                   }
                   py="5px"
                   ps="10px"
@@ -94,8 +96,8 @@ export function SidebarLinks(props) {
                       }
                       fontWeight={
                         activeRoute(route.path.toLowerCase())
-                          ? 'bold'
-                          : 'normal'
+                          ? "bold"
+                          : "normal"
                       }
                     >
                       {route.name}
@@ -107,7 +109,7 @@ export function SidebarLinks(props) {
                     bg={
                       activeRoute(route.path.toLowerCase())
                         ? brandColor
-                        : 'transparent'
+                        : "transparent"
                     }
                     borderRadius="5px"
                   />
@@ -117,7 +119,7 @@ export function SidebarLinks(props) {
               <Box>
                 <HStack
                   spacing={
-                    activeRoute(route.path.toLowerCase()) ? '22px' : '26px'
+                    activeRoute(route.path.toLowerCase()) ? "22px" : "26px"
                   }
                   py="5px"
                   ps="10px"
@@ -130,7 +132,7 @@ export function SidebarLinks(props) {
                         : inactiveColor
                     }
                     fontWeight={
-                      activeRoute(route.path.toLowerCase()) ? 'bold' : 'normal'
+                      activeRoute(route.path.toLowerCase()) ? "bold" : "normal"
                     }
                   >
                     {route.name}
