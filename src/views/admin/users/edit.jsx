@@ -17,11 +17,13 @@ import axiosService from 'utils/axiosService';
 import { useParams, useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import BackButton from 'components/menu/BackButton';
+import { useAppContext } from 'contexts/AppContext';
 
 export default function EditUser() {
   const [user, setUser] = useState(null);
   const history = useHistory();
   const { id } = useParams();
+  const { branches } = useAppContext();
   const {
     register,
     handleSubmit,
@@ -46,6 +48,7 @@ export default function EditUser() {
     };
     fetchUser();
   }, [setValue, id]);
+
   const submitHandler = async (userData) => {
     // Convert the 'role' field to a string if it's an array
     if (Array.isArray(userData.role)) {
@@ -141,14 +144,19 @@ export default function EditUser() {
                   Branch
                 </FormLabel>
                 <Select
-                  {...register('branch')}
-                  name="branch"
-                  defaultValue={user?.branch}
+                  {...register('branchId')}
+                  name="branchId"
+                  defaultValue=""
                 >
-                  <option value="">Select a branch</option>
-                  <option value="Hq">HQ</option>
-                  <option value="lagos">Lagos</option>
-                  <option value="abuja">Abuja</option>
+                  <option value="" disabled>
+                    Select a branch
+                  </option>
+                  {branches &&
+                    branches.map((branch) => (
+                      <option key={branch.id} value={branch.id}>
+                        {branch.name}
+                      </option>
+                    ))}
                 </Select>
               </FormControl>
 

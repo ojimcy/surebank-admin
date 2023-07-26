@@ -101,7 +101,6 @@ export default function ViewCustomer() {
         setLoading(false);
       } catch (error) {
         console.error(error);
-        toast.error(error.response?.data?.message || 'An error occurred');
         setLoading(false);
       }
     };

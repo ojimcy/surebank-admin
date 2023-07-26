@@ -38,7 +38,7 @@ export default function Deposit() {
   const [user, setUser] = useState(null);
   const [ownerName, setOwnerName] = useState('');
 
-  const accountNumber = watch('accountNumber', '');
+  watch('accountNumber', '');
 
   // Fetch user information for the given accountNumber
   const fetchUserByAccountNumber = async (accountNumber) => {

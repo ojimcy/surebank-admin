@@ -23,23 +23,33 @@ export default function User() {
   const { id } = useParams();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [branchInfo, setBranchInfo] = useState('');
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      setLoading(true);
-      try {
-        const response = await axiosService.get(`users/${id}`);
-        setUser(response.data);
-        setLoading(false);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchUsers();
-  }, [id]);
+   useEffect(() => {
+     const fetchUsers = async () => {
+       setLoading(true);
+       try {
+         const response = await axiosService.get(`users/${id}`);
+         setUser(response.data);
 
+         // Fetch branch information using the branchId
+         if (response.data.branchId) {
+           const branchResponse = await axiosService.get(
+             `branch/${response.data.branchId}`
+           );
+           setBranchInfo(branchResponse.data);
+         }
+
+         setLoading(false);
+       } catch (error) {
+         console.error(error);
+         setLoading(false);
+       }
+     };
+     fetchUsers();
+   }, [id]);
+
+   
   return (
     <Box>
       {loading ? (
@@ -97,7 +107,7 @@ export default function User() {
                           <Text fontWeight="bold">Roles:</Text>
                           <Text>{user.role}</Text>
                           <Text fontWeight="bold">Branch:</Text>
-                          <Text>{user.branch}</Text>
+                          <Text>{branchInfo.name}</Text>
                         </Grid>
                         <NavLink to={`/admin/user/edit-user/${id}`}>
                           <Button mt={4} colorScheme="blue" size="md">

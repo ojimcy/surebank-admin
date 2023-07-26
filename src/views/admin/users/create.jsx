@@ -49,7 +49,20 @@ export default function CreateCustomer() {
 
   const [show, setShow] = useState(false);
   const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
-  const [branches, setBranches] = useState(null);
+
+  const [branches, setBranches] = useState([]);
+
+  useEffect(() => {
+    const fetchBranches = async () => {
+      try {
+        const response = await axiosService.get('/branch/');
+        setBranches(response.data.results);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchBranches();
+  }, [setBranches]);
 
   const onCancel = () => {
     setIsCancelDialogOpen(true);
@@ -65,18 +78,6 @@ export default function CreateCustomer() {
   };
 
   const handleClick = () => setShow(!show);
-
-  useEffect(() => {
-    const fetchBranches = async () => {
-      try {
-        const response = await axiosService.get('/branch/');
-        setBranches(response.data.results);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchBranches();
-  }, []);
 
   const submitHandler = async (userData) => {
     try {
