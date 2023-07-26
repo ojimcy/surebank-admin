@@ -27,6 +27,7 @@ import EditUser from 'views/admin/users/edit';
 import CreateCustomer from 'views/admin/customers/create';
 import ViewCustomer from 'views/admin/customers/view-customer';
 import Deposit from 'views/admin/account/deposit';
+import Withdraw from 'views/admin/account/withdrawal';
 
 const routes = [
   {
@@ -100,7 +101,7 @@ const routes = [
     icon: (
       <Icon as={MdOutlinePerson3} width="20px" height="20px" color="inherit" />
     ),
-    component: ViewCustomer,
+    component: Withdraw,
   },
   {
     name: 'Account',

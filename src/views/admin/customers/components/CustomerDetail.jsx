@@ -22,8 +22,34 @@ const MainCustomerDetails = ({ user, userAccount, userPackage }) => {
 
   return (
     <>
-      <BackButton />
-      <SimpleGrid columns={{ base: 1, md: 3 }} gap="20px" mb="20px" mt="30px">
+      <Flex justifyContent="space-between">
+        <BackButton />
+        {user && userAccount && (
+          <Flex
+            gap="20px"
+            marginBottom="20px"
+            flexDirection={{ base: 'row' }}
+            alignItems="center"
+            justifyContent="center"
+          >
+            <Button
+              as={NavLink}
+              to={`/admin/transaction/deposit`}
+              colorScheme="green"
+            >
+              <AddIcon /> Deposit
+            </Button>
+            <Button
+              as={NavLink}
+              to={`/admin/transaction/withdraw`}
+              colorScheme="red"
+            >
+              Withdraw
+            </Button>
+          </Flex>
+        )}
+      </Flex>
+      <SimpleGrid columns={{ base: 1, md: 2 }} gap="2px" mb="20px" mt="30px">
         {user && userAccount && (
           <Flex
             h="100%"
@@ -36,6 +62,8 @@ const MainCustomerDetails = ({ user, userAccount, userPackage }) => {
               boxShadow="base"
               mb="30px"
               p="20px"
+              minWidth="346px"
+              minH="176.9px"
             >
               <Flex alignItems="center">
                 <IconBox
@@ -52,24 +80,26 @@ const MainCustomerDetails = ({ user, userAccount, userPackage }) => {
                   }
                 />
                 <Box px={6} py={4}>
-                  <Grid templateColumns="repeat(1fr)" gap={1}>
+                  <Grid templateColumns="repeat(2, 1fr)" gap={1}>
                     <Text fontWeight="bold" fontSize="1xl">
                       Total:{' '}
-                      {userPackage?.totalContribution
-                        ? formatNaira(userPackage?.totalContribution)
-                        : 'N/A'}
-                    </Text>
-                    <Text fontWeight="bold">
-                      Daily:{' '}
-                      {userPackage?.amountPerDay
-                        ? formatNaira(userPackage?.amountPerDay)
-                        : 'N/A'}
                     </Text>
                     <Text>
-                      Start date:{' '}
+                      {userPackage?.totalContribution
+                        ? formatNaira(userPackage?.totalContribution)
+                        : ''}
+                    </Text>
+                    <Text fontWeight="bold">Daily: </Text>
+                    <Text>
+                      {userPackage?.amountPerDay
+                        ? formatNaira(userPackage?.amountPerDay)
+                        : ''}
+                    </Text>
+                    <Text fontWeight="bold"> Start date: </Text>
+                    <Text>
                       {userPackage?.startDate
                         ? formatDate(userPackage?.startDate)
-                        : 'N/A'}
+                        : ''}
                     </Text>
                   </Grid>
                 </Box>
@@ -107,13 +137,16 @@ const MainCustomerDetails = ({ user, userAccount, userPackage }) => {
                   }
                 />
                 <Box px={6} py={4}>
-                  <Grid templateColumns="repeat(1fr)" gap={1}>
-                    <Text>Account Type: {userAccount.accountType}</Text>
-                    <Text fontWeight="bold">
-                      Account Number: {userAccount.accountNumber}
-                    </Text>
+                  <Grid templateColumns="repeat(2, 1fr)" gap={1}>
+                    <Text fontWeight="bold">Account Type: </Text>
+                    <Text>{userAccount.accountType}</Text>
+
+                    <Text fontWeight="bold">Account Number:</Text>
+                    <Text>{userAccount.accountNumber}</Text>
                     <Text fontWeight="bold" fontSize="1xl">
                       Balance:{' '}
+                    </Text>
+                    <Text>
                       {userAccount.availableBalance
                         ? formatNaira(userAccount.availableBalance)
                         : 'N/A'}
@@ -122,31 +155,6 @@ const MainCustomerDetails = ({ user, userAccount, userPackage }) => {
                 </Box>
               </Flex>
             </Box>
-          </Flex>
-        )}
-
-        {user && userAccount && (
-          <Flex
-            gap="20px"
-            marginBottom="20px"
-            flexDirection={{ base: 'row' }}
-            alignItems="center"
-            justifyContent="center"
-          >
-            <Button
-              as={NavLink}
-              to={`/admin/transaction/deposit`}
-              colorScheme="green"
-            >
-              <AddIcon /> Deposit
-            </Button>
-            <Button
-              as={NavLink}
-              to={`/admin/transaction/withdraw`}
-              colorScheme="red"
-            >
-              Withdraw
-            </Button>
           </Flex>
         )}
       </SimpleGrid>
