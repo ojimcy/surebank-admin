@@ -192,7 +192,7 @@ export default function Users() {
                           <HStack>
                             {/* Edit branch icon */}
                             <NavLink
-                              to={`/admin/branch/edit-branch/${branch.id}`}
+                              to={`/admin/branch/editbranch/${branch.id}`}
                             >
                               <IconButton
                                 icon={<EditIcon />}
