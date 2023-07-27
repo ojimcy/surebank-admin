@@ -77,9 +77,9 @@ export default function Customer() {
     fetchBranches();
   }, []);
 
-  const submitHandler = async (userData) => {
+  const submitHandler = async (customerData) => {
     try {
-      await axiosService.post(`/customer`, userData);
+      await axiosService.post(`/customer`, customerData);
       toast.success('Customer created successfully!');
       history.push('/');
     } catch (error) {
@@ -114,7 +114,7 @@ export default function Customer() {
       >
         <Card p={{ base: '30px', md: '30px', sm: '10px' }}>
           <Text marginBottom="20px" fontSize="3xl" fontWeight="bold">
-            Create User
+            Create Customer
           </Text>
           <form onSubmit={handleSubmit(submitHandler)}>
             <Flex
@@ -355,6 +355,30 @@ export default function Customer() {
               flexDirection={{ base: 'column', md: 'row' }}
             >
               <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
+                <FormControl isInvalid={errors.accountType}>
+                  <FormLabel
+                    htmlFor="address"
+                    display="flex"
+                    ms="4px"
+                    fontSize="sm"
+                    fontWeight="500"
+                    color={textColor}
+                    mb="8px"
+                  >
+                    Account Type<Text color={brandStars}>*</Text>
+                  </FormLabel>
+                  <Select
+                    {...register('accountType')}
+                    name="accountType"
+                    defaultValue="Hq"
+                  >
+                    <option value="">Select account rype</option>
+                    <option value="ds">DS</option>
+                    <option value="sb">SB</option>
+                  </Select>
+                </FormControl>
+              </Box>
+              <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
                 <FormControl isInvalid={errors.branch}>
                   <FormLabel
                     htmlFor="address"
@@ -381,30 +405,6 @@ export default function Customer() {
                           {branch.name}
                         </option>
                       ))}
-                  </Select>
-                </FormControl>
-              </Box>
-              <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
-                <FormControl isInvalid={errors.accountType}>
-                  <FormLabel
-                    htmlFor="address"
-                    display="flex"
-                    ms="4px"
-                    fontSize="sm"
-                    fontWeight="500"
-                    color={textColor}
-                    mb="8px"
-                  >
-                    Account Type<Text color={brandStars}>*</Text>
-                  </FormLabel>
-                  <Select
-                    {...register('accountType')}
-                    name="accountType"
-                    defaultValue="Hq"
-                  >
-                    <option value="">Select account rype</option>
-                    <option value="ds">DS</option>
-                    <option value="sb">SB</option>
                   </Select>
                 </FormControl>
               </Box>

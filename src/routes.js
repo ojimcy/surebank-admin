@@ -26,6 +26,13 @@ import Users from "views/admin/users";
 import CreateUser from "views/admin/users/create";
 import User from "views/admin/users/get-user";
 import EditUser from "views/admin/users/edit";
+import CreateCustomer from "views/admin/customers/create";
+import ViewCustomer from "views/admin/customers/view-customer";
+import Deposit from "views/admin/account/deposit";
+import Withdraw from "views/admin/account/withdrawal";
+import { FaMoneyBill } from "react-icons/fa";
+import { RiFileShield2Fill } from "react-icons/ri";
+import { LockIcon } from "@chakra-ui/icons";
 
 const routes = [
   {
@@ -82,11 +89,43 @@ const routes = [
     name: "Customers",
     layout: "/admin",
     path: "/customers",
+    icon: <Icon as={MdPerson} width="20px" height="20px" color="inherit" />,
+    component: Customers,
+  },
+  {
+    name: "Customers",
+    layout: "/admin",
+    path: "/customer/create",
     icon: (
       <Icon as={MdOutlinePerson3} width="20px" height="20px" color="inherit" />
     ),
-    component: Customers,
+    component: CreateCustomer,
   },
+
+  {
+    name: "Customer",
+    layout: "/admin",
+    path: "/customer/:id",
+    icon: (
+      <Icon as={MdOutlinePerson3} width="20px" height="20px" color="inherit" />
+    ),
+    component: ViewCustomer,
+  },
+  {
+    name: "Account",
+    layout: "/admin",
+    path: "/transaction/withdraw",
+    icon: <Icon as={FaMoneyBill} width="20px" height="20px" color="inherit" />,
+    component: Withdraw,
+  },
+  {
+    name: "Account",
+    layout: "/admin",
+    path: "/transaction/deposit",
+    icon: <Icon as={FaMoneyBill} width="20px" height="20px" color="inherit" />,
+    component: Deposit,
+  },
+
   {
     name: "Users",
     layout: "/admin",
@@ -136,6 +175,14 @@ const routes = [
     path: "/sign-up",
     icon: <Icon as={MdLock} width="20px" height="20px" color="inherit" />,
     component: SignUpCentered,
+  },
+
+  {
+    name: "ACL",
+    layout: "/admin",
+    path: "/acl",
+    icon: <Icon as={LockIcon} width="20px" height="20px" color="inherit" />,
+    component: Users,
   },
 ];
 

@@ -18,40 +18,36 @@ import {
   FormControl,
   Input,
   TableContainer,
-  IconButton,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 
 // Custom components
 
 // Assets
 import axiosService from 'utils/axiosService';
 import Card from 'components/card/Card.js';
-import { DeleteIcon, EditIcon, SearchIcon } from '@chakra-ui/icons';
-import { toast } from 'react-toastify';
+import { SearchIcon } from '@chakra-ui/icons';
+import BackButton from 'components/menu/BackButton';
 
 export default function Customers() {
-  const [customers, setCustomers] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [usersAccount, setUsersAccount] = useState({});
+  const [branchInfoMap, setBranchInfoMap] = useState({});
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [customerToDelete, setCustomerToDelete] = useState(null);
-
-  const fetchCustomers = async () => {
+  // Fetch user information
+  const fetchUserInfo = async () => {
     setLoading(true);
     try {
       const response = await axiosService.get('/users/');
-      setCustomers(response.data.results);
+      setUsers(response.data.results);
       setTotalPages(response.data.totalPages);
       setLoading(false);
     } catch (error) {
@@ -59,9 +55,71 @@ export default function Customers() {
     }
   };
 
+  // Fetch user account information for all users
+  const fetchAllUsersAccounts = async () => {
+    try {
+      const userAccountsPromises = users.map((user) =>
+        axiosService.get(`accounts/${user.id}`)
+      );
+      const userAccountsResponses = await Promise.all(userAccountsPromises);
+      const userAccountsData = userAccountsResponses.reduce((acc, response) => {
+        acc[response.data.userId] = response.data;
+        return acc;
+      }, {});
+      setUsersAccount(userAccountsData);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // Fetch branch information for all branches
+  const fetchAllBranchInfo = async () => {
+    try {
+      const branchPromises = Object.values(usersAccount).map(
+        (account) => account.branchId
+      );
+      const branchResponses = await Promise.all(
+        branchPromises.map((branchId) =>
+          axiosService.get(`/branch/${branchId}`)
+        )
+      );
+      const branchData = branchResponses.reduce((acc, response, index) => {
+        acc[branchPromises[index]] = response.data;
+        return acc;
+      }, {});
+      setBranchInfoMap(branchData);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // useEffect to fetch user information and user account information on initial load and when currentPage changes
   useEffect(() => {
-    fetchCustomers(currentPage);
+    fetchUserInfo();
   }, [currentPage]);
+
+  // useEffect to fetch user account information and branch information whenever users state is updated
+  useEffect(() => {
+    if (users.length > 0) {
+      fetchAllUsersAccounts();
+      fetchAllBranchInfo();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [users]);
+
+  // Combine user and account information for each customer
+  const getCustomerInfo = (user) => {
+    const account = usersAccount[user.id];
+    const branch = branchInfoMap[account?.branchId];
+    return {
+      id: user.id,
+      name: `${user.firstName} ${user.lastName}`,
+      status: user.status,
+      branch: user ? branch?.name || 'N/A' : 'N/A',
+      accountType: account ? account.accountType : 'N/A',
+      accountNumber: account ? account.accountNumber : 'N/A',
+    };
+  };
 
   const handleNextPageClick = () => {
     if (currentPage < totalPages) {
@@ -72,48 +130,6 @@ export default function Customers() {
   const handlePreviousPageClick = () => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
-    }
-  };
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric',
-      second: 'numeric',
-      hour12: true,
-    }).format(date);
-  };
-
-  const handleDeleteIconClick = (customerId) => {
-    setCustomerToDelete(customerId);
-    setShowDeleteModal(true);
-  };
-
-  const handleDeleteConfirm = () => {
-    if (customerToDelete) {
-      handleDeleteCustomer(customerToDelete);
-      setShowDeleteModal(false);
-    }
-  };
-
-  const handleDeleteCancel = () => {
-    setShowDeleteModal(false);
-  };
-
-  // Function to handle user deletion
-  const handleDeleteCustomer = async (customerId) => {
-    try {
-      await axiosService.delete(`/users/${customerId}`);
-      toast.success('User deleted successfully!');
-      // After successful deletion, refetch the users to update the list
-      fetchCustomers();
-    } catch (error) {
-      console.error(error);
-      toast.error(error.response?.data?.message || 'An error occurred');
     }
   };
 
@@ -132,12 +148,40 @@ export default function Customers() {
         gap={{ base: '20px', xl: '20px' }}
       >
         <Card p={{ base: '30px', md: '30px', sm: '10px' }}>
+          <Flex justifyContent="space-between" mb="20px">
+            <BackButton />
+            <Menu isLazy>
+              <MenuButton>Manage Customer</MenuButton>
+              <MenuList>
+                <MenuItem
+                  _hover={{ bg: 'none' }}
+                  _focus={{ bg: 'none' }}
+                  borderRadius="8px"
+                  px="14px"
+                  as={Link}
+                  to="/admin/transaction/deposit"
+                >
+                  <Text fontSize="sm">Deposit</Text>
+                </MenuItem>
+                <MenuItem
+                  _hover={{ bg: 'none' }}
+                  _focus={{ bg: 'none' }}
+                  borderRadius="8px"
+                  px="14px"
+                  as={Link}
+                  to="/admin/transaction/withdraw"
+                >
+                  <Text fontSize="sm">Withdraw</Text>
+                </MenuItem>
+              </MenuList>
+            </Menu>
+          </Flex>
           <Flex>
-            <Text fontSize="2xl">Users</Text>
+            <Text fontSize="2xl">Customers</Text>
             <Spacer />
-            <NavLink to="/admin/user/create">
+            <NavLink to="/admin/customer/create">
               <Button bgColor="blue.700" color="white">
-                Create User
+                Create Customers
               </Button>
             </NavLink>
           </Flex>
@@ -168,56 +212,40 @@ export default function Customers() {
                 <Table variant="simple" bordered>
                   <Thead>
                     <Tr>
-                      <Th>User </Th>
+                      <Th>Name </Th>
                       <Th>Status</Th>
                       <Th>Branch </Th>
                       <Th>Account Type </Th>
                       <Th>Account Number </Th>
-                      <Th>Action</Th>
                     </Tr>
                   </Thead>
                   <Tbody>
-                    {customers.map((user) => (
-                      <Tr key={user.id}>
-                        <Td>
-                          <NavLink
-                            to={`/admin/user/${user.id}`}
-                          >{`${user.firstName} ${user.lastName}`}</NavLink>{' '}
-                        </Td>
-                        <Td>{user.status}</Td>
-                        <Td>{formatDate(user.branch)}</Td>
-                        <Td>{formatDate(user.createdAt)}</Td>
-                        <Td>
-                          <HStack>
-                            {/* Edit user icon */}
-                            <NavLink to={`/admin/user/edit-user/${user.id}`}>
-                              <IconButton
-                                icon={<EditIcon />}
-                                colorScheme="blue"
-                                aria-label="Edit user"
-                              />
+                    {users.map((user) => {
+                      const customer = getCustomerInfo(user);
+                      return (
+                        <Tr key={customer.id}>
+                          <Td>
+                            <NavLink to={`/admin/customer/${customer.id}`}>
+                              {customer.name}
                             </NavLink>
-                            {/* Delete user icon */}
-                            <IconButton
-                              icon={<DeleteIcon />}
-                              colorScheme="red"
-                              aria-label="Delete user"
-                              onClick={() => handleDeleteIconClick(user.id)}
-                            />
-                          </HStack>
-                        </Td>
-                      </Tr>
-                    ))}
+                          </Td>
+                          <Td>{customer.status}</Td>
+                          <Td>{customer.branch}</Td>
+                          <Td>{customer.accountType}</Td>
+                          <Td>{customer.accountNumber}</Td>
+                        </Tr>
+                      );
+                    })}
                   </Tbody>
                 </Table>
               </TableContainer>
             )}
             <HStack mt="4" justify="space-between" align="center">
-              {customers && (
+              {users && (
                 <Box>
                   Showing {(currentPage - 1) * 10 + 1} to{' '}
-                  {Math.min(currentPage * 10, customers.length)} of{' '}
-                  {customers.length} entries
+                  {Math.min(currentPage * 10, users.length)} of {users.length}{' '}
+                  entries
                 </Box>
               )}
               <HStack>
@@ -238,23 +266,6 @@ export default function Customers() {
           </Box>
         </Card>
       </Grid>
-      {/* Delete confirmation modal */}
-      <Modal isOpen={showDeleteModal} onClose={handleDeleteCancel}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Delete Customer</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>Are you sure you want to delete this customer?</ModalBody>
-          <ModalFooter>
-            <Button colorScheme="red" mr={3} onClick={handleDeleteConfirm}>
-              Delete
-            </Button>
-            <Button variant="ghost" onClick={handleDeleteCancel}>
-              Cancel
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
     </Box>
   );
 }

@@ -33,8 +33,9 @@ import { MdOutlineRemoveRedEye } from 'react-icons/md';
 import { RiEyeCloseLine } from 'react-icons/ri';
 import axiosService from 'utils/axiosService';
 import { toast } from 'react-toastify';
+import BackButton from 'components/menu/BackButton';
 
-export default function CreateUser() {
+export default function CreateCustomer() {
   const history = useHistory();
   const brandStars = useColorModeValue('brand.500', 'brand.400');
   const textColor = useColorModeValue('navy.700', 'white');
@@ -48,7 +49,20 @@ export default function CreateUser() {
 
   const [show, setShow] = useState(false);
   const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
-  const [branches, setBranches] = useState(null);
+
+  const [branches, setBranches] = useState([]);
+
+  useEffect(() => {
+    const fetchBranches = async () => {
+      try {
+        const response = await axiosService.get('/branch/');
+        setBranches(response.data.results);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchBranches();
+  }, [setBranches]);
 
   const onCancel = () => {
     setIsCancelDialogOpen(true);
@@ -64,18 +78,6 @@ export default function CreateUser() {
   };
 
   const handleClick = () => setShow(!show);
-
-  useEffect(() => {
-    const fetchBranches = async () => {
-      try {
-        const response = await axiosService.get('/branch/');
-        setBranches(response.data.results);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchBranches();
-  }, []);
 
   const submitHandler = async (userData) => {
     try {
@@ -113,6 +115,7 @@ export default function CreateUser() {
         gap={{ base: '20px', xl: '20px' }}
       >
         <Card p={{ base: '30px', md: '30px', sm: '10px' }}>
+          <BackButton />
           <Text marginBottom="20px" fontSize="3xl" fontWeight="bold">
             Create User
           </Text>
@@ -363,11 +366,21 @@ export default function CreateUser() {
                 >
                   Branch<Text color={brandStars}>*</Text>
                 </FormLabel>
-                <Select {...register('branch')} name="branch" defaultValue="Hq">
-                  <option value="">Select a branch</option>
-                  <option value="Hq">HQ</option>
-                  <option value="lagos">Lagos</option>
-                  <option value="abuja">Abuja</option>
+
+                <Select
+                  {...register('branchId')}
+                  name="branchId"
+                  defaultValue=""
+                >
+                  <option value="" disabled>
+                    Select a branch
+                  </option>
+                  {branches &&
+                    branches.map((branch) => (
+                      <option key={branch.id} value={branch.id}>
+                        {branch.name}
+                      </option>
+                    ))}
                 </Select>
               </FormControl>
             </Box>

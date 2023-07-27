@@ -37,6 +37,7 @@ import axiosService from 'utils/axiosService';
 import Card from 'components/card/Card.js';
 import { DeleteIcon, EditIcon, SearchIcon } from '@chakra-ui/icons';
 import { toast } from 'react-toastify';
+import BackButton from 'components/menu/BackButton';
 
 export default function Users() {
   const [users, setUsers] = useState([]);
@@ -132,6 +133,7 @@ export default function Users() {
         gap={{ base: '20px', xl: '20px' }}
       >
         <Card p={{ base: '30px', md: '30px', sm: '10px' }}>
+          <BackButton />
           <Flex>
             <Text fontSize="2xl">Users</Text>
             <Spacer />
