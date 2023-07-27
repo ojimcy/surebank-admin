@@ -18,9 +18,13 @@ import {
   FormControl,
   Input,
   TableContainer,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 
 // Custom components
 
@@ -144,7 +148,34 @@ export default function Customers() {
         gap={{ base: '20px', xl: '20px' }}
       >
         <Card p={{ base: '30px', md: '30px', sm: '10px' }}>
-          <BackButton />
+          <Flex justifyContent="space-between" mb="20px">
+            <BackButton />
+            <Menu isLazy>
+              <MenuButton>Manage Customer</MenuButton>
+              <MenuList>
+                <MenuItem
+                  _hover={{ bg: 'none' }}
+                  _focus={{ bg: 'none' }}
+                  borderRadius="8px"
+                  px="14px"
+                  as={Link}
+                  to="/admin/transaction/deposit"
+                >
+                  <Text fontSize="sm">Deposit</Text>
+                </MenuItem>
+                <MenuItem
+                  _hover={{ bg: 'none' }}
+                  _focus={{ bg: 'none' }}
+                  borderRadius="8px"
+                  px="14px"
+                  as={Link}
+                  to="/admin/transaction/withdraw"
+                >
+                  <Text fontSize="sm">Withdraw</Text>
+                </MenuItem>
+              </MenuList>
+            </Menu>
+          </Flex>
           <Flex>
             <Text fontSize="2xl">Customers</Text>
             <Spacer />

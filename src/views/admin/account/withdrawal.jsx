@@ -34,7 +34,6 @@ export default function Withdraw() {
     watch,
   } = useForm();
 
-  const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
   const [ownerName, setOwnerName] = useState('');
 
@@ -42,16 +41,13 @@ export default function Withdraw() {
 
   // Fetch user information for the given accountNumber
   const fetchUserByAccountNumber = async (accountNumber) => {
-    setLoading(true);
     try {
       const response = await axiosService.get(
         `/transactions/user/?accountNumber=${accountNumber}`
       );
       setUser(response.data);
-      setLoading(false);
     } catch (error) {
       console.error(error);
-      setLoading(false);
     }
   };
 
@@ -66,10 +62,8 @@ export default function Withdraw() {
   // Handle form submission
   const onSubmit = async (data) => {
     try {
-      setLoading(true);
       await axiosService.post('/transactions/withdraw', data);
       toast.success('Customer withdrawal successfull!');
-      setLoading(false);
     } catch (error) {
       if (
         error.response &&

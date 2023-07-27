@@ -28,6 +28,9 @@ import CreateCustomer from 'views/admin/customers/create';
 import ViewCustomer from 'views/admin/customers/view-customer';
 import Deposit from 'views/admin/account/deposit';
 import Withdraw from 'views/admin/account/withdrawal';
+import { FaMoneyBill } from 'react-icons/fa';
+import { RiFileShield2Fill } from 'react-icons/ri';
+import { LockIcon } from '@chakra-ui/icons';
 
 const routes = [
   {
@@ -70,9 +73,7 @@ const routes = [
     name: 'Customers',
     layout: '/admin',
     path: '/customers',
-    icon: (
-      <Icon as={MdOutlinePerson3} width="20px" height="20px" color="inherit" />
-    ),
+    icon: <Icon as={MdPerson} width="20px" height="20px" color="inherit" />,
     component: Customers,
   },
   {
@@ -98,18 +99,14 @@ const routes = [
     name: 'Account',
     layout: '/admin',
     path: '/transaction/withdraw',
-    icon: (
-      <Icon as={MdOutlinePerson3} width="20px" height="20px" color="inherit" />
-    ),
+    icon: <Icon as={FaMoneyBill} width="20px" height="20px" color="inherit" />,
     component: Withdraw,
   },
   {
     name: 'Account',
     layout: '/admin',
     path: '/transaction/deposit',
-    icon: (
-      <Icon as={MdOutlinePerson3} width="20px" height="20px" color="inherit" />
-    ),
+    icon: <Icon as={FaMoneyBill} width="20px" height="20px" color="inherit" />,
     component: Deposit,
   },
 
@@ -162,6 +159,14 @@ const routes = [
     path: '/sign-up',
     icon: <Icon as={MdLock} width="20px" height="20px" color="inherit" />,
     component: SignUpCentered,
+  },
+
+  {
+    name: 'ACL',
+    layout: '/admin',
+    path: '/acl',
+    icon: <Icon as={LockIcon} width="20px" height="20px" color="inherit" />,
+    component: Users,
   },
 ];
 
