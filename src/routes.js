@@ -16,6 +16,7 @@ import Sales from "views/admin/sales";
 import Branches from "views/admin/branches";
 import CreateBranch from "views/admin/branches/CreateBranch";
 import EditBranch from "views/admin/branches/EditBranch";
+import ViewBranch from "views/admin/branches/ViewBranch";
 import Profile from "views/admin/profile";
 import Customers from "views/admin/customers";
 
@@ -77,6 +78,13 @@ const routes = [
     icon: <Icon as={MdBarChart} width="20px" height="20px" color="inherit" />,
     path: "/branch/editbranch/:id",
     component: EditBranch,
+  },
+  {
+    name: "Branches",
+    layout: "/admin",
+    icon: <Icon as={MdBarChart} width="20px" height="20px" color="inherit" />,
+    path: "/branch/viewbranch/:id",
+    component: ViewBranch,
   },
   {
     name: "Profile",

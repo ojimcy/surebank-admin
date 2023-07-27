@@ -181,7 +181,7 @@ export default function Users() {
                       <Tr key={branch.id}>
                         <Td>
                           <NavLink
-                            to={`/admin/branch/${branch.id}`}
+                            to={`/admin/branch/viewbranch/${branch.id}`}
                           >{`${branch.name}`}</NavLink>{" "}
                         </Td>
                         <Td>{branch.address}</Td>

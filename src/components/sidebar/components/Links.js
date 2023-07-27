@@ -12,6 +12,7 @@ const hiddenRoutes = [
   "/admin/user/edit-user/:id",
   "/admin/branch/create",
   "/admin/branch/editbranch/:id",
+  "/admin/branch/viewbranch/:id",
   "/auth/sign-in",
   "/auth/sign-up",
   "/admin/user/create",
