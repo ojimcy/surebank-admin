@@ -33,9 +33,10 @@ import CreateCustomer from 'views/admin/customers/create';
 import ViewCustomer from 'views/admin/customers/view-customer';
 import Deposit from 'views/admin/account/deposit';
 import Withdraw from 'views/admin/account/withdrawal';
-import { FaMoneyBill } from 'react-icons/fa';
+import { FaBox, FaMoneyBill } from 'react-icons/fa';
 // import { RiFileShield2Fill } from "react-icons/ri";
-import { LockIcon } from '@chakra-ui/icons';
+import DailySavingsDashboard from "views/admin/daily-savings";
+import MakeContribution from "views/admin/daily-savings/deposit";
 
 const routes = [
   {
@@ -200,13 +201,19 @@ const routes = [
     icon: <Icon as={MdLock} width="20px" height="20px" color="inherit" />,
     component: SignUpCentered,
   },
-
   {
-    name: 'ACL',
+    name: 'Daily Savings',
     layout: '/admin',
-    path: '/acl',
-    icon: <Icon as={LockIcon} width="20px" height="20px" color="inherit" />,
-    component: Users,
+    path: '/daily-savings/deposit',
+    icon: <Icon as={FaBox} width="20px" height="20px" color="inherit" />,
+    component: MakeContribution,
+  },
+  {
+    name: 'Daily Savings',
+    layout: '/admin',
+    path: '/daily-savings',
+    icon: <Icon as={FaBox} width="20px" height="20px" color="inherit" />,
+    component: DailySavingsDashboard,
   },
 ];
 

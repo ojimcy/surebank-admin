@@ -29,6 +29,7 @@ const hiddenRoutes = [
   '/admin/daily-savings/deposit',
   '/admin/daily-saving/package',
   '/admin/daily-savings/withdraw',
+  '/admin/customer/:id',
 ];
 
 export function SidebarLinks(props) {
