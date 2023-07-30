@@ -37,6 +37,8 @@ import { FaBox, FaMoneyBill } from 'react-icons/fa';
 // import { RiFileShield2Fill } from "react-icons/ri";
 import DailySavingsDashboard from "views/admin/daily-savings";
 import MakeContribution from "views/admin/daily-savings/deposit";
+import CreatePackage from "views/admin/daily-savings/package";
+import Withdrawal from "views/admin/daily-savings/withdrawal";
 
 const routes = [
   {
@@ -202,18 +204,32 @@ const routes = [
     component: SignUpCentered,
   },
   {
-    name: 'Daily Savings',
+    name: 'Deposit',
     layout: '/admin',
     path: '/daily-savings/deposit',
     icon: <Icon as={FaBox} width="20px" height="20px" color="inherit" />,
     component: MakeContribution,
   },
   {
-    name: 'Daily Savings',
+    name: 'Withdraw',
+    layout: '/admin',
+    path: '/daily-savings/withdraw',
+    icon: <Icon as={FaBox} width="20px" height="20px" color="inherit" />,
+    component: Withdrawal,
+  },
+  {
+    name: 'Customer',
     layout: '/admin',
     path: '/daily-savings',
     icon: <Icon as={FaBox} width="20px" height="20px" color="inherit" />,
     component: DailySavingsDashboard,
+  },
+  {
+    name: 'Packages',
+    layout: '/admin',
+    path: '/daily-saving/package',
+    icon: <Icon as={FaBox} width="20px" height="20px" color="inherit" />,
+    component: CreatePackage,
   },
 ];
 

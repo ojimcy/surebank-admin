@@ -13,6 +13,10 @@ const AppProvider = ({ children }) => {
   const [accountInformation, setAccountInformation] = useState(null);
   const [branches, setBranches] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [customerData, setCustomerData] = useState({});
+  const [userPackage, setUserPackage] = useState({});
+  const [userActivities, setUserActivities] = useState([]);
+  const [packageId, setPackageId] = useState(null);
 
   useEffect(() => {
     const fetchBranches = async () => {
@@ -40,6 +44,15 @@ const AppProvider = ({ children }) => {
         branches,
         setBranches,
         loading,
+        setLoading,
+        customerData,
+        setCustomerData,
+        userPackage,
+        setUserPackage,
+        userActivities,
+        setUserActivities,
+        setPackageId,
+        packageId,
       }}
     >
       {children}

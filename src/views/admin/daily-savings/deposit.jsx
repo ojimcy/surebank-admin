@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -16,11 +16,10 @@ import axiosService from 'utils/axiosService';
 import BackButton from 'components/menu/BackButton';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
-import { useAuth } from 'contexts/AuthContext';
 import { useHistory } from 'react-router-dom/';
+import { useAppContext } from 'contexts/AppContext';
 
 export default function MakeContribution() {
-  const { currentUser } = useAuth();
   const history = useHistory();
   const brandStars = useColorModeValue('brand.500', 'brand.400');
   const textColor = useColorModeValue('navy.700', 'white');
@@ -35,39 +34,25 @@ export default function MakeContribution() {
   const [packageId, setPackageId] = useState(null);
   const [accountNumber, setAccountNumber] = useState(null);
 
+  const { customerData } = useAppContext();
+
   useEffect(() => {
     const fetchUserPackage = async () => {
       try {
         const packages = await axiosService.get(
-          `/daily-savings/package?userId=${currentUser.id}`
+          `/daily-savings/package?userId=${customerData.userId}`
         );
         setPackageId(packages.data.id);
+        setAccountNumber(customerData.accountNumber);
       } catch (error) {
         console.error(error);
       }
     };
-    // Fetch user package and branches
-    const fetchData = async () => {
-      fetchUserPackage();
 
-      if (currentUser?.role === 'user') {
-        try {
-          const response = await axiosService.get(
-            `/accounts/${currentUser.id}`
-          );
-          setAccountNumber(response.data.accountNumber);
-          fetchUserByAccountNumber(response.data.accountNumber);
-        } catch (error) {
-          console.error(error);
-        }
-      }
-    };
+    fetchUserPackage();
+  }, [customerData]);
 
-    fetchData();
-  }, [currentUser]);
-
-  // Fetch user information for the given accountNumber
-  const fetchUserByAccountNumber = async (accountNumber) => {
+  const fetchUserByAccountNumber = useCallback(async (accountNumber) => {
     try {
       const response = await axiosService.get(
         `/transactions/user/?accountNumber=${accountNumber}`
@@ -76,33 +61,42 @@ export default function MakeContribution() {
     } catch (error) {
       console.error(error);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (accountNumber) {
+      fetchUserByAccountNumber(accountNumber);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accountNumber]);
 
   // Handle form submission
-  const onSubmit = async (depositData) => {
-    try {
-      console.log(packageId);
-      await axiosService.post(
-        `/daily-savings/make-contribution/?packageId=${packageId}`,
-        depositData
-      );
-      toast.success('Contribution successful!');
-      history.push('/');
-    } catch (error) {
-      if (
-        error.response &&
-        error.response.data &&
-        error.response.data.message
-      ) {
-        // Backend error with a specific error message
-        const errorMessage = error.response.data.message;
-        toast.error(errorMessage);
-      } else {
-        // Network error or other error
-        toast.error('Something went wrong. Please try again later.');
+  const handleContributionSubmit = useCallback(
+    async (depositData) => {
+      try {
+        await axiosService.post(
+          `/daily-savings/make-contribution/?packageId=${packageId}`,
+          depositData
+        );
+        toast.success('Contribution successful!');
+        history.push(`/admin/customer/${customerData.userId}`);
+      } catch (error) {
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.message
+        ) {
+          // Backend error with a specific error message
+          const errorMessage = error.response.data.message;
+          toast.error(errorMessage);
+        } else {
+          // Network error or other error
+          toast.error('Something went wrong. Please try again later.');
+        }
       }
-    }
-  };
+    },
+    [packageId, history, customerData.userId]
+  );
 
   return (
     <Box pt={{ base: '180px', md: '80px', xl: '80px' }}>
@@ -126,7 +120,7 @@ export default function MakeContribution() {
               boxShadow="base"
               p="30px"
             >
-              <form onSubmit={handleSubmit(onSubmit)}>
+              <form onSubmit={handleSubmit(handleContributionSubmit)}>
                 <FormControl isInvalid={errors.accountNumber}>
                   <FormLabel
                     htmlFor="accountNumber"
