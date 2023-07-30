@@ -16,3 +16,7 @@ export const formatNaira = (number) => {
     currency: 'NGN',
   });
 };
+
+export  const toSentenceCase = (text) => {
+  return text.toLowerCase().charAt(0).toUpperCase() + text.slice(1);
+};

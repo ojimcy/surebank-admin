@@ -38,8 +38,11 @@ import Card from 'components/card/Card.js';
 import { DeleteIcon, EditIcon, SearchIcon } from '@chakra-ui/icons';
 import { toast } from 'react-toastify';
 import BackButton from 'components/menu/BackButton';
+import { useAuth } from 'contexts/AuthContext';
+import axios from 'axios';
 
 export default function Users() {
+  const { currentUser } = useAuth();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -50,11 +53,14 @@ export default function Users() {
 
   const fetchUsers = async () => {
     setLoading(true);
+    const accessToken = localStorage.getItem('ACCESS_TOKEN_KEY');
     try {
       const response = await axiosService.get('/users/');
       setUsers(response.data.results);
       setTotalPages(response.data.totalPages);
       setLoading(false);
+
+      axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
     } catch (error) {
       console.error(error);
     }
@@ -63,6 +69,8 @@ export default function Users() {
   useEffect(() => {
     fetchUsers(currentPage);
   }, [currentPage]);
+
+  console.log(currentUser);
 
   const handleNextPageClick = () => {
     if (currentPage < totalPages) {
@@ -172,7 +180,7 @@ export default function Users() {
                     <Tr>
                       <Th>User </Th>
                       <Th>Status</Th>
-                      <Th>Last Updated </Th>
+                      <Th>Role </Th>
                       <Th>Created Date </Th>
                       <Th>Action</Th>
                     </Tr>
@@ -182,11 +190,11 @@ export default function Users() {
                       <Tr key={user.id}>
                         <Td>
                           <NavLink
-                            to={`/admin/user/${user.id}`}
+                            to={`/admin/customer/${user.id}`}
                           >{`${user.firstName} ${user.lastName}`}</NavLink>{' '}
                         </Td>
                         <Td>{user.status}</Td>
-                        <Td>{formatDate(user.updatedAt)}</Td>
+                        <Td>{user.role}</Td>
                         <Td>{formatDate(user.createdAt)}</Td>
                         <Td>
                           <HStack>

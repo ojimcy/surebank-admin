@@ -22,7 +22,10 @@ const hiddenRoutes = [
   '/admin/customer/:id',
   '/admin/transaction/deposit',
   '/admin/transaction/withdraw',
+  '/admin/daily-savings',
   '/admin/daily-savings/deposit',
+  '/admin/daily-saving/package',
+  '/admin/daily-savings/withdraw',
 ];
 
 export function SidebarLinks(props) {
