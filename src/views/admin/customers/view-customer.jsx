@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 
 import {
@@ -20,22 +19,24 @@ import {
   StatNumber,
   Text,
 } from '@chakra-ui/react';
-import axiosService from 'utils/axiosService';
-import { formatNaira } from 'utils/helper';
 // import { CustomButton } from 'components/Button/CustomButton';
 import { AiOutlineBank } from 'react-icons/ai';
 import { FaBox, FaDollarSign } from 'react-icons/fa';
 import { NavLink, useParams } from 'react-router-dom';
 import { formatDate } from 'utils/helper';
-import { useAppContext } from 'contexts/AppContext';
 // Assets
 
 // Custom components
+import axiosService from 'utils/axiosService';
+import { formatNaira } from 'utils/helper';
+import BackButton from 'components/menu/BackButton';
+import { useAppContext } from 'contexts/AppContext';
 
 export default function ViewCustomer() {
   const { id } = useParams();
   const [showTransactions, setShowTransactions] = useState(false);
-  const [visibleEntries, setVisibleEntries] = useState(10);
+  const [visibleTransactions, setVisibleTransactions] = useState(10);
+  const [loading, setLoading] = useState(false);
 
   const {
     customerData,
@@ -44,12 +45,10 @@ export default function ViewCustomer() {
     setUserPackage,
     userActivities,
     setUserActivities,
-    loading,
-    setLoading,
   } = useAppContext();
 
-  const savingsProgress = 60;
-  const daysLeft = 20;
+  const savingsProgress = ((userPackage.totalCount / 31) * 100).toFixed(2);
+  const daysLeft = 31 - userPackage.totalCount;
 
   useEffect(() => {
     // Set showTransactions to true after a small delay to trigger the fade-in effect
@@ -75,14 +74,14 @@ export default function ViewCustomer() {
       }
     };
     fetchUserPackage();
-  }, [id]);
+  }, [id, setUserPackage]);
 
   useEffect(() => {
     const fetchUserActivities = async () => {
       try {
         setLoading(true);
         const response = await axiosService.get(
-          `daily-savings/activities?userId=${id}`
+          `daily-savings/activities?userId=${id}&accountNumber=${customerData.accountNumber}`
         );
         setUserActivities(response.data);
         setLoading(false);
@@ -92,7 +91,7 @@ export default function ViewCustomer() {
       }
     };
     fetchUserActivities();
-  }, [id]);
+  }, [customerData, id, setUserActivities]);
 
   useEffect(() => {
     const fetchAccount = async () => {
@@ -109,11 +108,14 @@ export default function ViewCustomer() {
 
   // Function to handle "Show More" button click
   const handleShowMore = () => {
-    setVisibleEntries(userActivities.length);
+    setVisibleTransactions((prevVisible) => prevVisible + 10);
   };
 
   return (
     <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
+      <Flex justifyContent="space-between" mb="20px">
+        <BackButton />
+      </Flex>
       {loading ? (
         <Spinner />
       ) : (
@@ -140,13 +142,14 @@ export default function ViewCustomer() {
             <StatLabel fontSize="xl">Savings Progress</StatLabel>
             <StatNumber fontSize="4xl">{savingsProgress}%</StatNumber>
             <Progress
-              value={savingsProgress}
+              value={savingsProgress ? savingsProgress : 0}
               size="sm"
               mt="2"
               colorScheme="blue"
             />
             <StatHelpText>
-              You are {daysLeft} days away from reaching your goal!
+              You are {daysLeft ? daysLeft : 31} days away from reaching your
+              goal!
             </StatHelpText>
           </Stat>
 
@@ -183,6 +186,7 @@ export default function ViewCustomer() {
             </GridItem>
           </SimpleGrid>
 
+          {/* action buttons  */}
           <Flex
             mt="20px"
             direction={{ base: 'column', md: 'row' }}
@@ -262,41 +266,42 @@ export default function ViewCustomer() {
             <Stack spacing="4">
               {/* Add fade-in animation to the transaction items */}
               {showTransactions &&
-                userActivities.map((activity, index) => (
-                  <Box
-                    key={index}
-                    p="4"
-                    bg="gray.100"
-                    borderRadius="md"
-                    opacity={showTransactions ? 1 : 0}
-                    transform={`translateY(${showTransactions ? 0 : 10}px)`}
-                    transition="opacity 0.3s, transform 0.3s"
-                  >
-                    <Flex justifyContent="space-between" alignItems="center">
-                      <Box>
-                        <Text fontWeight="bold">
-                          {activity.narration === 'Daily contribution'
-                            ? 'Deposit'
-                            : 'Withdrawal'}
+                userActivities
+                  .slice(0, visibleTransactions)
+                  .map((activity, index) => (
+                    <Box
+                      key={index}
+                      p="4"
+                      bg="gray.100"
+                      borderRadius="md"
+                      opacity={showTransactions ? 1 : 0}
+                      transform={`translateY(${showTransactions ? 0 : 10}px)`}
+                      transition="opacity 0.3s, transform 0.3s"
+                    >
+                      <Flex justifyContent="space-between" alignItems="center">
+                        <Box>
+                          <Text fontWeight="bold">
+                            {activity.narration === 'Daily contribution'
+                              ? 'Deposit'
+                              : 'Withdrawal'}
+                          </Text>
+                          <Text>{formatDate(activity.date)}</Text>
+                        </Box>
+                        <Text
+                          color={
+                            activity.narration === 'Daily contribution'
+                              ? 'green'
+                              : 'inherit'
+                          }
+                        >
+                          {formatNaira(activity.amount)}
                         </Text>
-                        <Text>{formatDate(activity.date)}</Text>
-                      </Box>
-                      {/* Conditionally set the color to green for deposits */}
-                      <Text
-                        color={
-                          activity.narration === 'Daily contribution'
-                            ? 'green'
-                            : 'inherit'
-                        }
-                      >
-                        {formatNaira(activity.amount)}
-                      </Text>
-                    </Flex>
-                  </Box>
-                ))}
+                      </Flex>
+                    </Box>
+                  ))}
             </Stack>
             {/* Show More button */}
-            {visibleEntries < userActivities.length && (
+            {visibleTransactions < userActivities.length && (
               <Button
                 mt="4"
                 onClick={handleShowMore}

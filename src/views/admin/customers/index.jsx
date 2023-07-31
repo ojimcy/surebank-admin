@@ -36,10 +36,12 @@ import BackButton from 'components/menu/BackButton';
 import { toSentenceCase } from 'utils/helper';
 
 export default function Customers() {
-  const [customers, setCustomers] = useState({});
+  const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredCustomers, setFilteredCustomers] = useState([]);
 
   // Fetch customers
   useEffect(() => {
@@ -56,6 +58,19 @@ export default function Customers() {
     };
     fetchAccounts();
   }, []);
+
+  // Filter customers based on search term
+  useEffect(() => {
+    const filtered = customers?.filter((customer) => {
+      const fullName =
+        `${customer.firstName} ${customer.lastName}`.toLowerCase();
+      return (
+        fullName.includes(searchTerm.toLowerCase()) ||
+        customer.accountNumber.includes(searchTerm)
+      );
+    });
+    setFilteredCustomers(filtered);
+  }, [searchTerm, customers]);
 
   const handleNextPageClick = () => {
     if (currentPage < totalPages) {
@@ -86,8 +101,19 @@ export default function Customers() {
         <Card p={{ base: '30px', md: '30px', sm: '10px' }}>
           <Flex justifyContent="space-between" mb="20px">
             <BackButton />
+          </Flex>
+          <Flex>
+            <Text fontSize="2xl">Customers</Text>
+            <Spacer />
             <Menu isLazy>
-              <MenuButton>Manage Customer</MenuButton>
+              <MenuButton
+                bgColor="blue.700"
+                color="white"
+                px="15px"
+                borderRadius="5px"
+              >
+                Create Customer
+              </MenuButton>
               <MenuList>
                 <MenuItem
                   _hover={{ bg: 'none' }}
@@ -95,9 +121,9 @@ export default function Customers() {
                   borderRadius="8px"
                   px="14px"
                   as={Link}
-                  to="/admin/transaction/deposit"
+                  to="/admin/customer/create"
                 >
-                  <Text fontSize="sm">Deposit</Text>
+                  <Text fontSize="sm">New User</Text>
                 </MenuItem>
                 <MenuItem
                   _hover={{ bg: 'none' }}
@@ -105,21 +131,12 @@ export default function Customers() {
                   borderRadius="8px"
                   px="14px"
                   as={Link}
-                  to="/admin/transaction/withdraw"
+                  to="/admin/customer/create-account"
                 >
-                  <Text fontSize="sm">Withdraw</Text>
+                  <Text fontSize="sm">Existing User</Text>
                 </MenuItem>
               </MenuList>
             </Menu>
-          </Flex>
-          <Flex>
-            <Text fontSize="2xl">Customers</Text>
-            <Spacer />
-            <NavLink to="/admin/customer/create">
-              <Button bgColor="blue.700" color="white">
-                Create Customers
-              </Button>
-            </NavLink>
           </Flex>
           <Box marginTop="30">
             <Flex>
@@ -131,6 +148,8 @@ export default function Customers() {
                       type="search"
                       placeholder="Type a name"
                       borderColor="black"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
                     />
                   </FormControl>
                   <Button bgColor="blue.700" color="white">
@@ -143,7 +162,7 @@ export default function Customers() {
           <Box marginTop="30">
             {loading ? (
               <Spinner />
-            ) : customers.length === 0 ? (
+            ) : filteredCustomers.length === 0 ? (
               <Text fontSize="lg" textAlign="center" mt="20">
                 No customer records found.
               </Text>
@@ -160,7 +179,7 @@ export default function Customers() {
                     </Tr>
                   </Thead>
                   <Tbody>
-                    {customers.map((customer) => {
+                    {filteredCustomers.map((customer) => {
                       return (
                         <Tr key={customer.id}>
                           <Td>

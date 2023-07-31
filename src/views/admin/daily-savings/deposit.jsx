@@ -36,6 +36,7 @@ export default function MakeContribution() {
 
   const { customerData } = useAppContext();
 
+  console.log(customerData);
   useEffect(() => {
     const fetchUserPackage = async () => {
       try {
@@ -81,18 +82,8 @@ export default function MakeContribution() {
         toast.success('Contribution successful!');
         history.push(`/admin/customer/${customerData.userId}`);
       } catch (error) {
-        if (
-          error.response &&
-          error.response.data &&
-          error.response.data.message
-        ) {
-          // Backend error with a specific error message
-          const errorMessage = error.response.data.message;
-          toast.error(errorMessage);
-        } else {
-          // Network error or other error
-          toast.error('Something went wrong. Please try again later.');
-        }
+        console.error(error);
+        toast.error('Something went wrong. Please try again later.');
       }
     },
     [packageId, history, customerData.userId]

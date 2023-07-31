@@ -38,15 +38,15 @@ import Card from 'components/card/Card.js';
 import { DeleteIcon, EditIcon, SearchIcon } from '@chakra-ui/icons';
 import { toast } from 'react-toastify';
 import BackButton from 'components/menu/BackButton';
-import { useAuth } from 'contexts/AuthContext';
 import axios from 'axios';
 
 export default function Users() {
-  const { currentUser } = useAuth();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredUsers, setFilteredUsers] = useState([]);
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
@@ -70,7 +70,18 @@ export default function Users() {
     fetchUsers(currentPage);
   }, [currentPage]);
 
-  console.log(currentUser);
+  // Filter Users based on search term
+  useEffect(() => {
+    const filtered = users?.filter((user) => {
+      const fullName =
+        `${user.firstName} ${user.lastName}`.toLowerCase();
+      return (
+        fullName.includes(searchTerm.toLowerCase()) ||
+        user.email.includes(searchTerm)
+      );
+    });
+    setFilteredUsers(filtered);
+  }, [searchTerm, users]);
 
   const handleNextPageClick = () => {
     if (currentPage < totalPages) {
@@ -161,6 +172,8 @@ export default function Users() {
                       type="search"
                       placeholder="Type a name"
                       borderColor="black"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
                     />
                   </FormControl>
                   <Button bgColor="blue.700" color="white">
@@ -173,27 +186,31 @@ export default function Users() {
           <Box marginTop="30">
             {loading ? (
               <Spinner />
+            ) : filteredUsers.length === 0 ? (
+              <Text fontSize="lg" textAlign="center" mt="20">
+                No user records found.
+              </Text>
             ) : (
               <TableContainer>
                 <Table variant="simple" bordered>
                   <Thead>
                     <Tr>
                       <Th>User </Th>
-                      <Th>Status</Th>
+                      <Th>Email</Th>
                       <Th>Role </Th>
                       <Th>Created Date </Th>
                       <Th>Action</Th>
                     </Tr>
                   </Thead>
                   <Tbody>
-                    {users.map((user) => (
+                    {filteredUsers.map((user) => (
                       <Tr key={user.id}>
                         <Td>
                           <NavLink
                             to={`/admin/customer/${user.id}`}
                           >{`${user.firstName} ${user.lastName}`}</NavLink>{' '}
                         </Td>
-                        <Td>{user.status}</Td>
+                        <Td>{user.email}</Td>
                         <Td>{user.role}</Td>
                         <Td>{formatDate(user.createdAt)}</Td>
                         <Td>
