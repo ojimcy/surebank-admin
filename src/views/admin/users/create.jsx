@@ -1,11 +1,5 @@
 // Chakra imports
 import {
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogOverlay,
   Box,
   Button,
   Flex,
@@ -21,7 +15,7 @@ import {
   Text,
   useColorModeValue,
 } from '@chakra-ui/react';
-import React, { useEffect, useState } from 'react';
+import React, {  useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 // Custom components
@@ -34,9 +28,11 @@ import { RiEyeCloseLine } from 'react-icons/ri';
 import axiosService from 'utils/axiosService';
 import { toast } from 'react-toastify';
 import BackButton from 'components/menu/BackButton';
+import { useAppContext } from 'contexts/AppContext';
 
 export default function CreateCustomer() {
   const history = useHistory();
+  const { branches } = useAppContext();
   const brandStars = useColorModeValue('brand.500', 'brand.400');
   const textColor = useColorModeValue('navy.700', 'white');
   const textColorSecondary = 'gray.400';
@@ -48,34 +44,6 @@ export default function CreateCustomer() {
   } = useForm();
 
   const [show, setShow] = useState(false);
-  const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
-
-  const [branches, setBranches] = useState([]);
-
-  useEffect(() => {
-    const fetchBranches = async () => {
-      try {
-        const response = await axiosService.get('/branch/');
-        setBranches(response.data.results);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchBranches();
-  }, [setBranches]);
-
-  const onCancel = () => {
-    setIsCancelDialogOpen(true);
-  };
-
-  const onCloseCancelDialog = () => {
-    setIsCancelDialogOpen(false);
-  };
-
-  const onConfirmCancel = () => {
-    setIsCancelDialogOpen(false);
-    history.push('/admin/users');
-  };
 
   const handleClick = () => setShow(!show);
 
@@ -384,61 +352,19 @@ export default function CreateCustomer() {
                 </Select>
               </FormControl>
             </Box>
-            <Flex
-              gap="20px"
-              marginTop="20px"
-              flexDirection={{ base: 'row' }}
-              justifyContent="center"
-            >
-              <Box width={{ base: '50%', md: '50%', sm: '50%' }}>
-                <Button
-                  colorScheme="red"
-                  variant="solid"
-                  fontWeight="500"
-                  w="100%"
-                  h="50"
-                  mb="24px"
-                  onClick={onCancel}
-                >
-                  Cancel
-                </Button>
-              </Box>
-              <Box width={{ base: '50%', md: '50%', sm: '50%' }}>
-                <Button
-                  colorScheme="green"
-                  variant="solid"
-                  w="100%"
-                  h="50"
-                  mb="24px"
-                  type="submit"
-                  isLoading={isSubmitting}
-                >
-                  Save
-                </Button>
-              </Box>
-            </Flex>
-            <AlertDialog
-              isOpen={isCancelDialogOpen}
-              onClose={onCloseCancelDialog}
-            >
-              <AlertDialogOverlay />
-              <AlertDialogContent>
-                <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                  Cancel Confirmation
-                </AlertDialogHeader>
-
-                <AlertDialogBody>
-                  Are you sure you want to cancel creating a new user?
-                </AlertDialogBody>
-
-                <AlertDialogFooter>
-                  <Button onClick={onCloseCancelDialog}>No</Button>
-                  <Button colorScheme="red" onClick={onConfirmCancel} ml={3}>
-                    Yes
-                  </Button>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+            <Box width={{ base: '50%', md: '50%', sm: '50%' }} mt="15px">
+              <Button
+                colorScheme="green"
+                variant="solid"
+                w="100%"
+                h="50"
+                mb="24px"
+                type="submit"
+                isLoading={isSubmitting}
+              >
+                Save
+              </Button>
+            </Box>
           </form>
         </Card>
       </Grid>

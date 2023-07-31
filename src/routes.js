@@ -39,6 +39,7 @@ import DailySavingsDashboard from "views/admin/daily-savings";
 import MakeContribution from "views/admin/daily-savings/deposit";
 import CreatePackage from "views/admin/daily-savings/package";
 import Withdrawal from "views/admin/daily-savings/withdrawal";
+import CreateAccount from "views/admin/customers/create-account";
 
 const routes = [
   {
@@ -112,6 +113,8 @@ const routes = [
     icon: <Icon as={MdPerson} width="20px" height="20px" color="inherit" />,
     component: Profile,
   },
+
+  // customer routes
   {
     name: 'Customers',
     layout: '/admin',
@@ -127,6 +130,15 @@ const routes = [
       <Icon as={MdOutlinePerson3} width="20px" height="20px" color="inherit" />
     ),
     component: CreateCustomer,
+  },
+  {
+    name: 'Customers',
+    layout: '/admin',
+    path: '/customer/create-account',
+    icon: (
+      <Icon as={MdOutlinePerson3} width="20px" height="20px" color="inherit" />
+    ),
+    component: CreateAccount,
   },
 
   {
