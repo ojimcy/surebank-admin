@@ -28,6 +28,7 @@ export default function Withdrawal() {
     handleSubmit,
     register,
     formState: { errors, isSubmitting },
+    setValue,
   } = useForm();
 
   const [user, setUser] = useState({});
@@ -49,7 +50,11 @@ export default function Withdrawal() {
     };
 
     fetchUserPackage();
-  }, [customerData, setPackageId]);
+    // Set the initial value for "Account Number" using setValue
+    if (customerData.accountNumber) {
+      setValue('accountNumber', customerData.accountNumber);
+    }
+  }, [customerData, setPackageId, setValue]);
 
   const fetchUserByAccountNumber = useCallback(async (accountNumber) => {
     try {

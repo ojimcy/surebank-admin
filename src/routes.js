@@ -21,6 +21,7 @@ import ViewBranch from 'views/admin/branches/ViewBranch';
 import ViewStaff from 'views/admin/branches/ViewBranchStaff';
 import Profile from 'views/admin/profile';
 import Customers from 'views/admin/customers';
+import AssignManager from 'views/admin/customers/assign-manager';
 
 // Auth Imports
 import SignInCentered from 'views/auth/signIn';
@@ -140,6 +141,15 @@ const routes = [
     ),
     component: CreateAccount,
   },
+  {
+    name: 'Customers',
+    layout: '/admin',
+    path: '/account/assign-manager',
+    icon: (
+      <Icon as={MdOutlinePerson3} width="20px" height="20px" color="inherit" />
+    ),
+    component: AssignManager,
+  },
 
   {
     name: 'Customer',
@@ -150,6 +160,8 @@ const routes = [
     ),
     component: ViewCustomer,
   },
+
+  // account routes
   {
     name: 'Account',
     layout: '/admin',
@@ -164,6 +176,8 @@ const routes = [
     icon: <Icon as={FaMoneyBill} width="20px" height="20px" color="inherit" />,
     component: Deposit,
   },
+
+  // user
 
   {
     name: 'Users',
@@ -201,6 +215,8 @@ const routes = [
     ),
     component: User,
   },
+
+  // user auth
   {
     name: 'Sign In',
     layout: '/auth',
@@ -215,6 +231,8 @@ const routes = [
     icon: <Icon as={MdLock} width="20px" height="20px" color="inherit" />,
     component: SignUpCentered,
   },
+
+  // daily savings
   {
     name: 'Deposit',
     layout: '/admin',

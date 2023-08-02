@@ -28,6 +28,7 @@ export default function MakeContribution() {
     handleSubmit,
     register,
     formState: { errors, isSubmitting },
+    setValue,
   } = useForm();
 
   const [user, setUser] = useState({});
@@ -36,7 +37,6 @@ export default function MakeContribution() {
 
   const { customerData } = useAppContext();
 
-  console.log(customerData);
   useEffect(() => {
     const fetchUserPackage = async () => {
       try {
@@ -51,7 +51,12 @@ export default function MakeContribution() {
     };
 
     fetchUserPackage();
-  }, [customerData]);
+
+    // Set the initial value for "Account Number" using setValue
+    if (customerData.accountNumber) {
+      setValue('accountNumber', customerData.accountNumber);
+    }
+  }, [customerData, setValue]);
 
   const fetchUserByAccountNumber = useCallback(async (accountNumber) => {
     try {
