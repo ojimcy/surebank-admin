@@ -22,6 +22,14 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
+  IconButton,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { NavLink, Link } from 'react-router-dom';
@@ -31,9 +39,10 @@ import { NavLink, Link } from 'react-router-dom';
 // Assets
 import axiosService from 'utils/axiosService';
 import Card from 'components/card/Card.js';
-import { SearchIcon } from '@chakra-ui/icons';
+import { DeleteIcon, EditIcon, SearchIcon } from '@chakra-ui/icons';
 import BackButton from 'components/menu/BackButton';
 import { toSentenceCase } from 'utils/helper';
+import { toast } from 'react-toastify';
 
 export default function Customers() {
   const [customers, setCustomers] = useState([]);
@@ -43,19 +52,22 @@ export default function Customers() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredCustomers, setFilteredCustomers] = useState([]);
 
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [customerToDelete, setCustomerToDelete] = useState(null);
+
+  const fetchAccounts = async () => {
+    setLoading(true);
+    try {
+      const response = await axiosService.get('/accounts/');
+      setCustomers(response.data.results);
+      setTotalPages(response.data.totalPages);
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
   // Fetch customers
   useEffect(() => {
-    const fetchAccounts = async () => {
-      setLoading(true);
-      try {
-        const response = await axiosService.get('/accounts/');
-        setCustomers(response.data.results);
-        setTotalPages(response.data.totalPages);
-        setLoading(false);
-      } catch (error) {
-        console.error(error);
-      }
-    };
     fetchAccounts();
   }, []);
 
@@ -81,6 +93,34 @@ export default function Customers() {
   const handlePreviousPageClick = () => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleDeleteIconClick = (userId) => {
+    setCustomerToDelete(userId);
+    setShowDeleteModal(true);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (customerToDelete) {
+      handleDeleteCustomer(customerToDelete);
+      setShowDeleteModal(false);
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setShowDeleteModal(false);
+  };
+
+  // Function to handle customer deletion
+  const handleDeleteCustomer = async (userId) => {
+    try {
+      await axiosService.delete(`/accounts/${userId}`);
+      toast.success('Customer deleted successfully!');
+      fetchAccounts();
+    } catch (error) {
+      console.error(error);
+      toast.error(error.response?.data?.message || 'An error occurred');
     }
   };
 
@@ -176,6 +216,7 @@ export default function Customers() {
                       <Th>Branch </Th>
                       <Th>Account Type </Th>
                       <Th>Account Number </Th>
+                      <Th>Action</Th>
                     </Tr>
                   </Thead>
                   <Tbody>
@@ -194,6 +235,29 @@ export default function Customers() {
                           </Td>
                           <Td>{customer.accountType}</Td>
                           <Td>{customer.accountNumber}</Td>
+                          <Td>
+                            <HStack>
+                              {/* Edit user icon */}
+                              <NavLink
+                                to={`/admin/user/edit-customer/${customer.userId}`}
+                              >
+                                <IconButton
+                                  icon={<EditIcon />}
+                                  colorScheme="blue"
+                                  aria-label="Edit user"
+                                />
+                              </NavLink>
+                              {/* Delete user icon */}
+                              <IconButton
+                                icon={<DeleteIcon />}
+                                colorScheme="red"
+                                aria-label="Delete user"
+                                onClick={() =>
+                                  handleDeleteIconClick(customer.userId)
+                                }
+                              />
+                            </HStack>
+                          </Td>
                         </Tr>
                       );
                     })}
@@ -227,6 +291,24 @@ export default function Customers() {
           </Box>
         </Card>
       </Grid>
+
+      {/* Delete confirmation modal */}
+      <Modal isOpen={showDeleteModal} onClose={handleDeleteCancel}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Delete Customer</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>Are you sure you want to delete this customer?</ModalBody>
+          <ModalFooter>
+            <Button colorScheme="red" mr={3} onClick={handleDeleteConfirm}>
+              Delete
+            </Button>
+            <Button variant="ghost" onClick={handleDeleteCancel}>
+              Cancel
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 }
