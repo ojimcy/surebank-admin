@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { NavLink, useParams } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { NavLink, useParams } from "react-router-dom";
 
 // Chakra imports
 import {
@@ -11,45 +11,44 @@ import {
   Grid,
   Spinner,
   Text,
-} from '@chakra-ui/react';
+} from "@chakra-ui/react";
 
 // Custom components
 
 // Assets
-import axiosService from 'utils/axiosService';
-import BackButton from 'components/menu/BackButton';
+import axiosService from "utils/axiosService";
+import BackButton from "components/menu/BackButton";
 
 export default function User() {
   const { id } = useParams();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [branchInfo, setBranchInfo] = useState('');
+  const [branchInfo, setBranchInfo] = useState("");
 
-   useEffect(() => {
-     const fetchUsers = async () => {
-       setLoading(true);
-       try {
-         const response = await axiosService.get(`users/${id}`);
-         setUser(response.data);
+  useEffect(() => {
+    const fetchUsers = async () => {
+      setLoading(true);
+      try {
+        const response = await axiosService.get(`users/${id}`);
+        setUser(response.data);
 
-         // Fetch branch information using the branchId
-         if (response.data.branchId) {
-           const branchResponse = await axiosService.get(
-             `branch/${response.data.branchId}`
-           );
-           setBranchInfo(branchResponse.data);
-         }
+        // Fetch branch information using the branchId
+        if (response.data.branchId) {
+          const branchResponse = await axiosService.get(
+            `branch/${response.data.branchId}`
+          );
+          setBranchInfo(branchResponse.data);
+        }
 
-         setLoading(false);
-       } catch (error) {
-         console.error(error);
-         setLoading(false);
-       }
-     };
-     fetchUsers();
-   }, [id]);
+        setLoading(false);
+      } catch (error) {
+        console.error(error);
+        setLoading(false);
+      }
+    };
+    fetchUsers();
+  }, [id]);
 
-   
   return (
     <Box>
       {loading ? (
@@ -62,21 +61,21 @@ export default function User() {
           <Spinner size="xl" color="blue.500" />
         </Box>
       ) : (
-        <Box pt={{ base: '180px', md: '80px', xl: '80px' }}>
+        <Box pt={{ base: "180px", md: "80px", xl: "80px" }}>
           <BackButton />
           <Grid
             mb="20px"
-            gridTemplateColumns={{ xl: 'repeat(3, 1fr)', '2xl': '1fr 0.46fr' }}
-            gap={{ base: '20px', xl: '20px' }}
-            display={{ base: 'block', xl: 'grid' }}
+            gridTemplateColumns={{ xl: "repeat(3, 1fr)", "2xl": "1fr 0.46fr" }}
+            gap={{ base: "20px", xl: "20px" }}
+            display={{ base: "block", xl: "grid" }}
           >
             <Flex
               flexDirection="column"
-              gridArea={{ xl: '1 / 1 / 2 / 3', '2xl': '1 / 1 / 2 / 2' }}
+              gridArea={{ xl: "1 / 1 / 2 / 3", "2xl": "1 / 1 / 2 / 2" }}
             >
               <Center py={6}>
                 <Box
-                  w={{ base: '90%', md: '80%' }}
+                  w={{ base: "90%", md: "80%" }}
                   borderWidth="1px"
                   borderRadius="lg"
                   overflow="hidden"
@@ -86,8 +85,8 @@ export default function User() {
                     <Flex alignItems="center">
                       <Avatar
                         size="xl"
-                        name={user.firstName || ''}
-                        src={user.avatarUrl || ''}
+                        name={user.firstName || ""}
+                        src={user.avatarUrl || ""}
                         m={4}
                       />
                       <Box px={6} py={4}>

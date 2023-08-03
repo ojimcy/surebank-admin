@@ -15,8 +15,10 @@ import MainDashboard from "views/admin/default";
 import Sales from "views/admin/sales";
 import Branches from "views/admin/branches";
 import CreateBranch from "views/admin/branches/CreateBranch";
+import ViewAllStaff from "views/admin/branches/ViewAllStaff";
 import EditBranch from "views/admin/branches/EditBranch";
 import ViewBranch from "views/admin/branches/ViewBranch";
+import ViewStaff from "views/admin/branches/ViewBranchStaff";
 import Profile from "views/admin/profile";
 import Customers from "views/admin/customers";
 
@@ -73,6 +75,13 @@ const routes = [
     component: CreateBranch,
   },
   {
+    name: "View All Staff",
+    layout: "/admin",
+    icon: <Icon as={MdBarChart} width="20px" height="20px" color="inherit" />,
+    path: "/branch/viewallstaff",
+    component: ViewAllStaff,
+  },
+  {
     name: "Branches",
     layout: "/admin",
     icon: <Icon as={MdBarChart} width="20px" height="20px" color="inherit" />,
@@ -85,6 +94,13 @@ const routes = [
     icon: <Icon as={MdBarChart} width="20px" height="20px" color="inherit" />,
     path: "/branch/viewbranch/:id",
     component: ViewBranch,
+  },
+  {
+    name: "Branches",
+    layout: "/admin",
+    icon: <Icon as={MdBarChart} width="20px" height="20px" color="inherit" />,
+    path: "/branch/viewstaff/:id",
+    component: ViewStaff,
   },
   {
     name: "Profile",

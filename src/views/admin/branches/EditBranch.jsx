@@ -44,7 +44,6 @@ export default function EditBranch() {
   }, [setValue, id]);
   const submitHandler = async (userData) => {
     try {
-      console.log(userData);
       const response = await axiosService.patch(`branch/${id}`, userData);
       toast.success("Branch updated successfully!");
       setBranch(response.data);

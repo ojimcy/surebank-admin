@@ -3,14 +3,25 @@ import { NavLink, useParams } from "react-router-dom";
 
 // Chakra imports
 import {
-  Avatar,
   Box,
+  Grid,
   Button,
   Center,
-  Flex,
-  Grid,
+  Avatar,
   Spinner,
+  Flex,
   Text,
+  Spacer,
+  Stack,
+  FormControl,
+  FormLabel,
+  Select,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
 } from "@chakra-ui/react";
 
 // Custom components
@@ -18,35 +29,82 @@ import {
 // Assets
 import axiosService from "utils/axiosService";
 import BackButton from "components/menu/BackButton";
+import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import { useHistory } from "react-router-dom";
 
 export default function User() {
+  const history = useHistory();
+
+  const [users, setUsers] = useState([]);
+
   const { id } = useParams();
   const [branch, setBranch] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [branchInfo, setBranchInfo] = useState("");
+  const [message, setMessage] = useState("");
+  const [isError, setIsError] = useState(false);
+  const [totalPages, setTotalPages] = useState(1);
+  const [showCreateStaffModal, setShowCreateStaffModal] = useState(false);
+
+  const handleAddStaffToBranch = () => {
+    setShowCreateStaffModal(true);
+  };
+
+  const onCloseModal = () => {
+    setShowCreateStaffModal(false);
+  };
+
+  const fetchUsers = async () => {
+    setLoading(true);
+    try {
+      const response = await axiosService.get("/users/");
+      setUsers(response.data.results);
+      setTotalPages(response.data.totalPages);
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const {
+    handleSubmit,
+    register,
+    formState: { errors, isSubmitting },
+  } = useForm();
+
+  const addStaffToBranch = async (data) => {
+    try {
+      await axiosService.post(`branch/${id}/staff`, data);
+      toast.success("Staff has been created successfully!");
+      history.push(`/admin/branch/viewstaff/${id}`);
+    } catch (error) {
+      if (error.response.data.message) {
+        // Backend error with a specific error message
+        const errorMessage = error.response.data.message;
+        toast.error(errorMessage);
+      } else {
+        // Network error or other error
+        toast.error("Something went wrong. Please try again later.");
+      }
+    }
+  };
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchbranch = async () => {
       setLoading(true);
       try {
         const response = await axiosService.get(`branch/${id}`);
         setBranch(response.data);
-
-        // Fetch branch information using the branchId
-        if (response.data.branchId) {
-          const branchResponse = await axiosService.get(
-            `branch/${response.data.branchId}`
-          );
-          setBranchInfo(branchResponse.data);
-        }
-
         setLoading(false);
       } catch (error) {
         console.error(error);
         setLoading(false);
       }
     };
-    fetchUsers();
+    fetchbranch();
   }, [id]);
 
   return (
@@ -102,11 +160,26 @@ export default function User() {
                           <Text fontWeight="bold">Manager:</Text>
                           <Text>{branch.manager}</Text>
                         </Grid>
-                        <NavLink to={`/admin/branch/editbranch/${id}`}>
-                          <Button mt={4} colorScheme="blue" size="md">
-                            Edit Branch
+                        <Stack spacing={4} direction="row" align="center">
+                          <NavLink to={`/admin/branch/editbranch/${id}`}>
+                            <Button mt={4} colorScheme="blue" size="xs">
+                              Edit Branch
+                            </Button>
+                          </NavLink>
+                          <NavLink to={`/admin/branch/viewstaff/${id}`}>
+                            <Button mt={4} colorScheme="blue" size="xs">
+                              View Staff
+                            </Button>
+                          </NavLink>
+                          <Button
+                            mt={4}
+                            colorScheme="blue"
+                            size="xs"
+                            onClick={() => handleAddStaffToBranch(users.id)}
+                          >
+                            Create Staff
                           </Button>
-                        </NavLink>
+                        </Stack>
                       </Box>
                     </Flex>
                   )}
@@ -114,6 +187,74 @@ export default function User() {
               </Center>
             </Flex>
           </Grid>
+          {/* Modal for adding new staff */}
+          <Modal isOpen={showCreateStaffModal} onClose={onCloseModal}>
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>Assign staff to branch</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
+                <FormLabel color={isError ? "red" : "green"}>
+                  {message}
+                </FormLabel>{" "}
+                <Box>
+                  {/* <Card p={{ base: "30px", md: "30px", sm: "10px" }}> */}
+                  <form onSubmit={handleSubmit(addStaffToBranch)}>
+                    <Flex
+                      gap="20px"
+                      marginBottom="20px"
+                      flexDirection={{ base: "column", md: "row" }}
+                    >
+                      <Box width={{ base: "100%", md: "100%", sm: "100%" }}>
+                        <FormControl isInvalid={errors.branch}>
+                          <FormLabel
+                            htmlFor="address"
+                            display="flex"
+                            ms="4px"
+                            fontSize="sm"
+                            fontWeight="500"
+                            mb="8px"
+                          >
+                            Staff Name<Text>*</Text>
+                          </FormLabel>
+
+                          <Select
+                            {...register("staffId")}
+                            name="staffId"
+                            defaultValue=""
+                          >
+                            <option value="" disabled>
+                              Select a staff
+                            </option>
+                            {users &&
+                              users.map((user) => (
+                                <option key={user.id} value={user.id}>
+                                  {user.firstName} {user.lastName}
+                                  &ensp;&ensp;
+                                  {user.phoneNumber}
+                                </option>
+                              ))}
+                          </Select>
+                        </FormControl>
+                      </Box>
+                    </Flex>
+
+                    <Spacer />
+                    <Button
+                      bgColor="blue.700"
+                      color="white"
+                      type="submit"
+                      isLoading={isSubmitting}
+                    >
+                      Save
+                    </Button>
+                    {/* </Flex> */}
+                  </form>
+                  {/* </Card> */}
+                </Box>
+              </ModalBody>
+            </ModalContent>
+          </Modal>
         </Box>
       )}
     </Box>

@@ -26,18 +26,18 @@ import {
   ModalCloseButton,
   ModalBody,
   ModalFooter,
-} from '@chakra-ui/react';
-import React, { useEffect, useState } from 'react';
-import { NavLink } from 'react-router-dom';
+} from "@chakra-ui/react";
+import React, { useEffect, useState } from "react";
+import { NavLink } from "react-router-dom";
 
 // Custom components
 
 // Assets
-import axiosService from 'utils/axiosService';
-import Card from 'components/card/Card.js';
-import { DeleteIcon, EditIcon, SearchIcon } from '@chakra-ui/icons';
-import { toast } from 'react-toastify';
-import BackButton from 'components/menu/BackButton';
+import axiosService from "utils/axiosService";
+import Card from "components/card/Card.js";
+import { DeleteIcon, EditIcon, SearchIcon } from "@chakra-ui/icons";
+import { toast } from "react-toastify";
+import BackButton from "components/menu/BackButton";
 
 export default function Users() {
   const [users, setUsers] = useState([]);
@@ -51,7 +51,7 @@ export default function Users() {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const response = await axiosService.get('/users/');
+      const response = await axiosService.get("/users/");
       setUsers(response.data.results);
       setTotalPages(response.data.totalPages);
       setLoading(false);
@@ -78,13 +78,13 @@ export default function Users() {
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return new Intl.DateTimeFormat('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric',
-      second: 'numeric',
+    return new Intl.DateTimeFormat("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+      second: "numeric",
       hour12: true,
     }).format(date);
   };
@@ -109,30 +109,30 @@ export default function Users() {
   const handleDeleteUser = async (userId) => {
     try {
       await axiosService.delete(`/users/${userId}`);
-      toast.success('User deleted successfully!');
+      toast.success("User deleted successfully!");
       // After successful deletion, refetch the users to update the list
       fetchUsers();
     } catch (error) {
       console.error(error);
-      toast.error(error.response?.data?.message || 'An error occurred');
+      toast.error(error.response?.data?.message || "An error occurred");
     }
   };
 
   return (
-    <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
+    <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
       {/* Main Fields */}
       <Grid
         templateColumns={{
-          base: '1fr',
-          lg: '3.96fr',
+          base: "1fr",
+          lg: "3.96fr",
         }}
         templateRows={{
-          base: 'repeat(1, 1fr)',
-          lg: '1fr',
+          base: "repeat(1, 1fr)",
+          lg: "1fr",
         }}
-        gap={{ base: '20px', xl: '20px' }}
+        gap={{ base: "20px", xl: "20px" }}
       >
-        <Card p={{ base: '30px', md: '30px', sm: '10px' }}>
+        <Card p={{ base: "30px", md: "30px", sm: "10px" }}>
           <BackButton />
           <Flex>
             <Text fontSize="2xl">Users</Text>
@@ -183,7 +183,7 @@ export default function Users() {
                         <Td>
                           <NavLink
                             to={`/admin/user/${user.id}`}
-                          >{`${user.firstName} ${user.lastName}`}</NavLink>{' '}
+                          >{`${user.firstName} ${user.lastName}`}</NavLink>{" "}
                         </Td>
                         <Td>{user.status}</Td>
                         <Td>{formatDate(user.updatedAt)}</Td>
@@ -216,8 +216,8 @@ export default function Users() {
             <HStack mt="4" justify="space-between" align="center">
               {users && (
                 <Box>
-                  Showing {(currentPage - 1) * 10 + 1} to{' '}
-                  {Math.min(currentPage * 10, users.length)} of {users.length}{' '}
+                  Showing {(currentPage - 1) * 10 + 1} to{" "}
+                  {Math.min(currentPage * 10, users.length)} of {users.length}{" "}
                   entries
                 </Box>
               )}
