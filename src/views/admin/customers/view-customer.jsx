@@ -37,6 +37,8 @@ import { formatNaira } from 'utils/helper';
 import BackButton from 'components/menu/BackButton';
 import { useAppContext } from 'contexts/AppContext';
 import { ChevronDownIcon } from '@chakra-ui/icons';
+import { MdOutlineRemoveRedEye } from 'react-icons/md';
+import { RiEyeCloseLine } from 'react-icons/ri';
 
 export default function ViewCustomer() {
   const { id } = useParams();
@@ -45,6 +47,7 @@ export default function ViewCustomer() {
   const [loading, setLoading] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const [packageFound, setPackageFound] = useState(false);
+  const [showBalance, setShowBalance] = useState(true);
 
   const {
     customerData,
@@ -153,8 +156,14 @@ export default function ViewCustomer() {
           <MenuList>
             <MenuItem>
               <NavLink to="/admin/account/assign-manager">
-                Asign Manager
+                Assign Manager
               </NavLink>
+            </MenuItem>
+            <MenuItem>
+              <NavLink to="/admin/transaction/deposit">Deposit</NavLink>
+            </MenuItem>
+            <MenuItem>
+              <NavLink to="/admin/transaction/withdraw">Withdraw</NavLink>
             </MenuItem>
           </MenuList>
         </Menu>
@@ -163,8 +172,41 @@ export default function ViewCustomer() {
         <Spinner />
       ) : (
         <Box p="4">
-          <Flex justifyContent="space-between" alignItems="center">
-            <Flex>
+          <Flex flexDirection="column">
+            <Flex alignItems="center">
+              <Text fontSize="lg" fontWeight="bold">
+                Available Balance:
+                <Icon
+                  ml="2"
+                  fontSize="lg"
+                  _hover={{ cursor: 'pointer', color: 'blue.500' }}
+                  as={showBalance ? RiEyeCloseLine : MdOutlineRemoveRedEye}
+                  onClick={() =>
+                    setShowBalance((prevShowBalance) => !prevShowBalance)
+                  }
+                />
+              </Text>
+            </Flex>
+            <Text
+              ml="2"
+              fontSize={{ base: 'xl', md: '2xl' }}
+              fontWeight="bold"
+              color={showBalance ? 'gray.800' : 'gray.400'}
+            >
+              {customerData &&
+              customerData.availableBalance !== undefined &&
+              showBalance
+                ? formatNaira(customerData.availableBalance)
+                : '****'}
+            </Text>
+          </Flex>
+
+          <Flex
+            direction={{ base: 'column', md: 'row' }}
+            spacing={{ base: '4', md: '0' }}
+            justifyContent={{ base: 'center', md: 'space-between' }}
+          >
+            <Flex alignItems="center" mt="4">
               <Avatar
                 size="xl"
                 name={customerData.firstName || ''}
@@ -172,48 +214,58 @@ export default function ViewCustomer() {
                 m={4}
               />
               <Box px={6} py={4}>
-                <Grid templateColumns="repeat( 1fr)" gap={1}>
-                  <Text>
+                <Grid templateColumns="repeat(1fr)" gap={1}>
+                  <Text fontSize={{ base: 'md', md: 'lg' }}>
                     Name: {customerData.firstName} {customerData.lastName}
                   </Text>
-                  <Text>
-                    Account Number: {customerData.accountNumber}{' '}
+                  <Text fontSize={{ base: 'md', md: 'lg' }}>
+                    Account Number: {customerData.accountNumber}
                     <Button size="sm" onClick={handleCopyToClipboard}>
                       {isCopied ? 'Copied!' : <FaCopy />}
                     </Button>
-                  </Text>{' '}
-                  <Text>Account Number: {customerData.status}</Text>
-                  <Text>
+                  </Text>
+                  <Text fontSize={{ base: 'md', md: 'lg' }}>
+                    Account Status: {customerData.status}
+                  </Text>
+                  <Text fontSize={{ base: 'md', md: 'lg' }}>
                     Account Manager: {customerData.accountManagerName}
                   </Text>
                 </Grid>
               </Box>
             </Flex>
+            <Flex>
+              {/* Savings Progress Section */}
+              <Stat p="4" borderRadius="lg" bg="gray.50" boxShadow="sm">
+                {packageFound ? (
+                  <>
+                    <StatLabel fontSize={{ base: 'lg', md: 'xl' }}>
+                      Savings Progress
+                    </StatLabel>
+                    <StatNumber fontWeight="bold">
+                      {savingsProgress}%
+                    </StatNumber>
+                    <Progress
+                      value={savingsProgress ? parseFloat(savingsProgress) : 0}
+                      size="sm"
+                      mt="2"
+                      colorScheme="blue"
+                    />
+                    <StatHelpText fontSize={{ base: 'sm', md: 'md' }}>
+                      You are {daysLeft} days away from reaching your goal!
+                    </StatHelpText>
+                  </>
+                ) : (
+                  <Text
+                    mt="4"
+                    fontSize={{ base: 'md', md: 'lg' }}
+                    color="red.500"
+                  >
+                    No active package found for this customer.
+                  </Text>
+                )}
+              </Stat>
+            </Flex>
           </Flex>
-
-          {/* Savings Progress Section */}
-          <Stat p="4" borderRadius="lg" bg="blue.500" color="white">
-            {packageFound ? (
-              <>
-                <StatLabel fontSize="xl">Savings Progress</StatLabel>
-                <StatNumber fontSize="4xl">{savingsProgress}%</StatNumber>
-                <Progress
-                  value={savingsProgress ? savingsProgress : 0}
-                  size="sm"
-                  mt="2"
-                  colorScheme="blue"
-                />
-                <StatHelpText>
-                  You are {daysLeft ? daysLeft : 31} days away from reaching
-                  your goal!
-                </StatHelpText>
-              </>
-            ) : (
-              <Text mt="4" fontSize="lg" color="red.500">
-                No active package found for this customer.
-              </Text>
-            )}
-          </Stat>
 
           {/* Savings Summary Section */}
           <SimpleGrid
@@ -223,9 +275,9 @@ export default function ViewCustomer() {
             mt="40px"
           >
             <GridItem>
-              <Stat p="4" borderRadius="lg" bg="green.500" color="white">
-                <StatLabel fontSize="lg">Total contribution</StatLabel>
-                <StatNumber fontSize="3xl">
+              <Stat p="4" borderRadius="lg" bg="green.100">
+                <StatLabel>Total contribution</StatLabel>
+                <StatNumber fontWeight="bold">
                   {packageFound
                     ? formatNaira(userPackage.totalContribution)
                     : 0}
@@ -233,19 +285,17 @@ export default function ViewCustomer() {
               </Stat>
             </GridItem>
             <GridItem>
-              <Stat p="4" borderRadius="lg" bg="orange.500" color="white">
-                <StatLabel fontSize="lg">Amount per Day</StatLabel>
-                <StatNumber fontSize="3xl">
+              <Stat p="4" borderRadius="lg" bg="orange.100">
+                <StatLabel>Amount per Day</StatLabel>
+                <StatNumber fontWeight="bold">
                   {packageFound ? formatNaira(userPackage.amountPerDay) : 0}
                 </StatNumber>
               </Stat>
             </GridItem>
             <GridItem>
-              <Stat p="4" borderRadius="lg" bg="gray.500" color="white">
-                <StatLabel fontSize="lg">Days Left</StatLabel>
-                <StatNumber fontSize="3xl">
-                  {daysLeft ? daysLeft : 31}
-                </StatNumber>
+              <Stat p="4" borderRadius="lg" bg="gray.100">
+                <StatLabel>Days Left</StatLabel>
+                <StatNumber fontWeight="bold">{daysLeft}</StatNumber>
               </Stat>
             </GridItem>
           </SimpleGrid>
@@ -328,7 +378,6 @@ export default function ViewCustomer() {
               Recent Transactions
             </Heading>
             <Stack spacing="4">
-              {/* Add fade-in animation to the transaction items */}
               {showTransactions &&
                 userActivities
                   .slice(0, visibleTransactions)
@@ -351,11 +400,13 @@ export default function ViewCustomer() {
                           </Text>
                           <Text>{formatDate(activity.date)}</Text>
                         </Box>
+                        <Text>{activity.narration}</Text>
+                        <Text>{`${activity.userReps?.firstName} ${activity.userReps?.lastName}`}</Text>
                         <Text
                           color={
                             activity.narration === 'Daily contribution'
-                              ? 'green'
-                              : 'inherit'
+                              ? 'green.500'
+                              : 'gray.800'
                           }
                         >
                           {formatNaira(activity.amount)}
