@@ -13,16 +13,21 @@ const hiddenRoutes = [
   "/admin/branch/create",
   "/admin/branch/editbranch/:id",
   "/admin/branch/viewbranch/:id",
-  "/admin/branch/viewstaff/:id",
   "/auth/sign-in",
   "/auth/sign-up",
   "/admin/user/create",
   "/admin/user/:id",
   "/admin/user/edit-user/:id",
   "/admin/customer/create",
+  "/admin/customer/create-account",
   "/admin/customer/:id",
+  "/admin/account/assign-manager",
   "/admin/transaction/deposit",
   "/admin/transaction/withdraw",
+  "/admin/daily-savings",
+  "/admin/daily-savings/deposit",
+  "/admin/daily-saving/package",
+  "/admin/daily-savings/withdraw",
 ];
 
 export function SidebarLinks(props) {
