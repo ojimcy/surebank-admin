@@ -48,15 +48,10 @@ export default function ViewCustomer() {
   const [isCopied, setIsCopied] = useState(false);
   const [packageFound, setPackageFound] = useState(false);
   const [showBalance, setShowBalance] = useState(true);
+  const [userActivities, setUserActivities] = useState([]);
 
-  const {
-    customerData,
-    setCustomerData,
-    userPackage,
-    setUserPackage,
-    userActivities,
-    setUserActivities,
-  } = useAppContext();
+  const { customerData, setCustomerData, userPackage, setUserPackage } =
+    useAppContext();
 
   // Conditionally calculate savings progress and days left
   let savingsProgress = 0;
@@ -71,7 +66,7 @@ export default function ViewCustomer() {
     try {
       setLoading(true);
       const response = await axiosService.get(
-        `daily-savings/package?userId=${id}`
+        `daily-savings/package?userId=${id}&accountNumber=${customerData.accountNumber}`
       );
       setUserPackage(response.data);
       setLoading(false);
@@ -145,6 +140,7 @@ export default function ViewCustomer() {
     setTimeout(() => setIsCopied(false), 1500);
   });
 
+  console.log(customerData);
   return (
     <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
       <Flex justifyContent="space-between" mb="20px">
@@ -216,9 +212,6 @@ export default function ViewCustomer() {
               <Box px={6} py={4}>
                 <Grid templateColumns="repeat(1fr)" gap={1}>
                   <Text fontSize={{ base: 'md', md: 'lg' }}>
-                    Name: {customerData.firstName} {customerData.lastName}
-                  </Text>
-                  <Text fontSize={{ base: 'md', md: 'lg' }}>
                     Account Number: {customerData.accountNumber}
                     <Button size="sm" onClick={handleCopyToClipboard}>
                       {isCopied ? 'Copied!' : <FaCopy />}
@@ -228,7 +221,8 @@ export default function ViewCustomer() {
                     Account Status: {customerData.status}
                   </Text>
                   <Text fontSize={{ base: 'md', md: 'lg' }}>
-                    Account Manager: {customerData.accountManagerName}
+                    Account Manager: {customerData.accountManagerId?.firstName}{' '}
+                    {customerData.accountManagerId?.lastName}
                   </Text>
                 </Grid>
               </Box>
@@ -377,44 +371,52 @@ export default function ViewCustomer() {
             <Heading size="lg" mb="4">
               Recent Transactions
             </Heading>
-            <Stack spacing="4">
-              {showTransactions &&
-                userActivities
-                  .slice(0, visibleTransactions)
-                  .map((activity, index) => (
-                    <Box
-                      key={index}
-                      p="4"
-                      bg="gray.100"
-                      borderRadius="md"
-                      opacity={showTransactions ? 1 : 0}
-                      transform={`translateY(${showTransactions ? 0 : 10}px)`}
-                      transition="opacity 0.3s, transform 0.3s"
-                    >
-                      <Flex justifyContent="space-between" alignItems="center">
-                        <Box>
-                          <Text fontWeight="bold">
-                            {activity.narration === 'Daily contribution'
-                              ? 'Deposit'
-                              : 'Withdrawal'}
-                          </Text>
-                          <Text>{formatDate(activity.date)}</Text>
-                        </Box>
-                        <Text>{activity.narration}</Text>
-                        <Text>{`${activity.userReps?.firstName} ${activity.userReps?.lastName}`}</Text>
-                        <Text
-                          color={
-                            activity.narration === 'Daily contribution'
-                              ? 'green.500'
-                              : 'gray.800'
-                          }
+            {userActivities && userActivities.length > 0 ? (
+              <Stack spacing="4">
+                {showTransactions &&
+                  userActivities
+                    .slice(0, visibleTransactions)
+                    .map((activity, index) => (
+                      <Box
+                        key={index}
+                        p="4"
+                        bg="gray.100"
+                        borderRadius="md"
+                        opacity={showTransactions ? 1 : 0}
+                        transform={`translateY(${showTransactions ? 0 : 10}px)`}
+                        transition="opacity 0.3s, transform 0.3s"
+                      >
+                        <Flex
+                          justifyContent="space-between"
+                          alignItems="center"
                         >
-                          {formatNaira(activity.amount)}
-                        </Text>
-                      </Flex>
-                    </Box>
-                  ))}
-            </Stack>
+                          <Box>
+                            <Text fontWeight="bold">
+                              {activity.narration === 'Daily contribution'
+                                ? 'Deposit'
+                                : 'Withdrawal'}
+                            </Text>
+                            <Text>{formatDate(activity.date)}</Text>
+                          </Box>
+                          <Text>{activity.narration}</Text>
+                          <Text>{`${activity.userReps?.firstName} ${activity.userReps?.lastName}`}</Text>
+                          <Text
+                            color={
+                              activity.narration === 'Daily contribution'
+                                ? 'green.500'
+                                : 'gray.800'
+                            }
+                          >
+                            {formatNaira(activity.amount)}
+                          </Text>
+                        </Flex>
+                      </Box>
+                    ))}
+              </Stack>
+            ) : (
+              <Text>Transaction not found</Text>
+            )}
+
             {/* Show More button */}
             {visibleTransactions < userActivities.length && (
               <Button

@@ -41,7 +41,7 @@ export default function MakeContribution() {
     const fetchUserPackage = async () => {
       try {
         const packages = await axiosService.get(
-          `/daily-savings/package?userId=${customerData.userId}`
+          `/daily-savings/package?userId=${customerData.userId}&accountNumber=${customerData.accountNumber}`
         );
         setPackageId(packages.data.id);
         setAccountNumber(customerData.accountNumber);

@@ -15,7 +15,6 @@ const AppProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [customerData, setCustomerData] = useState({});
   const [userPackage, setUserPackage] = useState({});
-  const [userActivities, setUserActivities] = useState([]);
   const [packageId, setPackageId] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
@@ -51,8 +50,6 @@ const AppProvider = ({ children }) => {
         setCustomerData,
         userPackage,
         setUserPackage,
-        userActivities,
-        setUserActivities,
         setPackageId,
         packageId,
         searchTerm,

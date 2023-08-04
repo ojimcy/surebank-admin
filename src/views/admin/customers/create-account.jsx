@@ -59,7 +59,6 @@ export default function CreateAccount() {
       }
     }
   };
-
   return (
     <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
       {/* Main Fields */}
@@ -164,8 +163,8 @@ export default function CreateAccount() {
                     Branch<Text color={brandStars}>*</Text>
                   </FormLabel>
                   <Select
-                    {...register('branchName')}
-                    name="branchName"
+                    {...register('branchId')}
+                    name="branchId"
                     defaultValue=""
                   >
                     <option value="" disabled>
@@ -173,7 +172,7 @@ export default function CreateAccount() {
                     </option>
                     {branches &&
                       branches.map((branch) => (
-                        <option key={branch.name} value={branch.name}>
+                        <option key={branch.id} value={branch.id}>
                           {toSentenceCase(branch?.name)}
                         </option>
                       ))}

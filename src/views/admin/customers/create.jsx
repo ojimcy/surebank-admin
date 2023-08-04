@@ -77,7 +77,6 @@ export default function Customer() {
     };
     fetchBranches();
   }, []);
-
   const submitHandler = async (customerData) => {
     try {
       await axiosService.post(`/customer`, customerData);
@@ -393,8 +392,8 @@ export default function Customer() {
                     Branch<Text color={brandStars}>*</Text>
                   </FormLabel>
                   <Select
-                    {...register('branchName')}
-                    name="branchName"
+                    {...register('branchId')}
+                    name="branchId"
                     defaultValue=""
                   >
                     <option value="" disabled>
@@ -402,7 +401,7 @@ export default function Customer() {
                     </option>
                     {branches &&
                       branches.map((branch) => (
-                        <option key={branch.name} value={branch.name}>
+                        <option key={branch.id} value={branch.id}>
                           {toSentenceCase(branch?.name)}
                         </option>
                       ))}
