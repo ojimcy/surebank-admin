@@ -25,6 +25,7 @@ import Menu from 'components/menu/MainMenu';
 import { formatNaira, formatDate } from 'utils/helper';
 
 const TableComponent = ({ columns, data, pageSize = 10 }) => {
+  // Create a table instance using the provided columns and data
   const tableInstance = useTable(
     {
       columns,
@@ -70,6 +71,7 @@ const TableComponent = ({ columns, data, pageSize = 10 }) => {
         <Menu />
       </Flex>
       <Table {...getTableProps()} variant="simple" color="gray.500" mb="24px">
+        {/* Table header */}
         <Thead>
           {headerGroups.map((headerGroup, index) => (
             <Tr {...headerGroup.getHeaderGroupProps()} key={index}>
@@ -93,6 +95,7 @@ const TableComponent = ({ columns, data, pageSize = 10 }) => {
             </Tr>
           ))}
         </Thead>
+        {/* Table body */}
         <Tbody {...getTableBodyProps()}>
           {page.map((row, index) => {
             prepareRow(row);
@@ -108,6 +111,7 @@ const TableComponent = ({ columns, data, pageSize = 10 }) => {
                       borderColor="transparent"
                     >
                       <Flex align="center">
+                        {/* Render the cell value */}
                         <Text color={textColor} fontSize="sm" fontWeight="700">
                           {cell.column.id === 'date'
                             ? formatDate(cell.value)
@@ -122,6 +126,7 @@ const TableComponent = ({ columns, data, pageSize = 10 }) => {
           })}
         </Tbody>
       </Table>
+      {/* Pagination */}
       <Flex justify="space-between" mt="20px">
         <IconButton
           aria-label="Previous Page"

@@ -123,7 +123,6 @@ export default function Customers() {
       toast.error(error.response?.data?.message || 'An error occurred');
     }
   };
-
   return (
     <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
       {/* Main Fields */}
@@ -230,8 +229,8 @@ export default function Customers() {
                           </Td>
                           <Td>{customer.status}</Td>
                           <Td>
-                            {customer.branchName &&
-                              toSentenceCase(customer.branchName)}
+                            {customer.branchId.name &&
+                              toSentenceCase(customer.branchId.name)}
                           </Td>
                           <Td>{customer.accountType}</Td>
                           <Td>{customer.accountNumber}</Td>
