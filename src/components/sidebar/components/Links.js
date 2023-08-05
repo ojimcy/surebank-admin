@@ -22,6 +22,7 @@ const hiddenRoutes = [
   '/admin/customer/create',
   '/admin/customer/create-account',
   '/admin/customer/:id',
+  '/admin/customer/edit-customer/:id',
   '/admin/account/assign-manager',
   '/admin/transaction/deposit',
   '/admin/transaction/withdraw',

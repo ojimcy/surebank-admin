@@ -55,7 +55,6 @@ export default function EditUser() {
       userData.role = userData.role.join(',');
     }
     try {
-      console.log(userData);
       const response = await axiosService.patch(`users/${id}`, userData);
       toast.success('Profile updated successfully!');
       setUser(response.data);

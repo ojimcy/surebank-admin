@@ -32,15 +32,15 @@ import User from 'views/admin/users/get-user';
 import EditUser from 'views/admin/users/edit';
 import CreateCustomer from 'views/admin/customers/create';
 import ViewCustomer from 'views/admin/customers/view-customer';
+import EditCustomer from 'views/admin/customers/edit-customer';
 import Deposit from 'views/admin/account/deposit';
 import Withdraw from 'views/admin/account/withdrawal';
 import { FaBox, FaMoneyBill } from 'react-icons/fa';
-// import { RiFileShield2Fill } from "react-icons/ri";
-import DailySavingsDashboard from "views/admin/daily-savings";
-import MakeContribution from "views/admin/daily-savings/deposit";
-import CreatePackage from "views/admin/daily-savings/package";
-import Withdrawal from "views/admin/daily-savings/withdrawal";
-import CreateAccount from "views/admin/customers/create-account";
+import DailySavingsDashboard from 'views/admin/daily-savings';
+import MakeContribution from 'views/admin/daily-savings/deposit';
+import CreatePackage from 'views/admin/daily-savings/package';
+import Withdrawal from 'views/admin/daily-savings/withdrawal';
+import CreateAccount from 'views/admin/customers/create-account';
 
 const routes = [
   {
@@ -154,6 +154,16 @@ const routes = [
   {
     name: 'Customer',
     layout: '/admin',
+    path: '/customer/edit-customer/:id',
+    icon: (
+      <Icon as={MdOutlinePerson3} width="20px" height="20px" color="inherit" />
+    ),
+    component: EditCustomer,
+  },
+
+  {
+    name: 'Customer',
+    layout: '/admin',
     path: '/customer/:id',
     icon: (
       <Icon as={MdOutlinePerson3} width="20px" height="20px" color="inherit" />
@@ -178,7 +188,6 @@ const routes = [
   },
 
   // user
-
   {
     name: 'Users',
     layout: '/admin',
