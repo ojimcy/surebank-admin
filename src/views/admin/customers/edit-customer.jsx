@@ -1,45 +1,85 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
-  Checkbox,
   Flex,
   FormControl,
   FormLabel,
   Grid,
   Input,
   Select,
-  Stack,
+  Text,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import Card from 'components/card/Card';
 import { useForm } from 'react-hook-form';
 import axiosService from 'utils/axiosService';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import BackButton from 'components/menu/BackButton';
 import { useAppContext } from 'contexts/AppContext';
 
 export default function EditCustomer() {
+  const { id } = useParams();
   const history = useHistory();
-  const { branches, customerData } = useAppContext();
+  const { branches } = useAppContext();
+
+  const brandStars = useColorModeValue('brand.500', 'brand.400');
+  const textColor = useColorModeValue('navy.700', 'white');
+
+  const [account, setAccount] = useState({});
+  const [staffList, setStaffList] = useState([]);
+
   const {
     register,
     handleSubmit,
-    formState: { isSubmitting },
-
+    formState: { errors, isSubmitting },
+    setValue,
   } = useForm();
 
+  useEffect(() => {
+    // Extract the id from the query parameters in the URL
+    const fetchAccount = async () => {
+      try {
+        const response = await axiosService.get(`accounts/${id}`);
+        setAccount(response.data);
+        setValue('firstName', response.data.firstName);
+        setValue('lastName', response.data.lastName);
+        setValue('address', response.data.address);
+        setValue('phoneNumber', response.data.phoneNumber);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchAccount();
+  }, [setValue, id]);
+
+  useEffect(() => {
+    const fetchStaffInBranch = async () => {
+      try {
+        if (account && account.branchId) {
+          const response = await axiosService.get(
+            `/branch/${account?.branchId}/staff`
+          );
+          setStaffList(response.data);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchStaffInBranch();
+  }, [account, account.branchId]);
+  console.log(staffList);
   const submitHandler = async (userData) => {
     try {
-      await axiosService.patch(`accounts/${customerData.id}`, userData);
+      await axiosService.patch(`accounts/${id}`, userData);
       toast.success('Profile updated successfully!');
-      history.push(`/admin/user/${customerData.id}`);
+      history.push(`/admin/user/${id}`);
     } catch (error) {
       console.error(error);
       toast.error(error.response?.data?.message || 'An error occurred');
     }
   };
-
   return (
     <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
       {/* Main Fields */}
@@ -62,20 +102,11 @@ export default function EditCustomer() {
               onSubmit={handleSubmit(submitHandler)}
             >
               <FormControl>
-                <FormLabel>Email</FormLabel>
-                <Input
-                  {...register('email')}
-                  placeholder="Email"
-                  defaultValue={customerData?.email || ''}
-                />
-              </FormControl>
-
-              <FormControl>
                 <FormLabel pt={3}>First Name</FormLabel>
                 <Input
                   {...register('firstName')}
                   placeholder="First Name"
-                  defaultValue={customerData?.firstName || ''}
+                  defaultValue={account?.firstName || ''}
                 />
               </FormControl>
 
@@ -84,26 +115,36 @@ export default function EditCustomer() {
                 <Input
                   {...register('lastName')}
                   placeholder="Last Name"
-                  defaultValue={customerData?.lastName || ''}
-                />
-              </FormControl>
-
-              <FormControl>
-                <FormLabel pt={3}>Address</FormLabel>
-                <Input
-                  {...register('address')}
-                  placeholder="Address"
-                  defaultValue={customerData?.address || ''}
+                  defaultValue={account?.lastName || ''}
                 />
               </FormControl>
 
               <FormControl mt={4}>
-                <FormLabel>Phone Number</FormLabel>
-                <Input
-                  {...register('phoneNumber')}
-                  placeholder="Phone Number"
-                  defaultValue={customerData?.phoneNumber || ''}
-                />
+                <FormLabel
+                  htmlFor="address"
+                  display="flex"
+                  ms="4px"
+                  fontSize="sm"
+                  fontWeight="500"
+                  mb="8px"
+                >
+                  Account Manager
+                </FormLabel>
+                <Select
+                  {...register('accountManagerId')}
+                  name="accountManagerId"
+                  defaultValue={account?.branchManager}
+                >
+                  <option value="" disabled>
+                    Select Account Manager
+                  </option>
+                  {staffList &&
+                    staffList.map((staff) => (
+                      <option key={staff.id} value={staff.id}>
+                        {staff.firstName} {staff.lastName}
+                      </option>
+                    ))}
+                </Select>
               </FormControl>
 
               <FormControl mt={4}>
@@ -134,40 +175,28 @@ export default function EditCustomer() {
                 </Select>
               </FormControl>
 
-              <FormControl mt={4}>
+              <FormControl isInvalid={errors.accountType}>
                 <FormLabel
                   htmlFor="address"
                   display="flex"
                   ms="4px"
                   fontSize="sm"
                   fontWeight="500"
+                  color={textColor}
                   mb="8px"
                 >
-                  Role
+                  Account Type<Text color={brandStars}>*</Text>
                 </FormLabel>
-                {/* <Text fontSize="sm">Select one or more role</Text> */}
-                <Stack>
-                  <Checkbox
-                    value="admin"
-                    {...register('role')}
-                    id="admin"
-                    name="role"
-                    defaultChecked={customerData?.role?.includes('admin')}
-                  >
-                    Admin
-                  </Checkbox>
-                  <Checkbox
-                    value="user"
-                    {...register('role')}
-                    id="user"
-                    name="role"
-                    defaultChecked={customerData?.role?.includes('user')}
-                  >
-                    User
-                  </Checkbox>
-                </Stack>
+                <Select
+                  {...register('accountType')}
+                  name="accountType"
+                  defaultValue="Hq"
+                >
+                  <option value="">Select account rype</option>
+                  <option value="ds">DS</option>
+                  <option value="sb">SB</option>
+                </Select>
               </FormControl>
-
               <Button
                 fontSize="sm"
                 colorScheme="green"

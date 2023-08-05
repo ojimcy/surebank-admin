@@ -2,12 +2,6 @@
 import {
   Box,
   Grid,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
   Button,
   Spinner,
   HStack,
@@ -17,7 +11,6 @@ import {
   Stack,
   FormControl,
   Input,
-  TableContainer,
   Menu,
   MenuButton,
   MenuList,
@@ -41,14 +34,12 @@ import axiosService from 'utils/axiosService';
 import Card from 'components/card/Card.js';
 import { DeleteIcon, EditIcon, SearchIcon } from '@chakra-ui/icons';
 import BackButton from 'components/menu/BackButton';
-import { toSentenceCase } from 'utils/helper';
 import { toast } from 'react-toastify';
+import SimpleTable from 'components/table/SimpleTable';
 
 export default function Customers() {
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredCustomers, setFilteredCustomers] = useState([]);
 
@@ -60,7 +51,6 @@ export default function Customers() {
     try {
       const response = await axiosService.get('/accounts/');
       setCustomers(response.data.results);
-      setTotalPages(response.data.totalPages);
       setLoading(false);
     } catch (error) {
       console.error(error);
@@ -83,18 +73,6 @@ export default function Customers() {
     });
     setFilteredCustomers(filtered);
   }, [searchTerm, customers]);
-
-  const handleNextPageClick = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const handlePreviousPageClick = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
 
   const handleDeleteIconClick = (userId) => {
     setCustomerToDelete(userId);
@@ -123,6 +101,60 @@ export default function Customers() {
       toast.error(error.response?.data?.message || 'An error occurred');
     }
   };
+
+  // Columns for the user table
+  const columns = React.useMemo(
+    () => [
+      {
+        Header: 'Name',
+        accessor: (row) => (
+          <NavLink to={`/admin/customer/${row.userId}`}>
+            {row.firstName} {row.lastName}
+          </NavLink>
+        ),
+      },
+      {
+        Header: 'Status',
+        accessor: 'status',
+      },
+      {
+        Header: 'Branch',
+        accessor: (row) => row.branchId.name,
+      },
+      {
+        Header: 'Account Type',
+        accessor: 'accountType',
+      },
+      {
+        Header: 'Account Number',
+        accessor: 'accountNumber',
+      },
+      {
+        Header: 'Action',
+        accessor: (row) => (
+          <HStack>
+            {/* Edit user icon */}
+            <NavLink to={`/admin/customer/edit-customer/${row.userId}`}>
+              <IconButton
+                icon={<EditIcon />}
+                colorScheme="blue"
+                aria-label="Edit user"
+              />
+            </NavLink>
+            {/* Delete user icon */}
+            <IconButton
+              icon={<DeleteIcon />}
+              colorScheme="red"
+              aria-label="Delete user"
+              onClick={() => handleDeleteIconClick(row.userId)}
+            />
+          </HStack>
+        ),
+      },
+    ],
+    []
+  );
+
   return (
     <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
       {/* Main Fields */}
@@ -185,7 +217,7 @@ export default function Customers() {
                   <FormControl>
                     <Input
                       type="search"
-                      placeholder="Type a name"
+                      placeholder="Search"
                       borderColor="black"
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
@@ -201,92 +233,9 @@ export default function Customers() {
           <Box marginTop="30">
             {loading ? (
               <Spinner />
-            ) : filteredCustomers.length === 0 ? (
-              <Text fontSize="lg" textAlign="center" mt="20">
-                No customer records found.
-              </Text>
             ) : (
-              <TableContainer>
-                <Table variant="simple" bordered>
-                  <Thead>
-                    <Tr>
-                      <Th>Name </Th>
-                      <Th>Status</Th>
-                      <Th>Branch </Th>
-                      <Th>Account Type </Th>
-                      <Th>Account Number </Th>
-                      <Th>Action</Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    {filteredCustomers.map((customer) => {
-                      return (
-                        <Tr key={customer.id}>
-                          <Td>
-                            <NavLink to={`/admin/customer/${customer.userId}`}>
-                              {customer.firstName} {customer.lastName}
-                            </NavLink>
-                          </Td>
-                          <Td>{customer.status}</Td>
-                          <Td>
-                            {customer.branchId.name &&
-                              toSentenceCase(customer.branchId.name)}
-                          </Td>
-                          <Td>{customer.accountType}</Td>
-                          <Td>{customer.accountNumber}</Td>
-                          <Td>
-                            <HStack>
-                              {/* Edit user icon */}
-                              <NavLink
-                                to={`/admin/user/edit-customer/${customer.userId}`}
-                              >
-                                <IconButton
-                                  icon={<EditIcon />}
-                                  colorScheme="blue"
-                                  aria-label="Edit user"
-                                />
-                              </NavLink>
-                              {/* Delete user icon */}
-                              <IconButton
-                                icon={<DeleteIcon />}
-                                colorScheme="red"
-                                aria-label="Delete user"
-                                onClick={() =>
-                                  handleDeleteIconClick(customer.userId)
-                                }
-                              />
-                            </HStack>
-                          </Td>
-                        </Tr>
-                      );
-                    })}
-                  </Tbody>
-                </Table>
-              </TableContainer>
+              <SimpleTable columns={columns} data={filteredCustomers} />
             )}
-            <HStack mt="4" justify="space-between" align="center">
-              {customers && (
-                <Box>
-                  Showing {(currentPage - 1) * 10 + 1} to{' '}
-                  {Math.min(currentPage * 10, customers.length)} of{' '}
-                  {customers.length} entries
-                </Box>
-              )}
-              <HStack>
-                <Button
-                  disabled={currentPage === 1}
-                  onClick={handlePreviousPageClick}
-                >
-                  Previous Page
-                </Button>
-                <Button
-                  disabled={currentPage === totalPages}
-                  onClick={handleNextPageClick}
-                >
-                  Next Page
-                </Button>
-              </HStack>
-            </HStack>
           </Box>
         </Card>
       </Grid>

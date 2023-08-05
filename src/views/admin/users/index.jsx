@@ -2,12 +2,6 @@
 import {
   Box,
   Grid,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
   Button,
   Spinner,
   HStack,
@@ -17,7 +11,6 @@ import {
   Stack,
   FormControl,
   Input,
-  TableContainer,
   IconButton,
   Modal,
   ModalOverlay,
@@ -39,6 +32,7 @@ import { DeleteIcon, EditIcon, SearchIcon } from '@chakra-ui/icons';
 import { toast } from 'react-toastify';
 import BackButton from 'components/menu/BackButton';
 import axios from 'axios';
+import SimpleTable from 'components/table/SimpleTable';
 
 export default function Users() {
   const [users, setUsers] = useState([]);
@@ -73,8 +67,7 @@ export default function Users() {
   // Filter Users based on search term
   useEffect(() => {
     const filtered = users?.filter((user) => {
-      const fullName =
-        `${user.firstName} ${user.lastName}`.toLowerCase();
+      const fullName = `${user.firstName} ${user.lastName}`.toLowerCase();
       return (
         fullName.includes(searchTerm.toLowerCase()) ||
         user.email.includes(searchTerm)
@@ -137,6 +130,55 @@ export default function Users() {
     }
   };
 
+  // Columns for the user table
+  const columns = React.useMemo(
+    () => [
+      {
+        Header: 'User',
+        accessor: (row) => (
+          <NavLink to={`/admin/customer/${row.id}`}>
+            {row.firstName} {row.lastName}
+          </NavLink>
+        ),
+      },
+      {
+        Header: 'Email',
+        accessor: 'email',
+      },
+      {
+        Header: 'Role',
+        accessor: 'role',
+      },
+      {
+        Header: 'Created Date',
+        accessor: (row) => formatDate(row.createdAt),
+      },
+      {
+        Header: 'Action',
+        accessor: (row) => (
+          <HStack>
+            {/* Edit user icon */}
+            <NavLink to={`/admin/user/edit-user/${row.id}`}>
+              <IconButton
+                icon={<EditIcon />}
+                colorScheme="blue"
+                aria-label="Edit user"
+              />
+            </NavLink>
+            {/* Delete user icon */}
+            <IconButton
+              icon={<DeleteIcon />}
+              colorScheme="red"
+              aria-label="Delete user"
+              onClick={() => handleDeleteIconClick(row.id)}
+            />
+          </HStack>
+        ),
+      },
+    ],
+    []
+  );
+
   return (
     <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
       {/* Main Fields */}
@@ -191,52 +233,7 @@ export default function Users() {
                 No user records found.
               </Text>
             ) : (
-              <TableContainer>
-                <Table variant="simple" bordered>
-                  <Thead>
-                    <Tr>
-                      <Th>User </Th>
-                      <Th>Email</Th>
-                      <Th>Role </Th>
-                      <Th>Created Date </Th>
-                      <Th>Action</Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    {filteredUsers.map((user) => (
-                      <Tr key={user.id}>
-                        <Td>
-                          <NavLink
-                            to={`/admin/customer/${user.id}`}
-                          >{`${user.firstName} ${user.lastName}`}</NavLink>{' '}
-                        </Td>
-                        <Td>{user.email}</Td>
-                        <Td>{user.role}</Td>
-                        <Td>{formatDate(user.createdAt)}</Td>
-                        <Td>
-                          <HStack>
-                            {/* Edit user icon */}
-                            <NavLink to={`/admin/user/edit-user/${user.id}`}>
-                              <IconButton
-                                icon={<EditIcon />}
-                                colorScheme="blue"
-                                aria-label="Edit user"
-                              />
-                            </NavLink>
-                            {/* Delete user icon */}
-                            <IconButton
-                              icon={<DeleteIcon />}
-                              colorScheme="red"
-                              aria-label="Delete user"
-                              onClick={() => handleDeleteIconClick(user.id)}
-                            />
-                          </HStack>
-                        </Td>
-                      </Tr>
-                    ))}
-                  </Tbody>
-                </Table>
-              </TableContainer>
+              <SimpleTable columns={columns} data={filteredUsers} />
             )}
             <HStack mt="4" justify="space-between" align="center">
               {users && (

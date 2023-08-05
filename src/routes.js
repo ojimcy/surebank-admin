@@ -1,6 +1,6 @@
-import React from "react";
+import React from 'react';
 
-import { Icon } from "@chakra-ui/react";
+import { Icon } from '@chakra-ui/react';
 import {
   MdBarChart,
   MdPerson,
@@ -8,36 +8,37 @@ import {
   MdLock,
   MdOutlineShoppingCart,
   MdOutlinePerson3,
-} from "react-icons/md";
+} from 'react-icons/md';
 
 // Admin Imports
-import MainDashboard from "views/admin/default";
-import Sales from "views/admin/sales";
-import Branches from "views/admin/branches";
-import CreateBranch from "views/admin/branches/CreateBranch";
-import EditBranch from "views/admin/branches/EditBranch";
-import ViewBranch from "views/admin/branches/ViewBranch";
-import Profile from "views/admin/profile";
+import MainDashboard from 'views/admin/default';
+import Sales from 'views/admin/sales';
+import Branches from 'views/admin/branches';
+import CreateBranch from 'views/admin/branches/CreateBranch';
+import EditBranch from 'views/admin/branches/EditBranch';
+import ViewBranch from 'views/admin/branches/ViewBranch';
+import Profile from 'views/admin/profile';
 import Customers from 'views/admin/customers';
 import AssignManager from 'views/admin/customers/assign-manager';
 
 // Auth Imports
-import SignInCentered from "views/auth/signIn";
-import SignUpCentered from "views/auth/signUp";
-import Users from "views/admin/users";
-import CreateUser from "views/admin/users/create";
-import User from "views/admin/users/get-user";
-import EditUser from "views/admin/users/edit";
-import CreateCustomer from "views/admin/customers/create";
-import ViewCustomer from "views/admin/customers/view-customer";
-import Deposit from "views/admin/account/deposit";
-import Withdraw from "views/admin/account/withdrawal";
-import { FaBox, FaMoneyBill } from "react-icons/fa";
-import DailySavingsDashboard from "views/admin/daily-savings";
-import MakeContribution from "views/admin/daily-savings/deposit";
-import CreatePackage from "views/admin/daily-savings/package";
-import Withdrawal from "views/admin/daily-savings/withdrawal";
-import CreateAccount from "views/admin/customers/create-account";
+import SignInCentered from 'views/auth/signIn';
+import SignUpCentered from 'views/auth/signUp';
+import Users from 'views/admin/users';
+import CreateUser from 'views/admin/users/create';
+import User from 'views/admin/users/get-user';
+import EditUser from 'views/admin/users/edit';
+import CreateCustomer from 'views/admin/customers/create';
+import ViewCustomer from 'views/admin/customers/view-customer';
+import EditCustomer from 'views/admin/customers/edit-customer';
+import Deposit from 'views/admin/account/deposit';
+import Withdraw from 'views/admin/account/withdrawal';
+import { FaBox, FaMoneyBill } from 'react-icons/fa';
+import DailySavingsDashboard from 'views/admin/daily-savings';
+import MakeContribution from 'views/admin/daily-savings/deposit';
+import CreatePackage from 'views/admin/daily-savings/package';
+import Withdrawal from 'views/admin/daily-savings/withdrawal';
+import CreateAccount from 'views/admin/customers/create-account';
 
 const routes = [
   {
@@ -137,6 +138,16 @@ const routes = [
   {
     name: 'Customer',
     layout: '/admin',
+    path: '/customer/edit-customer/:id',
+    icon: (
+      <Icon as={MdOutlinePerson3} width="20px" height="20px" color="inherit" />
+    ),
+    component: EditCustomer,
+  },
+
+  {
+    name: 'Customer',
+    layout: '/admin',
     path: '/customer/:id',
     icon: (
       <Icon as={MdOutlinePerson3} width="20px" height="20px" color="inherit" />
@@ -161,7 +172,6 @@ const routes = [
   },
 
   // user
-
   {
     name: 'Users',
     layout: '/admin',
