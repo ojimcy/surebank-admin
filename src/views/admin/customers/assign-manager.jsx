@@ -16,8 +16,6 @@ const AssignManager = () => {
 
   const { customerData } = useAppContext();
 
-  console.log(customerData);
-
   useEffect(() => {
     fetchStaffInBranch();
     // eslint-disable-next-line react-hooks/exhaustive-deps

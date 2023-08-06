@@ -60,7 +60,7 @@ export default function ViewCustomer() {
     savingsProgress = ((userPackage.totalCount / 31) * 100).toFixed(2);
     daysLeft = 31 - userPackage.totalCount;
   }
-
+  console.log(userPackage);
   // Function to fetch user package data
   const fetchUserPackage = async () => {
     try {
@@ -140,7 +140,6 @@ export default function ViewCustomer() {
     setTimeout(() => setIsCopied(false), 1500);
   });
 
-  console.log(customerData);
   return (
     <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
       <Flex justifyContent="space-between" mb="20px">

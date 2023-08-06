@@ -69,7 +69,6 @@ export default function EditCustomer() {
     };
     fetchStaffInBranch();
   }, [account, account.branchId]);
-  console.log(staffList);
   const submitHandler = async (userData) => {
     try {
       await axiosService.patch(`accounts/${id}`, userData);
