@@ -54,7 +54,6 @@ export default function UserReports() {
         const response = await axiosService.get(
           '/reports/total-savings-withdrawal'
         );
-        console.log(response.data)
         setDailySavingsWithdrawals(response.data);
       };
 
@@ -102,7 +101,7 @@ export default function UserReports() {
             />
           }
           name="Total Contributions"
-          value={`${formatNaira(totalContributions && totalContributions)}`}
+          value={formatNaira(totalContributions)}
         />
 
         <MiniStatistics
@@ -118,11 +117,7 @@ export default function UserReports() {
           }
           growth="+23%"
           name="Total Daily contributions"
-          value={`${
-            contributionsDailyTotal?.length > 0
-              ? formatNaira(contributionsDailyTotal[0]?.total)
-              : formatNaira(0)
-          }`}
+          value={formatNaira(contributionsDailyTotal[0]?.total || 0)}
         />
 
         <MiniStatistics
@@ -137,10 +132,7 @@ export default function UserReports() {
             />
           }
           name="Total Daily DS Withdrawals"
-          value={`${formatNaira(
-            dailySavingsWithdrawals &&
-              formatNaira(dailySavingsWithdrawals[0]?.total)
-          )}`}
+          value={formatNaira(dailySavingsWithdrawals[0]?.total || 0)}
         />
 
         <MiniStatistics
