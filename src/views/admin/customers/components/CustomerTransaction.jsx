@@ -36,6 +36,7 @@ const CustomerTransactions = ({
                 <Tr>
                   <Th>Time</Th>
                   <Th>Direction </Th>
+                  <Th>Narration</Th>
                   <Th>Amount</Th>
                   <Th>Operator</Th>
                 </Tr>
@@ -45,6 +46,7 @@ const CustomerTransactions = ({
                   <Tr key={transaction.id}>
                     <Td>{transaction.date && formatDate(transaction.date)}</Td>
                     <Td>{transaction.direction}</Td>
+                    <Td>{transaction.narration}</Td>
                     <Td>{transaction.amount}</Td>
                     <Td>{transaction.operatorName}</Td>
                   </Tr>

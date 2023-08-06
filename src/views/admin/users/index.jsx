@@ -2,12 +2,6 @@
 import {
   Box,
   Grid,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
   Button,
   Spinner,
   HStack,
@@ -17,7 +11,6 @@ import {
   Stack,
   FormControl,
   Input,
-  TableContainer,
   IconButton,
   Modal,
   ModalOverlay,
@@ -33,28 +26,35 @@ import { NavLink } from "react-router-dom";
 // Custom components
 
 // Assets
-import axiosService from "utils/axiosService";
-import Card from "components/card/Card.js";
-import { DeleteIcon, EditIcon, SearchIcon } from "@chakra-ui/icons";
-import { toast } from "react-toastify";
-import BackButton from "components/menu/BackButton";
+import axiosService from 'utils/axiosService';
+import Card from 'components/card/Card.js';
+import { DeleteIcon, EditIcon, SearchIcon } from '@chakra-ui/icons';
+import { toast } from 'react-toastify';
+import BackButton from 'components/menu/BackButton';
+import axios from 'axios';
+import SimpleTable from 'components/table/SimpleTable';
 
 export default function Users() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredUsers, setFilteredUsers] = useState([]);
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
 
   const fetchUsers = async () => {
     setLoading(true);
+    const accessToken = localStorage.getItem('ACCESS_TOKEN_KEY');
     try {
       const response = await axiosService.get("/users/");
       setUsers(response.data.results);
       setTotalPages(response.data.totalPages);
       setLoading(false);
+
+      axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
     } catch (error) {
       console.error(error);
     }
@@ -63,6 +63,18 @@ export default function Users() {
   useEffect(() => {
     fetchUsers(currentPage);
   }, [currentPage]);
+
+  // Filter Users based on search term
+  useEffect(() => {
+    const filtered = users?.filter((user) => {
+      const fullName = `${user.firstName} ${user.lastName}`.toLowerCase();
+      return (
+        fullName.includes(searchTerm.toLowerCase()) ||
+        user.email.includes(searchTerm)
+      );
+    });
+    setFilteredUsers(filtered);
+  }, [searchTerm, users]);
 
   const handleNextPageClick = () => {
     if (currentPage < totalPages) {
@@ -118,6 +130,55 @@ export default function Users() {
     }
   };
 
+  // Columns for the user table
+  const columns = React.useMemo(
+    () => [
+      {
+        Header: 'User',
+        accessor: (row) => (
+          <NavLink to={`/admin/customer/${row.id}`}>
+            {row.firstName} {row.lastName}
+          </NavLink>
+        ),
+      },
+      {
+        Header: 'Email',
+        accessor: 'email',
+      },
+      {
+        Header: 'Role',
+        accessor: 'role',
+      },
+      {
+        Header: 'Created Date',
+        accessor: (row) => formatDate(row.createdAt),
+      },
+      {
+        Header: 'Action',
+        accessor: (row) => (
+          <HStack>
+            {/* Edit user icon */}
+            <NavLink to={`/admin/user/edit-user/${row.id}`}>
+              <IconButton
+                icon={<EditIcon />}
+                colorScheme="blue"
+                aria-label="Edit user"
+              />
+            </NavLink>
+            {/* Delete user icon */}
+            <IconButton
+              icon={<DeleteIcon />}
+              colorScheme="red"
+              aria-label="Delete user"
+              onClick={() => handleDeleteIconClick(row.id)}
+            />
+          </HStack>
+        ),
+      },
+    ],
+    []
+  );
+
   return (
     <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
       {/* Main Fields */}
@@ -153,6 +214,8 @@ export default function Users() {
                       type="search"
                       placeholder="Type a name"
                       borderColor="black"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
                     />
                   </FormControl>
                   <Button bgColor="blue.700" color="white">
@@ -165,53 +228,12 @@ export default function Users() {
           <Box marginTop="30">
             {loading ? (
               <Spinner />
+            ) : filteredUsers.length === 0 ? (
+              <Text fontSize="lg" textAlign="center" mt="20">
+                No user records found.
+              </Text>
             ) : (
-              <TableContainer>
-                <Table variant="simple" bordered>
-                  <Thead>
-                    <Tr>
-                      <Th>User </Th>
-                      <Th>Status</Th>
-                      <Th>Last Updated </Th>
-                      <Th>Created Date </Th>
-                      <Th>Action</Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    {users.map((user) => (
-                      <Tr key={user.id}>
-                        <Td>
-                          <NavLink
-                            to={`/admin/user/${user.id}`}
-                          >{`${user.firstName} ${user.lastName}`}</NavLink>{" "}
-                        </Td>
-                        <Td>{user.status}</Td>
-                        <Td>{formatDate(user.updatedAt)}</Td>
-                        <Td>{formatDate(user.createdAt)}</Td>
-                        <Td>
-                          <HStack>
-                            {/* Edit user icon */}
-                            <NavLink to={`/admin/user/edit-user/${user.id}`}>
-                              <IconButton
-                                icon={<EditIcon />}
-                                colorScheme="blue"
-                                aria-label="Edit user"
-                              />
-                            </NavLink>
-                            {/* Delete user icon */}
-                            <IconButton
-                              icon={<DeleteIcon />}
-                              colorScheme="red"
-                              aria-label="Delete user"
-                              onClick={() => handleDeleteIconClick(user.id)}
-                            />
-                          </HStack>
-                        </Td>
-                      </Tr>
-                    ))}
-                  </Tbody>
-                </Table>
-              </TableContainer>
+              <SimpleTable columns={columns} data={filteredUsers} />
             )}
             <HStack mt="4" justify="space-between" align="center">
               {users && (

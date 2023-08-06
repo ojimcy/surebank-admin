@@ -33,6 +33,7 @@ import { MdOutlineRemoveRedEye } from 'react-icons/md';
 import { RiEyeCloseLine } from 'react-icons/ri';
 import axiosService from 'utils/axiosService';
 import { toast } from 'react-toastify';
+import { toSentenceCase } from 'utils/helper';
 
 export default function Customer() {
   const history = useHistory();
@@ -76,12 +77,11 @@ export default function Customer() {
     };
     fetchBranches();
   }, []);
-
   const submitHandler = async (customerData) => {
     try {
       await axiosService.post(`/customer`, customerData);
       toast.success('Customer created successfully!');
-      history.push('/');
+      history.push('/admin/customers');
     } catch (error) {
       if (
         error.response &&
@@ -381,7 +381,7 @@ export default function Customer() {
               <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
                 <FormControl isInvalid={errors.branch}>
                   <FormLabel
-                    htmlFor="address"
+                    htmlFor="branch"
                     display="flex"
                     ms="4px"
                     fontSize="sm"
@@ -402,7 +402,7 @@ export default function Customer() {
                     {branches &&
                       branches.map((branch) => (
                         <option key={branch.id} value={branch.id}>
-                          {branch.name}
+                          {toSentenceCase(branch?.name)}
                         </option>
                       ))}
                   </Select>
