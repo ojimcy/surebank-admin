@@ -19,34 +19,42 @@ export default function UserReports() {
   const [openPackages, setOpenPackages] = useState(0);
   const [closedPackages, setClosedPackages] = useState(0);
 
-  useEffect(() => {
-    // Fetch total contributions data from the backend API
-    try {
-      const fetchTotalContributions = async () => {
-        // Get today's date at 00:00 and convert to timestamp
-        const startDate = new Date();
-        startDate.setHours(0, 0, 0, 0);
-        const startTimeStamp = startDate.getTime();
-        // Get today's date at 23:59 and convert to timestamp
-        const endDate = new Date();
-        endDate.setHours(23, 59, 59, 999);
-        const endTimeStamp = endDate.getTime();
+   useEffect(() => {
+     // Fetch total contributions data from the backend API
+     try {
+       const fetchTotalContributions = async () => {
+         // Get today's date at 00:00 and convert to timestamp
+         const startDate = new Date();
+         startDate.setHours(0, 0, 0, 0);
+         const startTimeStamp = startDate.getTime();
+         // Get today's date at 23:59 and convert to timestamp
+         const endDate = new Date();
+         endDate.setHours(23, 59, 59, 999);
+         const endTimeStamp = endDate.getTime();
 
-        // API call with date parameters as timestamps
-        const response = await axiosService.get(
-          `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}`
-        );
+         // API call with date parameters as timestamps
+         const contributionResponse = await axiosService.get(
+           `/reports/total-contributions?startDate=${startTimeStamp}&endDateParam=${endTimeStamp}`
+         );
 
-        setContributionDailyTotal(response.data.contributionsPerDay);
-        setTotalContributions(response.data.sumTotal);
-      };
+         setContributionDailyTotal(
+           contributionResponse.data.contributionsPerDay
+         );
+         setTotalContributions(contributionResponse.data.sumTotal);
 
-      fetchTotalContributions();
-    } catch (error) {
-      console.error(error);
-      toast.error(error.response?.data?.message || 'An error occurred');
-    }
-  }, []);
+         // API call to get total daily withdrawals for today
+         const withdrawalResponse = await axiosService.get(
+           `/reports/total-savings-withdrawal?startDate=${startTimeStamp}&endDateParam=${endTimeStamp}`
+         );
+         setDailySavingsWithdrawals(withdrawalResponse.data);
+       };
+
+       fetchTotalContributions();
+     } catch (error) {
+       console.error(error);
+       toast.error(error.response?.data?.message || 'An error occurred');
+     }
+   }, []);
 
   useEffect(() => {
     try {
