@@ -28,25 +28,25 @@ import {
   ModalCloseButton,
   ModalBody,
   ModalFooter,
-} from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
-import { useParams, NavLink, useHistory } from "react-router-dom";
-import { useForm } from "react-hook-form";
+} from '@chakra-ui/react';
+import React, { useEffect, useState } from 'react';
+import { useParams, NavLink, useHistory } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
 
 // Custom components
 
 // Assets
-import axiosService from "utils/axiosService";
-import Card from "components/card/Card.js";
-import { DeleteIcon, EditIcon, SearchIcon } from "@chakra-ui/icons";
-import { toast } from "react-toastify";
+import axiosService from 'utils/axiosService';
+import Card from 'components/card/Card.js';
+import { DeleteIcon, EditIcon, SearchIcon } from '@chakra-ui/icons';
+import { toast } from 'react-toastify';
 
 export default function Users() {
   const history = useHistory();
   const [staffs, setStaffs] = useState([]);
   const [users, setUsers] = useState([]);
   const [branch, setBranch] = useState([]);
-  const [staffUser, setStaffUser] = useState("");
+  const [staffUser, setStaffUser] = useState('');
   const [allBranch, setAllBranch] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -61,9 +61,9 @@ export default function Users() {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const branches = await axiosService.get("/branch/");
+      const branches = await axiosService.get('/branch/');
       const response = await axiosService.get(`/branch/staff`);
-      const UserResponse = await axiosService.get("/users/");
+      const UserResponse = await axiosService.get('/users/');
       setUsers(UserResponse.data.results);
       // const currentBranch = await axiosService.get(`branch/${id}`);
       setAllBranch(branches.data.results);
@@ -95,13 +95,13 @@ export default function Users() {
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return new Intl.DateTimeFormat("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "numeric",
-      minute: "numeric",
-      second: "numeric",
+    return new Intl.DateTimeFormat('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
       hour12: true,
     }).format(date);
   };
@@ -138,12 +138,12 @@ export default function Users() {
   const handleDeleteUser = async (staffId) => {
     try {
       await axiosService.delete(`/branch/${staffId}/staff`);
-      toast.success("Staff deleted successfully!");
+      toast.success('Staff deleted successfully!');
       // After successful deletion, refetch the users to update the list
       fetchUsers();
     } catch (error) {
       console.error(error);
-      toast.error(error.response?.data?.message || "An error occurred");
+      toast.error(error.response?.data?.message || 'An error occurred');
     }
   };
 
@@ -159,13 +159,13 @@ export default function Users() {
       // console.log(data);
 
       await axiosService.patch(`/branch/staff`, data);
-      toast.success("Staff transfered successfully!");
+      toast.success('Staff transfered successfully!');
       // setBranch(response.data);
       // history.push(`/admin/user/${id}`);
       history.push(`/admin/branches`);
     } catch (error) {
       console.error(error);
-      toast.error(error.response?.data?.message || "An error occurred");
+      toast.error(error.response?.data?.message || 'An error occurred');
     }
   };
 
@@ -183,7 +183,7 @@ export default function Users() {
       console.log(data);
       const id = data.branchId;
       await axiosService.post(`branch/staff`, data);
-      toast.success("Staff has been created successfully!");
+      toast.success('Staff has been created successfully!');
       history.push(`/admin/branch/viewstaff/${id}`);
     } catch (error) {
       if (
@@ -196,7 +196,7 @@ export default function Users() {
         toast.error(errorMessage);
       } else {
         // Network error or other error
-        toast.error("Something went wrong. Please try again later.");
+        toast.error('Something went wrong. Please try again later.');
       }
     }
   };
@@ -204,20 +204,20 @@ export default function Users() {
     setShowCreateStaffModal(false);
   };
   return (
-    <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
+    <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
       {/* Main Fields */}
       <Grid
         templateColumns={{
-          base: "1fr",
-          lg: "3.96fr",
+          base: '1fr',
+          lg: '3.96fr',
         }}
         templateRows={{
-          base: "repeat(1, 1fr)",
-          lg: "1fr",
+          base: 'repeat(1, 1fr)',
+          lg: '1fr',
         }}
-        gap={{ base: "20px", xl: "20px" }}
+        gap={{ base: '20px', xl: '20px' }}
       >
-        <Card p={{ base: "30px", md: "30px", sm: "10px" }}>
+        <Card p={{ base: '30px', md: '30px', sm: '10px' }}>
           <Flex>
             <Text fontSize="2xl">All Staff</Text>
             <Spacer />
@@ -278,7 +278,7 @@ export default function Users() {
                         <Td>
                           <NavLink
                             to={`/admin/user/${staff.id}`}
-                          >{`${staff.firstName} ${staff.lastName}`}</NavLink>{" "}
+                          >{`${staff.firstName} ${staff.lastName}`}</NavLink>{' '}
                         </Td>
                         <Td>{staff.phoneNumber}</Td>
                         <Td>{formatDate(staff.updatedAt)}</Td>
@@ -320,8 +320,8 @@ export default function Users() {
             <HStack mt="4" justify="space-between" align="center">
               {staffs && (
                 <Box>
-                  Showing {(currentPage - 1) * 10 + 1} to{" "}
-                  {Math.min(currentPage * 10, staffs.length)} of {staffs.length}{" "}
+                  Showing {(currentPage - 1) * 10 + 1} to{' '}
+                  {Math.min(currentPage * 10, staffs.length)} of {staffs.length}{' '}
                   entries
                 </Box>
               )}
@@ -374,9 +374,9 @@ export default function Users() {
                 <Flex
                   gap="20px"
                   marginBottom="20px"
-                  flexDirection={{ base: "column", md: "row" }}
+                  flexDirection={{ base: 'column', md: 'row' }}
                 >
-                  <Box width={{ base: "100%", md: "100%", sm: "100%" }}>
+                  <Box width={{ base: '100%', md: '100%', sm: '100%' }}>
                     <FormControl>
                       <FormLabel pt={3}>
                         {staffUser?.firstName}
@@ -388,13 +388,13 @@ export default function Users() {
                     <FormControl>
                       <Input
                         type="hidden"
-                        {...register("staffId")}
+                        {...register('staffId')}
                         value={staffUser?.id}
                       />
                     </FormControl>
                     <FormControl isInvalid={errors.branch}>
                       <Select
-                        {...register("branchId")}
+                        {...register('branchId')}
                         name="branchId"
                         defaultValue=""
                       >
@@ -443,9 +443,9 @@ export default function Users() {
                 <Flex
                   gap="20px"
                   marginBottom="20px"
-                  flexDirection={{ base: "column", md: "row" }}
+                  flexDirection={{ base: 'column', md: 'row' }}
                 >
-                  <Box width={{ base: "100%", md: "100%", sm: "100%" }}>
+                  <Box width={{ base: '100%', md: '100%', sm: '100%' }}>
                     <FormControl isInvalid={errors.branch}>
                       <FormLabel
                         htmlFor="address"
@@ -459,7 +459,7 @@ export default function Users() {
                       </FormLabel>
 
                       <Select
-                        {...register("staffId")}
+                        {...register('staffId')}
                         name="staffId"
                         defaultValue=""
                       >
@@ -489,7 +489,7 @@ export default function Users() {
                       </FormLabel>
 
                       <Select
-                        {...register("branchId")}
+                        {...register('branchId')}
                         name="branchId"
                         defaultValue=""
                       >

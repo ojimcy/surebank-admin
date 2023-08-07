@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { NavLink, useParams } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { NavLink, useParams } from 'react-router-dom';
 
 // Chakra imports
 import {
@@ -22,16 +22,16 @@ import {
   ModalHeader,
   ModalCloseButton,
   ModalBody,
-} from "@chakra-ui/react";
+} from '@chakra-ui/react';
 
 // Custom components
 
 // Assets
-import axiosService from "utils/axiosService";
-import BackButton from "components/menu/BackButton";
-import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
-import { useHistory } from "react-router-dom";
+import axiosService from 'utils/axiosService';
+import BackButton from 'components/menu/BackButton';
+import { useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
+import { useHistory } from 'react-router-dom';
 
 export default function User() {
   const history = useHistory();
@@ -41,7 +41,7 @@ export default function User() {
   const { id } = useParams();
   const [branch, setBranch] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState('');
   const [isError, setIsError] = useState(false);
   const [totalPages, setTotalPages] = useState(1);
   const [showCreateStaffModal, setShowCreateStaffModal] = useState(false);
@@ -57,7 +57,7 @@ export default function User() {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const response = await axiosService.get("/users/");
+      const response = await axiosService.get('/users/');
       setUsers(response.data.results);
       setTotalPages(response.data.totalPages);
       setLoading(false);
@@ -78,7 +78,7 @@ export default function User() {
   const addStaffToBranch = async (data) => {
     try {
       await axiosService.post(`branch/${id}/staff`, data);
-      toast.success("Staff has been created successfully!");
+      toast.success('Staff has been created successfully!');
       history.push(`/admin/branch/viewstaff/${id}`);
     } catch (error) {
       if (error.response.data.message) {
@@ -87,7 +87,7 @@ export default function User() {
         toast.error(errorMessage);
       } else {
         // Network error or other error
-        toast.error("Something went wrong. Please try again later.");
+        toast.error('Something went wrong. Please try again later.');
       }
     }
   };
@@ -119,21 +119,21 @@ export default function User() {
           <Spinner size="xl" color="blue.500" />
         </Box>
       ) : (
-        <Box pt={{ base: "180px", md: "80px", xl: "80px" }}>
+        <Box pt={{ base: '180px', md: '80px', xl: '80px' }}>
           <BackButton />
           <Grid
             mb="20px"
-            gridTemplateColumns={{ xl: "repeat(3, 1fr)", "2xl": "1fr 0.46fr" }}
-            gap={{ base: "20px", xl: "20px" }}
-            display={{ base: "block", xl: "grid" }}
+            gridTemplateColumns={{ xl: 'repeat(3, 1fr)', '2xl': '1fr 0.46fr' }}
+            gap={{ base: '20px', xl: '20px' }}
+            display={{ base: 'block', xl: 'grid' }}
           >
             <Flex
               flexDirection="column"
-              gridArea={{ xl: "1 / 1 / 2 / 3", "2xl": "1 / 1 / 2 / 2" }}
+              gridArea={{ xl: '1 / 1 / 2 / 3', '2xl': '1 / 1 / 2 / 2' }}
             >
               <Center py={6}>
                 <Box
-                  w={{ base: "90%", md: "80%" }}
+                  w={{ base: '90%', md: '80%' }}
                   borderWidth="1px"
                   borderRadius="lg"
                   overflow="hidden"
@@ -143,8 +143,8 @@ export default function User() {
                     <Flex alignItems="center">
                       <Avatar
                         size="xl"
-                        name={branch.name || ""}
-                        src={branch.avatarUrl || ""}
+                        name={branch.name || ''}
+                        src={branch.avatarUrl || ''}
                         m={4}
                       />
                       <Box px={6} py={4}>
@@ -194,18 +194,18 @@ export default function User() {
               <ModalHeader>Assign staff to branch</ModalHeader>
               <ModalCloseButton />
               <ModalBody>
-                <FormLabel color={isError ? "red" : "green"}>
+                <FormLabel color={isError ? 'red' : 'green'}>
                   {message}
-                </FormLabel>{" "}
+                </FormLabel>{' '}
                 <Box>
                   {/* <Card p={{ base: "30px", md: "30px", sm: "10px" }}> */}
                   <form onSubmit={handleSubmit(addStaffToBranch)}>
                     <Flex
                       gap="20px"
                       marginBottom="20px"
-                      flexDirection={{ base: "column", md: "row" }}
+                      flexDirection={{ base: 'column', md: 'row' }}
                     >
-                      <Box width={{ base: "100%", md: "100%", sm: "100%" }}>
+                      <Box width={{ base: '100%', md: '100%', sm: '100%' }}>
                         <FormControl isInvalid={errors.branch}>
                           <FormLabel
                             htmlFor="address"
@@ -219,7 +219,7 @@ export default function User() {
                           </FormLabel>
 
                           <Select
-                            {...register("staffId")}
+                            {...register('staffId')}
                             name="staffId"
                             defaultValue=""
                           >

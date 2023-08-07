@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -7,12 +7,12 @@ import {
   FormLabel,
   Grid,
   Input,
-} from "@chakra-ui/react";
-import Card from "components/card/Card";
-import { useForm } from "react-hook-form";
-import axiosService from "utils/axiosService";
-import { useParams, useHistory } from "react-router-dom";
-import { toast } from "react-toastify";
+} from '@chakra-ui/react';
+import Card from 'components/card/Card';
+import { useForm } from 'react-hook-form';
+import axiosService from 'utils/axiosService';
+import { useParams, useHistory } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 export default function EditBranch() {
   const [branch, setBranch] = useState(null);
@@ -31,11 +31,11 @@ export default function EditBranch() {
       try {
         const response = await axiosService.get(`branch/${id}`);
         setBranch(response.data);
-        setValue("name", response.data.name);
-        setValue("address", response.data.address);
-        setValue("email", response.data.email);
-        setValue("phone", response.data.phone);
-        setValue("manager", response.data.manager);
+        setValue('name', response.data.name);
+        setValue('address', response.data.address);
+        setValue('email', response.data.email);
+        setValue('phone', response.data.phone);
+        setValue('manager', response.data.manager);
       } catch (error) {
         console.error(error);
       }
@@ -45,29 +45,29 @@ export default function EditBranch() {
   const submitHandler = async (userData) => {
     try {
       const response = await axiosService.patch(`branch/${id}`, userData);
-      toast.success("Branch updated successfully!");
+      toast.success('Branch updated successfully!');
       setBranch(response.data);
       // history.push(`/admin/user/${id}`);
       history.push(`/admin/branches`);
     } catch (error) {
       console.error(error);
-      toast.error(error.response?.data?.message || "An error occurred");
+      toast.error(error.response?.data?.message || 'An error occurred');
     }
   };
 
   return (
-    <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
+    <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
       {/* Main Fields */}
       <Grid
         templateColumns={{
-          base: "1fr",
-          lg: "3.96fr",
+          base: '1fr',
+          lg: '3.96fr',
         }}
         templateRows={{
-          base: "repeat(1, 1fr)",
-          lg: "1fr",
+          base: 'repeat(1, 1fr)',
+          lg: '1fr',
         }}
-        gap={{ base: "20px", xl: "20px" }}
+        gap={{ base: '20px', xl: '20px' }}
       >
         <Card>
           <Flex w="50%" mx="auto" mt="26px">
@@ -78,43 +78,43 @@ export default function EditBranch() {
               <FormControl>
                 <FormLabel pt={3}>Branch Name</FormLabel>
                 <Input
-                  {...register("name")}
+                  {...register('name')}
                   placeholder="Branch Name"
-                  defaultValue={branch?.firstName || ""}
+                  defaultValue={branch?.firstName || ''}
                 />
               </FormControl>
               <FormControl>
                 <FormLabel>Email</FormLabel>
                 <Input
-                  {...register("email")}
+                  {...register('email')}
                   placeholder="Email"
-                  defaultValue={branch?.email || ""}
+                  defaultValue={branch?.email || ''}
                 />
               </FormControl>
 
               <FormControl>
                 <FormLabel pt={3}>Address</FormLabel>
                 <Input
-                  {...register("address")}
+                  {...register('address')}
                   placeholder="Address"
-                  defaultValue={branch?.address || ""}
+                  defaultValue={branch?.address || ''}
                 />
               </FormControl>
 
               <FormControl mt={4}>
                 <FormLabel>Phone Number</FormLabel>
                 <Input
-                  {...register("phone")}
+                  {...register('phone')}
                   placeholder="Phone Number"
-                  defaultValue={branch?.phone || ""}
+                  defaultValue={branch?.phone || ''}
                 />
               </FormControl>
               <FormControl mt={4}>
                 <FormLabel>Manager</FormLabel>
                 <Input
-                  {...register("manager")}
+                  {...register('manager')}
                   placeholder="Manager"
-                  defaultValue={branch?.manager || ""}
+                  defaultValue={branch?.manager || ''}
                 />
               </FormControl>
 

@@ -10,17 +10,17 @@ import {
   Spacer,
   Text,
   useColorModeValue,
-} from "@chakra-ui/react";
-import { useForm } from "react-hook-form";
-import Card from "components/card/Card";
-import { toast } from "react-toastify";
-import { useHistory } from "react-router-dom";
-import axiosService from "utils/axiosService";
+} from '@chakra-ui/react';
+import { useForm } from 'react-hook-form';
+import Card from 'components/card/Card';
+import { toast } from 'react-toastify';
+import { useHistory } from 'react-router-dom';
+import axiosService from 'utils/axiosService';
 
 export default function CreateBranch() {
   const history = useHistory();
-  const brandStars = useColorModeValue("brand.500", "brand.400");
-  const textColor = useColorModeValue("navy.700", "white");
+  const brandStars = useColorModeValue('brand.500', 'brand.400');
+  const textColor = useColorModeValue('navy.700', 'white');
   const {
     handleSubmit,
     register,
@@ -30,8 +30,8 @@ export default function CreateBranch() {
   const submitHandler = async (branchData) => {
     try {
       await axiosService.post(`/branch`, branchData);
-      toast.success("Branch has been created successfully!");
-      history.push("/admin/branches");
+      toast.success('Branch has been created successfully!');
+      history.push('/admin/branches');
     } catch (error) {
       if (
         error.response &&
@@ -43,13 +43,13 @@ export default function CreateBranch() {
         toast.error(errorMessage);
       } else {
         // Network error or other error
-        toast.error("Something went wrong. Please try again later.");
+        toast.error('Something went wrong. Please try again later.');
       }
     }
   };
   return (
-    <Box pt={{ base: "180px", md: "80px", xl: "80px" }}>
-      <Card p={{ base: "30px", md: "30px", sm: "10px" }}>
+    <Box pt={{ base: '180px', md: '80px', xl: '80px' }}>
+      <Card p={{ base: '30px', md: '30px', sm: '10px' }}>
         <Text marginBottom="20px" fontSize="3xl" fontWeight="bold">
           Create Branch
         </Text>
@@ -58,9 +58,9 @@ export default function CreateBranch() {
           <Flex
             gap="20px"
             marginBottom="20px"
-            flexDirection={{ base: "column", md: "row" }}
+            flexDirection={{ base: 'column', md: 'row' }}
           >
-            <Box width={{ base: "50%", md: "50%", sm: "100%" }}>
+            <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
               <FormControl isInvalid={errors.name}>
                 <FormLabel
                   htmlFor="name"
@@ -77,14 +77,14 @@ export default function CreateBranch() {
                   isRequired={true}
                   variant="auth"
                   fontSize="sm"
-                  ms={{ base: "0px", md: "0px" }}
+                  ms={{ base: '0px', md: '0px' }}
                   type="text"
                   id="name"
                   mb="24px"
                   fontWeight="500"
                   size="lg"
-                  {...register("name", {
-                    required: "name is required",
+                  {...register('name', {
+                    required: 'name is required',
                   })}
                 />
                 <FormErrorMessage>
@@ -92,7 +92,7 @@ export default function CreateBranch() {
                 </FormErrorMessage>
               </FormControl>
             </Box>
-            <Box width={{ base: "50%", md: "50%", sm: "100%" }}>
+            <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
               <FormControl isInvalid={errors.email}>
                 <FormLabel
                   htmlFor="email"
@@ -109,14 +109,14 @@ export default function CreateBranch() {
                   isRequired={true}
                   variant="auth"
                   fontSize="sm"
-                  ms={{ base: "0px", md: "0px" }}
+                  ms={{ base: '0px', md: '0px' }}
                   type="text"
                   id="email"
                   mb="24px"
                   fontWeight="500"
                   size="lg"
-                  {...register("email", {
-                    required: "email is required",
+                  {...register('email', {
+                    required: 'email is required',
                   })}
                 />
                 <FormErrorMessage>
@@ -128,9 +128,9 @@ export default function CreateBranch() {
           <Flex
             gap="20px"
             marginBottom="20px"
-            flexDirection={{ base: "column", md: "row" }}
+            flexDirection={{ base: 'column', md: 'row' }}
           >
-            <Box width={{ base: "50%", md: "50%", sm: "100%" }}>
+            <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
               <FormControl isInvalid={errors.phone}>
                 <FormLabel
                   htmlFor="phone"
@@ -147,14 +147,14 @@ export default function CreateBranch() {
                   isRequired={true}
                   variant="auth"
                   fontSize="sm"
-                  ms={{ base: "0px", md: "0px" }}
+                  ms={{ base: '0px', md: '0px' }}
                   type="text"
                   id="phone"
                   mb="24px"
                   fontWeight="500"
                   size="lg"
-                  {...register("phone", {
-                    required: "phone is required",
+                  {...register('phone', {
+                    required: 'phone is required',
                   })}
                 />
                 <FormErrorMessage>
@@ -162,7 +162,7 @@ export default function CreateBranch() {
                 </FormErrorMessage>
               </FormControl>
             </Box>
-            <Box width={{ base: "50%", md: "50%", sm: "100%" }}>
+            <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
               <FormControl isInvalid={errors.address}>
                 <FormLabel
                   htmlFor="address"
@@ -179,14 +179,14 @@ export default function CreateBranch() {
                   isRequired={true}
                   variant="auth"
                   fontSize="sm"
-                  ms={{ base: "0px", md: "0px" }}
+                  ms={{ base: '0px', md: '0px' }}
                   type="text"
                   id="address"
                   mb="24px"
                   fontWeight="500"
                   size="lg"
-                  {...register("address", {
-                    required: "address is required",
+                  {...register('address', {
+                    required: 'address is required',
                   })}
                 />
                 <FormErrorMessage>
@@ -198,9 +198,9 @@ export default function CreateBranch() {
           <Flex
             gap="20px"
             marginBottom="20px"
-            flexDirection={{ base: "column", md: "row" }}
+            flexDirection={{ base: 'column', md: 'row' }}
           >
-            <Box width={{ base: "50%", md: "50%", sm: "100%" }}>
+            <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
               <FormControl isInvalid={errors.manager}>
                 <FormLabel
                   htmlFor="manager"
@@ -217,14 +217,14 @@ export default function CreateBranch() {
                   isRequired={true}
                   variant="auth"
                   fontSize="sm"
-                  ms={{ base: "0px", md: "0px" }}
+                  ms={{ base: '0px', md: '0px' }}
                   type="text"
                   id="manager"
                   mb="24px"
                   fontWeight="500"
                   size="lg"
-                  {...register("manager", {
-                    required: "manager is required",
+                  {...register('manager', {
+                    required: 'manager is required',
                   })}
                 />
                 <FormErrorMessage>
