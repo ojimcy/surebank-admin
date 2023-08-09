@@ -21,6 +21,7 @@ import ViewBranch from 'views/admin/branches/ViewBranch';
 import ViewStaff from 'views/admin/branches/ViewBranchStaff';
 import Profile from 'views/admin/profile';
 import Customers from 'views/admin/customers';
+import BranchCustomers from 'views/admin/branches/ViewBranchCustomers';
 import AssignManager from 'views/admin/customers/assign-manager';
 
 // Auth Imports
@@ -131,6 +132,15 @@ const routes = [
       <Icon as={MdOutlinePerson3} width="20px" height="20px" color="inherit" />
     ),
     component: CreateCustomer,
+  },
+  {
+    name: 'Customers',
+    layout: '/admin',
+    path: '/branch/viewbranchcustomers/:branchId',
+    icon: (
+      <Icon as={MdOutlinePerson3} width="20px" height="20px" color="inherit" />
+    ),
+    component: BranchCustomers,
   },
   {
     name: 'Customers',

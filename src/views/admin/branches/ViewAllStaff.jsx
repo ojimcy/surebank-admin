@@ -30,7 +30,7 @@ import {
   ModalFooter,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
-import { useParams, NavLink, useHistory } from 'react-router-dom';
+import { NavLink, useHistory } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 
 // Custom components
@@ -45,13 +45,11 @@ export default function Users() {
   const history = useHistory();
   const [staffs, setStaffs] = useState([]);
   const [users, setUsers] = useState([]);
-  const [branch, setBranch] = useState([]);
   const [staffUser, setStaffUser] = useState('');
   const [allBranch, setAllBranch] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const { id } = useParams();
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showTransferStaffModal, setShowTransferStaffModal] = useState(false);
@@ -221,11 +219,6 @@ export default function Users() {
           <Flex>
             <Text fontSize="2xl">All Staff</Text>
             <Spacer />
-            {/* <NavLink to="/admin/branch/create">
-              <Button bgColor="blue.700" color="white">
-                Create Branch
-              </Button>
-            </NavLink> */}
           </Flex>
           <Box marginTop="30">
             <Flex>

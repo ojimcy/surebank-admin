@@ -20,6 +20,7 @@ const hiddenRoutes = [
   '/admin/user/:id',
   '/admin/user/edit-user/:id',
   '/admin/customer/create',
+  '/admin/branch/viewbranchcustomers/:branchId',
   '/admin/customer/create-account',
   '/admin/customer/:id',
   '/admin/customer/edit-customer/:id',
