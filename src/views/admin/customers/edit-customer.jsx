@@ -45,8 +45,8 @@ export default function EditCustomer() {
         setAccount(response.data);
         setValue('firstName', response.data.firstName);
         setValue('lastName', response.data.lastName);
-        setValue('address', response.data.address);
-        setValue('phoneNumber', response.data.phoneNumber);
+        setValue('accountManagerId', response.data.accountManagerId);
+        setValue('accountType', response.data.accountType);
       } catch (error) {
         console.error(error);
       }
@@ -69,7 +69,9 @@ export default function EditCustomer() {
     };
     fetchStaffInBranch();
   }, [account, account.branchId]);
+
   const submitHandler = async (userData) => {
+    console.log(userData)
     try {
       await axiosService.patch(`accounts/${id}`, userData);
       toast.success('Profile updated successfully!');
@@ -132,7 +134,7 @@ export default function EditCustomer() {
                 <Select
                   {...register('accountManagerId')}
                   name="accountManagerId"
-                  defaultValue={account?.branchManager}
+                  defaultValue={account?.accountManagerId?._id}
                 >
                   <option value="" disabled>
                     Select Account Manager
@@ -174,7 +176,7 @@ export default function EditCustomer() {
                 </Select>
               </FormControl>
 
-              <FormControl isInvalid={errors.accountType}>
+              <FormControl mt={4} isInvalid={errors.accountType}>
                 <FormLabel
                   htmlFor="address"
                   display="flex"
