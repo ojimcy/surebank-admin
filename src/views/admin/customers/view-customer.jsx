@@ -60,7 +60,6 @@ export default function ViewCustomer() {
     savingsProgress = ((userPackage.totalCount / 31) * 100).toFixed(2);
     daysLeft = 31 - userPackage.totalCount;
   }
-  console.log(userPackage);
   // Function to fetch user package data
   const fetchUserPackage = async () => {
     try {
@@ -151,7 +150,7 @@ export default function ViewCustomer() {
           <MenuList>
             <MenuItem>
               <NavLink to="/admin/account/assign-manager">
-                Assign Manager
+                Assign Account Manager
               </NavLink>
             </MenuItem>
             <MenuItem>

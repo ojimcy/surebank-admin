@@ -42,7 +42,7 @@ const AssignManager = () => {
       const data = { managerId: selectedManager };
       console.log(customerData.id);
       await axiosService.post(
-        `/accounts/${customerData.id}/assign-manager`,
+        `/accounts/${customerData._id}/assign-manager`,
         data
       );
       toast.success(
