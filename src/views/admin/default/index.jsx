@@ -193,17 +193,22 @@ export default function UserReports() {
         />
       </SimpleGrid>
 
-      <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
-        <Flex justify="space-between" mb="20px">
+      <Box>
+        <Flex
+          justify="space-between"
+          alignItems="center"
+          mb="20px"
+          flexDirection={{ base: 'column', md: 'row' }}
+        >
           <ActionButton
             to="/admin/daily-savings/deposit"
             icon={FaDollarSign}
-            label="Make Contribution"
+            label="Accounting"
           />
           <ActionButton
             to="/admin/daily-savings/deposit"
             icon={FaDollarSign}
-            label="Make Contribution"
+            label="Report"
           />
           <ActionButton
             to="/admin/daily-savings/deposit"

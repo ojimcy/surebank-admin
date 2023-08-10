@@ -11,7 +11,8 @@ const ActionButton = ({ to, icon, label }) => {
         boxShadow="md"
         _hover={{ boxShadow: 'xl', transform: 'translateY(-2px)' }}
         p="40px"
-        m="10"
+        m="5"
+        minWidth="200px"
         flexDirection="column"
         square
       >
