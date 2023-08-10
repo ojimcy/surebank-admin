@@ -67,6 +67,7 @@ export default function ViewCustomer() {
       const response = await axiosService.get(
         `daily-savings/package?userId=${id}&accountNumber=${customerData.accountNumber}`
       );
+      console.log(customerData);
       setUserPackage(response.data);
       setLoading(false);
       setPackageFound(true);
@@ -92,6 +93,7 @@ export default function ViewCustomer() {
   const fetchAccount = async () => {
     try {
       const response = await axiosService.get(`/accounts/${id}`);
+      console.log(response);
       setCustomerData(response.data);
     } catch (error) {
       console.error(error);
@@ -294,7 +296,7 @@ export default function ViewCustomer() {
 
           {/* action buttons  */}
           <Flex
-            mt="20px"
+            mt={4}
             direction={{ base: 'column', md: 'row' }}
             justifyContent="space-between"
             gap={{ base: '2', md: '0' }}

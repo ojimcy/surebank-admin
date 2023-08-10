@@ -1,12 +1,22 @@
 import { useState, useEffect } from 'react';
-import { Box, Icon, SimpleGrid, useColorModeValue } from '@chakra-ui/react';
+import {
+  Box,
+  Icon,
+  SimpleGrid,
+  useColorModeValue,
+  Flex,
+  // Button,
+} from '@chakra-ui/react';
 import MiniStatistics from 'components/card/MiniStatistics';
 import IconBox from 'components/icons/IconBox';
 import React from 'react';
 import { MdAttachMoney, MdPerson } from 'react-icons/md';
+import { FaDollarSign } from 'react-icons/fa';
 import axiosService from 'utils/axiosService';
 import { toast } from 'react-toastify';
 import { formatNaira } from 'utils/helper';
+
+import ActionButton from 'components/Button/CustomButton';
 
 export default function UserReports() {
   const brandColor = useColorModeValue('brand.500', 'white');
@@ -19,42 +29,42 @@ export default function UserReports() {
   const [openPackages, setOpenPackages] = useState(0);
   const [closedPackages, setClosedPackages] = useState(0);
 
-   useEffect(() => {
-     // Fetch total contributions data from the backend API
-     try {
-       const fetchTotalContributions = async () => {
-         // Get today's date at 00:00 and convert to timestamp
-         const startDate = new Date();
-         startDate.setHours(0, 0, 0, 0);
-         const startTimeStamp = startDate.getTime();
-         // Get today's date at 23:59 and convert to timestamp
-         const endDate = new Date();
-         endDate.setHours(23, 59, 59, 999);
-         const endTimeStamp = endDate.getTime();
+  useEffect(() => {
+    // Fetch total contributions data from the backend API
+    try {
+      const fetchTotalContributions = async () => {
+        // Get today's date at 00:00 and convert to timestamp
+        const startDate = new Date();
+        startDate.setHours(0, 0, 0, 0);
+        const startTimeStamp = startDate.getTime();
+        // Get today's date at 23:59 and convert to timestamp
+        const endDate = new Date();
+        endDate.setHours(23, 59, 59, 999);
+        const endTimeStamp = endDate.getTime();
 
-         // API call with date parameters as timestamps
-         const contributionResponse = await axiosService.get(
-           `/reports/total-contributions?startDate=${startTimeStamp}&endDateParam=${endTimeStamp}`
-         );
+        // API call with date parameters as timestamps
+        const contributionResponse = await axiosService.get(
+          `/reports/total-contributions?startDate=${startTimeStamp}&endDateParam=${endTimeStamp}`
+        );
 
-         setContributionDailyTotal(
-           contributionResponse.data.contributionsPerDay
-         );
-         setTotalContributions(contributionResponse.data.sumTotal);
+        setContributionDailyTotal(
+          contributionResponse.data.contributionsPerDay
+        );
+        setTotalContributions(contributionResponse.data.sumTotal);
 
-         // API call to get total daily withdrawals for today
-         const withdrawalResponse = await axiosService.get(
-           `/reports/total-savings-withdrawal?startDate=${startTimeStamp}&endDateParam=${endTimeStamp}`
-         );
-         setDailySavingsWithdrawals(withdrawalResponse.data);
-       };
+        // API call to get total daily withdrawals for today
+        const withdrawalResponse = await axiosService.get(
+          `/reports/total-savings-withdrawal?startDate=${startTimeStamp}&endDateParam=${endTimeStamp}`
+        );
+        setDailySavingsWithdrawals(withdrawalResponse.data);
+      };
 
-       fetchTotalContributions();
-     } catch (error) {
-       console.error(error);
-       toast.error(error.response?.data?.message || 'An error occurred');
-     }
-   }, []);
+      fetchTotalContributions();
+    } catch (error) {
+      console.error(error);
+      toast.error(error.response?.data?.message || 'An error occurred');
+    }
+  }, []);
 
   useEffect(() => {
     try {
@@ -182,6 +192,26 @@ export default function UserReports() {
           value={closedPackages && closedPackages}
         />
       </SimpleGrid>
+
+      <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
+        <Flex justify="space-between" mb="20px">
+          <ActionButton
+            to="/admin/daily-savings/deposit"
+            icon={FaDollarSign}
+            label="Make Contribution"
+          />
+          <ActionButton
+            to="/admin/daily-savings/deposit"
+            icon={FaDollarSign}
+            label="Make Contribution"
+          />
+          <ActionButton
+            to="/admin/daily-savings/deposit"
+            icon={FaDollarSign}
+            label="Make Contribution"
+          />
+        </Flex>
+      </Box>
     </Box>
   );
 }
