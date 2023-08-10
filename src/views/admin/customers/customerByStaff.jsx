@@ -16,7 +16,6 @@ import {
   MenuList,
   MenuItem,
   IconButton,
-  Select,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -26,7 +25,7 @@ import {
   ModalFooter,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
-import { useHistory, NavLink, Link } from 'react-router-dom';
+import { NavLink, Link, useParams } from 'react-router-dom';
 
 // Custom components
 
@@ -37,27 +36,27 @@ import { DeleteIcon, EditIcon, SearchIcon } from '@chakra-ui/icons';
 import BackButton from 'components/menu/BackButton';
 import { toast } from 'react-toastify';
 import SimpleTable from 'components/table/SimpleTable';
-import { useForm } from 'react-hook-form';
 
 export default function Customers() {
-  const history = useHistory();
+  const { id } = useParams();
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredCustomers, setFilteredCustomers] = useState([]);
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [showBranchModal, setShowBranchModal] = useState(false);
-  const [allBranch, setAllBranch] = useState([]);
   const [customerToDelete, setCustomerToDelete] = useState(null);
 
   const fetchAccounts = async () => {
+    const staffId = id;
+    console.log(staffId);
     setLoading(true);
     try {
-      const branches = await axiosService.get('/branch/');
-      const response = await axiosService.get('/accounts/');
-      setCustomers(response.data.results);
-      setAllBranch(branches.data.results);
+      const response = await axiosService.get(
+        `accounts/${staffId}/staffaccounts`
+      );
+      console.log(response);
+      setCustomers(response.data);
       setLoading(false);
     } catch (error) {
       console.error(error);
@@ -108,21 +107,7 @@ export default function Customers() {
       toast.error(error.response?.data?.message || 'An error occurred');
     }
   };
-  const openbranchcustomermodal = () => {
-    setShowBranchModal(true);
-  };
-  const closebranchcustomermodal = () => {
-    setShowBranchModal(false);
-  };
-  const {
-    handleSubmit,
-    register,
-    formState: { errors, isSubmitting },
-  } = useForm();
-  const viewbranchstaff = (data) => {
-    const branchId = data.branchId;
-    history.push(`/admin/branch/viewbranchcustomers/${branchId}`);
-  };
+
   // Columns for the user table
   const columns = React.useMemo(
     () => [
@@ -195,18 +180,8 @@ export default function Customers() {
             <BackButton />
           </Flex>
           <Flex>
-            <Text fontSize="2xl">Customers</Text>
+            <Text fontSize="2xl">Staff Customers</Text>
             <Spacer />
-            <Button
-              bgColor="blue.700"
-              color="white"
-              px="15px"
-              borderRadius="5px"
-              mr={4}
-              onClick={openbranchcustomermodal}
-            >
-              View Branch Customer
-            </Button>
             <Menu isLazy>
               <MenuButton
                 bgColor="blue.700"
@@ -286,59 +261,6 @@ export default function Customers() {
               Cancel
             </Button>
           </ModalFooter>
-        </ModalContent>
-      </Modal>
-      {/* Select branch modal */}
-      <Modal isOpen={showBranchModal} onClose={closebranchcustomermodal}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>View Branch Customer</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            {/* <FormLabel color={isError ? "red" : "green"}>{message}</FormLabel>{" "} */}
-            <Box>
-              {/* <Card p={{ base: "30px", md: "30px", sm: "10px" }}> */}
-              <form onSubmit={handleSubmit(viewbranchstaff)}>
-                <Flex
-                  gap="20px"
-                  marginBottom="20px"
-                  flexDirection={{ base: 'column', md: 'row' }}
-                >
-                  <Box width={{ base: '100%', md: '100%', sm: '100%' }}>
-                    <FormControl isInvalid={errors.branch}>
-                      <Select
-                        {...register('branchId')}
-                        name="branchId"
-                        defaultValue=""
-                      >
-                        <option value="" disabled>
-                          Select a branch
-                        </option>
-                        {allBranch &&
-                          allBranch.map((branch) => (
-                            <option key={branch.id} value={branch.id}>
-                              {branch.name}
-                            </option>
-                          ))}
-                      </Select>
-                    </FormControl>
-                  </Box>
-                </Flex>
-
-                <Spacer />
-                <Button
-                  bgColor="blue.700"
-                  color="white"
-                  type="submit"
-                  isLoading={isSubmitting}
-                >
-                  View
-                </Button>
-                {/* </Flex> */}
-              </form>
-              {/* </Card> */}
-            </Box>
-          </ModalBody>
         </ModalContent>
       </Modal>
     </Box>
