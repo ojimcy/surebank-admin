@@ -41,12 +41,13 @@ export default function EditCustomer() {
     // Extract the id from the query parameters in the URL
     const fetchAccount = async () => {
       try {
-        const response = await axiosService.get(`accounts/${id}`);
+        const response = await axiosService.get(`accounts/${id}/details`);
         setAccount(response.data);
         setValue('firstName', response.data.firstName);
         setValue('lastName', response.data.lastName);
-        setValue('accountManagerId', response.data.accountManagerId);
+        setValue('accountManagerId', response.data.accountManagerId._id);
         setValue('accountType', response.data.accountType);
+        setValue('branchId', response.data.branchId);
       } catch (error) {
         console.error(error);
       }
@@ -59,7 +60,7 @@ export default function EditCustomer() {
       try {
         if (account && account.branchId) {
           const response = await axiosService.get(
-            `/branch/${account?.branchId}/staff`
+            `/branch/${account?.branchId._id}/staff`
           );
           setStaffList(response.data);
         }
@@ -71,16 +72,16 @@ export default function EditCustomer() {
   }, [account, account.branchId]);
 
   const submitHandler = async (userData) => {
-    console.log(userData)
     try {
-      await axiosService.patch(`accounts/${id}`, userData);
+      await axiosService.patch(`accounts/${id}/details`, userData);
       toast.success('Profile updated successfully!');
-      history.push(`/admin/user/${id}`);
+      history.push(`/admin/customer/${account.userId}`);
     } catch (error) {
       console.error(error);
       toast.error(error.response?.data?.message || 'An error occurred');
     }
   };
+
   return (
     <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
       {/* Main Fields */}
@@ -162,7 +163,7 @@ export default function EditCustomer() {
                 <Select
                   {...register('branchId')}
                   name="branchId"
-                  defaultValue=""
+                  defaultValue={account?.branchId?.name}
                 >
                   <option value="" disabled>
                     Select a branch
@@ -191,9 +192,9 @@ export default function EditCustomer() {
                 <Select
                   {...register('accountType')}
                   name="accountType"
-                  defaultValue="Hq"
+                  defaultValue={account?.accountType}
                 >
-                  <option value="">Select account rype</option>
+                  <option value="">Select account type</option>
                   <option value="ds">DS</option>
                   <option value="sb">SB</option>
                 </Select>

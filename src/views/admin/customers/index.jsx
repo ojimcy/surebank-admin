@@ -134,7 +134,7 @@ export default function Customers() {
         accessor: (row) => (
           <HStack>
             {/* Edit user icon */}
-            <NavLink to={`/admin/customer/edit-customer/${row.userId}`}>
+            <NavLink to={`/admin/customer/edit-customer/${row.id}`}>
               <IconButton
                 icon={<EditIcon />}
                 colorScheme="blue"
@@ -146,7 +146,7 @@ export default function Customers() {
               icon={<DeleteIcon />}
               colorScheme="red"
               aria-label="Delete user"
-              onClick={() => handleDeleteIconClick(row.userId)}
+              onClick={() => handleDeleteIconClick(row.id)}
             />
           </HStack>
         ),
