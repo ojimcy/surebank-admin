@@ -42,7 +42,13 @@ const SimpleTable = ({ columns, data, pageSize = 10 }) => {
 
   return (
     <>
-      <Table {...getTableProps()} variant="simple" color="gray.500" mb="24px">
+      <Table
+        {...getTableProps()}
+        variant="simple"
+        color="gray.500"
+        mb="24px"
+        overflowX={{ base: 'auto', lg: 'hidden' }}
+      >
         {/* Table header */}
         <Thead>
           {headerGroups.map((headerGroup, index) => (

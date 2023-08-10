@@ -33,6 +33,9 @@ const hiddenRoutes = [
   '/admin/daily-saving/package',
   '/admin/daily-savings/withdraw',
   '/admin/customer/:id',
+  '/admin/accounting/dashboard',
+  '/admin/accounting/expenditure',
+  '/admin/accounting/expenditure/:id',
 ];
 
 export function SidebarLinks(props) {

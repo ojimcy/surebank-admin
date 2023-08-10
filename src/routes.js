@@ -43,6 +43,9 @@ import MakeContribution from 'views/admin/daily-savings/deposit';
 import CreatePackage from 'views/admin/daily-savings/package';
 import Withdrawal from 'views/admin/daily-savings/withdrawal';
 import CreateAccount from 'views/admin/customers/create-account';
+import Accounting from 'views/admin/accounting';
+import Expenditures from 'views/admin/accounting/expenditure';
+import ExpenditureDetail from 'views/admin/accounting/expenditure-detail';
 
 const routes = [
   {
@@ -289,6 +292,29 @@ const routes = [
     path: '/daily-saving/package',
     icon: <Icon as={FaBox} width="20px" height="20px" color="inherit" />,
     component: CreatePackage,
+  },
+
+  // Accounting route
+  {
+    name: 'Accounting',
+    layout: '/admin',
+    path: '/accounting/dashboard',
+    icon: <Icon as={FaMoneyBill} width="20px" height="20px" color="inherit" />,
+    component: Accounting,
+  },
+  {
+    name: 'Expenditure',
+    layout: '/admin',
+    path: '/accounting/expenditure/:id',
+    icon: <Icon as={FaMoneyBill} width="20px" height="20px" color="inherit" />,
+    component: ExpenditureDetail,
+  },
+  {
+    name: 'Expenditure',
+    layout: '/admin',
+    path: '/accounting/expenditure',
+    icon: <Icon as={FaMoneyBill} width="20px" height="20px" color="inherit" />,
+    component: Expenditures,
   },
 ];
 

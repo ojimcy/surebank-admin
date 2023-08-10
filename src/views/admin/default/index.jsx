@@ -26,7 +26,6 @@ export default function UserReports() {
   const [totalContributions, setTotalContributions] = useState(0);
   const [dailySavingsWithdrawals, setDailySavingsWithdrawals] = useState([]);
   const [packageCount, setPackageCount] = useState(0);
-  const [openPackages, setOpenPackages] = useState(0);
   const [closedPackages, setClosedPackages] = useState(0);
 
   useEffect(() => {
@@ -87,7 +86,6 @@ export default function UserReports() {
       const fetchPackageReport = async () => {
         const response = await axiosService.get('/reports/packages');
         setPackageCount(response.data.totalPackages);
-        setOpenPackages(response.data.totalOpenPackages);
         setClosedPackages(response.data.totalClosedPackages);
       };
 
@@ -175,22 +173,11 @@ export default function UserReports() {
               icon={<Icon w="32px" h="32px" as={MdPerson} color={brandColor} />}
             />
           }
-          name="Active Packages"
-          value={openPackages && openPackages}
-        />
-
-        <MiniStatistics
-          startContent={
-            <IconBox
-              w="56px"
-              h="56px"
-              bg={boxBg}
-              icon={<Icon w="32px" h="32px" as={MdPerson} color={brandColor} />}
-            />
-          }
-          name="Active Packages"
+          name="Closed Packages"
           value={closedPackages && closedPackages}
         />
+
+       
       </SimpleGrid>
 
       <Box>
@@ -201,7 +188,7 @@ export default function UserReports() {
           flexDirection={{ base: 'column', md: 'row' }}
         >
           <ActionButton
-            to="/admin/daily-savings/deposit"
+            to="/admin/accounting/dashboard"
             icon={FaDollarSign}
             label="Accounting"
           />
