@@ -296,7 +296,7 @@ export default function ViewCustomer() {
 
           {/* action buttons  */}
           <Flex
-            mt="20px"
+            mt={4}
             direction={{ base: 'column', md: 'row' }}
             justifyContent="space-between"
             gap={{ base: '2', md: '0' }}
