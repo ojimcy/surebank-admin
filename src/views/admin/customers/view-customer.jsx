@@ -19,7 +19,6 @@ import {
   Spinner,
   Stack,
   Stat,
-  StatHelpText,
   StatLabel,
   StatNumber,
   Text,
@@ -218,7 +217,7 @@ export default function ViewCustomer() {
                     </Button>
                   </Text>
                   <Text fontSize={{ base: 'md', md: 'lg' }}>
-                    Account Status: {customerData.status}
+                    Branch: {customerData.branchId?.name}
                   </Text>
                   <Text fontSize={{ base: 'md', md: 'lg' }}>
                     Account Manager: {customerData.accountManagerId?.firstName}{' '}
@@ -229,7 +228,7 @@ export default function ViewCustomer() {
             </Flex>
             <Flex>
               {/* Savings Progress Section */}
-              <Stat p="4" borderRadius="lg" bg="gray.50" boxShadow="sm">
+              <Stat p="4" borderRadius="lg" boxShadow="sm">
                 {packageFound ? (
                   <>
                     <StatLabel fontSize={{ base: 'lg', md: 'xl' }}>
@@ -244,9 +243,6 @@ export default function ViewCustomer() {
                       mt="2"
                       colorScheme="blue"
                     />
-                    <StatHelpText fontSize={{ base: 'sm', md: 'md' }}>
-                      You are {daysLeft} days away from reaching your goal!
-                    </StatHelpText>
                   </>
                 ) : (
                   <Text

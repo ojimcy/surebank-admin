@@ -15,6 +15,7 @@ import { SearchBar } from 'components/navbar/searchBar/SearchBar';
 import { SidebarResponsive } from 'components/sidebar/Sidebar';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { NavLink } from 'react-router-dom';
 // Assets
 import { MdNotificationsNone, MdInfoOutline } from 'react-icons/md';
 import routes from 'routes.js';
@@ -131,20 +132,18 @@ export default function HeaderLinks(props) {
               _focus={{ bg: 'none' }}
               borderRadius="8px"
               px="14px"
-              as="a"
-              href="/admin/profile"
             >
-              <Text fontSize="sm">My Profile</Text>
+              <NavLink to="/admin/profile">Update Profile</NavLink>
             </MenuItem>
             <MenuItem
               _hover={{ bg: 'none' }}
               _focus={{ bg: 'none' }}
               borderRadius="8px"
               px="14px"
-              as="a"
-              href="/admin/profile"
             >
-              <Text fontSize="sm">Update Profile</Text>
+              <NavLink fontSize="sm" to="/admin/profile">
+                Settings
+              </NavLink>
             </MenuItem>
             {currentUser.role === 'admin' ||
               ('superAdmin' && (

@@ -6,13 +6,15 @@ import {
   MdPerson,
   MdHome,
   MdLock,
-  MdOutlineShoppingCart,
   MdOutlinePerson3,
 } from 'react-icons/md';
+import { FaSitemap, FaUsers } from 'react-icons/fa';
+import { AiOutlineUsergroupAdd } from 'react-icons/ai';
+
 
 // Admin Imports
 import MainDashboard from 'views/admin/default';
-import Sales from 'views/admin/sales';
+// import Sales from 'views/admin/sales';
 import Branches from 'views/admin/branches';
 import CreateBranch from 'views/admin/branches/CreateBranch';
 import ViewAllStaff from 'views/admin/branches/ViewAllStaff';
@@ -56,24 +58,9 @@ const routes = [
     component: MainDashboard,
   },
   {
-    name: 'sales',
-    layout: '/admin',
-    path: '/sales',
-    icon: (
-      <Icon
-        as={MdOutlineShoppingCart}
-        width="20px"
-        height="20px"
-        color="inherit"
-      />
-    ),
-    component: Sales,
-    secondary: true,
-  },
-  {
     name: 'Branches',
     layout: '/admin',
-    icon: <Icon as={MdBarChart} width="20px" height="20px" color="inherit" />,
+    icon: <Icon as={FaSitemap} width="20px" height="20px" color="inherit" />,
     path: '/branches',
     component: Branches,
   },
@@ -125,7 +112,14 @@ const routes = [
     name: 'Customers',
     layout: '/admin',
     path: '/customers',
-    icon: <Icon as={MdPerson} width="20px" height="20px" color="inherit" />,
+    icon: (
+      <Icon
+        as={AiOutlineUsergroupAdd}
+        width="20px"
+        height="20px"
+        color="inherit"
+      />
+    ),
     component: Customers,
   },
   {
@@ -206,7 +200,7 @@ const routes = [
     name: 'Account',
     layout: '/admin',
     path: '/transaction/deposit',
-    icon: <Icon as={FaMoneyBill} width="20px" height="20px" color="inherit" />,
+    icon: <Icon as={FaUsers} width="20px" height="20px" color="inherit" />,
     component: Deposit,
   },
 
