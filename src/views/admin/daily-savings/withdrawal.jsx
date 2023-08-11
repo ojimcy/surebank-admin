@@ -46,6 +46,10 @@ export default function Withdrawal() {
         setAccountNumber(customerData.accountNumber);
       } catch (error) {
         console.error(error);
+        toast.error(
+          error.response?.data?.message ||
+            'An error occurred while fetching user package.'
+        );
       }
     };
 
@@ -82,18 +86,11 @@ export default function Withdrawal() {
         toast.success('Withdraw successful!');
         history.push(`/admin/customer/${customerData.userId}`);
       } catch (error) {
-        if (
-          error.response &&
-          error.response.data &&
-          error.response.data.message
-        ) {
-          // Backend error with a specific error message
-          const errorMessage = error.response.data.message;
-          toast.error(errorMessage);
-        } else {
-          // Network error or other error
-          toast.error('Something went wrong. Please try again later.');
-        }
+        console.error(error);
+        toast.error(
+          error.response?.data?.message ||
+            'An error occurred while fetching user package.'
+        );
       }
     },
     [history, customerData.userId]

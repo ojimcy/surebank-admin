@@ -47,6 +47,10 @@ export default function MakeContribution() {
         setAccountNumber(customerData.accountNumber);
       } catch (error) {
         console.error(error);
+        toast.error(
+          error.response?.data?.message ||
+            'An error occurred while fetching user package.'
+        );
       }
     };
 
@@ -88,7 +92,10 @@ export default function MakeContribution() {
         history.push(`/admin/customer/${customerData.userId}`);
       } catch (error) {
         console.error(error);
-        toast.error('Something went wrong. Please try again later.');
+        toast.error(
+          error.response?.data?.message ||
+            'An error occurred while making contribution.'
+        );
       }
     },
     [packageId, history, customerData.userId]

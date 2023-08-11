@@ -28,6 +28,7 @@ import { AiOutlineBank } from 'react-icons/ai';
 import { FaBox, FaCopy, FaDollarSign } from 'react-icons/fa';
 import { NavLink, useParams } from 'react-router-dom';
 import { formatDate } from 'utils/helper';
+import { toast } from 'react-toastify';
 // Assets
 
 // Custom components
@@ -72,6 +73,10 @@ export default function ViewCustomer() {
       setPackageFound(true);
     } catch (error) {
       console.error(error);
+        toast.error(
+          error.response?.data?.message ||
+            'An error occurred while fetching user package.'
+        );
       setLoading(false);
     }
   };
@@ -265,7 +270,14 @@ export default function ViewCustomer() {
             mt="40px"
           >
             <GridItem>
-              <Stat p="4" borderRadius="lg" bg="green.100">
+              <Stat
+                p="4"
+                borderRadius="lg"
+                bg="green.100"
+                minHeight="150px"
+                alignItems="center"
+                display="flex"
+              >
                 <StatLabel>Total contribution</StatLabel>
                 <StatNumber fontWeight="bold">
                   {packageFound
@@ -275,7 +287,14 @@ export default function ViewCustomer() {
               </Stat>
             </GridItem>
             <GridItem>
-              <Stat p="4" borderRadius="lg" bg="orange.100">
+              <Stat
+                p="4"
+                borderRadius="lg"
+                bg="orange.100"
+                minHeight="150px"
+                alignItems="center"
+                display="flex"
+              >
                 <StatLabel>Amount per Day</StatLabel>
                 <StatNumber fontWeight="bold">
                   {packageFound ? formatNaira(userPackage.amountPerDay) : 0}
@@ -283,7 +302,14 @@ export default function ViewCustomer() {
               </Stat>
             </GridItem>
             <GridItem>
-              <Stat p="4" borderRadius="lg" bg="gray.100">
+              <Stat
+                p="4"
+                borderRadius="lg"
+                bg="gray.100"
+                minHeight="150px"
+                alignItems="center"
+                display="flex"
+              >
                 <StatLabel>Days Left</StatLabel>
                 <StatNumber fontWeight="bold">{daysLeft}</StatNumber>
               </Stat>
