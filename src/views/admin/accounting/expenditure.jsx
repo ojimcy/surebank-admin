@@ -5,7 +5,6 @@ import {
   Button,
   Spinner,
   Flex,
-  Text,
   Spacer,
   Stack,
   FormControl,
@@ -16,8 +15,11 @@ import {
   ModalHeader,
   ModalCloseButton,
   ModalBody,
-  ModalFooter,
   Select,
+  FormLabel,
+  Text,
+  useColorModeValue,
+  FormErrorMessage,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 
@@ -30,6 +32,8 @@ import { SearchIcon } from '@chakra-ui/icons';
 import BackButton from 'components/menu/BackButton';
 import SimpleTable from 'components/table/SimpleTable';
 import { NavLink } from 'react-router-dom/';
+import { useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
 
 export default function Expenditures() {
   const [expenditures, setExpenditures] = useState([]);
@@ -38,7 +42,15 @@ export default function Expenditures() {
   const [filteredExpenditure, setFilteredExpenditure] = useState([]);
   const [timeRange, setTimeRange] = useState('all');
 
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showExpenditureModal, setShowExpenditureModal] = useState(false);
+
+  const {
+    handleSubmit,
+    register,
+    formState: { errors, isSubmitting },
+  } = useForm();
+  const brandStars = useColorModeValue('brand.500', 'brand.400');
+  const textColor = useColorModeValue('navy.700', 'white');
 
   useEffect(() => {
     const fetchExpenditures = async () => {
@@ -95,12 +107,30 @@ export default function Expenditures() {
     setFilteredExpenditure(filtered);
   }, [searchTerm, expenditures]);
 
-  const handleDeleteCancel = () => {
-    setShowDeleteModal(false);
+  const handleOpenExpenditureModal = () => {
+    setShowExpenditureModal(true);
+  };
+
+  const handleExpenditureModalClosed = () => {
+    setShowExpenditureModal(false);
   };
 
   const handleTimeRangeChange = (e) => {
     setTimeRange(e.target.value);
+  };
+
+  const handleCreateExpenditure = async (expenditureData) => {
+    try {
+      await axiosService.post('/accounting/expenditure', expenditureData);
+      toast.success('Expenditure succesfully created');
+      handleExpenditureModalClosed();
+    } catch (error) {
+      console.error(error);
+      toast.error(
+        error.response?.data?.message ||
+          'An error occurred while creating expenditure.'
+      );
+    }
   };
 
   // Columns for the user table
@@ -149,8 +179,17 @@ export default function Expenditures() {
             <BackButton />
           </Flex>
           <Flex>
-            <Text fontSize="2xl">Expenditures</Text>
             <Spacer />
+
+            <Button
+              bgColor="blue.700"
+              color="white"
+              borderRadius="5px"
+              mr={4}
+              onClick={handleOpenExpenditureModal}
+            >
+              Record Expenditure
+            </Button>
           </Flex>
           <Box marginTop="30">
             <Flex>
@@ -188,21 +227,90 @@ export default function Expenditures() {
         </Card>
       </Grid>
 
-      {/* Delete confirmation modal */}
-      <Modal isOpen={showDeleteModal} onClose={handleDeleteCancel}>
+      {/* Expenditure modal */}
+      <Modal
+        isOpen={showExpenditureModal}
+        onClose={handleExpenditureModalClosed}
+      >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Delete Customer</ModalHeader>
+          <ModalHeader>Expenditure</ModalHeader>
           <ModalCloseButton />
-          <ModalBody>Are you sure you want to delete this customer?</ModalBody>
-          <ModalFooter>
-            <Button colorScheme="red" mr={3}>
-              Delete
-            </Button>
-            <Button variant="ghost" onClick={handleDeleteCancel}>
-              Cancel
-            </Button>
-          </ModalFooter>
+          <ModalBody>Enter expenditure</ModalBody>
+          <ModalBody>
+            <form onSubmit={handleSubmit(handleCreateExpenditure)}>
+              <FormControl isInvalid={errors.accountNumber}>
+                <FormLabel
+                  htmlFor="amount"
+                  display="flex"
+                  ms="4px"
+                  fontSize="sm"
+                  fontWeight="500"
+                  mb="8px"
+                >
+                  Amount<Text color={brandStars}>*</Text>
+                </FormLabel>
+                <Input
+                  isRequired={true}
+                  variant="auth"
+                  fontSize="sm"
+                  ms={{ base: '0px', md: '0px' }}
+                  type="text"
+                  id="amount"
+                  mb="24px"
+                  fontWeight="500"
+                  size="lg"
+                  {...register('amount', {
+                    required: 'Amount is required',
+                  })}
+                />
+              </FormControl>
+              <FormControl isInvalid={errors.reason}>
+                <FormLabel
+                  htmlFor="reason"
+                  display="flex"
+                  ms="4px"
+                  fontSize="sm"
+                  fontWeight="500"
+                  color={textColor}
+                  mb="8px"
+                >
+                  Reason<Text color={brandStars}>*</Text>
+                </FormLabel>
+                <Input
+                  isRequired={true}
+                  variant="auth"
+                  fontSize="sm"
+                  ms={{ base: '0px', md: '0px' }}
+                  type="text"
+                  id="reason"
+                  mb="24px"
+                  fontWeight="500"
+                  size="lg"
+                  {...register('reason', {
+                    required: 'Reason is required',
+                  })}
+                />
+                <FormErrorMessage>
+                  {errors.reason && errors.reason.message}
+                </FormErrorMessage>
+              </FormControl>
+
+              <Box width={{ base: '50%', md: '50%', sm: '50%' }} mt="15px">
+                <Button
+                  colorScheme="green"
+                  variant="solid"
+                  w="100%"
+                  h="50"
+                  mb="24px"
+                  type="submit"
+                  isLoading={isSubmitting}
+                >
+                  Save
+                </Button>
+              </Box>
+            </form>
+          </ModalBody>
         </ModalContent>
       </Modal>
     </Box>

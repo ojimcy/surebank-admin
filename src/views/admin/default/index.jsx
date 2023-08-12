@@ -11,7 +11,7 @@ import MiniStatistics from 'components/card/MiniStatistics';
 import IconBox from 'components/icons/IconBox';
 import React from 'react';
 import { MdAttachMoney, MdPerson } from 'react-icons/md';
-import { FaDollarSign } from 'react-icons/fa';
+import { FaDollarSign, FaMoneyBillWave, FaChartBar } from 'react-icons/fa';
 import axiosService from 'utils/axiosService';
 import { toast } from 'react-toastify';
 import { formatNaira } from 'utils/helper';
@@ -25,7 +25,7 @@ export default function UserReports() {
   const [contributionsDailyTotal, setContributionDailyTotal] = useState([]);
   const [totalContributions, setTotalContributions] = useState(0);
   const [dailySavingsWithdrawals, setDailySavingsWithdrawals] = useState([]);
-  const [packageCount, setPackageCount] = useState(0);
+  const [openPackageCount, setOpenPackageCount] = useState(0);
   const [closedPackages, setClosedPackages] = useState(0);
 
   useEffect(() => {
@@ -85,7 +85,7 @@ export default function UserReports() {
     try {
       const fetchPackageReport = async () => {
         const response = await axiosService.get('/reports/packages');
-        setPackageCount(response.data.totalPackages);
+        setOpenPackageCount(response.data.totalOpenPackages);
         setClosedPackages(response.data.totalClosedPackages);
       };
 
@@ -147,7 +147,7 @@ export default function UserReports() {
               }
             />
           }
-          name="Total Daily DS Withdrawals"
+          name="Total Daily Withdrawals"
           value={formatNaira(dailySavingsWithdrawals[0]?.total || 0)}
         />
 
@@ -161,7 +161,7 @@ export default function UserReports() {
             />
           }
           name="Active Packages"
-          value={packageCount && packageCount}
+          value={openPackageCount && openPackageCount}
         />
 
         <MiniStatistics
@@ -176,8 +176,6 @@ export default function UserReports() {
           name="Closed Packages"
           value={closedPackages && closedPackages}
         />
-
-       
       </SimpleGrid>
 
       <Box>
@@ -193,14 +191,14 @@ export default function UserReports() {
             label="Accounting"
           />
           <ActionButton
-            to="/admin/daily-savings/deposit"
-            icon={FaDollarSign}
+            to="/admin/accounting/dashboard"
+            icon={FaChartBar}
             label="Report"
           />
           <ActionButton
-            to="/admin/daily-savings/deposit"
-            icon={FaDollarSign}
-            label="Make Contribution"
+            to="/admin/accounting/expenditure"
+            icon={FaMoneyBillWave}
+            label="Expenditure"
           />
         </Flex>
       </Box>

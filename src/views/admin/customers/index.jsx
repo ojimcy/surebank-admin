@@ -194,13 +194,10 @@ export default function Customers() {
           <Flex justifyContent="space-between" mb="20px">
             <BackButton />
           </Flex>
-          <Flex>
-            <Text fontSize="2xl">Customers</Text>
-            <Spacer />
+          <Flex justifyContent="flex-end">
             <Button
               bgColor="blue.700"
               color="white"
-              px="15px"
               borderRadius="5px"
               mr={4}
               onClick={openbranchcustomermodal}

@@ -9,7 +9,7 @@ import BackButton from 'components/menu/BackButton';
 
 const ExpenditureDetail = () => {
   const { id } = useParams();
-  const [expenditure, setExpenditure] = useState({});
+  const [expenditure, setExpenditure] = useState(null);
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     try {
@@ -18,7 +18,6 @@ const ExpenditureDetail = () => {
         const response = await axiosService.get(
           `/accounting/expenditure/${id}`
         );
-        console.log(response);
         setExpenditure(response.data);
       };
       fetchExpenditure();
@@ -32,6 +31,8 @@ const ExpenditureDetail = () => {
       setLoading(false);
     }
   }, [id]);
+
+  console.log(expenditure);
 
   return (
     <Box>
