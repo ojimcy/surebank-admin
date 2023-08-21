@@ -23,6 +23,8 @@ import {
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 
+import { useAuth } from 'contexts/AuthContext';
+
 // Custom components
 
 // Assets
@@ -36,6 +38,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 
 export default function Expenditures() {
+  const { currentUser } = useAuth();
   const [expenditures, setExpenditures] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -59,20 +62,24 @@ export default function Expenditures() {
         // Construct the API endpoint based on filters
         let endpoint = `/accounting/expenditure`;
 
-        if (timeRange === 'last7days') {
-          const endDate = new Date();
-          endDate.setHours(23, 59, 59, 999);
-          const startDate = new Date();
-          startDate.setDate(endDate.getDate() - 7);
-          startDate.setHours(0, 0, 0, 0);
-          endpoint += `?startDate=${startDate.getTime()}&endDate=${endDate.getTime()}`;
-        } else if (timeRange === 'last30days') {
-          const endDate = new Date();
-          endDate.setHours(23, 59, 59, 999);
-          const startDate = new Date();
-          startDate.setDate(endDate.getDate() - 30);
-          startDate.setHours(0, 0, 0, 0);
-          endpoint += `?startDate=${startDate.getTime()}&endDate=${endDate.getTime()}`;
+        if (currentUser.role === 'superAdmin') {
+          if (timeRange === 'last7days') {
+            const endDate = new Date();
+            endDate.setHours(23, 59, 59, 999);
+            const startDate = new Date();
+            startDate.setDate(endDate.getDate() - 7);
+            startDate.setHours(0, 0, 0, 0);
+            endpoint += `?startDate=${startDate.getTime()}&endDate=${endDate.getTime()}`;
+          } else if (timeRange === 'last30days') {
+            const endDate = new Date();
+            endDate.setHours(23, 59, 59, 999);
+            const startDate = new Date();
+            startDate.setDate(endDate.getDate() - 30);
+            startDate.setHours(0, 0, 0, 0);
+            endpoint += `?startDate=${startDate.getTime()}&endDate=${endDate.getTime()}`;
+          }
+        } else if (currentUser.role === 'admin') {
+          endpoint = '/accounting/expenditure/user-reps';
         }
 
         const response = await axiosService.get(endpoint);

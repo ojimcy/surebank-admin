@@ -18,7 +18,7 @@ import { formatNaira } from 'utils/helper';
 
 import ActionButton from 'components/Button/CustomButton';
 
-export default function AdminDashboard() {
+export default function SuperAdminDashboard() {
   const brandColor = useColorModeValue('brand.500', 'white');
   const boxBg = useColorModeValue('secondaryGray.300', 'whiteAlpha.100');
 
