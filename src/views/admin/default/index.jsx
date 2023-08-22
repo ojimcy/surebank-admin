@@ -7,7 +7,6 @@ import UserRepsDashboard from './components/UserRepsDashboard';
 
 export default function UserReports() {
   const { currentUser } = useAuth();
-  currentUser && console.log(currentUser);
   return (
     <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
       {currentUser ? (

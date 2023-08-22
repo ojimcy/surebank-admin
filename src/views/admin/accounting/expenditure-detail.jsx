@@ -32,8 +32,6 @@ const ExpenditureDetail = () => {
     }
   }, [id]);
 
-  console.log(expenditure);
-
   return (
     <Box>
       {loading ? (

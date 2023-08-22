@@ -26,7 +26,6 @@ export default function UpdateProfile() {
       });
 
       toast.success('Profile updated successfully!');
-      console.log(response);
       setCurrentUser(response.data);
     } catch (error) {
       console.error(error);

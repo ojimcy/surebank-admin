@@ -67,7 +67,6 @@ export default function Users() {
       setAllBranch(branches.data.results);
       // setBranch(currentBranch.data);
       setStaffs(response.data);
-      // console.log(response);
       setTotalPages(response.data.totalPages);
       setLoading(false);
     } catch (error) {
@@ -154,7 +153,6 @@ export default function Users() {
   const transferStaffToBranch = async (data) => {
     try {
       // const branchId = data.branchId;
-      // console.log(data);
 
       await axiosService.patch(`/branch/staff`, data);
       toast.success('Staff transfered successfully!');
@@ -178,7 +176,6 @@ export default function Users() {
 
   const addStaffToBranch = async (data) => {
     try {
-      console.log(data);
       const id = data.branchId;
       await axiosService.post(`branch/staff`, data);
       toast.success('Staff has been created successfully!');

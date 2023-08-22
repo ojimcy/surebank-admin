@@ -65,7 +65,6 @@ export default function Users() {
       setAllBranch(branches.data.results);
       setBranch(currentBranch.data);
       setStaffs(response.data);
-      // console.log(response);
       setTotalPages(response.data.totalPages);
       setLoading(false);
     } catch (error) {
@@ -152,7 +151,6 @@ export default function Users() {
   const transferStaffToBranch = async (data) => {
     try {
       const branchId = data.branchId;
-      console.log(data);
 
       await axiosService.patch(`/branch/${branchId}/staff`, data);
       toast.success('Staff transfered successfully!');

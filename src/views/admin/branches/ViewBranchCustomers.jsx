@@ -48,13 +48,11 @@ export default function Customers() {
   const [customerToDelete, setCustomerToDelete] = useState(null);
 
   const fetchAccounts = async () => {
-    console.log(branchId);
     setLoading(true);
     try {
       const response = await axiosService.get(
         `accounts/${branchId}/branchaccounts`
       );
-      console.log(response);
       setCustomers(response.data);
       setLoading(false);
     } catch (error) {

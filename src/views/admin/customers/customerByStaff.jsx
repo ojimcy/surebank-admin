@@ -49,13 +49,11 @@ export default function Customers() {
 
   const fetchAccounts = async () => {
     const staffId = id;
-    console.log(staffId);
     setLoading(true);
     try {
       const response = await axiosService.get(
         `accounts/${staffId}/staffaccounts`
       );
-      console.log(response);
       setCustomers(response.data);
       setLoading(false);
     } catch (error) {

@@ -34,7 +34,6 @@ export default function CreatePackage() {
 
   // Handle form submission
   const onSubmit = async (packageData) => {
-    console.log(packageData);
     try {
       await axiosService.post(`/daily-savings/package`, packageData);
       toast.success('Package created successfully!');
