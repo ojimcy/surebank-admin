@@ -8,6 +8,7 @@ import {
   ModalBody,
   ModalCloseButton,
   Button,
+  Text,
 } from '@chakra-ui/react';
 
 const ConfirmDepositModal = ({ isOpen, onClose, onConfirm, user }) => {
@@ -18,13 +19,13 @@ const ConfirmDepositModal = ({ isOpen, onClose, onConfirm, user }) => {
         <ModalHeader>Confirm Deposit</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <p>
+          <Text>
             You are about to make a deposit for{' '}
             <strong>
               {user.firstName} {user.lastName}
             </strong>
             .
-          </p>
+          </Text>
         </ModalBody>
         <ModalFooter>
           <Button variant="ghost" onClick={onClose}>

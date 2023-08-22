@@ -14,7 +14,6 @@ const ActionButton = ({ to, icon, label }) => {
         m="5"
         minWidth="200px"
         flexDirection="column"
-        square
       >
         <Box
           display="inline-block"

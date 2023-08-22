@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box } from '@chakra-ui/react';
+import { Box, Text } from '@chakra-ui/react';
 import { useAuth } from 'contexts/AuthContext';
 import SuperAdminDashboard from './components/SuperAdminDashboard';
 import AdminDashboard from './components/AdminDashboard';
@@ -19,7 +19,7 @@ export default function UserReports() {
           <AdminDashboard />
         )
       ) : (
-        <p>Unauthorized!!!</p>
+        <Text>Unauthorized!!!</Text>
       )}
     </Box>
   );

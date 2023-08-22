@@ -5,7 +5,6 @@ import {
   Text,
   useColorModeValue,
   Spacer,
-  HStack,
   IconButton,
   Box,
   Stack,
@@ -106,7 +105,6 @@ export default function UserRepsDashboard() {
         const response = await axiosService.get(
           `accounts/${staffId}/staffaccounts`
         );
-        console.log(response);
         setCustomers(response.data);
       } catch (error) {
         console.error(error);
@@ -128,7 +126,6 @@ export default function UserRepsDashboard() {
     setFilteredCustomers(filtered);
   }, [searchTerm, customers]);
 
-  // Columns for the user table
   const columns = React.useMemo(
     () => [
       {
@@ -154,8 +151,7 @@ export default function UserRepsDashboard() {
       {
         Header: 'Action',
         accessor: (row) => (
-          <HStack>
-            {/* Deposit icon */}
+          <Box>
             <NavLink to={`/admin/daily-savings/deposit`}>
               <IconButton
                 colorScheme="green"
@@ -163,7 +159,6 @@ export default function UserRepsDashboard() {
                 icon={<FaArrowUp />}
               />
             </NavLink>
-            {/* Widthdrawal icon */}
             <NavLink to={`/admin/daily-savings/withdraw`}>
               <IconButton
                 colorScheme="red"
@@ -171,7 +166,7 @@ export default function UserRepsDashboard() {
                 icon={<FaArrowDown />}
               />
             </NavLink>
-          </HStack>
+          </Box>
         ),
       },
     ],

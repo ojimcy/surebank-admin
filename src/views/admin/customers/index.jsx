@@ -38,8 +38,10 @@ import BackButton from 'components/menu/BackButton';
 import { toast } from 'react-toastify';
 import SimpleTable from 'components/table/SimpleTable';
 import { useForm } from 'react-hook-form';
+import { useAuth } from 'contexts/AuthContext';
 
 export default function Customers() {
+  const { currentUser } = useAuth();
   const history = useHistory();
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -54,9 +56,17 @@ export default function Customers() {
   const fetchAccounts = async () => {
     setLoading(true);
     try {
+      let response;
+      if (currentUser.role === 'admin') {
+        response = await axiosService.get(
+          `/accounts/${currentUser.id}/staffaccounts`
+        );
+        setCustomers(response.data);
+      } else {
+        response = await axiosService.get('/accounts/');
+        setCustomers(response.data.results);
+      }
       const branches = await axiosService.get('/branch/');
-      const response = await axiosService.get('/accounts/');
-      setCustomers(response.data.results);
       setAllBranch(branches.data.results);
       setLoading(false);
     } catch (error) {
@@ -70,6 +80,10 @@ export default function Customers() {
 
   // Filter customers based on search term
   useEffect(() => {
+    if (!customers) {
+      return;
+    }
+
     const filtered = customers?.filter((customer) => {
       const fullName =
         `${customer.firstName} ${customer.lastName}`.toLowerCase();

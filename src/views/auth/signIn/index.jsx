@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 // Chakra imports
 import {
@@ -52,9 +52,12 @@ function SignIn() {
   const [show, setShow] = React.useState(false);
   const handleClick = () => setShow(!show);
 
-  if (currentUser) {
-    history.push('/admin');
-  }
+  useEffect(() => {
+    if (currentUser) {
+      history.push('/admin');
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentUser]);
 
   const {
     handleSubmit,
