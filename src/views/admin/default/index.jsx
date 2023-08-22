@@ -4,6 +4,7 @@ import { useAuth } from 'contexts/AuthContext';
 import SuperAdminDashboard from './components/SuperAdminDashboard';
 import AdminDashboard from './components/AdminDashboard';
 import UserRepsDashboard from './components/UserRepsDashboard';
+import UserDashboard from './components/UserDashboard';
 
 export default function UserReports() {
   const { currentUser } = useAuth();
@@ -12,10 +13,12 @@ export default function UserReports() {
       {currentUser ? (
         currentUser.role === 'superAdmin' ? (
           <SuperAdminDashboard />
-        ) : currentUser.role === 'admin' ? (
+        ) : currentUser.role === 'userReps' ? (
           <UserRepsDashboard />
-        ) : (
+        ) : currentUser.role === 'admin' ? (
           <AdminDashboard />
+        ) : (
+          <UserDashboard />
         )
       ) : (
         <Text>Unauthorized!!!</Text>
