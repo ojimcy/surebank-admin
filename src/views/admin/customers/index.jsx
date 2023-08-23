@@ -153,10 +153,6 @@ export default function Customers() {
         accessor: 'status',
       },
       {
-        Header: 'Branch',
-        accessor: (row) => row.branchId.name,
-      },
-      {
         Header: 'Account Type',
         accessor: 'accountType',
       },

@@ -56,10 +56,10 @@ export function AuthProvider({ children }) {
     }
   };
 
-  const login = async (email, password) => {
+  const login = async (emailOrUsername, password) => {
     try {
       const response = await axios.post('http://localhost:3001/v1/auth/login', {
-        email,
+        emailOrUsername,
         password,
       });
       const accessToken = response.data.tokens.access.token;

@@ -40,7 +40,8 @@ export default function SuperAdminDashboard() {
         const endDate = new Date();
         endDate.setHours(23, 59, 59, 999);
         const endTimeStamp = endDate.getTime();
-
+        console.log('start');
+        console.log(startTimeStamp, endTimeStamp);
         // API call with date parameters as timestamps
         const contributionResponse = await axiosService.get(
           `/reports/total-contributions?startDate=${startTimeStamp}&endDateParam=${endTimeStamp}`

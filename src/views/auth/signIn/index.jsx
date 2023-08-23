@@ -22,7 +22,6 @@ import { HSeparator } from 'components/separator/Separator';
 import DefaultAuth from 'layouts/auth/Default';
 // Assets
 import illustration from 'assets/img/auth/auth-bg.png';
-import { FcGoogle } from 'react-icons/fc';
 import { MdOutlineRemoveRedEye } from 'react-icons/md';
 import { RiEyeCloseLine } from 'react-icons/ri';
 import { useForm } from 'react-hook-form';
@@ -39,16 +38,7 @@ function SignIn() {
   const textColorDetails = useColorModeValue('navy.700', 'secondaryGray.600');
   const textColorBrand = useColorModeValue('brand.500', 'white');
   const brandStars = useColorModeValue('brand.500', 'brand.400');
-  const googleBg = useColorModeValue('secondaryGray.300', 'whiteAlpha.200');
-  const googleText = useColorModeValue('navy.700', 'white');
-  const googleHover = useColorModeValue(
-    { bg: 'gray.200' },
-    { bg: 'whiteAlpha.300' }
-  );
-  const googleActive = useColorModeValue(
-    { bg: 'secondaryGray.300' },
-    { bg: 'whiteAlpha.200' }
-  );
+
   const [show, setShow] = React.useState(false);
   const handleClick = () => setShow(!show);
 
@@ -56,7 +46,7 @@ function SignIn() {
     if (currentUser) {
       history.push('/admin');
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser]);
 
   const {
@@ -67,7 +57,7 @@ function SignIn() {
 
   const submitHandler = async (data) => {
     try {
-      await login(data.email, data.password);
+      await login(data.emailOrUsername, data.password);
       toast.success('Signin successful!');
       history.push('/admin');
     } catch (error) {
@@ -107,7 +97,7 @@ function SignIn() {
             fontWeight="400"
             fontSize="md"
           >
-            Enter your email and password to sign in!
+            Enter your email / username and password to sign in!
           </Text>
         </Box>
         <Flex
@@ -121,23 +111,6 @@ function SignIn() {
           me="auto"
           mb={{ base: '20px', md: 'auto' }}
         >
-          <Button
-            fontSize="sm"
-            me="0px"
-            mb="26px"
-            py="15px"
-            h="50px"
-            borderRadius="16px"
-            bg={googleBg}
-            color={googleText}
-            fontWeight="500"
-            _hover={googleHover}
-            _active={googleActive}
-            _focus={googleActive}
-          >
-            <Icon as={FcGoogle} w="20px" h="20px" me="10px" />
-            Sign in with Google
-          </Button>
           <Flex align="center" mb="25px">
             <HSeparator />
             <Text color="gray.400" mx="14px">
@@ -147,35 +120,37 @@ function SignIn() {
           </Flex>
 
           <form onSubmit={handleSubmit(submitHandler)}>
-            <FormControl isInvalid={errors.email}>
+            <FormControl isInvalid={errors.emailOrUsername}>
               <FormLabel
                 display="flex"
-                htmlFor="email"
+                htmlFor="emailOrUsername"
                 ms="4px"
                 fontSize="sm"
                 fontWeight="500"
                 color={textColor}
                 mb="8px"
               >
-                Email<Text color={brandStars}>*</Text>
+                Email or Username<Text color={brandStars}>*</Text>
               </FormLabel>
               <Input
                 isRequired={true}
                 variant="auth"
                 fontSize="sm"
                 ms={{ base: '0px', md: '0px' }}
-                type="email"
-                placeholder="mail@simmmple.com"
+                type="text"
+                placeholder="Username or Email"
                 mb="24px"
                 fontWeight="500"
                 size="lg"
-                {...register('email')}
+                {...register('emailOrUsername')}
               />
-              {errors.email && (
-                <FormErrorMessage>{errors.email.message}</FormErrorMessage>
+              {errors.emailOrUsername && (
+                <FormErrorMessage>
+                  {errors.emailOrUsername.message}
+                </FormErrorMessage>
               )}
             </FormControl>
-            <FormControl isInvalid={errors.email}>
+            <FormControl isInvalid={errors.emailOrUsername}>
               <FormLabel
                 ms="4px"
                 fontSize="sm"
