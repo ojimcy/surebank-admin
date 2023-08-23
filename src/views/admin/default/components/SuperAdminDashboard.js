@@ -17,6 +17,7 @@ import { toast } from 'react-toastify';
 import { formatNaira } from 'utils/helper';
 
 import ActionButton from 'components/Button/CustomButton';
+import DsWithdrawals from './DsWithdrawals';
 
 export default function SuperAdminDashboard() {
   const brandColor = useColorModeValue('brand.500', 'white');
@@ -40,8 +41,7 @@ export default function SuperAdminDashboard() {
         const endDate = new Date();
         endDate.setHours(23, 59, 59, 999);
         const endTimeStamp = endDate.getTime();
-        console.log('start');
-        console.log(startTimeStamp, endTimeStamp);
+
         // API call with date parameters as timestamps
         const contributionResponse = await axiosService.get(
           `/reports/total-contributions?startDate=${startTimeStamp}&endDateParam=${endTimeStamp}`
@@ -203,6 +203,8 @@ export default function SuperAdminDashboard() {
           />
         </Flex>
       </Box>
+
+      <DsWithdrawals />
     </>
   );
 }
