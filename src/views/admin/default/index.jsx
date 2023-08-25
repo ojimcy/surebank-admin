@@ -13,7 +13,7 @@ export default function UserReports() {
       {currentUser ? (
         currentUser.role === 'superAdmin' ? (
           <SuperAdminDashboard />
-        ) : currentUser.role === 'admin' ? (
+        ) : currentUser.role === 'userReps' ? (
           <UserRepsDashboard />
         ) : currentUser.role === 'admin' ? (
           <AdminDashboard />

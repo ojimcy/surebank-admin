@@ -20,7 +20,6 @@ import React, { useEffect, useState } from 'react';
 
 // Assets
 import axiosService from 'utils/axiosService';
-import Card from 'components/card/Card.js';
 import SimpleTable from 'components/table/SimpleTable';
 import { NavLink } from 'react-router-dom/';
 
@@ -35,7 +34,6 @@ export default function DsWithdrawals() {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [branch, setBranch] = useState('');
-  const [userReps, setUserReps] = useState('');
   const [isCustomDateModalOpen, setCustomDateModalOpen] = useState(false);
   const [customRangeLabel, setCustomRangeLabel] = useState('Custom Range');
 
@@ -45,10 +43,6 @@ export default function DsWithdrawals() {
 
   const handleBranchChange = (e) => {
     setBranch(e.target.value);
-  };
-
-  const handleUserRepsChange = (e) => {
-    setUserReps(e.target.value);
   };
 
   const handleStartDateChange = (e) => {
@@ -65,8 +59,6 @@ export default function DsWithdrawals() {
     }
     setCustomDateModalOpen(false);
   };
-  console.log('branch');
-  console.log(branches);
   useEffect(() => {
     async function fetchDsWithdrawals() {
       setLoading(true);
@@ -106,7 +98,7 @@ export default function DsWithdrawals() {
     }
 
     fetchDsWithdrawals();
-  }, [timeRange, branch, userReps, startDate, endDate]);
+  }, [timeRange, branch, startDate, endDate]);
 
   useEffect(() => {
     let filteredData = dsWithdrawals;
@@ -147,9 +139,7 @@ export default function DsWithdrawals() {
       {
         Header: 'Action',
         accessor: (row) => (
-          <NavLink to={`/daily-savings/withdrawals/${row.id}`}>
-            View Details
-          </NavLink>
+          <NavLink to={`/daily-savings/withdrawals/${row.id}`}>Approve</NavLink>
         ),
       },
     ],
@@ -170,52 +160,47 @@ export default function DsWithdrawals() {
           }}
           gap={{ base: '20px', xl: '20px' }}
         >
-          <Card p={{ base: '30px', md: '30px', sm: '10px' }}>
-            <Box marginTop="30">
-              <Flex>
-                <Spacer />
-                <Box>
-                  <Stack direction="row">
-                    <Select
-                      value={timeRange}
-                      onChange={handleTimeRangeChange}
-                      minWidth="150px"
+          <Box marginTop="30">
+            <Flex>
+              <Spacer />
+              <Box>
+                <Stack direction="row">
+                  <Select
+                    value={timeRange}
+                    onChange={handleTimeRangeChange}
+                    minWidth="150px"
+                  >
+                    <option value="all">All Time</option>
+                    <option value="last7days">Last 7 Days</option>
+                    <option value="last30days">Last 30 Days</option>
+                    <option
+                      value="custom"
+                      onClick={() => setCustomDateModalOpen(true)}
                     >
-                      <option value="all">All Time</option>
-                      <option value="last7days">Last 7 Days</option>
-                      <option value="last30days">Last 30 Days</option>
-                      <option
-                        value="custom"
-                        onClick={() => setCustomDateModalOpen(true)}
-                      >
-                        {customRangeLabel}
-                      </option>
-                    </Select>
+                      {customRangeLabel}
+                    </option>
+                  </Select>
 
-                    <Select value={branch} onChange={handleBranchChange}>
-                      <option>Select Branch</option>
-                      {branches &&
-                        branches.map((branch) => (
-                          <option key={branch.id} value={branch.id}>
-                            {branch?.name}
-                          </option>
-                        ))}
-                    </Select>
-                    <Select value={userReps} onChange={handleUserRepsChange}>
-                      {/* map list of userReps */}
-                    </Select>
-                  </Stack>
-                </Box>
-              </Flex>
-            </Box>
-            <Box marginTop="30">
-              {loading ? (
-                <Spinner />
-              ) : (
-                <SimpleTable columns={columns} data={filteredWithdrawals} />
-              )}
-            </Box>
-          </Card>
+                  <Select value={branch} onChange={handleBranchChange}>
+                    <option>Select Branch</option>
+                    {branches &&
+                      branches.map((branch) => (
+                        <option key={branch.id} value={branch.id}>
+                          {branch?.name}
+                        </option>
+                      ))}
+                  </Select>
+                </Stack>
+              </Box>
+            </Flex>
+          </Box>
+          <Box marginTop="30">
+            {loading ? (
+              <Spinner />
+            ) : (
+              <SimpleTable columns={columns} data={filteredWithdrawals} />
+            )}
+          </Box>
         </Grid>
       </Box>
 

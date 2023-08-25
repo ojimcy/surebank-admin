@@ -20,12 +20,11 @@ const AssignManager = () => {
     fetchStaffInBranch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [customerData]);
-
   const fetchStaffInBranch = async () => {
     try {
       setLoading(true);
       const response = await axiosService.get(
-        `/branch/${customerData.branchId}/staff`
+        `/branch/${customerData.branchId._id}/staff`
       );
       setStaffList(response.data);
       setLoading(false);

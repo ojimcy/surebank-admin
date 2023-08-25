@@ -78,18 +78,6 @@ export default function Users() {
     fetchUsers(currentPage);
   }, [currentPage]);
 
-  const handleNextPageClick = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const handlePreviousPageClick = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return new Intl.DateTimeFormat('en-US', {
@@ -143,7 +131,6 @@ export default function Users() {
       toast.error(error.response?.data?.message || 'An error occurred');
     }
   };
-
   const {
     handleSubmit,
     register,
@@ -177,7 +164,7 @@ export default function Users() {
   const addStaffToBranch = async (data) => {
     try {
       const id = data.branchId;
-      await axiosService.post(`branch/staff`, data);
+      await axiosService.post(`branch/${id}/staff`, data);
       toast.success('Staff has been created successfully!');
       history.push(`/admin/branch/viewstaff/${id}`);
     } catch (error) {
@@ -222,17 +209,6 @@ export default function Users() {
               <Spacer />
               <Box>
                 <Stack direction="row">
-                  <Flex>
-                    <Spacer />
-                    <Button
-                      bgColor="blue.700"
-                      color="white"
-                      onClick={handleAddStaffToBranch}
-                    >
-                      Create Staff
-                    </Button>
-                  </Flex>
-
                   <FormControl>
                     <Input
                       type="search"
@@ -257,79 +233,58 @@ export default function Users() {
                     <Tr>
                       <Th>Staff Name </Th>
                       <Th>Phone Number</Th>
-                      <Th>Last Updated </Th>
                       <Th>Created Date </Th>
                       <Th>Action</Th>
                     </Tr>
                   </Thead>
-                  <Tbody>
-                    {staffs?.map((staff) => (
-                      <Tr key={staff.id}>
-                        <Td>
-                          <NavLink
-                            to={`/admin/user/${staff.id}`}
-                          >{`${staff.firstName} ${staff.lastName}`}</NavLink>{' '}
-                        </Td>
-                        <Td>{staff.phoneNumber}</Td>
-                        <Td>{formatDate(staff.updatedAt)}</Td>
-                        <Td>{formatDate(staff.createdAt)}</Td>
-                        <Td>
-                          <HStack>
-                            {/* Edit staff icon */}
-                            <NavLink to={`/admin/user/edit-user/${staff.id}`}>
+                  {staffs.length === 0 ? (
+                    <Text>No Staff in this branch</Text>
+                  ) : (
+                    <Tbody>
+                      {staffs?.map((staff) => (
+                        <Tr key={staff.id}>
+                          <Td>
+                            <NavLink
+                              to={`/admin/user/${staff.id}`}
+                            >{`${staff.firstName} ${staff.lastName}`}</NavLink>{' '}
+                          </Td>
+                          <Td>{staff.phoneNumber}</Td>
+                          <Td>{formatDate(staff.createdAt)}</Td>
+                          <Td>
+                            <HStack>
+                              {/* Edit staff icon */}
+                              <NavLink to={`/admin/user/edit-user/${staff.id}`}>
+                                <IconButton
+                                  icon={<EditIcon />}
+                                  colorScheme="blue"
+                                  aria-label="Edit branch"
+                                />
+                              </NavLink>
+                              {/* Delete branch icon */}
                               <IconButton
-                                icon={<EditIcon />}
-                                colorScheme="blue"
-                                aria-label="Edit branch"
+                                icon={<DeleteIcon />}
+                                colorScheme="red"
+                                aria-label="Delete branch"
+                                onClick={() => handleDeleteIconClick(staff.id)}
                               />
-                            </NavLink>
-                            {/* Delete branch icon */}
-                            <IconButton
-                              icon={<DeleteIcon />}
-                              colorScheme="red"
-                              aria-label="Delete branch"
-                              onClick={() => handleDeleteIconClick(staff.id)}
-                            />
 
-                            <Button
-                              mt={4}
-                              colorScheme="blue"
-                              size="md"
-                              onClick={() => openTransferStaffModal(staff.id)}
-                            >
-                              Transfer
-                            </Button>
-                          </HStack>
-                        </Td>
-                      </Tr>
-                    ))}
-                  </Tbody>
+                              <Button
+                                mt={4}
+                                colorScheme="blue"
+                                size="md"
+                                onClick={() => openTransferStaffModal(staff.id)}
+                              >
+                                Transfer
+                              </Button>
+                            </HStack>
+                          </Td>
+                        </Tr>
+                      ))}
+                    </Tbody>
+                  )}
                 </Table>
               </TableContainer>
             )}
-            <HStack mt="4" justify="space-between" align="center">
-              {staffs && (
-                <Box>
-                  Showing {(currentPage - 1) * 10 + 1} to{' '}
-                  {Math.min(currentPage * 10, staffs.length)} of {staffs.length}{' '}
-                  entries
-                </Box>
-              )}
-              <HStack>
-                <Button
-                  disabled={currentPage === 1}
-                  onClick={handlePreviousPageClick}
-                >
-                  Previous Page
-                </Button>
-                <Button
-                  disabled={currentPage === totalPages}
-                  onClick={handleNextPageClick}
-                >
-                  Next Page
-                </Button>
-              </HStack>
-            </HStack>
           </Box>
         </Card>
       </Grid>

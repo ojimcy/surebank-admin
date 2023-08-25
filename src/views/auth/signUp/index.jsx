@@ -109,51 +109,16 @@ function SignUp() {
           mb={{ base: '20px', md: 'auto' }}
         >
           <form onSubmit={handleSubmit(submitHandler)}>
-            <FormControl isInvalid={errors.email}>
-              <FormLabel
-                htmlFor="email"
-                display="flex"
-                ms="4px"
-                fontSize="sm"
-                fontWeight="500"
-                color={textColor}
-                mb="8px"
-              >
-                Email<Text color={brandStars}>*</Text>
-              </FormLabel>
-              <Input
-                isRequired={true}
-                variant="auth"
-                fontSize="sm"
-                ms={{ base: '0px', md: '0px' }}
-                type="email"
-                id="email"
-                placeholder="mail@sample.com"
-                mb="24px"
-                fontWeight="500"
-                size="lg"
-                {...register('email', {
-                  required: 'Email is required',
-                  pattern: {
-                    value: /\S+@\S+\.\S+/,
-                    message: 'Invalid email address',
-                  },
-                })}
-              />
-              <FormErrorMessage>
-                {errors.email && errors.email.message}
-              </FormErrorMessage>
-            </FormControl>
-            <FormControl isInvalid={errors.password}>
+            <FormControl isInvalid={errors.username}>
               <FormLabel
                 ms="4px"
                 fontSize="sm"
                 fontWeight="500"
                 color={textColor}
                 display="flex"
-                htmlFor="password"
+                htmlFor="username"
               >
-                Password<Text color={brandStars}>*</Text>
+                Username<Text color={brandStars}>*</Text>
               </FormLabel>
               <InputGroup size="md">
                 <Input
@@ -162,14 +127,14 @@ function SignUp() {
                   placeholder="Min. 8 characters"
                   mb="24px"
                   size="lg"
-                  type={show ? 'text' : 'password'}
-                  id="password"
+                  type={show ? 'text' : 'username'}
+                  id="username"
                   variant="auth"
-                  {...register('password', {
-                    required: 'Password is required',
+                  {...register('username', {
+                    required: 'Username is required',
                     minLength: {
-                      value: 8,
-                      message: 'Minimum length should be 8',
+                      value: 4,
+                      message: 'Minimum length should be 4',
                     },
                   })}
                 />
@@ -186,6 +151,97 @@ function SignUp() {
                 {errors.password && errors.password.message}
               </FormErrorMessage>
             </FormControl>
+            <Flex
+              gap="20px"
+              marginBottom="20px"
+              flexDirection={{ base: 'column', md: 'row' }}
+            >
+              <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
+                <FormControl isInvalid={errors.email}>
+                  <FormLabel
+                    htmlFor="email"
+                    display="flex"
+                    ms="4px"
+                    fontSize="sm"
+                    fontWeight="500"
+                    color={textColor}
+                    mb="8px"
+                  >
+                    Email<Text color={brandStars}>*</Text>
+                  </FormLabel>
+                  <Input
+                    isRequired={true}
+                    variant="auth"
+                    fontSize="sm"
+                    ms={{ base: '0px', md: '0px' }}
+                    type="email"
+                    id="email"
+                    placeholder="mail@sample.com"
+                    mb="24px"
+                    fontWeight="500"
+                    size="lg"
+                    {...register('email', {
+                      required: 'Email is required',
+                      pattern: {
+                        value: /\S+@\S+\.\S+/,
+                        message: 'Invalid email address',
+                      },
+                    })}
+                  />
+                  <FormErrorMessage>
+                    {errors.email && errors.email.message}
+                  </FormErrorMessage>
+                </FormControl>
+              </Box>
+              <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
+                <FormControl isInvalid={errors.password}>
+                  <FormLabel
+                    ms="4px"
+                    fontSize="sm"
+                    fontWeight="500"
+                    color={textColor}
+                    display="flex"
+                    htmlFor="password"
+                  >
+                    Password<Text color={brandStars}>*</Text>
+                  </FormLabel>
+                  <InputGroup size="md">
+                    <Input
+                      isRequired={true}
+                      fontSize="sm"
+                      placeholder="Min. 8 characters"
+                      mb="24px"
+                      size="lg"
+                      type={show ? 'text' : 'password'}
+                      id="password"
+                      variant="auth"
+                      {...register('password', {
+                        required: 'Password is required',
+                        minLength: {
+                          value: 8,
+                          message: 'Minimum length should be 8',
+                        },
+                      })}
+                    />
+                    <InputRightElement
+                      display="flex"
+                      alignItems="center"
+                      mt="4px"
+                    >
+                      <Icon
+                        color={textColorSecondary}
+                        _hover={{ cursor: 'pointer' }}
+                        as={show ? RiEyeCloseLine : MdOutlineRemoveRedEye}
+                        onClick={handleClick}
+                      />
+                    </InputRightElement>
+                  </InputGroup>
+                  <FormErrorMessage>
+                    {errors.password && errors.password.message}
+                  </FormErrorMessage>
+                </FormControl>
+              </Box>
+            </Flex>
 
             <Flex
               gap="20px"

@@ -76,18 +76,6 @@ export default function Users() {
     setFilteredUsers(filtered);
   }, [searchTerm, users]);
 
-  const handleNextPageClick = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const handlePreviousPageClick = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return new Intl.DateTimeFormat("en-US", {
@@ -134,7 +122,7 @@ export default function Users() {
   const columns = React.useMemo(
     () => [
       {
-        Header: 'User',
+        Header: 'Name',
         accessor: (row) => (
           <NavLink to={`/admin/customer/${row.id}`}>
             {row.firstName} {row.lastName}
@@ -243,20 +231,6 @@ export default function Users() {
                   entries
                 </Box>
               )}
-              <HStack>
-                <Button
-                  disabled={currentPage === 1}
-                  onClick={handlePreviousPageClick}
-                >
-                  Previous Page
-                </Button>
-                <Button
-                  disabled={currentPage === totalPages}
-                  onClick={handleNextPageClick}
-                >
-                  Next Page
-                </Button>
-              </HStack>
             </HStack>
           </Box>
         </Card>

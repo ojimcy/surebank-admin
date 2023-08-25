@@ -32,9 +32,6 @@ export default function Overview() {
           avatar={avatar}
           name={`${currentUser.firstName} ${currentUser.lastName}`}
           job={currentUser.role}
-          posts="17"
-          followers="9.7k"
-          following="274"
           currentUser={currentUser}
         />
       </Grid>

@@ -27,7 +27,7 @@ export default function EditBranch() {
 
   useEffect(() => {
     // Extract the id from the query parameters in the URL
-    const fetchUser = async () => {
+    const fetchBranch = async () => {
       try {
         const response = await axiosService.get(`branch/${id}`);
         setBranch(response.data);
@@ -40,7 +40,7 @@ export default function EditBranch() {
         console.error(error);
       }
     };
-    fetchUser();
+    fetchBranch();
   }, [setValue, id]);
   const submitHandler = async (userData) => {
     try {

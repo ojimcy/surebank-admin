@@ -23,7 +23,6 @@ export default function EditCustomer() {
   const { id } = useParams();
   const history = useHistory();
   const { branches } = useAppContext();
-  console.log(branches);
 
   const brandStars = useColorModeValue('brand.500', 'brand.400');
   const textColor = useColorModeValue('navy.700', 'white');
