@@ -36,6 +36,7 @@ export default function CreateCustomer() {
   const brandStars = useColorModeValue('brand.500', 'brand.400');
   const textColor = useColorModeValue('navy.700', 'white');
   const textColorSecondary = 'gray.400';
+
   const {
     handleSubmit,
     register,
@@ -200,86 +201,55 @@ export default function CreateCustomer() {
                 </FormControl>
               </Box>
               <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
-                <FormControl isInvalid={errors.username}>
+                <FormControl isInvalid={errors.password}>
                   <FormLabel
-                    htmlFor="username"
-                    display="flex"
                     ms="4px"
                     fontSize="sm"
                     fontWeight="500"
                     color={textColor}
-                    mb="8px"
+                    display="flex"
+                    htmlFor="password"
                   >
-                    Username<Text color={brandStars}>*</Text>
+                    Password<Text color={brandStars}>*</Text>
                   </FormLabel>
-                  <Input
-                    isRequired={true}
-                    variant="auth"
-                    fontSize="sm"
-                    ms={{ base: '0px', md: '0px' }}
-                    type="text"
-                    id="username"
-                    mb="24px"
-                    fontWeight="500"
-                    size="lg"
-                    {...register('username', {
-                      required: 'Username is required',
-                    })}
-                  />
+                  <InputGroup size="md">
+                    <Input
+                      isRequired={true}
+                      fontSize="sm"
+                      placeholder="Min. 8 characters"
+                      mb="24px"
+                      size="lg"
+                      type={show ? 'text' : 'password'}
+                      id="password"
+                      variant="auth"
+                      {...register('password', {
+                        required: 'Password is required',
+                        minLength: {
+                          value: 8,
+                          message: 'Minimum length should be 8',
+                        },
+                      })}
+                    />
+                    <InputRightElement
+                      display="flex"
+                      alignItems="center"
+                      mt="4px"
+                    >
+                      <Icon
+                        color={textColorSecondary}
+                        _hover={{ cursor: 'pointer' }}
+                        as={show ? RiEyeCloseLine : MdOutlineRemoveRedEye}
+                        onClick={handleClick}
+                      />
+                    </InputRightElement>
+                  </InputGroup>
                   <FormErrorMessage>
-                    {errors.username && errors.username.message}
+                    {errors.password && errors.password.message}
                   </FormErrorMessage>
                 </FormControl>
               </Box>
             </Flex>
-            <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
-              <FormControl isInvalid={errors.password}>
-                <FormLabel
-                  ms="4px"
-                  fontSize="sm"
-                  fontWeight="500"
-                  color={textColor}
-                  display="flex"
-                  htmlFor="password"
-                >
-                  Password<Text color={brandStars}>*</Text>
-                </FormLabel>
-                <InputGroup size="md">
-                  <Input
-                    isRequired={true}
-                    fontSize="sm"
-                    placeholder="Min. 8 characters"
-                    mb="24px"
-                    size="lg"
-                    type={show ? 'text' : 'password'}
-                    id="password"
-                    variant="auth"
-                    {...register('password', {
-                      required: 'Password is required',
-                      minLength: {
-                        value: 8,
-                        message: 'Minimum length should be 8',
-                      },
-                    })}
-                  />
-                  <InputRightElement
-                    display="flex"
-                    alignItems="center"
-                    mt="4px"
-                  >
-                    <Icon
-                      color={textColorSecondary}
-                      _hover={{ cursor: 'pointer' }}
-                      as={show ? RiEyeCloseLine : MdOutlineRemoveRedEye}
-                      onClick={handleClick}
-                    />
-                  </InputRightElement>
-                </InputGroup>
-                <FormErrorMessage>
-                  {errors.password && errors.password.message}
-                </FormErrorMessage>
-              </FormControl>
-            </Box>
+
             <Flex
               gap="20px"
               marginBottom="20px"

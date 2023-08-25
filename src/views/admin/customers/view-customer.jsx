@@ -72,10 +72,10 @@ export default function ViewCustomer() {
       setPackageFound(true);
     } catch (error) {
       console.error(error);
-        toast.error(
-          error.response?.data?.message ||
-            'An error occurred while fetching user package.'
-        );
+      toast.error(
+        error.response?.data?.message ||
+          'An error occurred while fetching user package.'
+      );
       setLoading(false);
     }
   };
@@ -106,7 +106,6 @@ export default function ViewCustomer() {
   useEffect(() => {
     fetchUserActivities();
   }, [customerData, id]);
-
   // Reload data when id changes
   useEffect(() => {
     fetchUserPackage();
