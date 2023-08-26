@@ -11,7 +11,6 @@ import {
 import { FaSitemap, FaUsers } from 'react-icons/fa';
 import { AiOutlineUsergroupAdd } from 'react-icons/ai';
 
-
 // Admin Imports
 import MainDashboard from 'views/admin/default';
 // import Sales from 'views/admin/sales';
@@ -55,6 +54,7 @@ const routes = [
     layout: '/admin',
     path: '/default',
     icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
+    roles: ['superAdmin', 'admin', 'userReps', 'user'],
     component: MainDashboard,
   },
   {
@@ -62,12 +62,14 @@ const routes = [
     layout: '/admin',
     icon: <Icon as={FaSitemap} width="20px" height="20px" color="inherit" />,
     path: '/branches',
+    roles: ['superAdmin', 'admin', 'userReps'],
     component: Branches,
   },
   {
     name: 'Branches',
     layout: '/admin',
     icon: <Icon as={MdBarChart} width="20px" height="20px" color="inherit" />,
+    roles: ['superAdmin', 'admin', 'userReps'],
     path: '/branch/create',
     component: CreateBranch,
   },
@@ -75,6 +77,7 @@ const routes = [
     name: 'View All Staff',
     layout: '/admin',
     icon: <Icon as={MdBarChart} width="20px" height="20px" color="inherit" />,
+    roles: ['superAdmin', 'admin', 'userReps'],
     path: '/branch/viewallstaff',
     component: ViewAllStaff,
   },
@@ -82,6 +85,7 @@ const routes = [
     name: 'Branches',
     layout: '/admin',
     icon: <Icon as={MdBarChart} width="20px" height="20px" color="inherit" />,
+    roles: ['superAdmin', 'admin', 'userReps'],
     path: '/branch/editbranch/:id',
     component: EditBranch,
   },
@@ -89,6 +93,7 @@ const routes = [
     name: 'Branches',
     layout: '/admin',
     icon: <Icon as={MdBarChart} width="20px" height="20px" color="inherit" />,
+    roles: ['superAdmin', 'admin', 'userReps'],
     path: '/branch/viewbranch/:id',
     component: ViewBranch,
   },
@@ -96,6 +101,7 @@ const routes = [
     name: 'Branches',
     layout: '/admin',
     icon: <Icon as={MdBarChart} width="20px" height="20px" color="inherit" />,
+    roles: ['superAdmin', 'admin', 'userReps'],
     path: '/branch/viewstaff/:id',
     component: ViewStaff,
   },
@@ -104,6 +110,7 @@ const routes = [
     layout: '/admin',
     path: '/profile',
     icon: <Icon as={MdPerson} width="20px" height="20px" color="inherit" />,
+    roles: ['superAdmin', 'admin', 'userReps', 'user'],
     component: Profile,
   },
 
@@ -120,6 +127,7 @@ const routes = [
         color="inherit"
       />
     ),
+    roles: ['superAdmin', 'admin', 'userReps'],
     component: Customers,
   },
   {
@@ -129,6 +137,7 @@ const routes = [
     icon: (
       <Icon as={MdOutlinePerson3} width="20px" height="20px" color="inherit" />
     ),
+    roles: ['superAdmin', 'admin', 'userReps'],
     component: CreateCustomer,
   },
   {
@@ -138,6 +147,7 @@ const routes = [
     icon: (
       <Icon as={MdOutlinePerson3} width="20px" height="20px" color="inherit" />
     ),
+    roles: ['superAdmin', 'admin', 'userReps'],
     component: CustomerByStaff,
   },
   {
@@ -147,6 +157,7 @@ const routes = [
     icon: (
       <Icon as={MdOutlinePerson3} width="20px" height="20px" color="inherit" />
     ),
+    roles: ['superAdmin', 'admin', 'userReps'],
     component: BranchCustomers,
   },
   {
@@ -156,6 +167,7 @@ const routes = [
     icon: (
       <Icon as={MdOutlinePerson3} width="20px" height="20px" color="inherit" />
     ),
+    roles: ['superAdmin', 'admin', 'userReps'],
     component: CreateAccount,
   },
   {
@@ -165,6 +177,7 @@ const routes = [
     icon: (
       <Icon as={MdOutlinePerson3} width="20px" height="20px" color="inherit" />
     ),
+    roles: ['superAdmin', 'admin', 'userReps'],
     component: AssignManager,
   },
 
@@ -175,6 +188,7 @@ const routes = [
     icon: (
       <Icon as={MdOutlinePerson3} width="20px" height="20px" color="inherit" />
     ),
+    roles: ['superAdmin', 'admin', 'userReps'],
     component: EditCustomer,
   },
 
@@ -185,6 +199,7 @@ const routes = [
     icon: (
       <Icon as={MdOutlinePerson3} width="20px" height="20px" color="inherit" />
     ),
+    roles: ['superAdmin', 'admin', 'userReps'],
     component: ViewCustomer,
   },
 
@@ -212,6 +227,7 @@ const routes = [
     icon: (
       <Icon as={MdOutlinePerson3} width="20px" height="20px" color="inherit" />
     ),
+    roles: ['superAdmin', 'admin', 'userReps'],
     component: Users,
   },
   {
@@ -221,6 +237,7 @@ const routes = [
     icon: (
       <Icon as={MdOutlinePerson3} width="20px" height="20px" color="inherit" />
     ),
+    roles: ['superAdmin', 'admin', 'userReps'],
     component: EditUser,
   },
   {
@@ -230,6 +247,7 @@ const routes = [
     icon: (
       <Icon as={MdOutlinePerson3} width="20px" height="20px" color="inherit" />
     ),
+    roles: ['superAdmin', 'admin', 'userReps'],
     component: CreateUser,
   },
   {
@@ -239,6 +257,7 @@ const routes = [
     icon: (
       <Icon as={MdOutlinePerson3} width="20px" height="20px" color="inherit" />
     ),
+    roles: ['superAdmin', 'admin', 'userReps'],
     component: User,
   },
 
@@ -264,6 +283,7 @@ const routes = [
     layout: '/admin',
     path: '/daily-savings/deposit/:packageId',
     icon: <Icon as={FaBox} width="20px" height="20px" color="inherit" />,
+    roles: ['superAdmin', 'admin', 'userReps', 'user'],
     component: MakeContribution,
   },
   {
@@ -271,6 +291,7 @@ const routes = [
     layout: '/admin',
     path: '/daily-savings/withdraw/:packageId',
     icon: <Icon as={FaBox} width="20px" height="20px" color="inherit" />,
+    roles: ['superAdmin', 'admin', 'userReps', 'user'],
     component: Withdrawal,
   },
   {
@@ -278,6 +299,7 @@ const routes = [
     layout: '/admin',
     path: '/daily-savings',
     icon: <Icon as={FaBox} width="20px" height="20px" color="inherit" />,
+    roles: ['superAdmin', 'admin', 'userReps', 'user'],
     component: DailySavingsDashboard,
   },
   {
@@ -285,6 +307,7 @@ const routes = [
     layout: '/admin',
     path: '/daily-saving/package',
     icon: <Icon as={FaBox} width="20px" height="20px" color="inherit" />,
+    roles: ['superAdmin', 'admin', 'userReps', 'user'],
     component: CreatePackage,
   },
 
