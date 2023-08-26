@@ -99,7 +99,7 @@ export default function Expenditures() {
       }
     };
     fetchExpenditures();
-  }, [timeRange]);
+  }, [currentUser.role, timeRange]);
 
   // Filter expenditures based on search term
   useEffect(() => {

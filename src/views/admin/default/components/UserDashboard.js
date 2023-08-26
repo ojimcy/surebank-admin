@@ -1,25 +1,23 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
-
 import {
   Box,
   Button,
   Flex,
+  Grid,
   Heading,
   Icon,
-  Progress,
   Spinner,
-  Stack,
-  Stat,
-  StatLabel,
-  StatNumber,
   Text,
   useColorModeValue,
+  Spacer,
+  Stack,
+  Select,
+  FormControl,
+  Input,
 } from '@chakra-ui/react';
-// import { CustomButton } from 'components/Button/CustomButton';
-import { formatDate } from 'utils/helper';
 import { toast } from 'react-toastify';
-// Assets
+import { NavLink } from 'react-router-dom';
 
 // Custom components
 import axiosService from 'utils/axiosService';
@@ -28,41 +26,38 @@ import { useAppContext } from 'contexts/AppContext';
 import { useAuth } from 'contexts/AuthContext';
 import { MdOutlineRemoveRedEye } from 'react-icons/md';
 import { RiEyeCloseLine } from 'react-icons/ri';
+import { SearchIcon } from '@chakra-ui/icons';
+
+import SimpleTable from 'components/table/SimpleTable';
 
 import Card from 'components/card/Card';
+import PackageCard from 'components/package/PackageCard';
 
 export default function UserDashboard() {
   const textColor = useColorModeValue('secondaryGray.900', 'white');
   const textColorSecondary = 'secondaryGray.600';
 
   const { currentUser } = useAuth();
-  const [showTransactions, setShowTransactions] = useState(false);
-  const [visibleTransactions, setVisibleTransactions] = useState(10);
   const [loading, setLoading] = useState(false);
-  const [packageFound, setPackageFound] = useState(false);
   const [showBalance, setShowBalance] = useState(true);
-  const [userActivities, setUserActivities] = useState([]);
+  const [transactions, setTransactions] = useState([]);
+  const [userPackages, setUserPackages] = useState([]);
 
-  const { customerData, setCustomerData, userPackage, setUserPackage } =
-    useAppContext();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredTransaction, setFilteredTransaction] = useState([]);
+  const [selectedFilter, setSelectedFilter] = useState('all');
 
-  // Conditionally calculate savings progress and days left
-  let savingsProgress = 0;
-  let daysLeft = 31;
-  if (userPackage && userPackage.totalCount) {
-    savingsProgress = ((userPackage.totalCount / 31) * 100).toFixed(2);
-    daysLeft = 31 - userPackage.totalCount;
-  }
-  // Function to fetch user package data
-  const fetchUserPackage = async () => {
+  const { customerData, setCustomerData } = useAppContext();
+
+  // Function to fetch user ds package data
+  const fetchDsPackage = async () => {
     try {
       setLoading(true);
       const response = await axiosService.get(
         `daily-savings/package?userId=${currentUser.id}&accountNumber=${customerData.accountNumber}`
       );
-      setUserPackage(response.data);
+      setUserPackages(response.data);
       setLoading(false);
-      setPackageFound(true);
     } catch (error) {
       console.error(error);
       toast.error(
@@ -72,14 +67,15 @@ export default function UserDashboard() {
       setLoading(false);
     }
   };
+  // Function to fetch user sb package data
 
   // Function to fetch user activities data
   const fetchUserActivities = async () => {
     try {
       const response = await axiosService.get(
-        `daily-savings/activities?userId=${currentUser.id}&accountNumber=${customerData.accountNumber}`
+        `/transactions?accountNumber=${customerData.accountNumber}`
       );
-      setUserActivities(response.data);
+      setTransactions(response.data);
     } catch (error) {
       console.error(error);
     }
@@ -102,38 +98,71 @@ export default function UserDashboard() {
 
   // Reload data when id changes
   useEffect(() => {
-    fetchUserPackage();
-  }, [currentUser.id, customerData, setUserPackage]);
+    fetchDsPackage();
+  }, [currentUser.id, customerData, setUserPackages]);
 
   // Load account data when component mounts
   useEffect(() => {
     fetchAccount();
   }, [currentUser.Buttonid]);
 
-  // Reload transactions when visibleTransactions changes
+  // Filter expenditures based on search term
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowTransactions(true);
-    }, 200);
-    return () => clearTimeout(timer);
-  }, [visibleTransactions]);
+    const filtered = transactions?.filter((transaction) => {
+      if (selectedFilter === 'all') {
+        return true; // Show all transactions
+      } else if (selectedFilter === 'deposit') {
+        return transaction.narration === 'Daily contribution';
+      } else if (selectedFilter === 'withdrawal') {
+        return transaction.narration !== 'Daily contribution';
+      }
+      return false;
+    });
+    setFilteredTransaction(filtered);
+  }, [selectedFilter, transactions]);
 
-  // Function to handle "Show More" button click
-  const handleShowMore = () => {
-    setVisibleTransactions((prevVisible) => prevVisible + 10);
-  };
-
+  // Columns for the user table
+  const columns = React.useMemo(
+    () => [
+      {
+        Header: 'Date',
+        accessor: 'date',
+      },
+      {
+        Header: 'Amount',
+        accessor: 'amount',
+      },
+      {
+        Header: 'Naration',
+        accessor: 'narration',
+        Cell: ({ value }) => (
+          <Text>
+            {value === 'Daily contribution withdrawal'
+              ? 'Deposit'
+              : 'Withdrawal'}
+          </Text>
+        ),
+      },
+      {
+        Header: 'Cashier',
+        accessor: (row) =>
+          `${row.userReps?.firstName} ${row.userReps?.lastName}`,
+      },
+    ],
+    []
+  );
+  
   return (
-    <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
+    <Box pt={{ base: '0px', md: '40px', xl: '40px' }}>
       {loading ? (
         <Spinner />
       ) : (
         <Box p="4">
-          <Flex justifyContent='space-between'>
+          <Flex justifyContent="space-between">
             <Box>
               <Flex alignItems="center">
                 <Text fontSize="lg" fontWeight="bold">
-                  Available Balance:
+                  Account Ballance:
                   <Icon
                     ml="2"
                     fontSize="lg"
@@ -158,170 +187,102 @@ export default function UserDashboard() {
                   : '****'}
               </Text>
             </Box>
-            <Flex
-              direction={{ base: 'column', md: 'row' }}
-              spacing={{ base: '4', md: '0' }}
-              justifyContent={{ base: 'center', md: 'space-between' }}
-            >
-              <Flex>
-                {/* Savings Progress Section */}
-                <Stat p="4" borderRadius="lg" boxShadow="sm">
-                  {packageFound ? (
-                    <>
-                      <StatLabel fontSize={{ base: 'lg', md: 'xl' }}>
-                        Savings Progress
-                      </StatLabel>
-                      <StatNumber fontWeight="bold">
-                        {savingsProgress}%
-                      </StatNumber>
-                      <Progress
-                        value={
-                          savingsProgress ? parseFloat(savingsProgress) : 0
-                        }
-                        size="sm"
-                        mt="2"
-                        colorScheme="blue"
-                      />
-                    </>
-                  ) : (
-                    <Text
-                      mt="4"
-                      fontSize={{ base: 'md', md: 'lg' }}
-                      color="red.500"
-                    >
-                      No active package found for this customer.
-                    </Text>
-                  )}
-                </Stat>
-              </Flex>
-            </Flex>
           </Flex>
 
           {/* Savings Summary Section */}
 
           <Flex direction={{ base: 'column', md: 'row' }} mb="20px" mt="40px">
             <Card>
-              <Text fontWeight="bold" fontSize="xl" mt="10px" color={textColor}>
-                Overview
-              </Text>
-              <Text fontSize="sm" color={textColorSecondary} pb="20px">
-                Overview of your activities
-              </Text>
-              <hr color={textColor} />
-              <Flex
-                direction={{ base: 'column', md: 'row' }}
-                justifyContent="space-between"
-                mt="20px"
-              >
-                <Stat
-                  p="4"
-                  m="6px"
-                  borderRadius="lg"
-                  bg="green.100"
-                  minHeight="150px"
-                  alignItems="center"
-                  display="flex"
-                >
-                  <StatLabel>Total contribution</StatLabel>
-                  <StatNumber fontWeight="bold">
-                    {packageFound
-                      ? formatNaira(userPackage.totalContribution)
-                      : 0}
-                  </StatNumber>
-                </Stat>
-                <Stat
-                  p="4"
-                  m="6px"
-                  borderRadius="lg"
-                  bg="orange.100"
-                  minHeight="150px"
-                  alignItems="center"
-                  display="flex"
-                >
-                  <StatLabel>Amount per Day</StatLabel>
-                  <StatNumber fontWeight="bold">
-                    {packageFound ? formatNaira(userPackage.amountPerDay) : 0}
-                  </StatNumber>
-                </Stat>
+              <Flex alignItems="center">
+                <Flex flexDirection="column">
+                  <Text
+                    fontWeight="bold"
+                    fontSize="xl"
+                    mt="10px"
+                    color={textColor}
+                  >
+                    Packages
+                  </Text>
+                  <Text fontSize="sm" color={textColorSecondary} pb="20px">
+                    Lists of user's packages
+                  </Text>
+                </Flex>
 
-                <Stat
-                  p="4"
-                  m="6px"
-                  borderRadius="lg"
-                  bg="gray.100"
-                  minHeight="150px"
-                  alignItems="center"
-                  display="flex"
-                >
-                  <StatLabel>Days Left</StatLabel>
-                  <StatNumber fontWeight="bold">{daysLeft}</StatNumber>
-                </Stat>
+                <Spacer />
+                <NavLink to="/admin/daily-saving/package">
+                  <Button bgColor="blue.700" color="white">
+                    Create Package
+                  </Button>
+                </NavLink>
               </Flex>
+              <hr color={textColor} />
+
+              {userPackages.length !== 0 ? (
+                <Grid
+                  templateColumns={{
+                    base: 'repeat(1, 1fr)',
+                    md: 'repeat(2, 1fr)',
+                  }}
+                  gap={2}
+                  mt="20px"
+                >
+                  {userPackages?.map((packageData, index) => (
+                    <PackageCard key={index} packageData={packageData} />
+                  ))}
+                </Grid>
+              ) : (
+                <Flex justifyContent="center" mt="4">
+                  <Button
+                    color="green"
+                    as={NavLink}
+                    to="/admin/daily-saving/package"
+                  >
+                    No Package Found, Create One
+                  </Button>
+                </Flex>
+              )}
             </Card>
           </Flex>
 
           {/* Recent Transactions Section */}
-          <Box mt="8">
-            <Heading size="lg" mb="4">
-              Recent Transactions
-            </Heading>
-            {userActivities && userActivities.length > 0 ? (
-              <Stack spacing="4">
-                {showTransactions &&
-                  userActivities
-                    .slice(0, visibleTransactions)
-                    .map((activity, index) => (
-                      <Box
-                        key={index}
-                        p="4"
-                        bg="gray.100"
-                        borderRadius="md"
-                        opacity={showTransactions ? 1 : 0}
-                        transform={`translateY(${showTransactions ? 0 : 10}px)`}
-                        transition="opacity 0.3s, transform 0.3s"
-                      >
-                        <Flex
-                          justifyContent="space-between"
-                          alignItems="center"
-                        >
-                          <Box>
-                            <Text fontWeight="bold">
-                              {activity.narration === 'Daily contribution'
-                                ? 'Deposit'
-                                : 'Withdrawal'}
-                            </Text>
-                            <Text>{formatDate(activity.date)}</Text>
-                          </Box>
-                          <Text>{activity.narration}</Text>
-                          <Text>{`${activity.userReps?.firstName} ${activity.userReps?.lastName}`}</Text>
-                          <Text
-                            color={
-                              activity.narration === 'Daily contribution'
-                                ? 'green.500'
-                                : 'gray.800'
-                            }
-                          >
-                            {formatNaira(activity.amount)}
-                          </Text>
-                        </Flex>
-                      </Box>
-                    ))}
-              </Stack>
+          <Box mt="80px">
+            <Flex
+              justifyContent="space-between"
+              direction={{ base: 'column', md: 'row' }}
+              mb="40px"
+            >
+              <Heading size="lg" mb="4">
+                Recent Transactions
+              </Heading>
+              <Box>
+                <Stack direction="row">
+                  <Select
+                    value={selectedFilter}
+                    onChange={(e) => setSelectedFilter(e.target.value)}
+                  >
+                    <option value="all">All</option>
+                    <option value="deposit">Deposit</option>
+                    <option value="withdrawal">Withdrawal</option>
+                  </Select>
+                  <FormControl>
+                    <Input
+                      type="search"
+                      placeholder="Search"
+                      borderColor="black"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                  </FormControl>
+                  <Button bgColor="blue.700" color="white">
+                    <SearchIcon />
+                  </Button>
+                </Stack>
+              </Box>
+            </Flex>
+            {transactions && transactions.length > 0 ? (
+              <SimpleTable columns={columns} data={filteredTransaction} />
             ) : (
               <Text>Transaction not found</Text>
-            )}
-
-            {/* Show More button */}
-            {visibleTransactions < userActivities.length && (
-              <Button
-                mt="4"
-                onClick={handleShowMore}
-                colorScheme="blue"
-                variant="outline"
-                size="sm"
-              >
-                Show More
-              </Button>
             )}
           </Box>
         </Box>

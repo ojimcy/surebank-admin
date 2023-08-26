@@ -463,7 +463,7 @@ export const HorizonLogo = createIcon({
   displayName: 'surebankLogo',
   viewBox: '0 0 200 100',
   path: (
-    <text x="0" y="50" font-family="Arial" font-size="54" fill="#007BFF">
+    <text x="0" y="50" fontSize="54" fill="#007BFF">
       Surebank LTD
     </text>
   ),

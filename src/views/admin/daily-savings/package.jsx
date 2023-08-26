@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Button,
@@ -11,6 +11,14 @@ import {
   Input,
   Text,
   useColorModeValue,
+  Select,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalBody,
+  ModalFooter,
+  ModalCloseButton,
+  ModalHeader,
 } from '@chakra-ui/react';
 import axiosService from 'utils/axiosService';
 import BackButton from 'components/menu/BackButton';
@@ -24,10 +32,39 @@ export default function CreatePackage() {
   const brandStars = useColorModeValue('brand.500', 'brand.400');
   const textColor = useColorModeValue('navy.700', 'white');
 
+  const [target, setTarget] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [customTargetInput, setCustomTargetInput] = useState('');
+
+  const [targetOptions, setTargetOptions] = useState([
+    'School Fees',
+    'House Rent',
+    'Building Projects',
+    'Shop Rent',
+    'Donations',
+    'Staff Salaries',
+    'Enter custom target',
+  ]);
+
+  const handleCustomTargetSubmit = () => {
+    if (customTargetInput) {
+      // Update the select field's options array
+      setTargetOptions([...targetOptions, customTargetInput]);
+
+      // Update the select field's value
+      setValue('target', customTargetInput);
+
+      setTarget(customTargetInput);
+      setCustomTargetInput('');
+      setShowModal(false);
+    }
+  };
+
   const {
     handleSubmit,
     register,
     formState: { errors, isSubmitting },
+    setValue,
   } = useForm();
 
   const { customerData } = useAppContext();
@@ -37,7 +74,7 @@ export default function CreatePackage() {
     try {
       await axiosService.post(`/daily-savings/package`, packageData);
       toast.success('Package created successfully!');
-        history.push(`/admin/customer/${customerData.userId}`);
+      history.push(`/admin/customer/${customerData.userId}`);
     } catch (error) {
       if (
         error.response &&
@@ -55,7 +92,7 @@ export default function CreatePackage() {
   };
 
   return (
-    <Box pt={{ base: '180px', md: '80px', xl: '80px' }}>
+    <Box pt={{ base: '80px', md: '80px', xl: '80px' }}>
       <BackButton />
       <Grid
         mb="20px"
@@ -108,6 +145,48 @@ export default function CreatePackage() {
                     {errors.accountNumber && errors.accountNumber.message}
                   </FormErrorMessage>
                 </FormControl>
+                <FormControl>
+                  <FormLabel
+                    htmlFor="predefinedTarget"
+                    display="flex"
+                    ms="4px"
+                    fontSize="sm"
+                    fontWeight="500"
+                    color={textColor}
+                    mb="8px"
+                  >
+                    Select Target
+                  </FormLabel>
+                  <Select
+                    isRequired={true}
+                    variant="auth"
+                    fontSize="sm"
+                    ms={{ base: '0px', md: '0px' }}
+                    id="target"
+                    mb="24px"
+                    fontWeight="500"
+                    size="lg"
+                    value={target}
+                    {...register('target', {
+                      required: 'Target is required',
+                    })}
+                    onChange={(e) => {
+                      const selectedValue = e.target.value;
+                      if (selectedValue === 'custom') {
+                        setShowModal(true);
+                      } else {
+                        setTarget(selectedValue);
+                      }
+                    }}
+                  >
+                    {targetOptions.map((targetOption) => (
+                      <option key={targetOption} value={targetOption}>
+                        {targetOption}
+                      </option>
+                    ))}
+                    <option value="custom">Add Custom Target</option>
+                  </Select>
+                </FormControl>
                 <FormControl isInvalid={errors.amountPerDay}>
                   <FormLabel
                     htmlFor="amountPerDay"
@@ -157,6 +236,36 @@ export default function CreatePackage() {
           </Center>
         </Flex>
       </Grid>
+
+      {showModal && (
+        <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Add Custom Target</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <Input
+                variant="auth"
+                fontSize="sm"
+                ms={{ base: '0px', md: '0px' }}
+                type="text"
+                id="customTarget"
+                mb="24px"
+                fontWeight="500"
+                size="lg"
+                value={customTargetInput}
+                onChange={(e) => setCustomTargetInput(e.target.value)}
+              />
+            </ModalBody>
+            <ModalFooter>
+              <Button colorScheme="blue" onClick={handleCustomTargetSubmit}>
+                Add
+              </Button>
+              <Button onClick={() => setShowModal(false)}>Cancel</Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      )}
     </Box>
   );
 }

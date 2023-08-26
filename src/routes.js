@@ -262,14 +262,14 @@ const routes = [
   {
     name: 'Deposit',
     layout: '/admin',
-    path: '/daily-savings/deposit',
+    path: '/daily-savings/deposit/:packageId',
     icon: <Icon as={FaBox} width="20px" height="20px" color="inherit" />,
     component: MakeContribution,
   },
   {
     name: 'Withdraw',
     layout: '/admin',
-    path: '/daily-savings/withdraw',
+    path: '/daily-savings/withdraw/:packageId',
     icon: <Icon as={FaBox} width="20px" height="20px" color="inherit" />,
     component: Withdrawal,
   },
