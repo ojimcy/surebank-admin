@@ -110,7 +110,7 @@ const routes = [
     layout: '/admin',
     path: '/profile',
     icon: <Icon as={MdPerson} width="20px" height="20px" color="inherit" />,
-    roles: ['superAdmin', 'admin', 'userReps', 'user'],
+    roles: [],
     component: Profile,
   },
 
@@ -209,6 +209,7 @@ const routes = [
     layout: '/admin',
     path: '/transaction/withdraw',
     icon: <Icon as={FaMoneyBill} width="20px" height="20px" color="inherit" />,
+    roles: ['superAdmin', 'admin', 'userReps', 'user'],
     component: Withdraw,
   },
   {
@@ -317,6 +318,7 @@ const routes = [
     layout: '/admin',
     path: '/accounting/dashboard',
     icon: <Icon as={FaMoneyBill} width="20px" height="20px" color="inherit" />,
+    roles: ['superAdmin', 'admin', 'userReps', 'user'],
     component: Accounting,
   },
   {
@@ -324,6 +326,7 @@ const routes = [
     layout: '/admin',
     path: '/accounting/expenditure/:id',
     icon: <Icon as={FaMoneyBill} width="20px" height="20px" color="inherit" />,
+    roles: ['superAdmin', 'admin', 'userReps', 'user'],
     component: ExpenditureDetail,
   },
   {
@@ -331,6 +334,15 @@ const routes = [
     layout: '/admin',
     path: '/accounting/expenditure',
     icon: <Icon as={FaMoneyBill} width="20px" height="20px" color="inherit" />,
+    roles: ['superAdmin', 'admin', 'userReps', 'user'],
+    component: Expenditures,
+  },
+  {
+    name: 'Payment',
+    layout: '/admin',
+    path: '/payment',
+    icon: <Icon as={FaMoneyBill} width="20px" height="20px" color="inherit" />,
+    roles: ['superAdmin', 'admin', 'userReps', 'user'],
     component: Expenditures,
   },
 ];
