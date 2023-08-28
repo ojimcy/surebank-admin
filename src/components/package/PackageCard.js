@@ -39,7 +39,7 @@ const PackageCard = ({ packageData }) => {
       <Flex mt="4" justify="space-between">
         <Link to={`/admin/daily-savings/withdraw/${packageData.id}`}>
           <Button colorScheme="red" size="sm">
-            Withdraw
+            Transfer
           </Button>
         </Link>
         <Link to={`/admin/daily-savings/deposit/${packageData.id}`}>
