@@ -14,7 +14,6 @@ import { SearchIcon } from '@chakra-ui/icons';
 import SimpleTable from 'components/table/SimpleTable';
 
 function RecentTransactions({ transactions }) {
-
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredTransaction, setFilteredTransaction] = useState([]);
   const [selectedFilter, setSelectedFilter] = useState('all');
@@ -65,7 +64,14 @@ function RecentTransactions({ transactions }) {
 
   return (
     <Box mt="80px">
-      <Flex justifyContent="space-between" mb="40px">
+      <Flex
+        justifyContent="space-between"
+        mb="40px"
+        flexDirection={{
+          base: 'column',
+          xl: 'row',
+        }}
+      >
         <Heading size="lg" mb="4">
           Recent Transactions
         </Heading>

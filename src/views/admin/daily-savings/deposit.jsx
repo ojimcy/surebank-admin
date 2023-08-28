@@ -71,6 +71,7 @@ export default function MakeContribution() {
     },
     [history, packageId, userPackage.userId]
   );
+  
 
   return (
     <Box pt={{ base: '180px', md: '80px', xl: '80px' }}>

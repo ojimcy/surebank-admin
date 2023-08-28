@@ -8,7 +8,6 @@ import {
   Spacer,
 } from '@chakra-ui/react';
 import PackageCard from 'components/package/PackageCard';
-import Card from 'components/card/Card';
 
 import { NavLink } from 'react-router-dom';
 
@@ -17,7 +16,7 @@ const UsersPackages = ({ userPackages }) => {
   const textColorSecondary = 'secondaryGray.600';
 
   return (
-    <Card>
+    <>
       <Flex alignItems="center">
         <Flex flexDirection="column">
           <Text fontWeight="bold" fontSize="xl" mt="10px" color={textColor}>
@@ -57,7 +56,7 @@ const UsersPackages = ({ userPackages }) => {
           </Button>
         </Flex>
       )}
-    </Card>
+    </>
   );
 };
 
