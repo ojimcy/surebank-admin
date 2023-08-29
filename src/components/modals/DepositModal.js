@@ -23,7 +23,7 @@ import { formatNaira } from 'utils/helper';
 
 import axiosService from 'utils/axiosService';
 
-const DepositModal = ({ isOpen, onClose, packageData }) => {
+const DepositModal = ({ isOpen, onClose, packageData, onSuccess }) => {
   const [depositAmount, setDepositAmount] = useState('');
 
   const handleDeposit = async () => {
@@ -41,17 +41,13 @@ const DepositModal = ({ isOpen, onClose, packageData }) => {
 
       toast.success('Deposit successful');
       onClose();
-
-      // Reload the page
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
+      onSuccess();
     } catch (error) {
       console.error(error);
-        toast.error(
-          error.response?.data?.message ||
-            'An error occurred while making contribution.'
-        );
+      toast.error(
+        error.response?.data?.message ||
+          'An error occurred while making contribution.'
+      );
     }
   };
 
@@ -64,9 +60,7 @@ const DepositModal = ({ isOpen, onClose, packageData }) => {
         <ModalBody>
           <VStack spacing={4}>
             <Text>Target: {packageData.target}</Text>
-            <Text>
-              Amount per day: {formatNaira(packageData.amountPerDay)}
-            </Text>
+            <Text>Amount per day: {formatNaira(packageData.amountPerDay)}</Text>
             <Text>Account Number: {packageData.accountNumber}</Text>
             <InputGroup>
               <Input
@@ -80,9 +74,7 @@ const DepositModal = ({ isOpen, onClose, packageData }) => {
                   h="1.75rem"
                   size="sm"
                   icon={<MdEdit />}
-                  onClick={() =>
-                    setDepositAmount(packageData.amountPerDay)
-                  }
+                  onClick={() => setDepositAmount(packageData.amountPerDay)}
                 />
               </InputRightElement>
             </InputGroup>

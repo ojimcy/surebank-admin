@@ -4,7 +4,6 @@ import {
   Grid,
   Spinner,
   Flex,
-  Spacer,
   Stack,
   Select,
   Modal,
@@ -59,6 +58,7 @@ export default function DsWithdrawals() {
     }
     setCustomDateModalOpen(false);
   };
+
   useEffect(() => {
     async function fetchDsWithdrawals() {
       setLoading(true);
@@ -162,7 +162,6 @@ export default function DsWithdrawals() {
         >
           <Box marginTop="30">
             <Flex>
-              <Spacer />
               <Box>
                 <Stack direction="row">
                   <Select

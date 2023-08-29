@@ -7,14 +7,15 @@ import {
   useColorModeValue,
   Spacer,
 } from '@chakra-ui/react';
-import { useAppContext } from 'contexts/AppContext';
 import PackageCard from 'components/package/PackageCard';
 
 import { NavLink } from 'react-router-dom';
 
-const UsersPackages = () => {
-  const { userPackages } = useAppContext();
-
+const UsersPackages = ({
+  userPackages,
+  handleTransferSuccess,
+  handleDepositSuccess,
+}) => {
   const textColor = useColorModeValue('secondaryGray.900', 'white');
   const textColorSecondary = 'secondaryGray.600';
 
@@ -49,7 +50,12 @@ const UsersPackages = () => {
           mt="20px"
         >
           {userPackages?.map((packageData, index) => (
-            <PackageCard key={index} packageData={packageData} />
+            <PackageCard
+              key={index}
+              packageData={packageData}
+              handleTransferSuccess={handleTransferSuccess}
+              handleDepositSuccess={handleDepositSuccess}
+            />
           ))}
         </Grid>
       ) : (

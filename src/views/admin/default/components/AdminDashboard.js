@@ -4,7 +4,6 @@ import {
   Icon,
   Text,
   useColorModeValue,
-  Spacer,
   Box,
 } from '@chakra-ui/react';
 
@@ -175,7 +174,6 @@ export default function UserRepsDashboard() {
       <Text fontSize="2xl" mt="5rem">
         Transactions
       </Text>
-      <Spacer />
 
       <DsWithdrawals />
     </>

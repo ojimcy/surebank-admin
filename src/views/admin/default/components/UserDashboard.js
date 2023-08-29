@@ -33,44 +33,85 @@ export default function UserDashboard() {
   const [showBalance, setShowBalance] = useState(true);
   const [transactions, setTransactions] = useState([]);
 
-  // Fetch all required data
-  const fetchData = async () => {
+  // Fetch user activities
+  const fetchUserActivities = async () => {
     try {
       setLoading(true);
-
-      // Fetch user activities
-      const userActivitiesResponse = await axiosService.get(
+      const response = await axiosService.get(
         `/transactions?accountNumber=${customerData.accountNumber}`
       );
-      setTransactions(userActivitiesResponse.data);
-
-      // Fetch user account data
-      const accountResponse = await axiosService.get(
-        `/accounts/${currentUser.id}`
-      );
-      setCustomerData(accountResponse.data);
-
-      // Fetch user ds package data
-      const dsPackageResponse = await axiosService.get(
-        `daily-savings/package?userId=${currentUser.id}&accountNumber=${customerData.accountNumber}`
-      );
-      setUserPackages(dsPackageResponse.data);
-
+      setTransactions(response.data);
       setLoading(false);
     } catch (error) {
       console.error(error);
       toast.error(
         error.response?.data?.message ||
-          'An error occurred while fetching data.'
+          'An error occurred while fetching user activities.'
       );
       setLoading(false);
     }
   };
 
-  // Reload data when id changes
+  // Fetch user ds package data
+  const fetchUserPackages = async () => {
+    try {
+      setLoading(true);
+      const response = await axiosService.get(
+        `daily-savings/package?userId=${currentUser.id}&accountNumber=${customerData.accountNumber}`
+      );
+      setUserPackages(response.data);
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+      toast.error(
+        error.response?.data?.message ||
+          'An error occurred while fetching user packages.'
+      );
+      setLoading(false);
+    }
+  };
+
+  // Fetch user account data and then user activities and packages
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const accountResponse = await axiosService.get(
+        `/accounts/${currentUser.id}`
+      );
+      setCustomerData(accountResponse.data);
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+      toast.error(
+        error.response?.data?.message ||
+          'An error occurred while fetching user account data.'
+      );
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchData();
   }, [currentUser]);
+
+  useEffect(() => {
+    if (customerData) {
+      fetchUserActivities();
+      fetchUserPackages();
+    }
+  }, [customerData]);
+
+  const handleTransferSuccess = () => {
+    // Fetch updated data after successful transfer here
+    fetchData();
+    fetchUserPackages();
+  };
+
+  const handleDepositSuccess = () => {
+    // Fetch updated data after successful deposit here
+    fetchData();
+    fetchUserPackages();
+  };
 
   return (
     <Box pt={{ base: '0px', md: '40px', xl: '40px' }}>
@@ -120,7 +161,11 @@ export default function UserDashboard() {
                 <TabPanel>
                   {/* Savings Summary Section */}
 
-                  <UsersPackages userPackages={userPackages} />
+                  <UsersPackages
+                    userPackages={userPackages}
+                    handleTransferSuccess={handleTransferSuccess}
+                    handleDepositSuccess={handleDepositSuccess}
+                  />
 
                   {/* Recent Transactions Section */}
 

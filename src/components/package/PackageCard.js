@@ -12,7 +12,11 @@ import { formatDate, formatNaira } from 'utils/helper';
 import TransferModal from 'components/modals/TransferModal';
 import DepositModal from 'components/modals/DepositModal';
 
-const PackageCard = ({ packageData }) => {
+const PackageCard = ({
+  packageData,
+  handleTransferSuccess,
+  handleDepositSuccess,
+}) => {
   const { target, amountPerDay, startDate, totalContribution, totalCount } =
     packageData;
 
@@ -70,11 +74,13 @@ const PackageCard = ({ packageData }) => {
         isOpen={isTransferModalOpen}
         onClose={handleCloseModal}
         packageData={packageData}
+        onSuccess={handleTransferSuccess}
       />
       <DepositModal
         isOpen={isDepositModalOpen}
         onClose={handleCloseDepositModal}
         packageData={packageData}
+        onSuccess={handleDepositSuccess}
       />
     </Box>
   );
