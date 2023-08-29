@@ -27,68 +27,49 @@ import UsersPackages from 'components/package/UsersPackages';
 
 export default function UserDashboard() {
   const { currentUser } = useAuth();
+  const { customerData, setCustomerData, userPackages, setUserPackages } =
+    useAppContext();
   const [loading, setLoading] = useState(false);
   const [showBalance, setShowBalance] = useState(true);
   const [transactions, setTransactions] = useState([]);
-  const [userPackages, setUserPackages] = useState([]);
 
-  const { customerData, setCustomerData } = useAppContext();
-
-  // Function to fetch user ds package data
-  const fetchDsPackage = async () => {
+  // Fetch all required data
+  const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await axiosService.get(
+
+      // Fetch user activities
+      const userActivitiesResponse = await axiosService.get(
+        `/transactions?accountNumber=${customerData.accountNumber}`
+      );
+      setTransactions(userActivitiesResponse.data);
+
+      // Fetch user account data
+      const accountResponse = await axiosService.get(
+        `/accounts/${currentUser.id}`
+      );
+      setCustomerData(accountResponse.data);
+
+      // Fetch user ds package data
+      const dsPackageResponse = await axiosService.get(
         `daily-savings/package?userId=${currentUser.id}&accountNumber=${customerData.accountNumber}`
       );
-      setUserPackages(response.data);
+      setUserPackages(dsPackageResponse.data);
+
       setLoading(false);
     } catch (error) {
       console.error(error);
       toast.error(
         error.response?.data?.message ||
-          'An error occurred while fetching user package.'
+          'An error occurred while fetching data.'
       );
       setLoading(false);
     }
   };
-  // Function to fetch user sb package data
-
-  // Function to fetch user activities data
-  const fetchUserActivities = async () => {
-    try {
-      const response = await axiosService.get(
-        `/transactions?accountNumber=${customerData.accountNumber}`
-      );
-      setTransactions(response.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  // Function to fetch account data
-  const fetchAccount = async () => {
-    try {
-      const response = await axiosService.get(`/accounts/${currentUser.id}`);
-      setCustomerData(response.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  // Reload data when customerData changes
-  useEffect(() => {
-    fetchUserActivities();
-  }, [customerData, currentUser.id]);
 
   // Reload data when id changes
   useEffect(() => {
-    fetchDsPackage();
-  }, [currentUser.id, customerData, setUserPackages]);
-
-  // Load account data when component mounts
-  useEffect(() => {
-    fetchAccount();
+    fetchData();
   }, [currentUser]);
 
   return (

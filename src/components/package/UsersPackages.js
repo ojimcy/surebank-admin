@@ -7,11 +7,14 @@ import {
   useColorModeValue,
   Spacer,
 } from '@chakra-ui/react';
+import { useAppContext } from 'contexts/AppContext';
 import PackageCard from 'components/package/PackageCard';
 
 import { NavLink } from 'react-router-dom';
 
-const UsersPackages = ({ userPackages }) => {
+const UsersPackages = () => {
+  const { userPackages } = useAppContext();
+
   const textColor = useColorModeValue('secondaryGray.900', 'white');
   const textColorSecondary = 'secondaryGray.600';
 

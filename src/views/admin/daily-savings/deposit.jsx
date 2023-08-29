@@ -60,7 +60,7 @@ export default function MakeContribution() {
           depositData
         );
         toast.success('Contribution successful!');
-        history.push(`/admin/customer/${userPackage.userId.id}`);
+        history.push(`/`);
       } catch (error) {
         console.error(error);
         toast.error(
@@ -69,9 +69,8 @@ export default function MakeContribution() {
         );
       }
     },
-    [history, packageId, userPackage.userId]
+    [history, packageId]
   );
-  
 
   return (
     <Box pt={{ base: '180px', md: '80px', xl: '80px' }}>

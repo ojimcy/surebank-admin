@@ -14,7 +14,7 @@ const AppProvider = ({ children }) => {
   const [branches, setBranches] = useState([]);
   const [loading, setLoading] = useState(false);
   const [customerData, setCustomerData] = useState({});
-  const [userPackages, setUserPackages] = useState({});
+  const [userPackages, setUserPackages] = useState([]);
   const [packageId, setPackageId] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
