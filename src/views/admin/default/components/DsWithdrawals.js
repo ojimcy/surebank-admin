@@ -132,14 +132,18 @@ export default function DsWithdrawals() {
         accessor: 'amount',
       },
       {
-        Header: 'User Reps',
+        Header: 'Cashier',
         accessor: (row) =>
           `${row.userReps?.firstName} ${row.userReps?.lastName}`,
       },
       {
         Header: 'Action',
         accessor: (row) => (
-          <NavLink to={`/daily-savings/withdrawals/${row.id}`}>Approve</NavLink>
+          <>
+            <NavLink to={`/daily-savings/withdrawals/${row.id}`}>
+              Approve
+            </NavLink>
+          </>
         ),
       },
     ],

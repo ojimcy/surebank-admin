@@ -7,27 +7,22 @@ import {
   Button,
   Flex,
   Grid,
-  GridItem,
-  Heading,
   Icon,
   Menu,
   MenuButton,
   MenuItem,
   MenuList,
-  Progress,
-  SimpleGrid,
   Spinner,
-  Stack,
-  Stat,
-  StatLabel,
-  StatNumber,
   Text,
+  Tabs,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
 } from '@chakra-ui/react';
 // import { CustomButton } from 'components/Button/CustomButton';
-import { AiOutlineBank } from 'react-icons/ai';
-import { FaBox, FaCopy, FaDollarSign } from 'react-icons/fa';
+import { FaCopy } from 'react-icons/fa';
 import { NavLink, useParams } from 'react-router-dom';
-import { formatDate } from 'utils/helper';
 import { toast } from 'react-toastify';
 // Assets
 
@@ -40,36 +35,28 @@ import { ChevronDownIcon } from '@chakra-ui/icons';
 import { MdOutlineRemoveRedEye } from 'react-icons/md';
 import { RiEyeCloseLine } from 'react-icons/ri';
 
+import RecentTransactions from 'components/transactions/RecentTransactions';
+import UsersPackages from 'components/package/UsersPackages';
+
 export default function ViewCustomer() {
   const { id } = useParams();
-  const [showTransactions, setShowTransactions] = useState(false);
-  const [visibleTransactions, setVisibleTransactions] = useState(10);
   const [loading, setLoading] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
-  const [packageFound, setPackageFound] = useState(false);
   const [showBalance, setShowBalance] = useState(true);
-  const [userActivities, setUserActivities] = useState([]);
+  const [transactions, setTransactions] = useState([]);
 
-  const { customerData, setCustomerData, userPackage, setUserPackage } =
+  const { customerData, setCustomerData, userPackages, setUserPackages } =
     useAppContext();
 
-  // Conditionally calculate savings progress and days left
-  let savingsProgress = 0;
-  let daysLeft = 31;
-  if (userPackage && userPackage.totalCount) {
-    savingsProgress = ((userPackage.totalCount / 31) * 100).toFixed(2);
-    daysLeft = 31 - userPackage.totalCount;
-  }
   // Function to fetch user package data
-  const fetchUserPackage = async () => {
+  const fetchUserPackages = async () => {
     try {
       setLoading(true);
       const response = await axiosService.get(
         `daily-savings/package?userId=${id}&accountNumber=${customerData.accountNumber}`
       );
-      setUserPackage(response.data);
+      setUserPackages(response.data);
       setLoading(false);
-      setPackageFound(true);
     } catch (error) {
       console.error(error);
       toast.error(
@@ -83,51 +70,49 @@ export default function ViewCustomer() {
   // Function to fetch user activities data
   const fetchUserActivities = async () => {
     try {
+      setLoading(true);
       const response = await axiosService.get(
-        `daily-savings/activities?userId=${id}&accountNumber=${customerData.accountNumber}`
+        `/transactions?accountNumber=${customerData.accountNumber}`
       );
-      setUserActivities(response.data);
+      setTransactions(response.data);
+      setLoading(false);
     } catch (error) {
       console.error(error);
+      toast.error(
+        error.response?.data?.message ||
+          'An error occurred while fetching user activities.'
+      );
+      setLoading(false);
     }
   };
 
   // Function to fetch account data
   const fetchAccount = async () => {
     try {
-      const response = await axiosService.get(`/accounts/${id}`);
-      setCustomerData(response.data);
+      setLoading(true);
+      const accountResponse = await axiosService.get(`/accounts/${id}`);
+      setCustomerData(accountResponse.data);
+      setLoading(false);
     } catch (error) {
       console.error(error);
+      toast.error(
+        error.response?.data?.message ||
+          'An error occurred while fetching user account data.'
+      );
+      setLoading(false);
     }
   };
 
-  // Reload data when customerData changes
-  useEffect(() => {
-    fetchUserActivities();
-  }, [customerData, id]);
-  // Reload data when id changes
-  useEffect(() => {
-    fetchUserPackage();
-  }, [id, customerData, setUserPackage]);
-
-  // Load account data when component mounts
   useEffect(() => {
     fetchAccount();
   }, [id]);
 
-  // Reload transactions when visibleTransactions changes
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowTransactions(true);
-    }, 200);
-    return () => clearTimeout(timer);
-  }, [visibleTransactions]);
-
-  // Function to handle "Show More" button click
-  const handleShowMore = () => {
-    setVisibleTransactions((prevVisible) => prevVisible + 10);
-  };
+    if (customerData) {
+      fetchUserActivities();
+      fetchUserPackages();
+    }
+  }, [customerData]);
 
   // Function to handle copy to clipboard
   const handleCopyToClipboard = useCallback(() => {
@@ -141,6 +126,18 @@ export default function ViewCustomer() {
     setIsCopied(true);
     setTimeout(() => setIsCopied(false), 1500);
   });
+
+  const handleTransferSuccess = () => {
+    // Fetch updated data after successful transfer here
+    fetchAccount();
+    fetchUserPackages();
+  };
+
+  const handleDepositSuccess = () => {
+    // Fetch updated data after successful deposit here
+    fetchAccount();
+    fetchUserPackages();
+  };
 
   return (
     <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
@@ -228,227 +225,31 @@ export default function ViewCustomer() {
                 </Grid>
               </Box>
             </Flex>
-            <Flex>
-              {/* Savings Progress Section */}
-              <Stat p="4" borderRadius="lg" boxShadow="sm">
-                {packageFound ? (
-                  <>
-                    <StatLabel fontSize={{ base: 'lg', md: 'xl' }}>
-                      Savings Progress
-                    </StatLabel>
-                    <StatNumber fontWeight="bold">
-                      {savingsProgress}%
-                    </StatNumber>
-                    <Progress
-                      value={savingsProgress ? parseFloat(savingsProgress) : 0}
-                      size="sm"
-                      mt="2"
-                      colorScheme="blue"
-                    />
-                  </>
-                ) : (
-                  <Text
-                    mt="4"
-                    fontSize={{ base: 'md', md: 'lg' }}
-                    color="red.500"
-                  >
-                    No active package found for this customer.
-                  </Text>
-                )}
-              </Stat>
-            </Flex>
           </Flex>
+          <Tabs variant="soft-rounded" colorScheme="green" mt='2rem'>
+            <TabList>
+              <Tab>DS Account</Tab>
+              <Tab>SB Account</Tab>
+            </TabList>
+            <TabPanels>
+              <TabPanel>
+                {/* Savings Summary Section */}
 
-          {/* Savings Summary Section */}
-          <SimpleGrid
-            columns={{ base: 1, md: 3, lg: 3, '2xl': 3 }}
-            gap="20px"
-            mb="20px"
-            mt="40px"
-          >
-            <GridItem>
-              <Stat
-                p="4"
-                borderRadius="lg"
-                bg="green.100"
-                minHeight="150px"
-                alignItems="center"
-                display="flex"
-              >
-                <StatLabel>Total contribution</StatLabel>
-                <StatNumber fontWeight="bold">
-                  {packageFound
-                    ? formatNaira(userPackage.totalContribution)
-                    : 0}
-                </StatNumber>
-              </Stat>
-            </GridItem>
-            <GridItem>
-              <Stat
-                p="4"
-                borderRadius="lg"
-                bg="orange.100"
-                minHeight="150px"
-                alignItems="center"
-                display="flex"
-              >
-                <StatLabel>Amount per Day</StatLabel>
-                <StatNumber fontWeight="bold">
-                  {packageFound ? formatNaira(userPackage.amountPerDay) : 0}
-                </StatNumber>
-              </Stat>
-            </GridItem>
-            <GridItem>
-              <Stat
-                p="4"
-                borderRadius="lg"
-                bg="gray.100"
-                minHeight="150px"
-                alignItems="center"
-                display="flex"
-              >
-                <StatLabel>Days Left</StatLabel>
-                <StatNumber fontWeight="bold">{daysLeft}</StatNumber>
-              </Stat>
-            </GridItem>
-          </SimpleGrid>
+                <UsersPackages
+                  userPackages={userPackages}
+                  handleTransferSuccess={handleTransferSuccess}
+                  handleDepositSuccess={handleDepositSuccess}
+                />
 
-          {/* action buttons  */}
-          <Flex
-            mt={4}
-            direction={{ base: 'column', md: 'row' }}
-            justifyContent="space-between"
-            gap={{ base: '2', md: '0' }}
-          >
-            <NavLink to="/admin/daily-savings/deposit">
-              <Button
-                borderRadius="none"
-                size="md"
-                boxShadow="md"
-                _hover={{ boxShadow: 'xl', transform: 'translateY(-2px)' }}
-                m="10px"
-              >
-                <Box
-                  display="inline-block"
-                  bg="rgb(64, 25, 109)"
-                  borderRadius="full"
-                  mr={2}
-                  w="20px"
-                  h="20px"
-                >
-                  <Icon as={FaDollarSign} w={4} h={3} color="white" />
-                </Box>
-                Make Contribution
-              </Button>
-            </NavLink>
-            <NavLink to="/admin/daily-savings/withdraw">
-              <Button
-                borderRadius="none"
-                size="md"
-                boxShadow="md"
-                _hover={{ boxShadow: 'xl', transform: 'translateY(-2px)' }}
-                m="10px"
-              >
-                <Box
-                  display="inline-block"
-                  bg="rgb(64, 25, 109)"
-                  borderRadius="full"
-                  mr={2}
-                  w="20px"
-                  h="20px"
-                >
-                  <Icon as={AiOutlineBank} w={4} h={3} color="white" />
-                </Box>
-                Make Withdrwal
-              </Button>
-            </NavLink>
-            <NavLink to="/admin/daily-saving/package">
-              <Button
-                borderRadius="none"
-                size="md"
-                boxShadow="md"
-                _hover={{ boxShadow: 'xl', transform: 'translateY(-2px)' }}
-                m="10px"
-              >
-                <Box
-                  display="inline-block"
-                  bg="rgb(64, 25, 109)"
-                  borderRadius="full"
-                  mr={2}
-                  w="20px"
-                  h="20px"
-                >
-                  <Icon as={FaBox} w={4} h={3} color="white" />
-                </Box>
-                Create Package
-              </Button>
-            </NavLink>
-          </Flex>
+                {/* Recent Transactions Section */}
 
-          {/* Recent Transactions Section */}
-          <Box mt="8">
-            <Heading size="lg" mb="4">
-              Recent Transactions
-            </Heading>
-            {userActivities && userActivities.length > 0 ? (
-              <Stack spacing="4">
-                {showTransactions &&
-                  userActivities
-                    .slice(0, visibleTransactions)
-                    .map((activity, index) => (
-                      <Box
-                        key={index}
-                        p="4"
-                        bg="gray.100"
-                        borderRadius="md"
-                        opacity={showTransactions ? 1 : 0}
-                        transform={`translateY(${showTransactions ? 0 : 10}px)`}
-                        transition="opacity 0.3s, transform 0.3s"
-                      >
-                        <Flex
-                          justifyContent="space-between"
-                          alignItems="center"
-                        >
-                          <Box>
-                            <Text fontWeight="bold">
-                              {activity.narration === 'Daily contribution'
-                                ? 'Deposit'
-                                : 'Withdrawal'}
-                            </Text>
-                            <Text>{formatDate(activity.date)}</Text>
-                          </Box>
-                          <Text>{activity.narration}</Text>
-                          <Text>{`${activity.userReps?.firstName} ${activity.userReps?.lastName}`}</Text>
-                          <Text
-                            color={
-                              activity.narration === 'Daily contribution'
-                                ? 'green.500'
-                                : 'gray.800'
-                            }
-                          >
-                            {formatNaira(activity.amount)}
-                          </Text>
-                        </Flex>
-                      </Box>
-                    ))}
-              </Stack>
-            ) : (
-              <Text>Transaction not found</Text>
-            )}
-
-            {/* Show More button */}
-            {visibleTransactions < userActivities.length && (
-              <Button
-                mt="4"
-                onClick={handleShowMore}
-                colorScheme="blue"
-                variant="outline"
-                size="sm"
-              >
-                Show More
-              </Button>
-            )}
-          </Box>
+                <RecentTransactions transactions={transactions} />
+              </TabPanel>
+              <TabPanel>
+                <p>SB accounts here!</p>
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
         </Box>
       )}
     </Box>
