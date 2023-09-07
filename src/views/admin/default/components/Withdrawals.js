@@ -24,10 +24,10 @@ import { NavLink } from 'react-router-dom/';
 
 import { useAppContext } from 'contexts/AppContext';
 
-export default function DsWithdrawals() {
+export default function Withdrawals() {
   const { branches } = useAppContext();
   const [loading, setLoading] = useState(true);
-  const [dsWithdrawals, setDsWithdrawals] = useState([]);
+  const [withdrawals, setWithdrawals] = useState([]);
   const [filteredWithdrawals, setFilteredWithdrawals] = useState([]);
   const [timeRange, setTimeRange] = useState('all');
   const [startDate, setStartDate] = useState('');
@@ -60,10 +60,10 @@ export default function DsWithdrawals() {
   };
 
   useEffect(() => {
-    async function fetchDsWithdrawals() {
+    async function fetchWithdrawals() {
       setLoading(true);
 
-      let endpoint = `/daily-savings/withdrawals`;
+      let endpoint = `/transactions/withdrawals`;
       if (timeRange === 'last7days') {
         const endDate = new Date();
         endDate.setHours(23, 59, 59, 999);
@@ -89,7 +89,7 @@ export default function DsWithdrawals() {
       }
       try {
         const response = await axiosService.get(endpoint);
-        setDsWithdrawals(response.data);
+        setWithdrawals(response.data);
         setLoading(false);
       } catch (error) {
         // Handle error
@@ -97,11 +97,11 @@ export default function DsWithdrawals() {
       }
     }
 
-    fetchDsWithdrawals();
+    fetchWithdrawals();
   }, [timeRange, branch, startDate, endDate]);
 
   useEffect(() => {
-    let filteredData = dsWithdrawals;
+    let filteredData = withdrawals;
 
     // Apply filters
     if (timeRange === 'last7days') {
@@ -118,7 +118,7 @@ export default function DsWithdrawals() {
       );
     }
     setFilteredWithdrawals(filteredData);
-  }, [dsWithdrawals, timeRange]);
+  }, [withdrawals, timeRange]);
 
   // Columns for the user table
   const columns = React.useMemo(
@@ -133,8 +133,11 @@ export default function DsWithdrawals() {
       },
       {
         Header: 'Cashier',
-        accessor: (row) =>
-          `${row.userReps?.firstName} ${row.userReps?.lastName}`,
+        accessor: (row) => (
+          <NavLink to={`/admin/user/${row.userReps._id}`}>
+            {row.userReps?.firstName} {row.userReps?.lastName}
+          </NavLink>
+        ),
       },
       {
         Header: 'Action',

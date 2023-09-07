@@ -25,6 +25,7 @@ import axiosService from 'utils/axiosService';
 
 const DepositModal = ({ isOpen, onClose, packageData, onSuccess }) => {
   const [depositAmount, setDepositAmount] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleDeposit = async () => {
     const depositData = {
@@ -34,12 +35,14 @@ const DepositModal = ({ isOpen, onClose, packageData, onSuccess }) => {
     };
 
     try {
+      setLoading(true);
       await axiosService.post(
         `/daily-savings/make-contribution/?packageId=${packageData.id}`,
         depositData
       );
 
       toast.success('Deposit successful');
+      setLoading(false);
       onClose();
       onSuccess();
     } catch (error) {
@@ -48,6 +51,8 @@ const DepositModal = ({ isOpen, onClose, packageData, onSuccess }) => {
         error.response?.data?.message ||
           'An error occurred while making contribution.'
       );
+    } finally {
+    setLoading(false);
     }
   };
 
@@ -55,7 +60,7 @@ const DepositModal = ({ isOpen, onClose, packageData, onSuccess }) => {
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Transfer Funds</ModalHeader>
+        <ModalHeader>Deposit</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <VStack spacing={4}>
@@ -65,7 +70,7 @@ const DepositModal = ({ isOpen, onClose, packageData, onSuccess }) => {
             <InputGroup>
               <Input
                 type="number"
-                placeholder="Enter transfer amount"
+                placeholder="Enter deposit amount"
                 value={depositAmount}
                 onChange={(e) => setDepositAmount(e.target.value)}
               />
@@ -82,7 +87,12 @@ const DepositModal = ({ isOpen, onClose, packageData, onSuccess }) => {
         </ModalBody>
 
         <ModalFooter>
-          <Button colorScheme="green" onClick={handleDeposit}>
+          <Button
+            colorScheme="green"
+            onClick={handleDeposit}
+            isLoading={loading}
+            loadingText="Depositting"
+          >
             Deposit
           </Button>
         </ModalFooter>

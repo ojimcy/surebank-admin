@@ -43,7 +43,6 @@ export default function CreatePackage() {
     'Shop Rent',
     'Donations',
     'Staff Salaries',
-    'Enter custom target',
   ]);
 
   const handleCustomTargetSubmit = () => {

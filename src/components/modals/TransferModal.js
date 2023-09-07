@@ -10,9 +10,7 @@ import {
   ModalCloseButton,
   Input,
   InputGroup,
-  InputRightElement,
   VStack,
-  IconButton,
   Button,
   Spinner,
   AlertDialog,
@@ -21,9 +19,9 @@ import {
   AlertDialogHeader,
   AlertDialogBody,
   AlertDialogFooter,
+  HStack,
 } from '@chakra-ui/react';
 
-import { MdEdit } from 'react-icons/md';
 import { toast } from 'react-toastify';
 
 import { formatNaira } from 'utils/helper';
@@ -34,6 +32,7 @@ const TransferModal = ({ isOpen, onClose, packageData, onSuccess }) => {
   const [transferAmount, setTransferAmount] = useState('');
   const [showConfirmCloseModal, setShowConfirmCloseModal] = useState(false);
   const [isConfirming, setIsConfirming] = useState(false);
+  const [loading, setLoading] = useState(false);
   const cancelRef = React.useRef();
 
   const handleTransferConfirm = async () => {
@@ -60,20 +59,23 @@ const TransferModal = ({ isOpen, onClose, packageData, onSuccess }) => {
     };
 
     try {
+      setLoading(true);
       await axiosService.post(
         `/daily-savings/withdraw/?packageId=${packageData.id}`,
         transferData
       );
-
       toast.success('Transfer successful');
+      setLoading(false);
       onClose();
       onSuccess();
     } catch (error) {
       console.error(error);
       toast.error('Transfer failed. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
-  console.log(packageData);
+
   const handleCloseConfirmModal = () => {
     setShowConfirmCloseModal(false);
   };
@@ -110,24 +112,29 @@ const TransferModal = ({ isOpen, onClose, packageData, onSuccess }) => {
                   value={transferAmount}
                   onChange={(e) => setTransferAmount(e.target.value)}
                 />
-                <InputRightElement width="4.5rem">
-                  <IconButton
-                    h="1.75rem"
-                    size="sm"
-                    icon={<MdEdit />}
-                    onClick={() =>
-                      setTransferAmount(packageData.totalContribution)
-                    }
-                  />
-                </InputRightElement>
               </InputGroup>
             </VStack>
           </ModalBody>
 
-          <ModalFooter>
-            <Button colorScheme="green" onClick={handleTransferConfirm}>
-              Confirm Transfer
-            </Button>
+          <ModalFooter justifyContent='space-around'>
+            <HStack>
+              <Button
+                colorScheme="green"
+                onClick={handleTransferConfirm}
+                isLoading={loading}
+                loadingText="Submitting"
+              >
+                Transfer to SB
+              </Button>
+              <Button
+                colorScheme="green"
+                onClick={handleTransferConfirm}
+                isLoading={loading}
+                loadingText="Submitting"
+              >
+                Request Cash
+              </Button>
+            </HStack>
           </ModalFooter>
         </ModalContent>
       </Modal>

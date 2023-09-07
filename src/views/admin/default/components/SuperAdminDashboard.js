@@ -17,7 +17,7 @@ import { toast } from 'react-toastify';
 import { formatNaira } from 'utils/helper';
 
 import ActionButton from 'components/Button/CustomButton';
-import DsWithdrawals from './DsWithdrawals';
+import Withdrawals from './Withdrawals';
 
 export default function SuperAdminDashboard() {
   const brandColor = useColorModeValue('brand.500', 'white');
@@ -204,7 +204,7 @@ export default function SuperAdminDashboard() {
         </Flex>
       </Box>
 
-      <DsWithdrawals />
+      <Withdrawals />
     </>
   );
 }

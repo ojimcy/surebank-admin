@@ -28,7 +28,7 @@ export default function Accounting() {
     const fetchTotalIncome = async () => {
       try {
         const response = await axiosService.get(
-          '/accounting/contibution-incomes'
+          '/accounting/contribution-incomes/supperadmin'
         );
         setTotalIncome(response.data);
       } catch (error) {

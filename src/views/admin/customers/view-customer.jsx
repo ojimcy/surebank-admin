@@ -114,6 +114,7 @@ export default function ViewCustomer() {
     }
   }, [customerData]);
 
+
   // Function to handle copy to clipboard
   const handleCopyToClipboard = useCallback(() => {
     const textField = document.createElement('textarea');
@@ -210,6 +211,10 @@ export default function ViewCustomer() {
               <Box px={6} py={4}>
                 <Grid templateColumns="repeat(1fr)" gap={1}>
                   <Text fontSize={{ base: 'md', md: 'lg' }}>
+                    Account Name: {customerData.firstName}{' '}
+                    {customerData.lastName}
+                  </Text>
+                  <Text fontSize={{ base: 'md', md: 'lg' }}>
                     Account Number: {customerData.accountNumber}
                     <Button size="sm" onClick={handleCopyToClipboard}>
                       {isCopied ? 'Copied!' : <FaCopy />}
@@ -226,7 +231,7 @@ export default function ViewCustomer() {
               </Box>
             </Flex>
           </Flex>
-          <Tabs variant="soft-rounded" colorScheme="green" mt='2rem'>
+          <Tabs variant="soft-rounded" colorScheme="green" mt="2rem">
             <TabList>
               <Tab>DS Account</Tab>
               <Tab>SB Account</Tab>

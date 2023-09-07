@@ -1,11 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Flex,
-  Icon,
-  Text,
-  useColorModeValue,
-  Box,
-} from '@chakra-ui/react';
+import { Flex, Icon, Text, useColorModeValue, Box } from '@chakra-ui/react';
 
 import { MdAttachMoney, MdPerson } from 'react-icons/md';
 import axiosService from 'utils/axiosService';
@@ -19,7 +13,7 @@ import MiniStatistics from 'components/card/MiniStatistics';
 import IconBox from 'components/icons/IconBox';
 import ActionButton from 'components/Button/CustomButton';
 
-import DsWithdrawals from './DsWithdrawals';
+import Withdrawals from './Withdrawals';
 
 export default function UserRepsDashboard() {
   const brandColor = useColorModeValue('brand.500', 'white');
@@ -175,7 +169,7 @@ export default function UserRepsDashboard() {
         Transactions
       </Text>
 
-      <DsWithdrawals />
+      <Withdrawals />
     </>
   );
 }
