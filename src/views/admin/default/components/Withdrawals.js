@@ -63,7 +63,7 @@ export default function Withdrawals() {
     async function fetchWithdrawals() {
       setLoading(true);
 
-      let endpoint = `/transactions/withdrawals`;
+      let endpoint = `/transactions/withdraw/cash`;
       if (timeRange === 'last7days') {
         const endDate = new Date();
         endDate.setHours(23, 59, 59, 999);

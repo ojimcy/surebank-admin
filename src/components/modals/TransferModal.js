@@ -126,14 +126,6 @@ const TransferModal = ({ isOpen, onClose, packageData, onSuccess }) => {
               >
                 Transfer to SB
               </Button>
-              <Button
-                colorScheme="green"
-                onClick={handleTransferConfirm}
-                isLoading={loading}
-                loadingText="Submitting"
-              >
-                Request Cash
-              </Button>
             </HStack>
           </ModalFooter>
         </ModalContent>

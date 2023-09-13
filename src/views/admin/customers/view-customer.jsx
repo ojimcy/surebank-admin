@@ -47,7 +47,6 @@ export default function ViewCustomer() {
 
   const { customerData, setCustomerData, userPackages, setUserPackages } =
     useAppContext();
-
   // Function to fetch user package data
   const fetchUserPackages = async () => {
     try {
@@ -114,7 +113,6 @@ export default function ViewCustomer() {
     }
   }, [customerData]);
 
-
   // Function to handle copy to clipboard
   const handleCopyToClipboard = useCallback(() => {
     const textField = document.createElement('textarea');
@@ -167,33 +165,38 @@ export default function ViewCustomer() {
         <Spinner />
       ) : (
         <Box p="4">
-          <Flex flexDirection="column">
-            <Flex alignItems="center">
-              <Text fontSize="lg" fontWeight="bold">
-                Available Balance:
-                <Icon
-                  ml="2"
-                  fontSize="lg"
-                  _hover={{ cursor: 'pointer', color: 'blue.500' }}
-                  as={showBalance ? RiEyeCloseLine : MdOutlineRemoveRedEye}
-                  onClick={() =>
-                    setShowBalance((prevShowBalance) => !prevShowBalance)
-                  }
-                />
+          <Flex flexDirection="row" justifyContent="space-between">
+            <Box>
+              <Flex alignItems="center">
+                <Text fontSize="lg" fontWeight="bold">
+                  Available Balance:
+                  <Icon
+                    ml="2"
+                    fontSize="lg"
+                    _hover={{ cursor: 'pointer', color: 'blue.500' }}
+                    as={showBalance ? RiEyeCloseLine : MdOutlineRemoveRedEye}
+                    onClick={() =>
+                      setShowBalance((prevShowBalance) => !prevShowBalance)
+                    }
+                  />
+                </Text>
+              </Flex>
+              <Text
+                ml="2"
+                fontSize={{ base: 'xl', md: '2xl' }}
+                fontWeight="bold"
+                color={showBalance ? 'gray.800' : 'gray.400'}
+              >
+                {customerData && customerData?.availableBalance && showBalance
+                  ? formatNaira(customerData.availableBalance)
+                  : '****'}
               </Text>
-            </Flex>
-            <Text
-              ml="2"
-              fontSize={{ base: 'xl', md: '2xl' }}
-              fontWeight="bold"
-              color={showBalance ? 'gray.800' : 'gray.400'}
-            >
-              {customerData &&
-              customerData.availableBalance !== undefined &&
-              showBalance
-                ? formatNaira(customerData.availableBalance)
-                : '****'}
-            </Text>
+            </Box>
+            <Box>
+              <NavLink to="/admin/transaction/withdraw">
+                <Button colorScheme="green">Withdraw Cash</Button>
+              </NavLink>
+            </Box>
           </Flex>
 
           <Flex
@@ -208,7 +211,7 @@ export default function ViewCustomer() {
                 src={customerData.avatarUrl || ''}
                 m={4}
               />
-              <Box px={6} py={4}>
+              <Box px={6} py={2}>
                 <Grid templateColumns="repeat(1fr)" gap={1}>
                   <Text fontSize={{ base: 'md', md: 'lg' }}>
                     Account Name: {customerData.firstName}{' '}

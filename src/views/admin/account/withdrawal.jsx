@@ -23,7 +23,11 @@ import BackButton from 'components/menu/BackButton';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 
+import { useAppContext } from 'contexts/AppContext';
+
 export default function Withdraw() {
+  const { customerData } = useAppContext();
+
   const brandStars = useColorModeValue('brand.500', 'brand.400');
   const textColor = useColorModeValue('navy.700', 'white');
 
@@ -31,13 +35,23 @@ export default function Withdraw() {
     handleSubmit,
     register,
     formState: { errors, isSubmitting },
-    watch,
+    setValue,
   } = useForm();
 
   const [user, setUser] = useState(null);
   const [ownerName, setOwnerName] = useState('');
 
-  watch('accountNumber', '');
+  // Set the initial value of accountNumber field
+  useEffect(() => {
+    setValue('accountNumber', customerData.accountNumber || '');
+  }, [setValue, customerData.accountNumber]);
+
+  const handleAccountNumberChange = (e) => {
+    const accountNumber = e.target.value.trim();
+    if (accountNumber) {
+      fetchUserByAccountNumber(accountNumber);
+    }
+  };
 
   // Fetch user information for the given accountNumber
   const fetchUserByAccountNumber = async (accountNumber) => {
@@ -62,8 +76,8 @@ export default function Withdraw() {
   // Handle form submission
   const onSubmit = async (data) => {
     try {
-      await axiosService.post('/transactions/withdraw', data);
-      toast.success('Customer withdrawal successfull!');
+      await axiosService.post('/transactions/withdraw/cash', data);
+      toast.success('Withdrawal request sent successfully!');
     } catch (error) {
       if (
         error.response &&
@@ -128,12 +142,7 @@ export default function Withdraw() {
                     {...register('accountNumber', {
                       required: 'Account number is required',
                     })}
-                    onBlur={(e) => {
-                      const accountNumber = e.target.value.trim();
-                      if (accountNumber) {
-                        fetchUserByAccountNumber(accountNumber);
-                      }
-                    }}
+                    onChange={handleAccountNumberChange}
                   />
                   {user ? (
                     <Text fontSize="sm" color="green" mt="2px" pb="10px">
@@ -178,34 +187,6 @@ export default function Withdraw() {
                     {errors.amount && errors.amount.message}
                   </FormErrorMessage>
                 </FormControl>
-                <FormControl isInvalid={errors.narration}>
-                  <FormLabel
-                    htmlFor="narration"
-                    display="flex"
-                    ms="4px"
-                    fontSize="sm"
-                    fontWeight="500"
-                    color={textColor}
-                    mb="8px"
-                  >
-                    Narration<Text color={brandStars}>*</Text>
-                  </FormLabel>
-                  <Input
-                    isRequired={true}
-                    variant="auth"
-                    fontSize="sm"
-                    ms={{ base: '0px', md: '0px' }}
-                    type="text"
-                    id="narration"
-                    mb="24px"
-                    fontWeight="500"
-                    size="lg"
-                    {...register('narration')}
-                  />
-                  <FormErrorMessage>
-                    {errors.narration && errors.narration.message}
-                  </FormErrorMessage>
-                </FormControl>
                 <Box width={{ base: '50%', md: '50%', sm: '50%' }}>
                   <Button
                     colorScheme="green"
@@ -216,7 +197,7 @@ export default function Withdraw() {
                     type="submit"
                     isLoading={isSubmitting}
                   >
-                    Withdraw
+                    Request Cash
                   </Button>
                 </Box>
               </form>
