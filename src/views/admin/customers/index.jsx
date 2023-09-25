@@ -4,7 +4,6 @@ import {
   Grid,
   Button,
   Spinner,
-  HStack,
   Flex,
   Text,
   Spacer,
@@ -163,9 +162,12 @@ export default function Customers() {
       {
         Header: 'Action',
         accessor: (row) => (
-          <HStack>
+          <>
             {/* Edit user icon */}
-            <NavLink to={`/admin/customer/edit-customer/${row.id}`}>
+            <NavLink
+              to={`/admin/customer/edit-customer/${row.id}`}
+              style={{ marginRight: '10px' }}
+            >
               <IconButton
                 icon={<EditIcon />}
                 colorScheme="blue"
@@ -179,7 +181,7 @@ export default function Customers() {
               aria-label="Delete user"
               onClick={() => handleDeleteIconClick(row.id)}
             />
-          </HStack>
+          </>
         ),
       },
     ],

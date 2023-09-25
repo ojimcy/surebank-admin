@@ -38,6 +38,7 @@ import ViewCustomer from 'views/admin/customers/view-customer';
 import EditCustomer from 'views/admin/customers/edit-customer';
 import Deposit from 'views/admin/account/deposit';
 import Withdraw from 'views/admin/account/withdrawal';
+import WithdrawalRequest from 'views/admin/account/withdrawal-request';
 import { FaBox, FaMoneyBill } from 'react-icons/fa';
 import DailySavingsDashboard from 'views/admin/daily-savings';
 import MakeContribution from 'views/admin/daily-savings/deposit';
@@ -204,6 +205,14 @@ const routes = [
   },
 
   // account routes
+  {
+    name: 'Account',
+    layout: '/admin',
+    path: '/transaction/withdraw/:requestId',
+    icon: <Icon as={FaMoneyBill} width="20px" height="20px" color="inherit" />,
+    roles: ['superAdmin', 'admin', 'userReps'],
+    component: WithdrawalRequest,
+  },
   {
     name: 'Account',
     layout: '/admin',

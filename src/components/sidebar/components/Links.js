@@ -30,6 +30,7 @@ const hiddenRoutes = [
   '/admin/account/assign-manager',
   '/admin/transaction/deposit',
   '/admin/transaction/withdraw',
+  '/admin/transaction/withdraw/:requestId',
   '/admin/daily-savings',
   '/admin/daily-savings/deposit/:packageId',
   '/admin/daily-saving/package',

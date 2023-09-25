@@ -1,7 +1,6 @@
 // Chakra imports
 import {
   Box,
-  Grid,
   Spinner,
   Flex,
   Stack,
@@ -140,13 +139,19 @@ export default function Withdrawals() {
         ),
       },
       {
+        Header: 'Direction',
+        accessor: 'direction',
+      },
+
+      {
         Header: 'Action',
         accessor: (row) => (
-          <>
-            <NavLink to={`/daily-savings/withdrawals/${row.id}`}>
-              Approve
-            </NavLink>
-          </>
+          <NavLink
+            to={`transaction/withdraw/${row._id}`}
+            style={{ marginRight: '10px' }}
+          >
+            View
+          </NavLink>
         ),
       },
     ],
@@ -156,58 +161,46 @@ export default function Withdrawals() {
   return (
     <>
       <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
-        <Grid
-          templateColumns={{
-            base: '1fr',
-            lg: '3.96fr',
-          }}
-          templateRows={{
-            base: 'repeat(1, 1fr)',
-            lg: '1fr',
-          }}
-          gap={{ base: '20px', xl: '20px' }}
-        >
-          <Box marginTop="30">
-            <Flex>
-              <Box>
-                <Stack direction="row">
-                  <Select
-                    value={timeRange}
-                    onChange={handleTimeRangeChange}
-                    minWidth="150px"
+        <Box marginTop="30">
+          <Flex>
+            <Box>
+              <Stack direction="row">
+                <Select
+                  value={timeRange}
+                  onChange={handleTimeRangeChange}
+                  minWidth="150px"
+                >
+                  <option value="all">All Time</option>
+                  <option value="last7days">Last 7 Days</option>
+                  <option value="last30days">Last 30 Days</option>
+                  <option
+                    value="custom"
+                    onClick={() => setCustomDateModalOpen(true)}
                   >
-                    <option value="all">All Time</option>
-                    <option value="last7days">Last 7 Days</option>
-                    <option value="last30days">Last 30 Days</option>
-                    <option
-                      value="custom"
-                      onClick={() => setCustomDateModalOpen(true)}
-                    >
-                      {customRangeLabel}
-                    </option>
-                  </Select>
+                    {customRangeLabel}
+                  </option>
+                </Select>
 
-                  <Select value={branch} onChange={handleBranchChange}>
-                    <option>Select Branch</option>
-                    {branches &&
-                      branches.map((branch) => (
-                        <option key={branch.id} value={branch.id}>
-                          {branch?.name}
-                        </option>
-                      ))}
-                  </Select>
-                </Stack>
-              </Box>
-            </Flex>
-          </Box>
-          <Box marginTop="30">
-            {loading ? (
-              <Spinner />
-            ) : (
-              <SimpleTable columns={columns} data={filteredWithdrawals} />
-            )}
-          </Box>
-        </Grid>
+                <Select value={branch} onChange={handleBranchChange}>
+                  <option>Select Branch</option>
+                  {branches &&
+                    branches.map((branch) => (
+                      <option key={branch.id} value={branch.id}>
+                        {branch?.name}
+                      </option>
+                    ))}
+                </Select>
+              </Stack>
+            </Box>
+          </Flex>
+        </Box>
+        <Box marginTop="30">
+          {loading ? (
+            <Spinner />
+          ) : (
+            <SimpleTable columns={columns} data={filteredWithdrawals} />
+          )}
+        </Box>
       </Box>
 
       <Modal
