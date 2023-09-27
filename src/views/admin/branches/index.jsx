@@ -30,8 +30,6 @@ import {
 import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 
-// Custom components
-
 // Assets
 import axiosService from 'utils/axiosService';
 import Card from 'components/card/Card.js';
@@ -39,7 +37,7 @@ import { DeleteIcon, EditIcon, SearchIcon } from '@chakra-ui/icons';
 import { toast } from 'react-toastify';
 
 export default function Users() {
-  const [branchs, setBranchs] = useState([]);
+  const [branches, setBranches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -51,14 +49,13 @@ export default function Users() {
     setLoading(true);
     try {
       const response = await axiosService.get('/branch/');
-      setBranchs(response.data.results);
+      setBranches(response.data.results);
       setTotalPages(response.data.totalPages);
       setLoading(false);
     } catch (error) {
       console.error(error);
     }
   };
-
   useEffect(() => {
     fetchUsers(currentPage);
   }, [currentPage]);
@@ -73,19 +70,6 @@ export default function Users() {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
     }
-  };
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric',
-      second: 'numeric',
-      hour12: true,
-    }).format(date);
   };
 
   const handleDeleteIconClick = (userId) => {
@@ -173,13 +157,13 @@ export default function Users() {
                       <Th>Branch Name </Th>
                       <Th>Address</Th>
                       <Th>Phone Number</Th>
-                      <Th>Last Updated </Th>
-                      <Th>Created Date </Th>
+                      <Th>Email </Th>
+                      <Th>Manager </Th>
                       <Th>Action</Th>
                     </Tr>
                   </Thead>
                   <Tbody>
-                    {branchs.map((branch) => (
+                    {branches.map((branch) => (
                       <Tr key={branch.id}>
                         <Td>
                           <NavLink
@@ -187,9 +171,9 @@ export default function Users() {
                           >{`${branch.name}`}</NavLink>{' '}
                         </Td>
                         <Td>{branch.address}</Td>
-                        <Td>{branch.phone}</Td>
-                        <Td>{formatDate(branch.updatedAt)}</Td>
-                        <Td>{formatDate(branch.createdAt)}</Td>
+                        <Td>{branch.phoneNumber}</Td>
+                        <Td>{branch.email}</Td>
+                        <Td>{branch.manager}</Td>
                         <Td>
                           <HStack>
                             {/* Edit branch icon */}
@@ -218,11 +202,11 @@ export default function Users() {
               </TableContainer>
             )}
             <HStack mt="4" justify="space-between" align="center">
-              {branchs && (
+              {branches && (
                 <Box>
                   Showing {(currentPage - 1) * 10 + 1} to{' '}
-                  {Math.min(currentPage * 10, branchs.length)} of{' '}
-                  {branchs.length} entries
+                  {Math.min(currentPage * 10, branches.length)} of{' '}
+                  {branches.length} entries
                 </Box>
               )}
               <HStack>

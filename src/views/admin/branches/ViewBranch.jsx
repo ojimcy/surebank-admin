@@ -36,14 +36,11 @@ import { useHistory } from 'react-router-dom';
 export default function User() {
   const history = useHistory();
 
-  const [users, setUsers] = useState([]);
+  const [staffs, setStaffs] = useState([]);
 
   const { id } = useParams();
   const [branch, setBranch] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [message, setMessage] = useState('');
-  const [isError, setIsError] = useState(false);
-  const [totalPages, setTotalPages] = useState(1);
   const [showCreateStaffModal, setShowCreateStaffModal] = useState(false);
 
   const handleAddStaffToBranch = () => {
@@ -54,21 +51,18 @@ export default function User() {
     setShowCreateStaffModal(false);
   };
 
-  const fetchUsers = async () => {
-    setLoading(true);
+  const fetchStaffs = async () => {
     try {
-      const response = await axiosService.get('/users/');
-      setUsers(response.data.results);
-      setTotalPages(response.data.totalPages);
-      setLoading(false);
+      const response = await axiosService.get(`/branch/staff`);
+      setStaffs(response.data);
     } catch (error) {
       console.error(error);
     }
   };
-  useEffect(() => {
-    fetchUsers();
-  }, []);
 
+  useEffect(() => {
+    fetchStaffs();
+  }, []);
   const {
     handleSubmit,
     register,
@@ -81,7 +75,11 @@ export default function User() {
       toast.success('Staff has been created successfully!');
       history.push(`/admin/branch/viewstaff/${id}`);
     } catch (error) {
-      if (error.response.data.message) {
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
         // Backend error with a specific error message
         const errorMessage = error.response.data.message;
         toast.error(errorMessage);
@@ -160,24 +158,38 @@ export default function User() {
                           <Text fontWeight="bold">Manager:</Text>
                           <Text>{branch.manager}</Text>
                         </Grid>
-                        <Stack spacing={4} direction="row" align="center">
+                        <Stack
+                          spacing={4}
+                          direction="row"
+                          alignItems="center"
+                          justifyContent="space-between"
+                          mt={4}
+                        >
                           <NavLink to={`/admin/branch/editbranch/${id}`}>
-                            <Button mt={4} colorScheme="blue" size="xs">
+                            <Button
+                              size="sm"
+                              color="#ffffff"
+                              background="blue.800"
+                            >
                               Edit Branch
                             </Button>
                           </NavLink>
                           <NavLink to={`/admin/branch/viewstaff/${id}`}>
-                            <Button mt={4} colorScheme="blue" size="xs">
+                            <Button
+                              size="sm"
+                              color="#ffffff"
+                              background="blue.800"
+                            >
                               View Staff
                             </Button>
                           </NavLink>
                           <Button
-                            mt={4}
-                            colorScheme="blue"
-                            size="xs"
-                            onClick={() => handleAddStaffToBranch(users.id)}
+                            size="sm"
+                            color="#ffffff"
+                            background="blue.800"
+                            onClick={() => handleAddStaffToBranch(staffs.id)}
                           >
-                            Create Staff
+                            Add Staff
                           </Button>
                         </Stack>
                       </Box>
@@ -194,9 +206,6 @@ export default function User() {
               <ModalHeader>Assign staff to branch</ModalHeader>
               <ModalCloseButton />
               <ModalBody>
-                <FormLabel color={isError ? 'red' : 'green'}>
-                  {message}
-                </FormLabel>{' '}
                 <Box>
                   {/* <Card p={{ base: "30px", md: "30px", sm: "10px" }}> */}
                   <form onSubmit={handleSubmit(addStaffToBranch)}>
@@ -226,8 +235,8 @@ export default function User() {
                             <option value="" disabled>
                               Select a staff
                             </option>
-                            {users &&
-                              users.map((user) => (
+                            {staffs &&
+                              staffs.map((user) => (
                                 <option key={user.id} value={user.id}>
                                   {user.firstName} {user.lastName}
                                   &ensp;&ensp;

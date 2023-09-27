@@ -19,6 +19,7 @@ import axiosService from 'utils/axiosService';
 
 export default function CreateBranch() {
   const history = useHistory();
+
   const brandStars = useColorModeValue('brand.500', 'brand.400');
   const textColor = useColorModeValue('navy.700', 'white');
   const {
@@ -53,7 +54,7 @@ export default function CreateBranch() {
         <Text marginBottom="20px" fontSize="3xl" fontWeight="bold">
           Create Branch
         </Text>
-        {/* <FormLabel color={isError ? "red" : "green"}>{message}</FormLabel>{" "} */}
+        
         <form onSubmit={handleSubmit(submitHandler)}>
           <Flex
             gap="20px"
@@ -131,9 +132,9 @@ export default function CreateBranch() {
             flexDirection={{ base: 'column', md: 'row' }}
           >
             <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
-              <FormControl isInvalid={errors.phone}>
+              <FormControl isInvalid={errors.phoneNumber}>
                 <FormLabel
-                  htmlFor="phone"
+                  htmlFor="phoneNumber"
                   display="flex"
                   ms="4px"
                   fontSize="sm"
@@ -149,16 +150,16 @@ export default function CreateBranch() {
                   fontSize="sm"
                   ms={{ base: '0px', md: '0px' }}
                   type="text"
-                  id="phone"
+                  id="phoneNumber"
                   mb="24px"
                   fontWeight="500"
                   size="lg"
-                  {...register('phone', {
-                    required: 'phone is required',
+                  {...register('phoneNumber', {
+                    required: 'phoneNumber is required',
                   })}
                 />
                 <FormErrorMessage>
-                  {errors.phone && errors.phone.message}
+                  {errors.phoneNumber && errors.phoneNumber.message}
                 </FormErrorMessage>
               </FormControl>
             </Box>
@@ -191,44 +192,6 @@ export default function CreateBranch() {
                 />
                 <FormErrorMessage>
                   {errors.address && errors.address.message}
-                </FormErrorMessage>
-              </FormControl>
-            </Box>
-          </Flex>
-          <Flex
-            gap="20px"
-            marginBottom="20px"
-            flexDirection={{ base: 'column', md: 'row' }}
-          >
-            <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
-              <FormControl isInvalid={errors.manager}>
-                <FormLabel
-                  htmlFor="manager"
-                  display="flex"
-                  ms="4px"
-                  fontSize="sm"
-                  fontWeight="500"
-                  color={textColor}
-                  mb="8px"
-                >
-                  Branch Manager<Text color={brandStars}>*</Text>
-                </FormLabel>
-                <Input
-                  isRequired={true}
-                  variant="auth"
-                  fontSize="sm"
-                  ms={{ base: '0px', md: '0px' }}
-                  type="text"
-                  id="manager"
-                  mb="24px"
-                  fontWeight="500"
-                  size="lg"
-                  {...register('manager', {
-                    required: 'manager is required',
-                  })}
-                />
-                <FormErrorMessage>
-                  {errors.manager && errors.manager.message}
                 </FormErrorMessage>
               </FormControl>
             </Box>

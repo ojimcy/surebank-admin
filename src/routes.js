@@ -78,7 +78,7 @@ const routes = [
     name: 'View All Staff',
     layout: '/admin',
     icon: <Icon as={MdBarChart} width="20px" height="20px" color="inherit" />,
-    roles: ['superAdmin', 'admin', 'userReps'],
+    roles: ['superAdmin', 'admin',],
     path: '/branch/viewallstaff',
     component: ViewAllStaff,
   },

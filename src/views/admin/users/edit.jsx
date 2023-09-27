@@ -145,7 +145,7 @@ export default function EditUser() {
                 <Select
                   {...register('branchId')}
                   name="branchId"
-                  defaultValue=""
+                  defaultValue={user?.branch}
                 >
                   <option value="" disabled>
                     Select a branch

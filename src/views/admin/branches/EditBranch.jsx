@@ -7,6 +7,7 @@ import {
   FormLabel,
   Grid,
   Input,
+  Select,
 } from '@chakra-ui/react';
 import Card from 'components/card/Card';
 import { useForm } from 'react-hook-form';
@@ -16,6 +17,7 @@ import { toast } from 'react-toastify';
 
 export default function EditBranch() {
   const [branch, setBranch] = useState(null);
+  const [staffs, setStaffs] = useState([])
   const history = useHistory();
   const { id } = useParams();
   const {
@@ -24,6 +26,19 @@ export default function EditBranch() {
     formState: { isSubmitting },
     setValue,
   } = useForm();
+
+   const fetchStaffs = async () => {
+     try {
+       const response = await axiosService.get(`/branch/staff`);
+       setStaffs(response.data);
+     } catch (error) {
+       console.error(error);
+     }
+   };
+
+   useEffect(() => {
+     fetchStaffs();
+   }, []);
 
   useEffect(() => {
     // Extract the id from the query parameters in the URL
@@ -34,7 +49,7 @@ export default function EditBranch() {
         setValue('name', response.data.name);
         setValue('address', response.data.address);
         setValue('email', response.data.email);
-        setValue('phone', response.data.phone);
+        setValue('phoneNumber', response.data.phoneNumber);
         setValue('manager', response.data.manager);
       } catch (error) {
         console.error(error);
@@ -42,6 +57,7 @@ export default function EditBranch() {
     };
     fetchBranch();
   }, [setValue, id]);
+
   const submitHandler = async (userData) => {
     try {
       const response = await axiosService.patch(`branch/${id}`, userData);
@@ -104,18 +120,28 @@ export default function EditBranch() {
               <FormControl mt={4}>
                 <FormLabel>Phone Number</FormLabel>
                 <Input
-                  {...register('phone')}
+                  {...register('phoneNumber')}
                   placeholder="Phone Number"
-                  defaultValue={branch?.phone || ''}
+                  defaultValue={branch?.phoneNumber || ''}
                 />
               </FormControl>
               <FormControl mt={4}>
                 <FormLabel>Manager</FormLabel>
-                <Input
-                  {...register('manager')}
-                  placeholder="Manager"
-                  defaultValue={branch?.manager || ''}
-                />
+
+                <Select {...register('manager')} name="manager" defaultValue="">
+                  <option value="" disabled>
+                    Select a Staff
+                  </option>
+                  {staffs &&
+                    staffs.map((staff) => (
+                      <option
+                        key={staff.id}
+                        value={`${staff.firstName} ${staff.lastName}`}
+                      >
+                        {staff.firstName} {staff.lastName}
+                      </option>
+                    ))}
+                </Select>
               </FormControl>
 
               <Button

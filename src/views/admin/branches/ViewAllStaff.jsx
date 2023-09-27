@@ -131,6 +131,7 @@ export default function Users() {
       toast.error(error.response?.data?.message || 'An error occurred');
     }
   };
+
   const {
     handleSubmit,
     register,
@@ -155,18 +156,11 @@ export default function Users() {
   const handleAddStaffToBranch = () => {
     setShowCreateStaffModal(true);
   };
-  // const {
-  //   handleSubmit,
-  //   register,
-  //   formState: { errors, isSubmitting },
-  // } = useForm();
 
   const addStaffToBranch = async (data) => {
     try {
-      const id = data.branchId;
-      await axiosService.post(`branch/${id}/staff`, data);
+      await axiosService.post(`/branch/staff`, data);
       toast.success('Staff has been created successfully!');
-      history.push(`/admin/branch/viewstaff/${id}`);
     } catch (error) {
       if (
         error.response &&
@@ -182,9 +176,11 @@ export default function Users() {
       }
     }
   };
+
   const onClosestaffModal = () => {
     setShowCreateStaffModal(false);
   };
+
   return (
     <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
       {/* Main Fields */}
@@ -203,6 +199,15 @@ export default function Users() {
           <Flex>
             <Text fontSize="2xl">All Staff</Text>
             <Spacer />
+            <Button
+              bgColor="blue.700"
+              color="white"
+              px="15px"
+              borderRadius="5px"
+              onClick={handleAddStaffToBranch}
+            >
+              Create Staff
+            </Button>
           </Flex>
           <Box marginTop="30">
             <Flex>
