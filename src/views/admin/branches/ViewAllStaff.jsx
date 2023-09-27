@@ -140,12 +140,9 @@ export default function Users() {
 
   const transferStaffToBranch = async (data) => {
     try {
-      // const branchId = data.branchId;
-
+      console.log(data);
       await axiosService.patch(`/branch/staff`, data);
       toast.success('Staff transfered successfully!');
-      // setBranch(response.data);
-      // history.push(`/admin/user/${id}`);
       history.push(`/admin/branches`);
     } catch (error) {
       console.error(error);
@@ -237,8 +234,9 @@ export default function Users() {
                   <Thead>
                     <Tr>
                       <Th>Staff Name </Th>
-                      <Th>Phone Number</Th>
+                      <Th>Branch </Th>
                       <Th>Created Date </Th>
+                      <Th>Status</Th>
                       <Th>Action</Th>
                     </Tr>
                   </Thead>
@@ -247,18 +245,21 @@ export default function Users() {
                   ) : (
                     <Tbody>
                       {staffs?.map((staff) => (
-                        <Tr key={staff.id}>
+                        <Tr key={staff.staffId?.id}>
                           <Td>
                             <NavLink
-                              to={`/admin/user/${staff.id}`}
-                            >{`${staff.firstName} ${staff.lastName}`}</NavLink>{' '}
+                              to={`/admin/user/${staff.staffId?.id}`}
+                            >{`${staff.staffId?.firstName} ${staff.staffId?.lastName}`}</NavLink>{' '}
                           </Td>
-                          <Td>{staff.phoneNumber}</Td>
+                          <Td>{staff.branchId?.name}</Td>
                           <Td>{formatDate(staff.createdAt)}</Td>
+                          <Td>{staff.isCurrent ? 'Active' : 'Inactive'}</Td>
                           <Td>
                             <HStack>
                               {/* Edit staff icon */}
-                              <NavLink to={`/admin/user/edit-user/${staff.id}`}>
+                              <NavLink
+                                to={`/admin/user/edit-user/${staff.staffId?.id}`}
+                              >
                                 <IconButton
                                   icon={<EditIcon />}
                                   colorScheme="blue"
@@ -270,14 +271,18 @@ export default function Users() {
                                 icon={<DeleteIcon />}
                                 colorScheme="red"
                                 aria-label="Delete branch"
-                                onClick={() => handleDeleteIconClick(staff.id)}
+                                onClick={() =>
+                                  handleDeleteIconClick(staff.staffId?.id)
+                                }
                               />
 
                               <Button
                                 mt={4}
                                 colorScheme="blue"
                                 size="md"
-                                onClick={() => openTransferStaffModal(staff.id)}
+                                onClick={() =>
+                                  openTransferStaffModal(staff.staffId?.id)
+                                }
                               >
                                 Transfer
                               </Button>
@@ -311,15 +316,15 @@ export default function Users() {
           </ModalFooter>
         </ModalContent>
       </Modal>
+
+      {/* Transfer staff modal */}
       <Modal isOpen={showTransferStaffModal} onClose={closeTransferModal}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Transfer staff</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            {/* <FormLabel color={isError ? "red" : "green"}>{message}</FormLabel>{" "} */}
             <Box>
-              {/* <Card p={{ base: "30px", md: "30px", sm: "10px" }}> */}
               <form onSubmit={handleSubmit(transferStaffToBranch)}>
                 <Flex
                   gap="20px"
@@ -329,12 +334,9 @@ export default function Users() {
                   <Box width={{ base: '100%', md: '100%', sm: '100%' }}>
                     <FormControl>
                       <FormLabel pt={3}>
-                        {staffUser?.firstName}
-                        &ensp;&ensp;
-                        {staffUser?.lastName}
+                        {`${staffUser?.firstName} ${staffUser?.lastName}`}
                       </FormLabel>
                     </FormControl>
-                    &ensp;&ensp;
                     <FormControl>
                       <Input
                         type="hidden"

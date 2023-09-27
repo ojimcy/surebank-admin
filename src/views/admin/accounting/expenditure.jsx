@@ -60,7 +60,7 @@ export default function Expenditures() {
       setLoading(true);
       try {
         // Construct the API endpoint based on filters
-        let endpoint = `/accounting/expenditure`;
+        let endpoint = `/expenditure`;
 
         if (currentUser.role === 'superAdmin') {
           if (timeRange === 'last7days') {
@@ -79,7 +79,7 @@ export default function Expenditures() {
             endpoint += `?startDate=${startDate.getTime()}&endDate=${endDate.getTime()}`;
           }
         } else if (currentUser.role === 'admin') {
-          endpoint = '/accounting/expenditure/user-reps';
+          endpoint = '/expenditure/user-reps';
         }
 
         const response = await axiosService.get(endpoint);

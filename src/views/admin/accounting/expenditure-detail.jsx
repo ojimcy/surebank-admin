@@ -16,7 +16,7 @@ const ExpenditureDetail = () => {
       const fetchExpenditure = async () => {
         setLoading(true);
         const response = await axiosService.get(
-          `/accounting/expenditure/${id}`
+          `/expenditure/${id}`
         );
         setExpenditure(response.data);
       };
@@ -68,10 +68,10 @@ const ExpenditureDetail = () => {
                     <Flex alignItems="center">
                       <Box px={6} py={4}>
                         <Grid templateColumns="repeat(2, 1fr)" gap={4}>
-                          <Text fontWeight="bold">User Reps</Text>
+                          <Text fontWeight="bold">Created By</Text>
                           <Text>
-                            {expenditure.userReps?.firstName}{' '}
-                            {expenditure.userReps?.lastName}
+                            {expenditure.createdBy?.firstName}{' '}
+                            {expenditure.createdBy?.lastName}
                           </Text>
                           <Text fontWeight="bold">Reason:</Text>
                           <Text>{expenditure.reason}</Text>
