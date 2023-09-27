@@ -54,7 +54,7 @@ export default function Expenditures() {
   } = useForm();
   const brandStars = useColorModeValue('brand.500', 'brand.400');
   const textColor = useColorModeValue('navy.700', 'white');
-
+  
   useEffect(() => {
     const fetchExpenditures = async () => {
       setLoading(true);
@@ -62,7 +62,7 @@ export default function Expenditures() {
         // Construct the API endpoint based on filters
         let endpoint = `/expenditure`;
 
-        if (currentUser.role === 'superAdmin') {
+        if (currentUser.role === 'superAdmin' || 'admin') {
           if (timeRange === 'last7days') {
             const endDate = new Date();
             endDate.setHours(23, 59, 59, 999);
@@ -78,7 +78,7 @@ export default function Expenditures() {
             startDate.setHours(0, 0, 0, 0);
             endpoint += `?startDate=${startDate.getTime()}&endDate=${endDate.getTime()}`;
           }
-        } else if (currentUser.role === 'admin') {
+        } else if (currentUser.role === 'userReps') {
           endpoint = '/expenditure/user-reps';
         }
 
@@ -105,7 +105,7 @@ export default function Expenditures() {
   useEffect(() => {
     const filtered = expenditures?.filter((expenditure) => {
       const fullName =
-        `${expenditure.userReps.firstName} ${expenditure.userReps.lastName}`.toLowerCase();
+        `${expenditure.createdBy.firstName} ${expenditure.createdBy.lastName}`.toLowerCase();
       return (
         fullName.includes(searchTerm.toLowerCase()) ||
         expenditure.reason.includes(searchTerm)
@@ -128,7 +128,7 @@ export default function Expenditures() {
 
   const handleCreateExpenditure = async (expenditureData) => {
     try {
-      await axiosService.post('/accounting/expenditure', expenditureData);
+      await axiosService.post('/expenditure', expenditureData);
       toast.success('Expenditure succesfully created');
       handleExpenditureModalClosed();
     } catch (error) {
@@ -154,6 +154,10 @@ export default function Expenditures() {
       {
         Header: 'Reason',
         accessor: 'reason',
+      },
+      {
+        Header: 'Status',
+        accessor: 'status',
       },
       {
         Header: 'Details',
@@ -184,9 +188,6 @@ export default function Expenditures() {
         <Card p={{ base: '30px', md: '30px', sm: '10px' }}>
           <Flex justifyContent="space-between" mb="20px">
             <BackButton />
-          </Flex>
-          <Flex>
-            <Spacer />
 
             <Button
               bgColor="blue.700"
