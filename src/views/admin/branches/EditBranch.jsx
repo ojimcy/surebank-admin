@@ -70,7 +70,6 @@ export default function EditBranch() {
       toast.error(error.response?.data?.message || 'An error occurred');
     }
   };
-  console.log(staffs);
   return (
     <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
       {/* Main Fields */}
@@ -89,7 +88,7 @@ export default function EditBranch() {
           <Flex>
             <BackButton />
           </Flex>
-          <Flex w="50%" mx="auto" mt="26px">
+          <Flex w={{ base: '100%', md: '50%' }} mx="auto" mt="26px">
             <form
               className="update-form"
               onSubmit={handleSubmit(submitHandler)}

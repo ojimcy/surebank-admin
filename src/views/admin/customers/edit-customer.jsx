@@ -98,7 +98,7 @@ export default function EditCustomer() {
       >
         <Card>
           <BackButton />
-          <Flex w="50%" mx="auto" mt="26px">
+          <Flex w={{ base: '100%', md: '50%' }} mx="auto" mt="26px">
             <form
               className="update-form"
               onSubmit={handleSubmit(submitHandler)}

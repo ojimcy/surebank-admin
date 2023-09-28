@@ -18,12 +18,14 @@ import { useParams, useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import BackButton from 'components/menu/BackButton';
 import { useAppContext } from 'contexts/AppContext';
+import { useAuth } from 'contexts/AuthContext';
 
 export default function EditUser() {
   const [user, setUser] = useState(null);
   const history = useHistory();
   const { id } = useParams();
   const { branches } = useAppContext();
+  const { currentUser } = useAuth();
   const {
     register,
     handleSubmit,
@@ -64,7 +66,6 @@ export default function EditUser() {
       toast.error(error.response?.data?.message || 'An error occurred');
     }
   };
-
   return (
     <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
       {/* Main Fields */}
@@ -81,7 +82,7 @@ export default function EditUser() {
       >
         <Card>
           <BackButton />
-          <Flex w="50%" mx="auto" mt="26px">
+          <Flex w={{ base: '100%', md: '50%' }} mx="auto" mt="26px">
             <form
               className="update-form"
               onSubmit={handleSubmit(submitHandler)}
@@ -131,76 +132,102 @@ export default function EditUser() {
                 />
               </FormControl>
 
-              <FormControl mt={4}>
-                <FormLabel
-                  htmlFor="address"
-                  display="flex"
-                  ms="4px"
-                  fontSize="sm"
-                  fontWeight="500"
-                  mb="8px"
-                >
-                  Branch
-                </FormLabel>
-                <Select
-                  {...register('branchId')}
-                  name="branchId"
-                  defaultValue={user?.branch}
-                >
-                  <option value="" disabled>
-                    Select a branch
-                  </option>
-                  {branches &&
-                    branches.map((branch) => (
-                      <option key={branch.id} value={branch.id}>
-                        {branch.name}
+              {currentUser &&
+              (currentUser.role === 'superAdmin' ||
+                currentUser.role === 'admin') ? (
+                <>
+                  <FormControl mt={4}>
+                    <FormLabel
+                      htmlFor="address"
+                      display="flex"
+                      ms="4px"
+                      fontSize="sm"
+                      fontWeight="500"
+                      mb="8px"
+                    >
+                      Branch
+                    </FormLabel>
+                    <Select
+                      {...register('branchId')}
+                      name="branchId"
+                      defaultValue={user?.branch}
+                    >
+                      <option value="" disabled>
+                        Select a branch
                       </option>
-                    ))}
-                </Select>
-              </FormControl>
-
-              <FormControl mt={4}>
-                <FormLabel
-                  htmlFor="address"
-                  display="flex"
-                  ms="4px"
-                  fontSize="sm"
-                  fontWeight="500"
-                  mb="8px"
-                >
-                  Role
-                </FormLabel>
-                {/* <Text fontSize="sm">Select one or more role</Text> */}
-                <Stack>
-                  <Checkbox
-                    value="admin"
-                    {...register('role')}
-                    id="admin"
-                    name="role"
-                    defaultChecked={user?.role?.includes('admin')}
-                  >
-                    Admin
-                  </Checkbox>
-                  <Checkbox
-                    value="userReps"
-                    {...register('role')}
-                    id="userReps"
-                    name="role"
-                    defaultChecked={user?.role?.includes('userReps')}
-                  >
-                    User Reps
-                  </Checkbox>
-                  <Checkbox
-                    value="user"
-                    {...register('role')}
-                    id="user"
-                    name="role"
-                    defaultChecked={user?.role?.includes('user')}
-                  >
-                    User
-                  </Checkbox>
-                </Stack>
-              </FormControl>
+                      {branches &&
+                        branches.map((branch) => (
+                          <option key={branch.id} value={branch.id}>
+                            {branch.name}
+                          </option>
+                        ))}
+                    </Select>
+                  </FormControl>
+                  <FormControl mt={4}>
+                    <FormLabel
+                      htmlFor="address"
+                      display="flex"
+                      ms="4px"
+                      fontSize="sm"
+                      fontWeight="500"
+                      mb="8px"
+                    >
+                      Role
+                    </FormLabel>
+                    <Stack>
+                      {currentUser.role === 'superAdmin' && (
+                        <Checkbox
+                          value="admin"
+                          {...register('role')}
+                          id="admin"
+                          name="role"
+                          defaultChecked={user?.role?.includes('admin')}
+                        >
+                          Admin
+                        </Checkbox>
+                      )}
+                      <Checkbox
+                        value="userReps"
+                        {...register('role')}
+                        id="userReps"
+                        name="role"
+                        defaultChecked={user?.role?.includes('userReps')}
+                      >
+                        Staff
+                      </Checkbox>
+                      <Checkbox
+                        value="storeKeeper"
+                        {...register('role')}
+                        id="storeKeeper"
+                        name="role"
+                        defaultChecked={user?.role?.includes('storeKeeper')}
+                      >
+                        Store Keeper
+                      </Checkbox>
+                      <Checkbox
+                        value="vendour"
+                        {...register('role')}
+                        id="vendour"
+                        name="role"
+                        defaultChecked={user?.role?.includes('vendour')}
+                      >
+                        Vendour
+                      </Checkbox>
+                      <Checkbox
+                        value="user"
+                        {...register('role')}
+                        id="user"
+                        name="role"
+                        defaultChecked={user?.role?.includes('user')}
+                      >
+                        User
+                      </Checkbox>
+                    </Stack>
+                  </FormControl>
+                </>
+              ) : (
+                ' '
+              )}
 
               <Button
                 fontSize="sm"

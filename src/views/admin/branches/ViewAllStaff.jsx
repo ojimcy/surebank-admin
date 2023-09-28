@@ -156,6 +156,7 @@ export default function Users() {
     try {
       await axiosService.post(`/branch/staff`, data);
       toast.success('Staff has been created successfully!');
+      fetchUsers()
     } catch (error) {
       if (
         error.response &&
