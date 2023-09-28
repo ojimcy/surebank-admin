@@ -187,7 +187,7 @@ export default function User() {
                             size="sm"
                             color="#ffffff"
                             background="blue.800"
-                            onClick={() => handleAddStaffToBranch(staffs.id)}
+                            onClick={() => handleAddStaffToBranch(staffs?.id)}
                           >
                             Add Staff
                           </Button>
@@ -236,11 +236,11 @@ export default function User() {
                               Select a staff
                             </option>
                             {staffs &&
-                              staffs.map((user) => (
-                                <option key={user.id} value={user.id}>
-                                  {user.firstName} {user.lastName}
+                              staffs.map((staff) => (
+                                <option key={staff.id} value={staff.staffId?.id}>
+                                  {staff.staffId?.firstName} {staff.staffId?.lastName}
                                   &ensp;&ensp;
-                                  {user.phoneNumber}
+                                  {staff.phoneNumber}
                                 </option>
                               ))}
                           </Select>

@@ -14,10 +14,11 @@ import { useForm } from 'react-hook-form';
 import axiosService from 'utils/axiosService';
 import { useParams, useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import BackButton from 'components/menu/BackButton';
 
 export default function EditBranch() {
   const [branch, setBranch] = useState(null);
-  const [staffs, setStaffs] = useState([])
+  const [staffs, setStaffs] = useState(null);
   const history = useHistory();
   const { id } = useParams();
   const {
@@ -27,18 +28,18 @@ export default function EditBranch() {
     setValue,
   } = useForm();
 
-   const fetchStaffs = async () => {
-     try {
-       const response = await axiosService.get(`/branch/staff`);
-       setStaffs(response.data);
-     } catch (error) {
-       console.error(error);
-     }
-   };
+  const fetchStaffs = async () => {
+    try {
+      const response = await axiosService.get(`/branch/staff`);
+      setStaffs(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-   useEffect(() => {
-     fetchStaffs();
-   }, []);
+  useEffect(() => {
+    fetchStaffs();
+  }, []);
 
   useEffect(() => {
     // Extract the id from the query parameters in the URL
@@ -63,14 +64,13 @@ export default function EditBranch() {
       const response = await axiosService.patch(`branch/${id}`, userData);
       toast.success('Branch updated successfully!');
       setBranch(response.data);
-      // history.push(`/admin/user/${id}`);
       history.push(`/admin/branches`);
     } catch (error) {
       console.error(error);
       toast.error(error.response?.data?.message || 'An error occurred');
     }
   };
-
+  console.log(staffs);
   return (
     <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
       {/* Main Fields */}
@@ -86,6 +86,9 @@ export default function EditBranch() {
         gap={{ base: '20px', xl: '20px' }}
       >
         <Card>
+          <Flex>
+            <BackButton />
+          </Flex>
           <Flex w="50%" mx="auto" mt="26px">
             <form
               className="update-form"
@@ -128,17 +131,21 @@ export default function EditBranch() {
               <FormControl mt={4}>
                 <FormLabel>Manager</FormLabel>
 
-                <Select {...register('manager')} name="manager" defaultValue="">
+                <Select
+                  {...register('manager')}
+                  name="manager"
+                  defaultValue={branch?.manager}
+                >
                   <option value="" disabled>
-                    Select a Staff
+                    Select a staff
                   </option>
                   {staffs &&
                     staffs.map((staff) => (
                       <option
                         key={staff.id}
-                        value={`${staff.firstName} ${staff.lastName}`}
+                        value={`${staff.staffId?.firstName} ${staff.staffId?.lastName}`}
                       >
-                        {staff.firstName} {staff.lastName}
+                        {staff.staffId?.firstName} {staff.staffId?.lastName}
                       </option>
                     ))}
                 </Select>

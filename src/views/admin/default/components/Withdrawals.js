@@ -133,7 +133,7 @@ export default function Withdrawals() {
       {
         Header: 'Cashier',
         accessor: (row) => (
-          <NavLink to={`/admin/user/${row.userReps._id}`}>
+          <NavLink to={`/admin/user/${row.userReps?._id}`}>
             {row.userReps?.firstName} {row.userReps?.lastName}
           </NavLink>
         ),

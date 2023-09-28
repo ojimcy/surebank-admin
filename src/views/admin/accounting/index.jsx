@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import {
   Box,
+  Flex,
   Icon,
   SimpleGrid,
   useColorModeValue,
@@ -14,6 +15,7 @@ import axiosService from 'utils/axiosService';
 import { toast } from 'react-toastify';
 import { formatNaira } from 'utils/helper';
 import { NavLink } from 'react-router-dom/cjs/react-router-dom.min';
+import BackButton from 'components/menu/BackButton';
 
 export default function Accounting() {
   const brandColor = useColorModeValue('brand.500', 'white');
@@ -60,6 +62,9 @@ export default function Accounting() {
 
   return (
     <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
+      <Flex>
+        <BackButton />
+      </Flex>
       <SimpleGrid
         columns={{ base: 1, md: 3, lg: 3, '2xl': 3 }}
         gap="20px"

@@ -63,9 +63,7 @@ export default function Users() {
       const response = await axiosService.get(`/branch/staff`);
       const UserResponse = await axiosService.get('/users/');
       setUsers(UserResponse.data.results);
-      // const currentBranch = await axiosService.get(`branch/${id}`);
       setAllBranch(branches.data.results);
-      // setBranch(currentBranch.data);
       setStaffs(response.data);
       setTotalPages(response.data.totalPages);
       setLoading(false);

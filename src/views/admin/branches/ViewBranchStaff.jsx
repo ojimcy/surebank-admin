@@ -40,6 +40,7 @@ import axiosService from 'utils/axiosService';
 import Card from 'components/card/Card.js';
 import { DeleteIcon, EditIcon, SearchIcon } from '@chakra-ui/icons';
 import { toast } from 'react-toastify';
+import BackButton from 'components/menu/BackButton';
 
 export default function Users() {
   const history = useHistory();
@@ -179,6 +180,9 @@ export default function Users() {
       >
         <Card p={{ base: '30px', md: '30px', sm: '10px' }}>
           <Flex>
+            <BackButton />
+          </Flex>
+          <Flex>
             <Text fontSize="2xl">{branch.name} Branch Staff</Text>
             <Spacer />
           </Flex>
@@ -204,6 +208,8 @@ export default function Users() {
           <Box marginTop="30">
             {loading ? (
               <Spinner />
+            ) : staffs.length === 0 ? (
+              <Text>No staff found in this branch!</Text>
             ) : (
               <TableContainer>
                 <Table variant="simple" bordered>
