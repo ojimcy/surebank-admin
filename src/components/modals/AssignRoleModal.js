@@ -25,6 +25,12 @@ const AssignRoleModal = ({ isOpen, onClose, staffs, addRoleToStaff }) => {
   } = useForm();
 
   const roles = ['userReps', 'manager', 'admin', 'superAdmin'];
+  const roleLabels = {
+    userReps: 'Cashier',
+    manager: 'Manager',
+    admin: 'Admin',
+    superAdmin: 'Super Admin',
+  };
 
   const onSubmit = (data) => {
     addRoleToStaff(data);
@@ -92,7 +98,7 @@ const AssignRoleModal = ({ isOpen, onClose, staffs, addRoleToStaff }) => {
                       {roles &&
                         roles.map((role) => (
                           <option key={role} value={role}>
-                            {role}
+                            {roleLabels[role]}
                           </option>
                         ))}
                     </Select>

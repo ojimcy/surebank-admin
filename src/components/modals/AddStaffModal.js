@@ -25,11 +25,20 @@ const AddStaffModal = ({
   const {
     handleSubmit,
     register,
-    formState: { isSubmitting },
+    formState: { errors, isSubmitting },
   } = useForm();
 
   const handleAddStaff = (data) => {
+    console.log(data);
     addStaffToBranch(data);
+  };
+
+  const roles = ['userReps', 'manager', 'admin', 'superAdmin'];
+  const roleLabels = {
+    userReps: 'Cashier',
+    manager: 'Manager',
+    admin: 'Admin',
+    superAdmin: 'Super Admin',
   };
 
   return (
@@ -83,6 +92,31 @@ const AddStaffModal = ({
                     {branch.name}
                   </option>
                 ))}
+              </Select>
+            </FormControl>
+            <FormControl isInvalid={errors.branch}>
+              <FormLabel
+                htmlFor="address"
+                display="flex"
+                ms="4px"
+                fontSize="sm"
+                fontWeight="500"
+                mb="8px"
+                mt="8px"
+              >
+                Role<Text>*</Text>
+              </FormLabel>
+
+              <Select {...register('role')} name="role" defaultValue="">
+                <option value="" disabled>
+                  Select a Role
+                </option>
+                {roles &&
+                  roles.map((role) => (
+                    <option key={role} value={role}>
+                      {roleLabels[role]}
+                    </option>
+                  ))}
               </Select>
             </FormControl>
           </form>

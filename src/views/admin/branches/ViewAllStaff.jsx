@@ -23,8 +23,6 @@ import {
   ModalOverlay,
   ModalContent,
   ModalHeader,
-  FormLabel,
-  Select,
   ModalCloseButton,
   ModalBody,
   ModalFooter,
@@ -34,8 +32,7 @@ import {
   MenuItem,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
-import { NavLink, useHistory } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
+import { NavLink } from 'react-router-dom';
 
 // Custom components
 
@@ -44,16 +41,15 @@ import axiosService from 'utils/axiosService';
 import Card from 'components/card/Card.js';
 import AssignRoleModal from 'components/modals/AssignRoleModal.js';
 import AddStaffModal from 'components/modals/AddStaffModal.js';
+import TransferStaffModal from 'components/modals/TransferStaffModal.js';
 import {
   ChevronDownIcon,
   DeleteIcon,
-  EditIcon,
   SearchIcon,
 } from '@chakra-ui/icons';
 import { toast } from 'react-toastify';
 
 export default function Users() {
-  const history = useHistory();
   const [staffs, setStaffs] = useState([]);
   const [users, setUsers] = useState([]);
   const [staffUser, setStaffUser] = useState('');
@@ -70,7 +66,7 @@ export default function Users() {
     setLoading(true);
     try {
       const branches = await axiosService.get('/branch/');
-      const response = await axiosService.get(`/branch/staff`);
+      const response = await axiosService.get(`/staff`);
       const UserResponse = await axiosService.get('/users/');
       setUsers(UserResponse.data.results);
       setAllBranch(branches.data.results);
@@ -135,7 +131,7 @@ export default function Users() {
   // Function to handle user deletion
   const handleDeleteUser = async (staffId) => {
     try {
-      await axiosService.delete(`/branch/${staffId}/staff`);
+      await axiosService.delete(`/${staffId}/staff`);
       toast.success('Staff deleted successfully!');
       // After successful deletion, refetch the users to update the list
       fetchUsers();
@@ -145,17 +141,12 @@ export default function Users() {
     }
   };
 
-  const {
-    handleSubmit,
-    register,
-    formState: { errors },
-  } = useForm();
-
   const transferStaffToBranch = async (data) => {
     try {
-      await axiosService.patch(`/branch/staff`, data);
+      await axiosService.patch(`/staff`, data);
       toast.success('Staff transfered successfully!');
-      history.push(`/admin/branches`);
+      closeTransferModal();
+      fetchUsers();
     } catch (error) {
       console.error(error);
       toast.error(error.response?.data?.message || 'An error occurred');
@@ -176,8 +167,9 @@ export default function Users() {
 
   const addStaffToBranch = async (data) => {
     try {
-      await axiosService.post(`/branch/staff`, data);
+      await axiosService.post(`/staff`, data);
       toast.success('Staff has been created successfully!');
+      onClosestaffModal();
       fetchUsers();
     } catch (error) {
       if (
@@ -197,7 +189,7 @@ export default function Users() {
 
   const addRoleToStaff = async (data) => {
     try {
-      await axiosService.patch(`/branch/staff/role`, data);
+      await axiosService.patch(`/staff/role`, data);
       toast.success('Role added to staff successfully');
       closeRoleModal();
       fetchUsers();
@@ -215,6 +207,14 @@ export default function Users() {
         toast.error('Something went wrong. Please try again later.');
       }
     }
+  };
+
+  
+  const roleLabels = {
+    userReps: 'Cashier',
+    manager: 'Manager',
+    admin: 'Admin',
+    superAdmin: 'Super Admin',
   };
 
   return (
@@ -277,6 +277,7 @@ export default function Users() {
                     <Tr>
                       <Th>Staff Name </Th>
                       <Th>Branch </Th>
+                      <Th>Role </Th>
                       <Th>Created Date </Th>
                       <Th>Status</Th>
                       <Th>Action</Th>
@@ -294,20 +295,11 @@ export default function Users() {
                             >{`${staff.staffId?.firstName} ${staff.staffId?.lastName}`}</NavLink>{' '}
                           </Td>
                           <Td>{staff.branchId?.name}</Td>
+                          <Td>{roleLabels[staff.staffId?.role]}</Td>
                           <Td>{formatDate(staff.createdAt)}</Td>
                           <Td>{staff.isCurrent ? 'Active' : 'Inactive'}</Td>
                           <Td>
                             <HStack>
-                              {/* Edit staff icon */}
-                              <NavLink
-                                to={`/admin/user/edit-user/${staff.staffId?.id}`}
-                              >
-                                <IconButton
-                                  icon={<EditIcon />}
-                                  colorScheme="blue"
-                                  aria-label="Edit branch"
-                                />
-                              </NavLink>
                               {/* Delete branch icon */}
                               <IconButton
                                 icon={<DeleteIcon />}
@@ -360,65 +352,13 @@ export default function Users() {
       </Modal>
 
       {/* Transfer staff modal */}
-      <Modal isOpen={showTransferStaffModal} onClose={closeTransferModal}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Transfer staff</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Box>
-              <form onSubmit={handleSubmit(transferStaffToBranch)}>
-                <Flex
-                  gap="20px"
-                  marginBottom="20px"
-                  flexDirection={{ base: 'column', md: 'row' }}
-                >
-                  <Box width={{ base: '100%', md: '100%', sm: '100%' }}>
-                    <FormControl>
-                      <FormLabel pt={3}>
-                        {`${staffUser?.firstName} ${staffUser?.lastName}`}
-                      </FormLabel>
-                    </FormControl>
-                    <FormControl>
-                      <Input
-                        type="hidden"
-                        {...register('staffId')}
-                        value={staffUser?.id}
-                      />
-                    </FormControl>
-                    <FormControl isInvalid={errors.branch}>
-                      <Select
-                        {...register('branchId')}
-                        name="branchId"
-                        defaultValue=""
-                      >
-                        <option value="" disabled>
-                          Select a branch
-                        </option>
-                        {allBranch &&
-                          allBranch.map((branch) => (
-                            <option key={branch.id} value={branch.id}>
-                              {branch.name}
-                            </option>
-                          ))}
-                      </Select>
-                    </FormControl>
-                  </Box>
-                </Flex>
-
-                <Spacer />
-                <Button
-                  bgColor="blue.700"
-                  color="white"
-                  type="submit"
-                >
-                  Save
-                </Button>
-              </form>
-            </Box>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
+      <TransferStaffModal
+        isOpen={showTransferStaffModal}
+        onClose={closeTransferModal}
+        staffUser={staffUser}
+        allBranch={allBranch}
+        transferStaffToBranch={transferStaffToBranch}
+      />
 
       {/* Modal for adding new staff */}
       <AddStaffModal
