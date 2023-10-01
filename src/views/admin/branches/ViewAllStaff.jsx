@@ -28,6 +28,10 @@ import {
   ModalCloseButton,
   ModalBody,
   ModalFooter,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { NavLink, useHistory } from 'react-router-dom';
@@ -38,7 +42,14 @@ import { useForm } from 'react-hook-form';
 // Assets
 import axiosService from 'utils/axiosService';
 import Card from 'components/card/Card.js';
-import { DeleteIcon, EditIcon, SearchIcon } from '@chakra-ui/icons';
+import AssignRoleModal from 'components/modals/AssignRoleModal.js';
+import AddStaffModal from 'components/modals/AddStaffModal.js';
+import {
+  ChevronDownIcon,
+  DeleteIcon,
+  EditIcon,
+  SearchIcon,
+} from '@chakra-ui/icons';
 import { toast } from 'react-toastify';
 
 export default function Users() {
@@ -48,13 +59,12 @@ export default function Users() {
   const [staffUser, setStaffUser] = useState('');
   const [allBranch, setAllBranch] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showTransferStaffModal, setShowTransferStaffModal] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
   const [showCreateStaffModal, setShowCreateStaffModal] = useState(false);
+  const [showRoleModal, setShowRoleModal] = useState(false);
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -65,7 +75,6 @@ export default function Users() {
       setUsers(UserResponse.data.results);
       setAllBranch(branches.data.results);
       setStaffs(response.data);
-      setTotalPages(response.data.totalPages);
       setLoading(false);
     } catch (error) {
       console.error(error);
@@ -73,8 +82,8 @@ export default function Users() {
   };
 
   useEffect(() => {
-    fetchUsers(currentPage);
-  }, [currentPage]);
+    fetchUsers();
+  }, []);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -110,11 +119,17 @@ export default function Users() {
   const handleDeleteCancel = () => {
     setShowDeleteModal(false);
   };
+
   const onCloseModal = () => {
     setShowDeleteModal(false);
   };
+
   const closeTransferModal = () => {
     setShowTransferStaffModal(false);
+  };
+
+  const closeRoleModal = () => {
+    setShowRoleModal(false);
   };
 
   // Function to handle user deletion
@@ -133,12 +148,11 @@ export default function Users() {
   const {
     handleSubmit,
     register,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm();
 
   const transferStaffToBranch = async (data) => {
     try {
-      console.log(data);
       await axiosService.patch(`/branch/staff`, data);
       toast.success('Staff transfered successfully!');
       history.push(`/admin/branches`);
@@ -152,11 +166,19 @@ export default function Users() {
     setShowCreateStaffModal(true);
   };
 
+  const handleAddRoleToStaff = () => {
+    setShowRoleModal(true);
+  };
+
+  const onClosestaffModal = () => {
+    setShowCreateStaffModal(false);
+  };
+
   const addStaffToBranch = async (data) => {
     try {
       await axiosService.post(`/branch/staff`, data);
       toast.success('Staff has been created successfully!');
-      fetchUsers()
+      fetchUsers();
     } catch (error) {
       if (
         error.response &&
@@ -173,8 +195,26 @@ export default function Users() {
     }
   };
 
-  const onClosestaffModal = () => {
-    setShowCreateStaffModal(false);
+  const addRoleToStaff = async (data) => {
+    try {
+      await axiosService.patch(`/branch/staff/role`, data);
+      toast.success('Role added to staff successfully');
+      closeRoleModal();
+      fetchUsers();
+    } catch (error) {
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        // Backend error with a specific error message
+        const errorMessage = error.response.data.message;
+        toast.error(errorMessage);
+      } else {
+        // Network error or other error
+        toast.error('Something went wrong. Please try again later.');
+      }
+    }
   };
 
   return (
@@ -195,15 +235,18 @@ export default function Users() {
           <Flex>
             <Text fontSize="2xl">All Staff</Text>
             <Spacer />
-            <Button
-              bgColor="blue.700"
-              color="white"
-              px="15px"
-              borderRadius="5px"
-              onClick={handleAddStaffToBranch}
-            >
-              Create Staff
-            </Button>
+
+            <Menu>
+              <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+                Manage Staff
+              </MenuButton>
+              <MenuList>
+                <MenuItem onClick={handleAddStaffToBranch}>
+                  Create New Staff
+                </MenuItem>
+                <MenuItem onClick={handleAddRoleToStaff}>Asign Role</MenuItem>
+              </MenuList>
+            </Menu>
           </Flex>
           <Box marginTop="30">
             <Flex>
@@ -368,112 +411,31 @@ export default function Users() {
                   bgColor="blue.700"
                   color="white"
                   type="submit"
-                  // isLoading={}
                 >
                   Save
                 </Button>
-                {/* </Flex> */}
               </form>
-              {/* </Card> */}
             </Box>
           </ModalBody>
         </ModalContent>
       </Modal>
+
       {/* Modal for adding new staff */}
+      <AddStaffModal
+        isOpen={showCreateStaffModal}
+        onClose={onClosestaffModal}
+        users={users}
+        allBranch={allBranch}
+        addStaffToBranch={addStaffToBranch}
+      />
 
-      <Modal isOpen={showCreateStaffModal} onClose={onClosestaffModal}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Create new staff</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            {/* <FormLabel color={isError ? "red" : "green"}>{message}</FormLabel>{" "} */}
-            <Box>
-              {/* <Card p={{ base: "30px", md: "30px", sm: "10px" }}> */}
-              <form onSubmit={handleSubmit(addStaffToBranch)}>
-                <Flex
-                  gap="20px"
-                  marginBottom="20px"
-                  flexDirection={{ base: 'column', md: 'row' }}
-                >
-                  <Box width={{ base: '100%', md: '100%', sm: '100%' }}>
-                    <FormControl isInvalid={errors.branch}>
-                      <FormLabel
-                        htmlFor="address"
-                        display="flex"
-                        ms="4px"
-                        fontSize="sm"
-                        fontWeight="500"
-                        mb="8px"
-                      >
-                        User Name<Text>*</Text>
-                      </FormLabel>
-
-                      <Select
-                        {...register('staffId')}
-                        name="staffId"
-                        defaultValue=""
-                      >
-                        <option value="" disabled>
-                          Select a user
-                        </option>
-                        {users &&
-                          users.map((user) => (
-                            <option key={user.id} value={user.id}>
-                              {user.firstName} {user.lastName}
-                              &ensp;&ensp;
-                              {user.phoneNumber}
-                            </option>
-                          ))}
-                      </Select>
-                    </FormControl>
-                    <FormControl isInvalid={errors.branch}>
-                      <FormLabel
-                        htmlFor="address"
-                        display="flex"
-                        ms="4px"
-                        fontSize="sm"
-                        fontWeight="500"
-                        mb="8px"
-                      >
-                        Branch Name<Text>*</Text>
-                      </FormLabel>
-
-                      <Select
-                        {...register('branchId')}
-                        name="branchId"
-                        defaultValue=""
-                      >
-                        <option value="" disabled>
-                          Select a branch
-                        </option>
-                        {allBranch &&
-                          allBranch.map((branch) => (
-                            <option key={branch.id} value={branch.id}>
-                              {branch.name}
-                            </option>
-                          ))}
-                      </Select>
-                    </FormControl>
-                  </Box>
-                </Flex>
-
-                <Spacer />
-                <Button
-                  bgColor="blue.700"
-                  color="white"
-                  type="submit"
-                  isLoading={isSubmitting}
-                >
-                  Save
-                </Button>
-                {/* </Flex> */}
-              </form>
-              {/* </Card> */}
-            </Box>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
+      {/* Modal for assigning role to staff */}
+      <AssignRoleModal
+        isOpen={showRoleModal}
+        onClose={closeRoleModal}
+        staffs={staffs}
+        addRoleToStaff={addRoleToStaff}
+      />
     </Box>
   );
 }

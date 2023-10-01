@@ -187,6 +187,15 @@ export default function EditUser() {
                         </Checkbox>
                       )}
                       <Checkbox
+                        value="manager"
+                        {...register('role')}
+                        id="manager"
+                        name="role"
+                        defaultChecked={user?.role?.includes('manager')}
+                      >
+                        Manager
+                      </Checkbox>
+                      <Checkbox
                         value="userReps"
                         {...register('role')}
                         id="userReps"
