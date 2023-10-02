@@ -8,6 +8,7 @@ import {
   Spacer,
 } from '@chakra-ui/react';
 import PackageCard from 'components/package/PackageCard';
+import { useAppContext } from 'contexts/AppContext';
 
 import { NavLink } from 'react-router-dom';
 
@@ -16,9 +17,11 @@ const UsersPackages = ({
   handleTransferSuccess,
   handleDepositSuccess,
 }) => {
+  const { customerData } = useAppContext();
+
   const textColor = useColorModeValue('secondaryGray.900', 'white');
   const textColorSecondary = 'secondaryGray.600';
-
+  console.log(customerData);
   return (
     <>
       <Flex alignItems="center">

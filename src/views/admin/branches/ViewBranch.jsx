@@ -53,7 +53,7 @@ export default function User() {
 
   const fetchStaffs = async () => {
     try {
-      const response = await axiosService.get(`/branch/staff`);
+      const response = await axiosService.get(`/staff`);
       setStaffs(response.data);
     } catch (error) {
       console.error(error);
@@ -71,7 +71,7 @@ export default function User() {
 
   const addStaffToBranch = async (data) => {
     try {
-      await axiosService.post(`branch/${id}/staff`, data);
+      await axiosService.post(`staff/${id}`, data);
       toast.success('Staff has been created successfully!');
       history.push(`/admin/branch/viewstaff/${id}`);
     } catch (error) {

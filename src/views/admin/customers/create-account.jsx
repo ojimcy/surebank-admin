@@ -4,18 +4,17 @@ import {
   Button,
   Flex,
   FormControl,
-  FormErrorMessage,
   FormLabel,
   Grid,
-  Input,
   Select,
   Text,
   useColorModeValue,
 } from '@chakra-ui/react';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 
 // Custom components
+import ReactSelect from 'react-select';
 
 // Assets
 import Card from 'components/card/Card.js';
@@ -33,14 +32,38 @@ export default function CreateAccount() {
   const brandStars = useColorModeValue('brand.500', 'brand.400');
   const textColor = useColorModeValue('navy.700', 'white');
 
+  const [users, setUsers] = useState([]);
+  const [selectedUser, setSelectedUser] = useState(null);
+
   const {
     handleSubmit,
     register,
     formState: { errors, isSubmitting },
   } = useForm();
 
+  const fetchUsers = async () => {
+    try {
+      const UserResponse = await axiosService.get('/users/');
+      setUsers(UserResponse.data.results);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const handleUserSelect = (selectedOption) => {
+    setSelectedUser(selectedOption);
+  };
+
   const submitHandler = async (accountData) => {
     try {
+      // If a user is selected
+      if (selectedUser) {
+        accountData.email = selectedUser.value;
+      }
       await axiosService.post(`/accounts`, accountData);
       toast.success('Account created successfully!');
       history.push('/admin/customers');
@@ -59,6 +82,7 @@ export default function CreateAccount() {
       }
     }
   };
+
   return (
     <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
       {/* Main Fields */}
@@ -85,40 +109,25 @@ export default function CreateAccount() {
               flexDirection={{ base: 'column', md: 'row' }}
             >
               <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
-                <FormControl isInvalid={errors.email}>
+                <FormControl>
                   <FormLabel
-                    htmlFor="email"
+                    htmlFor="address"
                     display="flex"
                     ms="4px"
                     fontSize="sm"
                     fontWeight="500"
-                    color={textColor}
                     mb="8px"
                   >
-                    Email<Text color={brandStars}>*</Text>
+                    Users<Text>*</Text>
                   </FormLabel>
-                  <Input
-                    isRequired={true}
-                    variant="auth"
-                    fontSize="sm"
-                    ms={{ base: '0px', md: '0px' }}
-                    type="email"
-                    id="email"
-                    placeholder="mail@sample.com"
-                    mb="24px"
-                    fontWeight="500"
-                    size="lg"
-                    {...register('email', {
-                      required: 'Email is required',
-                      pattern: {
-                        value: /\S+@\S+\.\S+/,
-                        message: 'Invalid email address',
-                      },
-                    })}
+                  <ReactSelect
+                    options={users.map((user) => ({
+                      value: user.email,
+                      label: `${user.firstName} ${user.lastName} - ${user.email}`,
+                    }))}
+                    onChange={handleUserSelect}
+                    placeholder="Select User"
                   />
-                  <FormErrorMessage>
-                    {errors.email && errors.email.message}
-                  </FormErrorMessage>
                 </FormControl>
               </Box>
             </Flex>

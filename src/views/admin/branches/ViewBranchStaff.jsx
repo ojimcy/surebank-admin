@@ -61,7 +61,7 @@ export default function Users() {
     setLoading(true);
     try {
       const branches = await axiosService.get('/branch/');
-      const response = await axiosService.get(`/branch/${id}/staff`);
+      const response = await axiosService.get(`/staff/${id}/`);
       const currentBranch = await axiosService.get(`branch/${id}`);
       setAllBranch(branches.data.results);
       setBranch(currentBranch.data);
@@ -102,12 +102,6 @@ export default function Users() {
     }).format(date);
   };
 
-  const openTransferStaffModal = async (staffUserId) => {
-    const response = await axiosService.get(`users/${staffUserId}`);
-    setStaffUser(response.data);
-    setShowTransferStaffModal(true);
-  };
-
   const handleDeleteIconClick = (userId) => {
     setUserToDelete(userId);
     setShowDeleteModal(true);
@@ -133,7 +127,7 @@ export default function Users() {
   // Function to handle user deletion
   const handleDeleteUser = async (staffId) => {
     try {
-      await axiosService.delete(`/branch/${staffId}/staff`);
+      await axiosService.delete(`/staff/${staffId}`);
       toast.success('Staff deleted successfully!');
       // After successful deletion, refetch the users to update the list
       fetchUsers();
@@ -153,10 +147,8 @@ export default function Users() {
     try {
       const branchId = data.branchId;
 
-      await axiosService.patch(`/branch/${branchId}/staff`, data);
+      await axiosService.patch(`/staff/${branchId}`, data);
       toast.success('Staff transfered successfully!');
-      // setBranch(response.data);
-      // history.push(`/admin/user/${id}`);
       history.push(`/admin/branches`);
     } catch (error) {
       console.error(error);

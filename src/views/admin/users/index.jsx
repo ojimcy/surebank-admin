@@ -118,6 +118,13 @@ export default function Users() {
     }
   };
 
+  const roleLabels = {
+    userReps: 'Cashier',
+    manager: 'Manager',
+    admin: 'Admin',
+    superAdmin: 'Super Admin',
+  };
+
   // Columns for the user table
   const columns = React.useMemo(
     () => [
@@ -135,7 +142,7 @@ export default function Users() {
       },
       {
         Header: 'Role',
-        accessor: 'role',
+        accessor: (row) => roleLabels[row.role] || row.role,
       },
       {
         Header: 'Created Date',
@@ -167,6 +174,7 @@ export default function Users() {
         ),
       },
     ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
 

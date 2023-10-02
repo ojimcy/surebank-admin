@@ -2,14 +2,12 @@ import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
-  Checkbox,
   Flex,
   FormControl,
   FormLabel,
   Grid,
   Input,
   Select,
-  Stack,
 } from '@chakra-ui/react';
 import Card from 'components/card/Card';
 import { useForm } from 'react-hook-form';
@@ -162,76 +160,6 @@ export default function EditUser() {
                           </option>
                         ))}
                     </Select>
-                  </FormControl>
-                  <FormControl mt={4}>
-                    <FormLabel
-                      htmlFor="address"
-                      display="flex"
-                      ms="4px"
-                      fontSize="sm"
-                      fontWeight="500"
-                      mb="8px"
-                    >
-                      Role
-                    </FormLabel>
-                    <Stack>
-                      {currentUser.role === 'superAdmin' && (
-                        <Checkbox
-                          value="admin"
-                          {...register('role')}
-                          id="admin"
-                          name="role"
-                          defaultChecked={user?.role?.includes('admin')}
-                        >
-                          Admin
-                        </Checkbox>
-                      )}
-                      <Checkbox
-                        value="manager"
-                        {...register('role')}
-                        id="manager"
-                        name="role"
-                        defaultChecked={user?.role?.includes('manager')}
-                      >
-                        Manager
-                      </Checkbox>
-                      <Checkbox
-                        value="userReps"
-                        {...register('role')}
-                        id="userReps"
-                        name="role"
-                        defaultChecked={user?.role?.includes('userReps')}
-                      >
-                        Staff
-                      </Checkbox>
-                      <Checkbox
-                        value="storeKeeper"
-                        {...register('role')}
-                        id="storeKeeper"
-                        name="role"
-                        defaultChecked={user?.role?.includes('storeKeeper')}
-                      >
-                        Store Keeper
-                      </Checkbox>
-                      <Checkbox
-                        value="vendour"
-                        {...register('role')}
-                        id="vendour"
-                        name="role"
-                        defaultChecked={user?.role?.includes('vendour')}
-                      >
-                        Vendour
-                      </Checkbox>
-                      <Checkbox
-                        value="user"
-                        {...register('role')}
-                        id="user"
-                        name="role"
-                        defaultChecked={user?.role?.includes('user')}
-                      >
-                        User
-                      </Checkbox>
-                    </Stack>
                   </FormControl>
                 </>
               ) : (
