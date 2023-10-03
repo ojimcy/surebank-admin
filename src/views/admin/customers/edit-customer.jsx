@@ -60,7 +60,7 @@ export default function EditCustomer() {
       try {
         if (account && account.branchId) {
           const response = await axiosService.get(
-            `/branch/${account?.branchId._id}/staff`
+            `/staff/${account?.branchId._id}`
           );
           setStaffList(response.data);
         }
@@ -142,8 +142,8 @@ export default function EditCustomer() {
                   </option>
                   {staffList &&
                     staffList.map((staff) => (
-                      <option key={staff.id} value={staff.id}>
-                        {staff.firstName} {staff.lastName}
+                      <option key={staff.staffId?.id} value={staff.staffId?.id}>
+                        {staff.staffId?.firstName} {staff.staffId?.lastName}
                       </option>
                     ))}
                 </Select>

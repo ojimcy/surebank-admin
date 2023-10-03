@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Button,
   Flex,
@@ -8,6 +8,7 @@ import {
   Spacer,
 } from '@chakra-ui/react';
 import PackageCard from 'components/package/PackageCard';
+import CreateAccountModal from 'components/modals/CreateAccountModal';
 import { useAppContext } from 'contexts/AppContext';
 
 import { NavLink } from 'react-router-dom';
@@ -21,7 +22,18 @@ const UsersPackages = ({
 
   const textColor = useColorModeValue('secondaryGray.900', 'white');
   const textColorSecondary = 'secondaryGray.600';
-  console.log(customerData);
+
+  const [showAccountModal, setShowAccountModal] = useState(false);
+
+
+  const handleShowAccountModal = () => {
+    setShowAccountModal(true);
+  };
+
+  const closeAccountModal = () => {
+    setShowAccountModal(false);
+  };
+
   return (
     <>
       <Flex alignItems="center">
@@ -35,11 +47,21 @@ const UsersPackages = ({
         </Flex>
 
         <Spacer />
-        <NavLink to="/admin/daily-saving/package">
-          <Button bgColor="blue.700" color="white">
-            Create Package
+        {!customerData || Object.keys(customerData).length === 0 ? (
+          <Button
+            bgColor="blue.700"
+            color="white"
+            onClick={handleShowAccountModal}
+          >
+            Create Account
           </Button>
-        </NavLink>
+        ) : (
+          <NavLink to="/admin/daily-saving/package">
+            <Button bgColor="blue.700" color="white">
+              Create Package
+            </Button>
+          </NavLink>
+        )}
       </Flex>
       <hr color={textColor} />
 
@@ -68,6 +90,11 @@ const UsersPackages = ({
           </Button>
         </Flex>
       )}
+
+      <CreateAccountModal
+        isOpen={showAccountModal}
+        onClose={closeAccountModal}
+      />
     </>
   );
 };

@@ -186,7 +186,6 @@ export default function Users() {
       }
     }
   };
-
   const addRoleToStaff = async (data) => {
     try {
       await axiosService.patch(`/staff/role`, data);

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { Box, Button, Flex, Spinner, Stack, Text } from '@chakra-ui/react';
 
 import { toast } from 'react-toastify';
@@ -9,6 +10,7 @@ import { useAppContext } from 'contexts/AppContext';
 import BackButton from 'components/menu/BackButton';
 
 const AssignManager = () => {
+  const history = useHistory();
   const [loading, setLoading] = useState(false);
   const [staffList, setStaffList] = useState([]);
   const [selectedManager, setSelectedManager] = useState(null);
@@ -24,12 +26,12 @@ const AssignManager = () => {
     try {
       setLoading(true);
       const response = await axiosService.get(
-        `/branch/${customerData.branchId._id}/staff`
+        `/staff/${customerData.branchId._id}`
       );
       setStaffList(response.data);
-      setLoading(false);
     } catch (error) {
       console.error(error);
+    } finally {
       setLoading(false);
     }
   };
@@ -47,6 +49,7 @@ const AssignManager = () => {
         'The selected staff member has been assigned as the account manager.'
       );
       setAssigning(false);
+      history.goBack()
       // Handle success or show a notification to the user
     } catch (error) {
       console.error(error);
@@ -79,15 +82,14 @@ const AssignManager = () => {
                   justifyContent="space-between"
                   alignItems="center"
                   p="4"
-                  bg="gray.100"
                   borderRadius="md"
                 >
                   <Text>
-                    {staff.firstName} {staff.lastName}
+                    {staff.staffId?.firstName} {staff.staffId?.lastName}
                   </Text>
                   <Button
                     size="sm"
-                    onClick={() => setSelectedManager(staff.id)}
+                    onClick={() => setSelectedManager(staff.staffId?.id)}
                     disabled={assigning}
                   >
                     {assigning ? 'Assigning...' : 'Make Manager'}
