@@ -11,12 +11,13 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react';
 // Custom Components
+import { SearchBar } from 'components/navbar/searchBar/SearchBar';
 import { SidebarResponsive } from 'components/sidebar/Sidebar';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 // Assets
-import { MdNotificationsNone } from 'react-icons/md';
+import { MdNotificationsNone, MdInfoOutline } from 'react-icons/md';
 import routes from 'routes.js';
 import { useAuth } from 'contexts/AuthContext';
 import { useHistory } from 'react-router-dom';
@@ -51,15 +52,36 @@ export default function HeaderLinks(props) {
       w={{ sm: '100%', md: 'auto' }}
       alignItems="center"
       flexDirection="row"
+      bg={menuBg}
       flexWrap={secondary ? { base: 'wrap', md: 'nowrap' } : 'unset'}
       p="10px"
+      borderRadius="30px"
+      boxShadow={shadow}
     >
+      <SearchBar
+        mb={secondary ? { base: '10px', md: 'unset' } : 'unset'}
+        me="10px"
+        borderRadius="30px"
+      />
       <SidebarResponsive routes={routes} />
       <Menu>
         <MenuButton p="0px">
           <Icon
             mt="6px"
             as={MdNotificationsNone}
+            color={navbarIcon}
+            w="18px"
+            h="18px"
+            me="10px"
+          />
+        </MenuButton>
+      </Menu>
+
+      <Menu>
+        <MenuButton p="0px">
+          <Icon
+            mt="6px"
+            as={MdInfoOutline}
             color={navbarIcon}
             w="18px"
             h="18px"

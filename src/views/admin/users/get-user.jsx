@@ -37,6 +37,7 @@ export default function User() {
           const branchResponse = await axiosService.get(
             `branch/${response.data.branchId}`
           );
+          
           setBranchInfo(branchResponse.data);
         }
 

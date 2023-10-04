@@ -11,7 +11,7 @@ import MiniStatistics from 'components/card/MiniStatistics';
 import IconBox from 'components/icons/IconBox';
 import React from 'react';
 import { MdAttachMoney, MdPerson } from 'react-icons/md';
-import { FaDollarSign, FaMoneyBillWave, FaChartBar } from 'react-icons/fa';
+import { FaMoneyBillWave, FaChartBar } from 'react-icons/fa';
 import axiosService from 'utils/axiosService';
 import { toast } from 'react-toastify';
 import { formatNaira } from 'utils/helper';
@@ -186,11 +186,6 @@ export default function SuperAdminDashboard() {
           mb="20px"
           flexDirection={{ base: 'column', md: 'row' }}
         >
-          <ActionButton
-            to="/admin/accounting/dashboard"
-            icon={FaDollarSign}
-            label="Accounting"
-          />
           <ActionButton
             to="/admin/accounting/dashboard"
             icon={FaChartBar}
