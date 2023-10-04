@@ -24,9 +24,11 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 
 import { useAppContext } from 'contexts/AppContext';
+import { useHistory } from 'react-router-dom';
 
 export default function Withdraw() {
   const { customerData } = useAppContext();
+  const history = useHistory;
 
   const brandStars = useColorModeValue('brand.500', 'brand.400');
   const textColor = useColorModeValue('navy.700', 'white');
@@ -78,6 +80,7 @@ export default function Withdraw() {
     try {
       await axiosService.post('/transactions/withdraw/cash', data);
       toast.success('Withdrawal request sent successfully!');
+      history.goBack();
     } catch (error) {
       if (
         error.response &&
@@ -145,11 +148,11 @@ export default function Withdraw() {
                     onChange={handleAccountNumberChange}
                   />
                   {user ? (
-                    <Text fontSize="sm" color="green" mt="2px" pb="10px">
+                    <Text fontSize="sm" color="green" mb="5px" pb="10px">
                       {ownerName}
                     </Text>
                   ) : (
-                    <Text fontSize="sm" color="red" mt="2px" pb="10px">
+                    <Text fontSize="sm" color="red" mb="5px" pb="10px">
                       {ownerName}
                     </Text>
                   )}

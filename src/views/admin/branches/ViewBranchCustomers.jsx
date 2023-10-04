@@ -62,6 +62,7 @@ export default function Customers() {
   // Fetch customers
   useEffect(() => {
     fetchAccounts();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Filter customers based on search term
@@ -104,6 +105,11 @@ export default function Customers() {
       toast.error(error.response?.data?.message || 'An error occurred');
     }
   };
+
+
+  const totalItems = filteredCustomers.length;
+  const itemsPerPage = 10;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
 
   // Columns for the user table
   const columns = React.useMemo(
@@ -237,7 +243,12 @@ export default function Customers() {
             {loading ? (
               <Spinner />
             ) : (
-              <SimpleTable columns={columns} data={filteredCustomers} />
+              <SimpleTable
+                columns={columns}
+                data={filteredCustomers}
+                pageSize={itemsPerPage}
+                totalPages={totalPages}
+              />
             )}
           </Box>
         </Card>

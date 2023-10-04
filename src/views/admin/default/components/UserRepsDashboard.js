@@ -45,6 +45,7 @@ export default function UserRepsDashboard() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredCustomers, setFilteredCustomers] = useState([]);
 
+
   const { currentUser } = useAuth();
 
   useEffect(() => {
@@ -125,6 +126,10 @@ export default function UserRepsDashboard() {
     });
     setFilteredCustomers(filtered);
   }, [searchTerm, customers]);
+
+  const totalItems = filteredCustomers.length;
+  const itemsPerPage = 10;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
 
   const columns = React.useMemo(
     () => [
@@ -290,7 +295,12 @@ export default function UserRepsDashboard() {
         </Flex>
       </Box>
 
-      <SimpleTable columns={columns} data={filteredCustomers} />
+      <SimpleTable
+        columns={columns}
+        data={filteredCustomers}
+        pageSize={itemsPerPage}
+        totalPages={totalPages}
+      />
     </>
   );
 }

@@ -22,12 +22,12 @@ import {
   MenuList,
   MenuItem,
   IconButton,
-  HStack,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 
 // Custom components
+import { formatDate } from 'utils/helper';
 
 // Assets
 import axiosService from 'utils/axiosService';
@@ -45,9 +45,6 @@ export default function Users() {
   const [staffUser, setStaffUser] = useState('');
   const [allBranch, setAllBranch] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalResults, setTotalResults] = useState(1);
-  const [pageLimit, setPageLimit] = useState(10);
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showTransferStaffModal, setShowTransferStaffModal] = useState(false);
@@ -58,6 +55,7 @@ export default function Users() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredStaffs, setFilteredStaffs] = useState([]);
 
+
   const fetchUsers = async () => {
     setLoading(true);
     try {
@@ -67,9 +65,6 @@ export default function Users() {
       setUsers(UserResponse.data.results);
       setAllBranch(branches.data.results);
       setStaffs(response.data);
-      setCurrentPage(response.data.page);
-      setTotalResults(response.data.totalResults);
-      setPageLimit(response.data.limit);
       setLoading(false);
     } catch (error) {
       console.error(error);
@@ -79,19 +74,6 @@ export default function Users() {
   useEffect(() => {
     fetchUsers();
   }, []);
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric',
-      second: 'numeric',
-      hour12: true,
-    }).format(date);
-  };
 
   const openTransferStaffModal = async (staffUserId) => {
     const response = await axiosService.get(`users/${staffUserId}`);
@@ -229,6 +211,11 @@ export default function Users() {
     superAdmin: 'Super Admin',
   };
 
+
+  const totalItems = filteredStaffs.length;
+  const itemsPerPage = 10;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+
   // Columns for the user table
   const columns = React.useMemo(
     () => [
@@ -343,18 +330,10 @@ export default function Users() {
               <SimpleTable
                 columns={columns}
                 data={filteredStaffs}
-                pageSize={totalResults}
-                totalPages={totalResults}
+                pageSize={itemsPerPage}
+                totalPages={totalPages}
               />
             )}
-            <HStack mt="4" justify="space-between" align="center">
-              {staffs && (
-                <Box>
-                  Showing {currentPage} to {Math.min(pageLimit, totalResults)}{' '}
-                  of {totalResults} entries
-                </Box>
-              )}
-            </HStack>
           </Box>
         </Card>
       </Grid>

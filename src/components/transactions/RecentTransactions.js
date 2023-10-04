@@ -54,14 +54,13 @@ function RecentTransactions({ transactions }) {
         ),
       },
       {
-        Header: 'Cashier',
+        Header: 'Created By',
         accessor: (row) =>
-          `${row.userReps?.firstName} ${row.userReps?.lastName}`,
+          `${row.createdBy?.firstName} ${row.createdBy?.lastName}`,
       },
     ],
     []
   );
-
   return (
     <Box mt="80px">
       <Flex
@@ -101,7 +100,11 @@ function RecentTransactions({ transactions }) {
         </Box>
       </Flex>
       {transactions && transactions.length > 0 ? (
-        <SimpleTable columns={columns} data={filteredTransaction} />
+        <SimpleTable
+          columns={columns}
+          data={filteredTransaction}
+          pageSize="10"
+        />
       ) : (
         <Text>Transaction not found</Text>
       )}

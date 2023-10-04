@@ -23,7 +23,6 @@ import {
   ModalCloseButton,
   ModalBody,
   ModalFooter,
-  HStack,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { useHistory, NavLink, Link } from 'react-router-dom';
@@ -45,9 +44,7 @@ export default function Customers() {
   const history = useHistory();
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
   const [totalResults, setTotalResults] = useState(1);
-  const [pageLimit, setPageLimit] = useState(10);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredCustomers, setFilteredCustomers] = useState([]);
 
@@ -56,19 +53,28 @@ export default function Customers() {
   const [allBranch, setAllBranch] = useState([]);
   const [customerToDelete, setCustomerToDelete] = useState(null);
 
+  const pageLimit = 10;
+
   const fetchAccounts = async () => {
     setLoading(true);
     try {
       let response;
-      if (currentUser.role === 'admin') {
+      if (currentUser.role === 'userReps') {
         response = await axiosService.get(
           `/accounts/${currentUser.id}/staffaccounts`
         );
         setCustomers(response.data);
-        setCurrentPage(response.data.page);
-        setTotalResults(response.data.totalResults);
-        setPageLimit(response.data.limit);
-      } else {
+        setTotalResults(response.data.length);
+      } else if(currentUser.role === 'manager') {
+
+      const response = await axiosService.get(
+        `accounts/${currentUser.branchId}/branchaccounts`
+      );
+        setCustomers(response.data);
+        setTotalResults(response.data.length);
+      }
+      
+      else {
         response = await axiosService.get('/accounts/');
         setCustomers(response.data.results);
       }
@@ -129,9 +135,11 @@ export default function Customers() {
       toast.error(error.response?.data?.message || 'An error occurred');
     }
   };
+
   const openbranchcustomermodal = () => {
     setShowBranchModal(true);
   };
+
   const closebranchcustomermodal = () => {
     setShowBranchModal(false);
   };
@@ -140,10 +148,12 @@ export default function Customers() {
     register,
     formState: { errors, isSubmitting },
   } = useForm();
+
   const viewbranchstaff = (data) => {
     const branchId = data.branchId;
     history.push(`/admin/branch/viewbranchcustomers/${branchId}`);
   };
+
   // Columns for the user table
   const columns = React.useMemo(
     () => [
@@ -285,18 +295,10 @@ export default function Customers() {
               <SimpleTable
                 columns={columns}
                 data={filteredCustomers}
-                pageSize={totalResults}
+                pageSize={pageLimit}
                 totalPages={totalResults}
               />
             )}
-            <HStack mt="4" justify="space-between" align="center">
-              {customers && (
-                <Box>
-                  Showing {currentPage} to {Math.min(pageLimit, totalResults)}{' '}
-                  of {totalResults} entries
-                </Box>
-              )}
-            </HStack>
           </Box>
         </Card>
       </Grid>
@@ -318,6 +320,7 @@ export default function Customers() {
           </ModalFooter>
         </ModalContent>
       </Modal>
+
       {/* Select branch modal */}
       <Modal isOpen={showBranchModal} onClose={closebranchcustomermodal}>
         <ModalOverlay />

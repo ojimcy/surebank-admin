@@ -11,8 +11,10 @@ import {
   TabList,
   TabPanel,
   TabPanels,
+  Button,
 } from '@chakra-ui/react';
 import { toast } from 'react-toastify';
+import { NavLink } from 'react-router-dom';
 
 // Custom components
 import axiosService from 'utils/axiosService';
@@ -38,7 +40,7 @@ export default function UserDashboard() {
     try {
       setLoading(true);
       const response = await axiosService.get(
-        `/transactions?accountNumber=${customerData.accountNumber}`
+        `/transactions?accountNumber=${customerData?.accountNumber}`
       );
       setTransactions(response.data);
       setLoading(false);
@@ -148,6 +150,11 @@ export default function UserDashboard() {
                   ? formatNaira(customerData.availableBalance)
                   : '****'}
               </Text>
+            </Box>
+            <Box>
+              <NavLink to="/admin/transaction/withdraw">
+                <Button colorScheme="green">Withdraw Cash</Button>
+              </NavLink>
             </Box>
           </Flex>
 

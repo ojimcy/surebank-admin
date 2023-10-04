@@ -21,7 +21,7 @@ import {
 } from '@chakra-ui/icons';
 import { formatDate } from 'utils/helper';
 
-const SimpleTable = ({ columns, data, pageSize }) => {
+const SimpleTable = ({ columns, data, pageSize, totalPages }) => {
   const {
     getTableProps,
     getTableBodyProps,
@@ -143,6 +143,12 @@ const SimpleTable = ({ columns, data, pageSize }) => {
           isDisabled={!canNextPage}
         />
       </Flex>
+      <Text mt={4}>
+        Page{' '}
+        <strong>
+          {pageIndex + 1} of {totalPages}
+        </strong>{' '}
+      </Text>
     </>
   );
 };

@@ -4,7 +4,6 @@ import {
   Grid,
   Button,
   Spinner,
-  HStack,
   Flex,
   Text,
   Spacer,
@@ -37,14 +36,14 @@ import SimpleTable from 'components/table/SimpleTable';
 export default function Users() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalResults, setTotalResults] = useState(1);
-  const [pageLimit, setPageLimit] = useState(10);
+  const [totalPages, setTotalTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredUsers, setFilteredUsers] = useState([]);
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
+
+  const itemsPerPage = 10;
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -52,9 +51,7 @@ export default function Users() {
     try {
       const response = await axiosService.get('/users/');
       setUsers(response.data.results);
-      setCurrentPage(response.data.page)
-      setTotalResults(response.data.totalResults);
-      setPageLimit(response.data.limit);
+      setTotalTotalPages(response.data.totalPages);
       setLoading(false);
 
       axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
@@ -64,8 +61,8 @@ export default function Users() {
   };
 
   useEffect(() => {
-    fetchUsers(currentPage);
-  }, [currentPage]);
+    fetchUsers();
+  }, []);
 
   // Filter Users based on search term
   useEffect(() => {
@@ -239,18 +236,10 @@ export default function Users() {
               <SimpleTable
                 columns={columns}
                 data={filteredUsers}
-                pageSize={totalResults}
-                totalPages={totalResults}
+                pageSize={itemsPerPage}
+                totalPages={totalPages}
               />
             )}
-            <HStack mt="4" justify="space-between" align="center">
-              {users && (
-                <Box>
-                  Showing {currentPage} to {Math.min(pageLimit, totalResults)}{' '}
-                  of {totalResults} entries
-                </Box>
-              )}
-            </HStack>
           </Box>
         </Card>
       </Grid>
