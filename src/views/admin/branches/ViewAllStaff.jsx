@@ -2,23 +2,14 @@
 import {
   Box,
   Grid,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
   Button,
   Spinner,
-  HStack,
   Flex,
   Text,
   Spacer,
   Stack,
   FormControl,
   Input,
-  TableContainer,
-  IconButton,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -30,6 +21,8 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
+  IconButton,
+  HStack,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
@@ -42,11 +35,8 @@ import Card from 'components/card/Card.js';
 import AssignRoleModal from 'components/modals/AssignRoleModal.js';
 import AddStaffModal from 'components/modals/AddStaffModal.js';
 import TransferStaffModal from 'components/modals/TransferStaffModal.js';
-import {
-  ChevronDownIcon,
-  DeleteIcon,
-  SearchIcon,
-} from '@chakra-ui/icons';
+import SimpleTable from 'components/table/SimpleTable';
+import { ChevronDownIcon, DeleteIcon, SearchIcon } from '@chakra-ui/icons';
 import { toast } from 'react-toastify';
 
 export default function Users() {
@@ -55,12 +45,18 @@ export default function Users() {
   const [staffUser, setStaffUser] = useState('');
   const [allBranch, setAllBranch] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalResults, setTotalResults] = useState(1);
+  const [pageLimit, setPageLimit] = useState(10);
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showTransferStaffModal, setShowTransferStaffModal] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
   const [showCreateStaffModal, setShowCreateStaffModal] = useState(false);
   const [showRoleModal, setShowRoleModal] = useState(false);
+
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredStaffs, setFilteredStaffs] = useState([]);
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -71,6 +67,9 @@ export default function Users() {
       setUsers(UserResponse.data.results);
       setAllBranch(branches.data.results);
       setStaffs(response.data);
+      setCurrentPage(response.data.page);
+      setTotalResults(response.data.totalResults);
+      setPageLimit(response.data.limit);
       setLoading(false);
     } catch (error) {
       console.error(error);
@@ -186,6 +185,7 @@ export default function Users() {
       }
     }
   };
+
   const addRoleToStaff = async (data) => {
     try {
       await axiosService.patch(`/staff/role`, data);
@@ -208,13 +208,81 @@ export default function Users() {
     }
   };
 
-  
+  // Filter customers based on search term
+  useEffect(() => {
+    if (!staffs) {
+      return;
+    }
+
+    const filtered = staffs?.filter((staff) => {
+      const fullName =
+        `${staff.staffId.firstName} ${staff.staffId.lastName}`.toLowerCase();
+      return fullName.includes(searchTerm.toLowerCase());
+    });
+    setFilteredStaffs(filtered);
+  }, [searchTerm, staffs]);
+
   const roleLabels = {
     userReps: 'Cashier',
     manager: 'Manager',
     admin: 'Admin',
     superAdmin: 'Super Admin',
   };
+
+  // Columns for the user table
+  const columns = React.useMemo(
+    () => [
+      {
+        Header: 'Staff Name',
+        accessor: (row) => (
+          <NavLink to={`/admin/user/${row.staffId?.id}`}>
+            {row.staffId.firstName} {row.staffId.lastName}
+          </NavLink>
+        ),
+      },
+      {
+        Header: 'Branch',
+        accessor: (row) => row.branchId.name,
+      },
+      {
+        Header: 'Role',
+        accessor: (row) => roleLabels[row.staffId.role],
+      },
+      {
+        Header: 'Status',
+        accessor: (row) => (row.isCurrent ? 'Active' : 'Inactive'),
+      },
+      {
+        Header: 'Created At',
+        accessor: (row) => formatDate(row.createdAt),
+      },
+      {
+        Header: 'Action',
+        accessor: (row) => (
+          <>
+            {/* Delete user icon */}
+            <IconButton
+              icon={<DeleteIcon />}
+              colorScheme="red"
+              aria-label="Delete branch"
+              onClick={() => handleDeleteIconClick(row.staffId?.id)}
+            />
+            <Button
+              mt={0}
+              ml={2}
+              colorScheme="blue"
+              size="md"
+              onClick={() => openTransferStaffModal(row.staffId?.id)}
+            >
+              Transfer
+            </Button>
+          </>
+        ),
+      },
+    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
 
   return (
     <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
@@ -255,8 +323,10 @@ export default function Users() {
                   <FormControl>
                     <Input
                       type="search"
-                      placeholder="Type a name"
+                      placeholder="Search staffs by name"
                       borderColor="black"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
                     />
                   </FormControl>
                   <Button bgColor="blue.700" color="white">
@@ -270,64 +340,21 @@ export default function Users() {
             {loading ? (
               <Spinner />
             ) : (
-              <TableContainer>
-                <Table variant="simple" bordered>
-                  <Thead>
-                    <Tr>
-                      <Th>Staff Name </Th>
-                      <Th>Branch </Th>
-                      <Th>Role </Th>
-                      <Th>Created Date </Th>
-                      <Th>Status</Th>
-                      <Th>Action</Th>
-                    </Tr>
-                  </Thead>
-                  {staffs.length === 0 ? (
-                    <Text>No Staff in this branch</Text>
-                  ) : (
-                    <Tbody>
-                      {staffs?.map((staff) => (
-                        <Tr key={staff.staffId?.id}>
-                          <Td>
-                            <NavLink
-                              to={`/admin/user/${staff.staffId?.id}`}
-                            >{`${staff.staffId?.firstName} ${staff.staffId?.lastName}`}</NavLink>{' '}
-                          </Td>
-                          <Td>{staff.branchId?.name}</Td>
-                          <Td>{roleLabels[staff.staffId?.role]}</Td>
-                          <Td>{formatDate(staff.createdAt)}</Td>
-                          <Td>{staff.isCurrent ? 'Active' : 'Inactive'}</Td>
-                          <Td>
-                            <HStack>
-                              {/* Delete branch icon */}
-                              <IconButton
-                                icon={<DeleteIcon />}
-                                colorScheme="red"
-                                aria-label="Delete branch"
-                                onClick={() =>
-                                  handleDeleteIconClick(staff.staffId?.id)
-                                }
-                              />
-
-                              <Button
-                                mt={4}
-                                colorScheme="blue"
-                                size="md"
-                                onClick={() =>
-                                  openTransferStaffModal(staff.staffId?.id)
-                                }
-                              >
-                                Transfer
-                              </Button>
-                            </HStack>
-                          </Td>
-                        </Tr>
-                      ))}
-                    </Tbody>
-                  )}
-                </Table>
-              </TableContainer>
+              <SimpleTable
+                columns={columns}
+                data={filteredStaffs}
+                pageSize={totalResults}
+                totalPages={totalResults}
+              />
             )}
+            <HStack mt="4" justify="space-between" align="center">
+              {staffs && (
+                <Box>
+                  Showing {currentPage} to {Math.min(pageLimit, totalResults)}{' '}
+                  of {totalResults} entries
+                </Box>
+              )}
+            </HStack>
           </Box>
         </Card>
       </Grid>

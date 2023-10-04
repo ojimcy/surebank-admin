@@ -21,7 +21,7 @@ import {
 } from '@chakra-ui/icons';
 import { formatDate } from 'utils/helper';
 
-const SimpleTable = ({ columns, data, pageSize = 10 }) => {
+const SimpleTable = ({ columns, data, pageSize }) => {
   const {
     getTableProps,
     getTableBodyProps,

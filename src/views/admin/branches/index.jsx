@@ -2,12 +2,6 @@
 import {
   Box,
   Grid,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
   Button,
   Spinner,
   HStack,
@@ -17,7 +11,6 @@ import {
   Stack,
   FormControl,
   Input,
-  TableContainer,
   IconButton,
   Modal,
   ModalOverlay,
@@ -36,11 +29,16 @@ import Card from 'components/card/Card.js';
 import { DeleteIcon, EditIcon, SearchIcon } from '@chakra-ui/icons';
 import { toast } from 'react-toastify';
 
+import SimpleTable from 'components/table/SimpleTable';
+
 export default function Users() {
   const [branches, setBranches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const [totalResults, setTotalResults] = useState(1);
+  const [pageLimit, setPageLimit] = useState(10);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredBranches, setFilteredBranches] = useState([]);
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
@@ -50,7 +48,9 @@ export default function Users() {
     try {
       const response = await axiosService.get('/branch/');
       setBranches(response.data.results);
-      setTotalPages(response.data.totalPages);
+      setCurrentPage(response.data.page);
+      setTotalResults(response.data.totalResults);
+      setPageLimit(response.data.limit);
       setLoading(false);
     } catch (error) {
       console.error(error);
@@ -59,18 +59,6 @@ export default function Users() {
   useEffect(() => {
     fetchUsers(currentPage);
   }, [currentPage]);
-
-  const handleNextPageClick = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const handlePreviousPageClick = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
 
   const handleDeleteIconClick = (userId) => {
     setUserToDelete(userId);
@@ -101,6 +89,71 @@ export default function Users() {
       toast.error(error.response?.data?.message || 'An error occurred');
     }
   };
+
+  // Filter Users based on search term
+  useEffect(() => {
+    const filtered = branches?.filter((branch) => {
+      const name = `${branch.name}`.toLowerCase();
+      return name.includes(searchTerm.toLowerCase());
+    });
+    setFilteredBranches(filtered);
+  }, [searchTerm, branches]);
+
+  // Columns for the user table
+  const columns = React.useMemo(
+    () => [
+      {
+        Header: 'Branch Name',
+        accessor: (row) => (
+          <NavLink to={`/admin/branch/viewbranch/${row.id}`}>
+            {row.name}
+          </NavLink>
+        ),
+      },
+      {
+        Header: 'Address',
+        accessor: 'address',
+      },
+      {
+        Header: 'Phone Number',
+        accessor: 'phoneNumber',
+      },
+      {
+        Header: 'Email',
+        accessor: 'email',
+      },
+      {
+        Header: 'Manager',
+        accessor: 'manager',
+      },
+
+      {
+        Header: 'Action',
+        accessor: (row) => (
+          <>
+            {/* Edit branch icon */}
+            <NavLink to={`/admin/branch/editbranch/${row.id}`}>
+              <IconButton
+                icon={<EditIcon />}
+                colorScheme="blue"
+                mr={2}
+                aria-label="Edit branch"
+              />
+            </NavLink>
+            {/* Delete branch icon */}
+            <IconButton
+              icon={<DeleteIcon />}
+              colorScheme="red"
+              aria-label="Delete branch"
+              onClick={() => handleDeleteIconClick(row.id)}
+            />
+          </>
+        ),
+      },
+    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
 
   return (
     <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
@@ -137,6 +190,8 @@ export default function Users() {
                       type="search"
                       placeholder="Type a name"
                       borderColor="black"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
                     />
                   </FormControl>
                   <Button bgColor="blue.700" color="white">
@@ -150,79 +205,20 @@ export default function Users() {
             {loading ? (
               <Spinner />
             ) : (
-              <TableContainer>
-                <Table variant="simple" bordered>
-                  <Thead>
-                    <Tr>
-                      <Th>Branch Name </Th>
-                      <Th>Address</Th>
-                      <Th>Phone Number</Th>
-                      <Th>Email </Th>
-                      <Th>Manager </Th>
-                      <Th>Action</Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    {branches.map((branch) => (
-                      <Tr key={branch.id}>
-                        <Td>
-                          <NavLink
-                            to={`/admin/branch/viewbranch/${branch.id}`}
-                          >{`${branch.name}`}</NavLink>{' '}
-                        </Td>
-                        <Td>{branch.address}</Td>
-                        <Td>{branch.phoneNumber}</Td>
-                        <Td>{branch.email}</Td>
-                        <Td>{branch.manager}</Td>
-                        <Td>
-                          <HStack>
-                            {/* Edit branch icon */}
-                            <NavLink
-                              to={`/admin/branch/editbranch/${branch.id}`}
-                            >
-                              <IconButton
-                                icon={<EditIcon />}
-                                colorScheme="blue"
-                                aria-label="Edit branch"
-                              />
-                            </NavLink>
-                            {/* Delete branch icon */}
-                            <IconButton
-                              icon={<DeleteIcon />}
-                              colorScheme="red"
-                              aria-label="Delete branch"
-                              onClick={() => handleDeleteIconClick(branch.id)}
-                            />
-                          </HStack>
-                        </Td>
-                      </Tr>
-                    ))}
-                  </Tbody>
-                </Table>
-              </TableContainer>
+              <SimpleTable
+                columns={columns}
+                data={filteredBranches}
+                pageSize={totalResults}
+                totalPages={totalResults}
+              />
             )}
             <HStack mt="4" justify="space-between" align="center">
               {branches && (
                 <Box>
-                  Showing {(currentPage - 1) * 10 + 1} to{' '}
-                  {Math.min(currentPage * 10, branches.length)} of{' '}
-                  {branches.length} entries
+                  Showing {currentPage} to {Math.min(pageLimit, totalResults)}{' '}
+                  of {totalResults} entries
                 </Box>
               )}
-              <HStack>
-                <Button
-                  disabled={currentPage === 1}
-                  onClick={handlePreviousPageClick}
-                >
-                  Previous Page
-                </Button>
-                <Button
-                  disabled={currentPage === totalPages}
-                  onClick={handleNextPageClick}
-                >
-                  Next Page
-                </Button>
-              </HStack>
             </HStack>
           </Box>
         </Card>

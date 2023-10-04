@@ -17,6 +17,7 @@ const BackButton = () => {
         aria-label="Go back"
         size="lg"
         onClick={handleGoBack}
+        mb={4}
       />
     </Flex>
   );

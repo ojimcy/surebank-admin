@@ -38,7 +38,8 @@ export default function Users() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const [totalResults, setTotalResults] = useState(1);
+  const [pageLimit, setPageLimit] = useState(10);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredUsers, setFilteredUsers] = useState([]);
 
@@ -51,7 +52,9 @@ export default function Users() {
     try {
       const response = await axiosService.get('/users/');
       setUsers(response.data.results);
-      setTotalPages(response.data.totalPages);
+      setCurrentPage(response.data.page)
+      setTotalResults(response.data.totalResults);
+      setPageLimit(response.data.limit);
       setLoading(false);
 
       axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
@@ -123,6 +126,7 @@ export default function Users() {
     manager: 'Manager',
     admin: 'Admin',
     superAdmin: 'Super Admin',
+    user: 'User',
   };
 
   // Columns for the user table
@@ -232,14 +236,18 @@ export default function Users() {
                 No user records found.
               </Text>
             ) : (
-              <SimpleTable columns={columns} data={filteredUsers} />
+              <SimpleTable
+                columns={columns}
+                data={filteredUsers}
+                pageSize={totalResults}
+                totalPages={totalResults}
+              />
             )}
             <HStack mt="4" justify="space-between" align="center">
               {users && (
                 <Box>
-                  Showing {(currentPage - 1) * 10 + 1} to{' '}
-                  {Math.min(currentPage * 10, users.length)} of {users.length}{' '}
-                  entries
+                  Showing {currentPage} to {Math.min(pageLimit, totalResults)}{' '}
+                  of {totalResults} entries
                 </Box>
               )}
             </HStack>

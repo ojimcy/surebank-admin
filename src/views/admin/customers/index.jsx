@@ -23,6 +23,7 @@ import {
   ModalCloseButton,
   ModalBody,
   ModalFooter,
+  HStack,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { useHistory, NavLink, Link } from 'react-router-dom';
@@ -44,6 +45,9 @@ export default function Customers() {
   const history = useHistory();
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalResults, setTotalResults] = useState(1);
+  const [pageLimit, setPageLimit] = useState(10);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredCustomers, setFilteredCustomers] = useState([]);
 
@@ -61,6 +65,9 @@ export default function Customers() {
           `/accounts/${currentUser.id}/staffaccounts`
         );
         setCustomers(response.data);
+        setCurrentPage(response.data.page);
+        setTotalResults(response.data.totalResults);
+        setPageLimit(response.data.limit);
       } else {
         response = await axiosService.get('/accounts/');
         setCustomers(response.data.results);
@@ -75,6 +82,7 @@ export default function Customers() {
   // Fetch customers
   useEffect(() => {
     fetchAccounts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Filter customers based on search term
@@ -274,8 +282,21 @@ export default function Customers() {
             {loading ? (
               <Spinner />
             ) : (
-              <SimpleTable columns={columns} data={filteredCustomers} />
+              <SimpleTable
+                columns={columns}
+                data={filteredCustomers}
+                pageSize={totalResults}
+                totalPages={totalResults}
+              />
             )}
+            <HStack mt="4" justify="space-between" align="center">
+              {customers && (
+                <Box>
+                  Showing {currentPage} to {Math.min(pageLimit, totalResults)}{' '}
+                  of {totalResults} entries
+                </Box>
+              )}
+            </HStack>
           </Box>
         </Card>
       </Grid>
