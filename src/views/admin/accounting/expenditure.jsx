@@ -140,6 +140,11 @@ export default function Expenditures() {
     }
   };
 
+
+  const totalItems = filteredExpenditure.length;
+  const itemsPerPage = 10;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+
   // Columns for the user table
   const columns = React.useMemo(
     () => [
@@ -229,7 +234,12 @@ export default function Expenditures() {
             {loading ? (
               <Spinner />
             ) : (
-              <SimpleTable columns={columns} data={filteredExpenditure} />
+              <SimpleTable
+                columns={columns}
+                data={filteredExpenditure}
+                pageSize={itemsPerPage}
+                totalPages={totalPages}
+              />
             )}
           </Box>
         </Card>

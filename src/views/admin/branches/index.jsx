@@ -4,7 +4,6 @@ import {
   Grid,
   Button,
   Spinner,
-  HStack,
   Flex,
   Text,
   Spacer,
@@ -36,7 +35,6 @@ export default function Users() {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalResults, setTotalResults] = useState(1);
-  const [pageLimit, setPageLimit] = useState(10);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredBranches, setFilteredBranches] = useState([]);
 
@@ -50,7 +48,6 @@ export default function Users() {
       setBranches(response.data.results);
       setCurrentPage(response.data.page);
       setTotalResults(response.data.totalResults);
-      setPageLimit(response.data.limit);
       setLoading(false);
     } catch (error) {
       console.error(error);
@@ -212,14 +209,6 @@ export default function Users() {
                 totalPages={totalResults}
               />
             )}
-            <HStack mt="4" justify="space-between" align="center">
-              {branches && (
-                <Box>
-                  Showing {currentPage} to {Math.min(pageLimit, totalResults)}{' '}
-                  of {totalResults} entries
-                </Box>
-              )}
-            </HStack>
           </Box>
         </Card>
       </Grid>

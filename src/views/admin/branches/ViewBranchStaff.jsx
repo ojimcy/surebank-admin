@@ -23,15 +23,12 @@ import {
   ModalOverlay,
   ModalContent,
   ModalHeader,
-  FormLabel,
-  Select,
   ModalCloseButton,
   ModalBody,
   ModalFooter,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
-import { useParams, NavLink, useHistory } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
+import { useParams, NavLink } from 'react-router-dom';
 
 // Custom components
 
@@ -43,27 +40,21 @@ import { toast } from 'react-toastify';
 import BackButton from 'components/menu/BackButton';
 
 export default function Users() {
-  const history = useHistory();
   const [staffs, setStaffs] = useState([]);
   const [branch, setBranch] = useState([]);
-  const [staffUser, setStaffUser] = useState('');
-  const [allBranch, setAllBranch] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const { id } = useParams();
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [showTransferStaffModal, setShowTransferStaffModal] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
 
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const branches = await axiosService.get('/branch/');
       const response = await axiosService.get(`/staff/${id}/`);
       const currentBranch = await axiosService.get(`branch/${id}`);
-      setAllBranch(branches.data.results);
       setBranch(currentBranch.data);
       setStaffs(response.data);
       setTotalPages(response.data.totalPages);
@@ -75,6 +66,7 @@ export default function Users() {
 
   useEffect(() => {
     fetchUsers(currentPage);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage]);
 
   const handleNextPageClick = () => {
@@ -120,9 +112,6 @@ export default function Users() {
   const onCloseModal = () => {
     setShowDeleteModal(false);
   };
-  const closeTransferModal = () => {
-    setShowTransferStaffModal(false);
-  };
 
   // Function to handle user deletion
   const handleDeleteUser = async (staffId) => {
@@ -131,25 +120,6 @@ export default function Users() {
       toast.success('Staff deleted successfully!');
       // After successful deletion, refetch the users to update the list
       fetchUsers();
-    } catch (error) {
-      console.error(error);
-      toast.error(error.response?.data?.message || 'An error occurred');
-    }
-  };
-
-  const {
-    handleSubmit,
-    register,
-    formState: { errors, isSubmittingstaff },
-  } = useForm();
-
-  const transferStaffToBranch = async (data) => {
-    try {
-      const branchId = data.branchId;
-
-      await axiosService.patch(`/staff/${branchId}`, data);
-      toast.success('Staff transfered successfully!');
-      history.push(`/admin/branches`);
     } catch (error) {
       console.error(error);
       toast.error(error.response?.data?.message || 'An error occurred');
@@ -208,7 +178,7 @@ export default function Users() {
                   <Thead>
                     <Tr>
                       <Th>Staff Name </Th>
-                      <Th>Phone Number</Th>
+                      <Th>Role</Th>
                       <Th>Last Updated </Th>
                       <Th>Created Date </Th>
                       <Th>Action</Th>
@@ -219,10 +189,10 @@ export default function Users() {
                       <Tr key={staff.id}>
                         <Td>
                           <NavLink
-                            to={`/admin/user/${staff.id}`}
-                          >{`${staff.firstName} ${staff.lastName}`}</NavLink>{' '}
+                            to={`/admin/user/${staff.staffId.id}`}
+                          >{`${staff.staffId.firstName} ${staff.staffId.lastName}`}</NavLink>{' '}
                         </Td>
-                        <Td>{staff.phoneNumber}</Td>
+                        <Td>{staff.staffId.role}</Td>
                         <Td>{formatDate(staff.updatedAt)}</Td>
                         <Td>{formatDate(staff.createdAt)}</Td>
                         <Td>
@@ -294,73 +264,7 @@ export default function Users() {
           </ModalFooter>
         </ModalContent>
       </Modal>
-      <Modal isOpen={showTransferStaffModal} onClose={closeTransferModal}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Transfer staff</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            {/* <FormLabel color={isError ? "red" : "green"}>{message}</FormLabel>{" "} */}
-            <Box>
-              {/* <Card p={{ base: "30px", md: "30px", sm: "10px" }}> */}
-              <form onSubmit={handleSubmit(transferStaffToBranch)}>
-                <Flex
-                  gap="20px"
-                  marginBottom="20px"
-                  flexDirection={{ base: 'column', md: 'row' }}
-                >
-                  <Box width={{ base: '100%', md: '100%', sm: '100%' }}>
-                    <FormControl>
-                      <FormLabel pt={3}>
-                        {staffUser?.firstName}
-                        &ensp;&ensp;
-                        {staffUser?.lastName}
-                      </FormLabel>
-                    </FormControl>
-                    &ensp;&ensp;
-                    <FormControl>
-                      <Input
-                        type="hidden"
-                        {...register('staffId')}
-                        value={staffUser?.id}
-                      />
-                    </FormControl>
-                    <FormControl isInvalid={errors.branch}>
-                      <Select
-                        {...register('branchId')}
-                        name="branchId"
-                        defaultValue=""
-                      >
-                        <option value="" disabled>
-                          Select a branch
-                        </option>
-                        {allBranch &&
-                          allBranch.map((branch) => (
-                            <option key={branch.id} value={branch.id}>
-                              {branch.name}
-                            </option>
-                          ))}
-                      </Select>
-                    </FormControl>
-                  </Box>
-                </Flex>
-
-                <Spacer />
-                <Button
-                  bgColor="blue.700"
-                  color="white"
-                  type="submit"
-                  isLoading={isSubmittingstaff}
-                >
-                  Save
-                </Button>
-                {/* </Flex> */}
-              </form>
-              {/* </Card> */}
-            </Box>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
+      
     </Box>
   );
 }
