@@ -42,7 +42,6 @@ export default function Withdrawals() {
   const handleBranchChange = (e) => {
     setBranch(e.target.value);
   };
-
   const handleStartDateChange = (e) => {
     setStartDate(e.target.value);
   };

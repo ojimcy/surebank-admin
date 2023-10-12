@@ -53,7 +53,7 @@ export default function UserDashboard() {
       setLoading(false);
     }
   };
-
+console.log(transactions);
   // Fetch user ds package data
   const fetchUserPackages = async () => {
     try {

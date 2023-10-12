@@ -29,11 +29,11 @@ import { DeleteIcon, EditIcon, SearchIcon } from '@chakra-ui/icons';
 import { toast } from 'react-toastify';
 
 import SimpleTable from 'components/table/SimpleTable';
+import { useAppContext } from 'contexts/AppContext';
 
 export default function Users() {
-  const [branches, setBranches] = useState([]);
+  const { branches, setBranches } = useAppContext();
   const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
   const [totalResults, setTotalResults] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredBranches, setFilteredBranches] = useState([]);
@@ -41,12 +41,11 @@ export default function Users() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
 
-  const fetchUsers = async () => {
+  const fetchBranches = async () => {
     setLoading(true);
     try {
       const response = await axiosService.get('/branch/');
       setBranches(response.data.results);
-      setCurrentPage(response.data.page);
       setTotalResults(response.data.totalResults);
       setLoading(false);
     } catch (error) {
@@ -54,8 +53,9 @@ export default function Users() {
     }
   };
   useEffect(() => {
-    fetchUsers(currentPage);
-  }, [currentPage]);
+    fetchBranches();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleDeleteIconClick = (userId) => {
     setUserToDelete(userId);
@@ -80,7 +80,7 @@ export default function Users() {
       await axiosService.delete(`/branch/${branchId}/deletestaffbranch`);
       toast.success('Branch deleted successfully!');
       // After successful deletion, refetch the users to update the list
-      fetchUsers();
+      fetchBranches();
     } catch (error) {
       console.error(error);
       toast.error(error.response?.data?.message || 'An error occurred');
@@ -168,7 +168,7 @@ export default function Users() {
       >
         <Card p={{ base: '30px', md: '30px', sm: '10px' }}>
           <Flex>
-            <Text fontSize="2xl">Branchs</Text>
+            <Text fontSize="2xl">Branches</Text>
             <Spacer />
 
             <NavLink to="/admin/branch/create">

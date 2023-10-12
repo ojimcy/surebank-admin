@@ -104,7 +104,7 @@ export default function CreateBranch() {
                   color={textColor}
                   mb="8px"
                 >
-                  Branch Email<Text color={brandStars}>*</Text>
+                  Branch Email (Optional)
                 </FormLabel>
                 <Input
                   isRequired={true}

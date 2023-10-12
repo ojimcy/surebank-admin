@@ -352,7 +352,7 @@ export default function CreateCustomer() {
                 </Select>
               </FormControl>
             </Box>
-            <Box width={{ base: '50%', md: '50%', sm: '50%' }} mt="15px">
+            <Box width={{ base: '50%', md: '50%', sm: '50%' }} mt="25px">
               <Button
                 colorScheme="green"
                 variant="solid"
@@ -362,7 +362,7 @@ export default function CreateCustomer() {
                 type="submit"
                 isLoading={isSubmitting}
               >
-                Save
+                Create
               </Button>
             </Box>
           </form>

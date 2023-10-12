@@ -88,7 +88,6 @@ export default function Users() {
       hour12: true,
     }).format(date);
   };
-
   const handleDeleteIconClick = (userId) => {
     setUserToDelete(userId);
     setShowDeleteModal(true);
