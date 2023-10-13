@@ -12,18 +12,20 @@ import {
   Image,
 } from '@chakra-ui/react';
 import { toast } from 'react-toastify';
+import { useForm } from 'react-hook-form';
 import { NavLink, useParams } from 'react-router-dom';
 
 import { useAppContext } from 'contexts/AppContext';
 import { useAuth } from 'contexts/AuthContext';
 import CreateAccountModal from 'components/modals/CreateAccountModal';
+import CreatePackageModal from 'components/modals/CreatePackageModal';
 
 import axiosService from 'utils/axiosService';
 import { formatDate, formatNaira } from 'utils/helper';
 
 import testImg from 'assets/img/nfts/Nft2.png';
 
-const SbPackage = ({ handleTransferSuccess, handleDepositSuccess }) => {
+const SbPackage = () => {
   const { id } = useParams();
   const { currentUser } = useAuth();
   const { customerData } = useAppContext();
@@ -33,6 +35,9 @@ const SbPackage = ({ handleTransferSuccess, handleDepositSuccess }) => {
 
   const [sbPackages, setSbPackages] = useState([]);
   const [showAccountModal, setShowAccountModal] = useState(false);
+  const [createPackagesModal, setCreatePackagesModal] = useState(false);
+
+  const { reset } = useForm();
 
   useEffect(() => {
     if (customerData) {
@@ -67,6 +72,17 @@ const SbPackage = ({ handleTransferSuccess, handleDepositSuccess }) => {
   const closeAccountModal = () => {
     setShowAccountModal(false);
   };
+
+  const showCreatePackagesModal = () => {
+    setCreatePackagesModal(true);
+  };
+
+  const closeCreatePackagesModal = () => {
+    setCreatePackagesModal(false);
+    reset();
+    reset();
+  };
+
   return (
     <>
       <Flex alignItems="center">
@@ -89,11 +105,13 @@ const SbPackage = ({ handleTransferSuccess, handleDepositSuccess }) => {
             Create Account
           </Button>
         ) : (
-          <NavLink to="/admin/daily-saving/package">
-            <Button bgColor="blue.700" color="white">
-              Create Package
-            </Button>
-          </NavLink>
+          <Button
+            onClick={showCreatePackagesModal}
+            bgColor="blue.700"
+            color="white"
+          >
+            Create Package
+          </Button>
         )}
       </Flex>
       <hr color={textColor} />
@@ -115,7 +133,7 @@ const SbPackage = ({ handleTransferSuccess, handleDepositSuccess }) => {
               boxShadow="md"
               justifyContent="center"
               alignItems="cemter"
-              key={packageData.id}
+              key={packageData._id}
             >
               <Box display="flex" justifyContent="center">
                 <Image
@@ -181,6 +199,11 @@ const SbPackage = ({ handleTransferSuccess, handleDepositSuccess }) => {
       <CreateAccountModal
         isOpen={showAccountModal}
         onClose={closeAccountModal}
+      />
+
+      <CreatePackageModal
+        isOpen={createPackagesModal}
+        onClose={closeCreatePackagesModal}
       />
     </>
   );

@@ -49,19 +49,16 @@ export default function UserDashboard() {
   // Fetch user activities
   const fetchUserActivities = async () => {
     try {
-      setLoading(true);
       const response = await axiosService.get(
         `/transactions?accountNumber=${customerData?.accountNumber}`
       );
       setTransactions(response.data);
-      setLoading(false);
     } catch (error) {
       console.error(error);
       toast.error(
         error.response?.data?.message ||
           'An error occurred while fetching user activities.'
       );
-      setLoading(false);
     }
   };
   // Fetch user ds package data
@@ -86,19 +83,16 @@ export default function UserDashboard() {
   // Fetch user account data and then user activities and packages
   const fetchData = async () => {
     try {
-      setLoading(true);
       const accountResponse = await axiosService.get(
         `/accounts/${currentUser.id}`
       );
       setCustomerData(accountResponse.data);
-      setLoading(false);
     } catch (error) {
       console.error(error);
       toast.error(
         error.response?.data?.message ||
           'An error occurred while fetching user account data.'
       );
-      setLoading(false);
     }
   };
 
@@ -148,7 +142,7 @@ export default function UserDashboard() {
         <Spinner />
       ) : (
         <Box p="4">
-          <Flex justifyContent="space-between" mb="40px">
+          <Flex justifyContent="space-between">
             <Flex>
               {isMobile ? null : (
                 <Avatar
@@ -191,7 +185,7 @@ export default function UserDashboard() {
             </Box>
           </Flex>
 
-          <Link onClick={handleShowUserDetails}>
+          <Link onClick={handleShowUserDetails} ml='20px'>
             {showUserDetails ? 'Hide Details' : 'Show Details'}
           </Link>
 
@@ -228,7 +222,7 @@ export default function UserDashboard() {
             </Flex>
           )}
 
-          <Box>
+          <Box mt="40px">
             <Tabs variant="soft-rounded" colorScheme="green">
               <TabList>
                 <Tab>DS Account</Tab>

@@ -217,7 +217,7 @@ export default function ViewCustomer() {
             </Box>
           </Flex>
 
-          <Link onClick={handleShowUserDetails}>
+          <Link onClick={handleShowUserDetails} ml="20px">
             {showUserDetails ? 'Hide Details' : 'Show Details'}
           </Link>
 
