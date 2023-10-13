@@ -19,6 +19,8 @@ import {
   TabList,
   TabPanel,
   TabPanels,
+  Link,
+  useBreakpointValue,
 } from '@chakra-ui/react';
 // import { CustomButton } from 'components/Button/CustomButton';
 import { FaCopy } from 'react-icons/fa';
@@ -37,6 +39,7 @@ import { RiEyeCloseLine } from 'react-icons/ri';
 
 import RecentTransactions from 'components/transactions/RecentTransactions';
 import UsersPackages from 'components/package/UsersPackages';
+import SbPackage from 'components/package/SbPackage';
 
 export default function ViewCustomer() {
   const { id } = useParams();
@@ -44,9 +47,13 @@ export default function ViewCustomer() {
   const [isCopied, setIsCopied] = useState(false);
   const [showBalance, setShowBalance] = useState(true);
   const [transactions, setTransactions] = useState([]);
+  const [showUserDetails, setShowUserDetails] = useState(false);
 
   const { customerData, setCustomerData, userPackages, setUserPackages } =
     useAppContext();
+
+  const isMobile = useBreakpointValue({ base: true, md: false });
+
   // Function to fetch user package data
   const fetchUserPackages = async () => {
     try {
@@ -138,6 +145,10 @@ export default function ViewCustomer() {
     fetchUserPackages();
   };
 
+  const handleShowUserDetails = () => {
+    setShowUserDetails((prevShowUserDetails) => !prevShowUserDetails);
+  };
+
   return (
     <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
       <Flex justifyContent="space-between" mb="20px">
@@ -152,46 +163,53 @@ export default function ViewCustomer() {
                 Assign Account Manager
               </NavLink>
             </MenuItem>
-            <MenuItem>
-              <NavLink to="/admin/transaction/deposit">Deposit</NavLink>
-            </MenuItem>
-            <MenuItem>
-              <NavLink to="/admin/transaction/withdraw">Withdraw</NavLink>
-            </MenuItem>
           </MenuList>
         </Menu>
       </Flex>
       {loading ? (
         <Spinner />
       ) : (
-        <Box p="4">
-          <Flex flexDirection="row" justifyContent="space-between">
-            <Box>
-              <Flex alignItems="center">
-                <Text fontSize="lg" fontWeight="bold">
-                  Available Balance:
-                  <Icon
-                    ml="2"
-                    fontSize="lg"
-                    _hover={{ cursor: 'pointer', color: 'blue.500' }}
-                    as={showBalance ? RiEyeCloseLine : MdOutlineRemoveRedEye}
-                    onClick={() =>
-                      setShowBalance((prevShowBalance) => !prevShowBalance)
-                    }
-                  />
+        <Box>
+          <Flex
+            flexDirection="row"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <Flex>
+              {isMobile ? null : (
+                <Avatar
+                  size="xl"
+                  name="SB"
+                  src={customerData.avatarUrl || ''}
+                  m={4}
+                />
+              )}
+              <Flex flexDirection="column" justifyContent="center">
+                <Flex alignItems="center" justifyContent="center">
+                  <Text fontSize="lg">
+                    SB Savings
+                    <Icon
+                      ml="2"
+                      fontSize="lg"
+                      _hover={{ cursor: 'pointer', color: 'blue.500' }}
+                      as={showBalance ? RiEyeCloseLine : MdOutlineRemoveRedEye}
+                      onClick={() =>
+                        setShowBalance((prevShowBalance) => !prevShowBalance)
+                      }
+                    />
+                  </Text>
+                </Flex>
+                <Text
+                  fontSize={{ base: 'xl', md: '2xl' }}
+                  fontWeight="bold"
+                  color={showBalance ? 'gray.800' : 'gray.400'}
+                >
+                  {customerData && customerData?.availableBalance && showBalance
+                    ? formatNaira(customerData.availableBalance)
+                    : '****'}
                 </Text>
               </Flex>
-              <Text
-                ml="2"
-                fontSize={{ base: 'xl', md: '2xl' }}
-                fontWeight="bold"
-                color={showBalance ? 'gray.800' : 'gray.400'}
-              >
-                {customerData && customerData?.availableBalance && showBalance
-                  ? formatNaira(customerData.availableBalance)
-                  : '****'}
-              </Text>
-            </Box>
+            </Flex>
             <Box>
               <NavLink to="/admin/transaction/withdraw">
                 <Button colorScheme="green">Withdraw Cash</Button>
@@ -199,41 +217,43 @@ export default function ViewCustomer() {
             </Box>
           </Flex>
 
-          <Flex
-            direction={{ base: 'column', md: 'row' }}
-            spacing={{ base: '4', md: '0' }}
-            justifyContent={{ base: 'center', md: 'space-between' }}
-          >
-            <Flex alignItems="center" mt="4">
-              <Avatar
-                size="xl"
-                name={customerData.firstName || ''}
-                src={customerData.avatarUrl || ''}
-                m={4}
-              />
-              <Box px={6} py={2}>
-                <Grid templateColumns="repeat(1fr)" gap={1}>
-                  <Text fontSize={{ base: 'md', md: 'lg' }}>
-                    Account Name: {customerData.firstName}{' '}
-                    {customerData.lastName}
-                  </Text>
-                  <Text fontSize={{ base: 'md', md: 'lg' }}>
-                    Account Number: {customerData.accountNumber}
-                    <Button size="sm" onClick={handleCopyToClipboard}>
-                      {isCopied ? 'Copied!' : <FaCopy />}
-                    </Button>
-                  </Text>
-                  <Text fontSize={{ base: 'md', md: 'lg' }}>
-                    Branch: {customerData.branchId?.name}
-                  </Text>
-                  <Text fontSize={{ base: 'md', md: 'lg' }}>
-                    Account Manager: {customerData.accountManagerId?.firstName}{' '}
-                    {customerData.accountManagerId?.lastName}
-                  </Text>
-                </Grid>
-              </Box>
+          <Link onClick={handleShowUserDetails}>
+            {showUserDetails ? 'Hide Details' : 'Show Details'}
+          </Link>
+
+          {showUserDetails && (
+            <Flex
+              direction={{ base: 'column', md: 'row' }}
+              spacing={{ base: '4', md: '0' }}
+              justifyContent={{ base: 'center', md: 'space-between' }}
+            >
+              <Flex alignItems="center" mt="4">
+                <Box px={6} py={2}>
+                  <Grid templateColumns="repeat(1fr)" gap={1}>
+                    <Text fontSize={{ base: 'md', md: 'lg' }}>
+                      Account Name: {customerData.firstName}{' '}
+                      {customerData.lastName}
+                    </Text>
+                    <Text fontSize={{ base: 'md', md: 'lg' }}>
+                      Account Number: {customerData.accountNumber}
+                      <Button size="sm" onClick={handleCopyToClipboard}>
+                        {isCopied ? 'Copied!' : <FaCopy />}
+                      </Button>
+                    </Text>
+                    <Text fontSize={{ base: 'md', md: 'lg' }}>
+                      Branch: {customerData.branchId?.name}
+                    </Text>
+                    <Text fontSize={{ base: 'md', md: 'lg' }}>
+                      Account Manager:{' '}
+                      {customerData.accountManagerId?.firstName}{' '}
+                      {customerData.accountManagerId?.lastName}
+                    </Text>
+                  </Grid>
+                </Box>
+              </Flex>
             </Flex>
-          </Flex>
+          )}
+
           <Tabs variant="soft-rounded" colorScheme="green" mt="2rem">
             <TabList>
               <Tab>DS Account</Tab>
@@ -254,7 +274,7 @@ export default function ViewCustomer() {
                 <RecentTransactions transactions={transactions} />
               </TabPanel>
               <TabPanel>
-                <p>SB accounts here!</p>
+                <SbPackage />
               </TabPanel>
             </TabPanels>
           </Tabs>

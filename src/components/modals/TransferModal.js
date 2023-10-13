@@ -102,7 +102,7 @@ const TransferModal = ({ isOpen, onClose, packageData, onSuccess }) => {
               <Text>Target: {packageData.target}</Text>
               <Text>
                 Total Contributions:{' '}
-                {formatNaira(packageData.totalContribution)}
+                {formatNaira(packageData?.totalContribution)}
               </Text>
               <Text>Account Number: {packageData.accountNumber}</Text>
               <InputGroup>

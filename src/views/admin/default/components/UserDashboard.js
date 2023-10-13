@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Box,
   Flex,
@@ -12,7 +12,13 @@ import {
   TabPanel,
   TabPanels,
   Button,
+  Avatar,
+  useBreakpointValue,
+  Link,
+  Grid
 } from '@chakra-ui/react';
+
+import { FaCopy } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import { NavLink } from 'react-router-dom';
 
@@ -26,6 +32,7 @@ import { RiEyeCloseLine } from 'react-icons/ri';
 
 import RecentTransactions from 'components/transactions/RecentTransactions';
 import UsersPackages from 'components/package/UsersPackages';
+import SbPackage from 'components/package/SbPackage';
 
 export default function UserDashboard() {
   const { currentUser } = useAuth();
@@ -34,6 +41,10 @@ export default function UserDashboard() {
   const [loading, setLoading] = useState(false);
   const [showBalance, setShowBalance] = useState(true);
   const [transactions, setTransactions] = useState([]);
+  const [showUserDetails, setShowUserDetails] = useState(false);
+  const [isCopied, setIsCopied] = useState(false);
+
+  const isMobile = useBreakpointValue({ base: true, md: false });
 
   // Fetch user activities
   const fetchUserActivities = async () => {
@@ -53,7 +64,6 @@ export default function UserDashboard() {
       setLoading(false);
     }
   };
-console.log(transactions);
   // Fetch user ds package data
   const fetchUserPackages = async () => {
     try {
@@ -115,6 +125,23 @@ console.log(transactions);
     fetchUserPackages();
   };
 
+  // Function to handle copy to clipboard
+  const handleCopyToClipboard = useCallback(() => {
+    const textField = document.createElement('textarea');
+    textField.innerText = customerData.accountNumber;
+    document.body.appendChild(textField);
+    textField.select();
+    document.execCommand('copy');
+    textField.remove();
+
+    setIsCopied(true);
+    setTimeout(() => setIsCopied(false), 1500);
+  });
+
+  const handleShowUserDetails = () => {
+    setShowUserDetails((prevShowUserDetails) => !prevShowUserDetails);
+  };
+
   return (
     <Box pt={{ base: '0px', md: '40px', xl: '40px' }}>
       {loading ? (
@@ -122,41 +149,84 @@ console.log(transactions);
       ) : (
         <Box p="4">
           <Flex justifyContent="space-between" mb="40px">
-            <Box>
-              <Flex alignItems="center">
-                {/* account informations */}
-                <Text fontSize="lg" fontWeight="bold">
-                  Account Ballance:
-                  <Icon
-                    ml="2"
-                    fontSize="lg"
-                    _hover={{ cursor: 'pointer', color: 'blue.500' }}
-                    as={showBalance ? RiEyeCloseLine : MdOutlineRemoveRedEye}
-                    onClick={() =>
-                      setShowBalance((prevShowBalance) => !prevShowBalance)
-                    }
-                  />
+            <Flex>
+              {isMobile ? null : (
+                <Avatar
+                  size="xl"
+                  name="SB"
+                  src={customerData.avatarUrl || ''}
+                  m={4}
+                />
+              )}
+              <Flex flexDirection="column" justifyContent="center">
+                <Flex alignItems="center" justifyContent="center">
+                  <Text fontSize="lg">
+                    SB Savings
+                    <Icon
+                      ml="2"
+                      fontSize="lg"
+                      _hover={{ cursor: 'pointer', color: 'blue.500' }}
+                      as={showBalance ? RiEyeCloseLine : MdOutlineRemoveRedEye}
+                      onClick={() =>
+                        setShowBalance((prevShowBalance) => !prevShowBalance)
+                      }
+                    />
+                  </Text>
+                </Flex>
+                <Text
+                  fontSize={{ base: 'xl', md: '2xl' }}
+                  fontWeight="bold"
+                  color={showBalance ? 'gray.800' : 'gray.400'}
+                >
+                  {customerData && customerData?.availableBalance && showBalance
+                    ? formatNaira(customerData.availableBalance)
+                    : '****'}
                 </Text>
               </Flex>
-              <Text
-                ml="2"
-                fontSize={{ base: 'xl', md: '2xl' }}
-                fontWeight="bold"
-                color={showBalance ? 'gray.800' : 'gray.400'}
-              >
-                {customerData &&
-                customerData.availableBalance !== undefined &&
-                showBalance
-                  ? formatNaira(customerData.availableBalance)
-                  : '****'}
-              </Text>
-            </Box>
+            </Flex>
             <Box>
               <NavLink to="/admin/transaction/withdraw">
                 <Button colorScheme="green">Withdraw Cash</Button>
               </NavLink>
             </Box>
           </Flex>
+
+          <Link onClick={handleShowUserDetails}>
+            {showUserDetails ? 'Hide Details' : 'Show Details'}
+          </Link>
+
+          {showUserDetails && (
+            <Flex
+              direction={{ base: 'column', md: 'row' }}
+              spacing={{ base: '4', md: '0' }}
+              justifyContent={{ base: 'center', md: 'space-between' }}
+            >
+              <Flex alignItems="center" mt="4">
+                <Box px={6} py={2}>
+                  <Grid templateColumns="repeat(1fr)" gap={1}>
+                    <Text fontSize={{ base: 'md', md: 'lg' }}>
+                      Account Name: {customerData.firstName}{' '}
+                      {customerData.lastName}
+                    </Text>
+                    <Text fontSize={{ base: 'md', md: 'lg' }}>
+                      Account Number: {customerData.accountNumber}
+                      <Button size="sm" onClick={handleCopyToClipboard}>
+                        {isCopied ? 'Copied!' : <FaCopy />}
+                      </Button>
+                    </Text>
+                    <Text fontSize={{ base: 'md', md: 'lg' }}>
+                      Branch: {customerData.branchId?.name}
+                    </Text>
+                    <Text fontSize={{ base: 'md', md: 'lg' }}>
+                      Account Manager:{' '}
+                      {customerData.accountManagerId?.firstName}{' '}
+                      {customerData.accountManagerId?.lastName}
+                    </Text>
+                  </Grid>
+                </Box>
+              </Flex>
+            </Flex>
+          )}
 
           <Box>
             <Tabs variant="soft-rounded" colorScheme="green">
@@ -179,7 +249,7 @@ console.log(transactions);
                   <RecentTransactions transactions={transactions} />
                 </TabPanel>
                 <TabPanel>
-                  <p>SB accounts here!</p>
+                  <SbPackage />
                 </TabPanel>
               </TabPanels>
             </Tabs>
