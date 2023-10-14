@@ -8,7 +8,7 @@ import {
   MdLock,
   MdOutlinePerson3,
 } from 'react-icons/md';
-import { FaSitemap, FaUsers } from 'react-icons/fa';
+import { FaProductHunt, FaSitemap, FaUsers } from 'react-icons/fa';
 import { AiOutlineUsergroupAdd } from 'react-icons/ai';
 
 // Admin Imports
@@ -49,13 +49,16 @@ import Accounting from 'views/admin/accounting';
 import Expenditures from 'views/admin/accounting/expenditure';
 import ExpenditureDetail from 'views/admin/accounting/expenditure-detail';
 
+import Products from 'views/admin/products';
+
+
 const routes = [
   {
     name: 'Dashboard',
     layout: '/admin',
     path: '/default',
     icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
-    roles: ['superAdmin', 'admin', 'manager', 'userReps', 'user'],
+    roles: ['superAdmin', 'admin', 'manager', 'userReps'],
     component: MainDashboard,
   },
   {
@@ -218,7 +221,7 @@ const routes = [
     layout: '/admin',
     path: '/transaction/withdraw',
     icon: <Icon as={FaMoneyBill} width="20px" height="20px" color="inherit" />,
-    roles: ['superAdmin', 'admin', 'manager', 'userReps', 'user'],
+    roles: ['superAdmin', 'admin', 'manager', 'userReps'],
     component: Withdraw,
   },
   {
@@ -293,7 +296,7 @@ const routes = [
     layout: '/admin',
     path: '/daily-savings/deposit/:packageId',
     icon: <Icon as={FaBox} width="20px" height="20px" color="inherit" />,
-    roles: ['superAdmin', 'admin', 'manager', 'userReps', 'user'],
+    roles: ['superAdmin', 'admin', 'manager', 'userReps'],
     component: MakeContribution,
   },
   {
@@ -301,7 +304,7 @@ const routes = [
     layout: '/admin',
     path: '/daily-savings/withdraw/:packageId',
     icon: <Icon as={FaBox} width="20px" height="20px" color="inherit" />,
-    roles: ['superAdmin', 'admin', 'manager', 'userReps', 'user'],
+    roles: ['superAdmin', 'admin', 'manager', 'userReps'],
     component: Withdrawal,
   },
   {
@@ -309,7 +312,7 @@ const routes = [
     layout: '/admin',
     path: '/daily-savings',
     icon: <Icon as={FaBox} width="20px" height="20px" color="inherit" />,
-    roles: ['superAdmin', 'admin', 'manager', 'userReps', 'user'],
+    roles: ['superAdmin', 'admin', 'manager', 'userReps'],
     component: DailySavingsDashboard,
   },
   {
@@ -317,7 +320,7 @@ const routes = [
     layout: '/admin',
     path: '/daily-saving/package',
     icon: <Icon as={FaBox} width="20px" height="20px" color="inherit" />,
-    roles: ['superAdmin', 'admin', 'manager', 'userReps', 'user'],
+    roles: ['superAdmin', 'admin', 'manager', 'userReps'],
     component: CreatePackage,
   },
 
@@ -327,7 +330,7 @@ const routes = [
     layout: '/admin',
     path: '/accounting/dashboard',
     icon: <Icon as={FaMoneyBill} width="20px" height="20px" color="inherit" />,
-    roles: ['superAdmin', 'admin', 'manager', 'userReps', 'user'],
+    roles: ['superAdmin', 'admin', 'manager', 'userReps'],
     component: Accounting,
   },
   {
@@ -335,7 +338,7 @@ const routes = [
     layout: '/admin',
     path: '/accounting/expenditure/:id',
     icon: <Icon as={FaMoneyBill} width="20px" height="20px" color="inherit" />,
-    roles: ['superAdmin', 'admin', 'manager', 'userReps', 'user'],
+    roles: ['superAdmin', 'admin', 'manager', 'userReps'],
     component: ExpenditureDetail,
   },
   {
@@ -343,16 +346,16 @@ const routes = [
     layout: '/admin',
     path: '/accounting/expenditure',
     icon: <Icon as={FaMoneyBill} width="20px" height="20px" color="inherit" />,
-    roles: ['superAdmin', 'admin', 'manager', 'userReps', 'user'],
+    roles: ['superAdmin', 'admin', 'manager', 'userReps'],
     component: Expenditures,
   },
   {
-    name: 'Payment',
+    name: 'Products',
     layout: '/admin',
-    path: '/payment',
-    icon: <Icon as={FaMoneyBill} width="20px" height="20px" color="inherit" />,
-    roles: ['superAdmin', 'admin', 'manager', 'userReps', 'user'],
-    component: Expenditures,
+    path: '/products',
+    icon: <Icon as={FaProductHunt} width="20px" height="20px" color="inherit" />,
+    roles: ['superAdmin', 'admin', 'manager', 'userReps'],
+    component: Products,
   },
 ];
 
