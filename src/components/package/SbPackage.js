@@ -19,6 +19,7 @@ import { useAppContext } from 'contexts/AppContext';
 import { useAuth } from 'contexts/AuthContext';
 import CreateAccountModal from 'components/modals/CreateAccountModal';
 import CreatePackageModal from 'components/modals/CreatePackageModal';
+import SbDepositModal from 'components/modals/SbDepositModal';
 
 import axiosService from 'utils/axiosService';
 import { formatDate, formatNaira } from 'utils/helper';
@@ -29,6 +30,7 @@ const SbPackage = () => {
   const { id } = useParams();
   const { currentUser } = useAuth();
   const { customerData } = useAppContext();
+  const { reset } = useForm();
 
   const textColor = useColorModeValue('secondaryGray.900', 'white');
   const textColorSecondary = 'secondaryGray.600';
@@ -36,8 +38,8 @@ const SbPackage = () => {
   const [sbPackages, setSbPackages] = useState([]);
   const [showAccountModal, setShowAccountModal] = useState(false);
   const [createPackagesModal, setCreatePackagesModal] = useState(false);
-
-  const { reset } = useForm();
+  const [sbDepositModal, setSbDepositModal] = useState(false);
+  const [selectedPackage, setSelectedPackage] = useState(null);
 
   useEffect(() => {
     if (customerData) {
@@ -80,7 +82,21 @@ const SbPackage = () => {
   const closeCreatePackagesModal = () => {
     setCreatePackagesModal(false);
     reset();
+  };
+
+  const showSbDepositModal = () => {
+    setSbDepositModal(true);
     reset();
+  };
+
+  const closeSbDepositModal = () => {
+    setSbDepositModal(false);
+    reset();
+  };
+
+  const handleDepositModalOpen = (packageData) => {
+    setSelectedPackage(packageData);
+    showSbDepositModal();
   };
 
   return (
@@ -151,16 +167,24 @@ const SbPackage = () => {
               >
                 <Text>{packageData.product?.name}</Text>
                 <Text fontSize="lg" fontWeight="bold">
-                  {formatNaira(packageData.product?.price)}
+                  {formatNaira(packageData.totalContribution)}
                 </Text>
               </Box>
-              <Text fontSize="md" mt={4}>
-                Target Amount:{' '}
-                <Box fontWeight="bold" as="span">
-                  {formatNaira(packageData?.amountPerDay)}
-                </Box>{' '}
-                / Day
-              </Text>
+              <Flex justifyContent="space-between" alignItems="center" mt={4}>
+                <Text fontSize={{ base: '14px', md: 'lg' }}>
+                  Amount:{' '}
+                  <Box fontWeight="bold" as="span">
+                    {formatNaira(packageData?.amountPerDay)}
+                  </Box>{' '}
+                  / Day
+                </Text>
+                <Text fontSize={{ base: '14px', md: 'lg' }}>
+                  Price:{' '}
+                  <Box fontWeight="bold" as="span">
+                    {formatNaira(packageData.product?.price)}
+                  </Box>{' '}
+                </Text>
+              </Flex>
               <Box mt="4">
                 <Flex justifyContent="space-between" alignItems="center">
                   <Text fontSize="sm">
@@ -179,9 +203,13 @@ const SbPackage = () => {
               </Box>
               <Flex mt="4" justify="space-between">
                 <Button colorScheme="red" size="sm">
-                  Transfer
+                  Merge
                 </Button>
-                <Button colorScheme="green" size="sm">
+                <Button
+                  colorScheme="green"
+                  size="sm"
+                  onClick={() => handleDepositModalOpen(packageData)}
+                >
                   Deposit
                 </Button>
               </Flex>
@@ -204,6 +232,12 @@ const SbPackage = () => {
       <CreatePackageModal
         isOpen={createPackagesModal}
         onClose={closeCreatePackagesModal}
+      />
+
+      <SbDepositModal
+        isOpen={sbDepositModal}
+        onClose={closeSbDepositModal}
+        packageData={selectedPackage}
       />
     </>
   );
