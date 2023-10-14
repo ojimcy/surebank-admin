@@ -19,17 +19,19 @@ import {
   useColorMode,
   useDisclosure,
   SimpleGrid,
-} from "@chakra-ui/react";
+  Image,
+} from '@chakra-ui/react';
 
 // Custom components
 import IconBox from "components/icons/IconBox";
-import { HorizonLogo } from "components/icons/Icons";
 import { SidebarResponsive } from "components/sidebar/Sidebar";
 import { SidebarContext } from "contexts/SidebarContext";
 
 // Assets
 import { GoChevronDown, GoChevronRight } from "react-icons/go";
 import routes from "routes.js";
+
+import sbLogo from 'assets/img/sbLogo.png'
 
 export default function AuthNavbar(props) {
   const { logo, logoText, secondary, sidebarWidth, ...rest } = props;
@@ -77,7 +79,6 @@ export default function AuthNavbar(props) {
   let mainObject = getLinksCollapse("Main Pages");
   let dashboardsObject = getLinks("Dashboards");
   let nftsObject = getLinks("NFTs");
-  let logoColor = useColorModeValue("white", "white");
   // Chakra color mode
 
   const textColor = useColorModeValue("navy.700", "white");
@@ -100,7 +101,7 @@ export default function AuthNavbar(props) {
       alignItems='center'
       color={mainText}>
       <Stack direction='row' spacing='12px' align='center' justify='center'>
-        <HorizonLogo h='26px' w='175px' color={logoColor} />
+        <Image src={sbLogo} alt="Surebank LTD" />
       </Stack>
       <Text fontsize='sm' mt='3px'>
         {logoText}
@@ -110,16 +111,17 @@ export default function AuthNavbar(props) {
   if (props.secondary === true) {
     brand = (
       <Link
-        minW='175px'
+        minW="175px"
         href={`${process.env.PUBLIC_URL}/#/`}
-        target='_blank'
-        display='flex'
-        lineHeight='100%'
-        fontWeight='bold'
-        justifyContent='center'
-        alignItems='center'
-        color={mainText}>
-        <HorizonLogo h='26px' w='175px' my='32px' color={logoColor} />
+        target="_blank"
+        display="flex"
+        lineHeight="100%"
+        fontWeight="bold"
+        justifyContent="center"
+        alignItems="center"
+        color={mainText}
+      >
+        <Image src={sbLogo} alt="Surebank LTD" h="26px" w="175px" my="32px" />
       </Link>
     );
     // mainText = useColorModeValue("gray.700", "gray.200");

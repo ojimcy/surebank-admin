@@ -99,6 +99,17 @@ const SbPackage = () => {
     showSbDepositModal();
   };
 
+   const calculateProgressValue = (packageData) => {
+     const { totalContribution, amountPerDay, startDate } = packageData;
+     console.log(packageData)
+     const totalDays = Math.floor(
+       (Date.now() - new Date(startDate)) / (1000 * 60 * 60 * 24)
+     ); // Calculate total days
+     const progressValue =
+       (totalContribution / (amountPerDay * totalDays)) * 100;
+     return Math.min(progressValue, 100); // Ensure progress value doesn't exceed 100%
+   };
+
   return (
     <>
       <Flex alignItems="center">
@@ -191,12 +202,12 @@ const SbPackage = () => {
                     Start Date: {formatDate(packageData?.startDate)}
                   </Text>
                   <CircularProgress
-                    value={packageData?.progressValue}
+                    value={calculateProgressValue(packageData)}
                     size="50px"
                     thickness="6px"
                   >
                     <CircularProgressLabel>
-                      {packageData?.progressValue}%
+                      {calculateProgressValue(packageData).toFixed(2)}%{' '}
                     </CircularProgressLabel>
                   </CircularProgress>
                 </Flex>
