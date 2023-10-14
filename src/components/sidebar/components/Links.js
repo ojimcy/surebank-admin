@@ -39,6 +39,7 @@ const hiddenRoutes = [
   '/admin/accounting/dashboard',
   '/admin/accounting/expenditure',
   '/admin/accounting/expenditure/:id',
+  '/admin/products/catalogue',
 ];
 
 export function SidebarLinks(props) {

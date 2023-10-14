@@ -50,6 +50,7 @@ import Expenditures from 'views/admin/accounting/expenditure';
 import ExpenditureDetail from 'views/admin/accounting/expenditure-detail';
 
 import Products from 'views/admin/products';
+import Catalogue from 'views/admin/products/catalogue';
 
 
 const routes = [
@@ -81,7 +82,7 @@ const routes = [
     name: 'View All Staff',
     layout: '/admin',
     icon: <Icon as={MdBarChart} width="20px" height="20px" color="inherit" />,
-    roles: ['superAdmin', 'admin', 'manager',],
+    roles: ['superAdmin', 'admin', 'manager'],
     path: '/branch/viewallstaff',
     component: ViewAllStaff,
   },
@@ -349,11 +350,24 @@ const routes = [
     roles: ['superAdmin', 'admin', 'manager', 'userReps'],
     component: Expenditures,
   },
+
+  {
+    name: 'Products',
+    layout: '/admin',
+    path: '/products/catalogue',
+    icon: (
+      <Icon as={FaProductHunt} width="20px" height="20px" color="inherit" />
+    ),
+    roles: ['superAdmin', 'admin', 'manager', 'userReps'],
+    component: Catalogue,
+  },
   {
     name: 'Products',
     layout: '/admin',
     path: '/products',
-    icon: <Icon as={FaProductHunt} width="20px" height="20px" color="inherit" />,
+    icon: (
+      <Icon as={FaProductHunt} width="20px" height="20px" color="inherit" />
+    ),
     roles: ['superAdmin', 'admin', 'manager', 'userReps'],
     component: Products,
   },

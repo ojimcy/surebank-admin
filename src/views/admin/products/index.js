@@ -1,6 +1,20 @@
 // Chakra imports
 import React, { useEffect, useState } from 'react';
-import { Box, Grid, Spinner, Flex, Button, Spacer } from '@chakra-ui/react';
+import {
+  Box,
+  Grid,
+  Spinner,
+  Flex,
+  Button,
+  Spacer,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+} from '@chakra-ui/react';
+
+import { ChevronDownIcon } from '@chakra-ui/icons';
+import { NavLink } from 'react-router-dom';
 
 // Custom components
 import { formatDate } from 'utils/helper';
@@ -108,14 +122,23 @@ export default function Customers() {
           <Flex justifyContent="space-between" mb="20px">
             <BackButton />
             <Spacer />
-
-            <Button
-              bgColor="blue.700"
-              color="white"
-              onClick={handleShowProductModal}
-            >
-              Create Product
-            </Button>
+            <Menu>
+              <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+                Manage Product
+              </MenuButton>
+              <MenuList>
+                <MenuItem>
+                  <NavLink to="#" onClick={handleShowProductModal}>
+                    New Product
+                  </NavLink>
+                </MenuItem>
+                <MenuItem>
+                  <NavLink to="/admin/products/catalogue">
+                    Product Catalogue
+                  </NavLink>
+                </MenuItem>
+              </MenuList>
+            </Menu>
           </Flex>
           <Box marginTop="30">
             {loading ? (
