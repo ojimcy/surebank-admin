@@ -50,7 +50,6 @@ import Expenditures from 'views/admin/accounting/expenditure';
 import ExpenditureDetail from 'views/admin/accounting/expenditure-detail';
 
 import Products from 'views/admin/products';
-import Catalogue from 'views/admin/products/catalogue';
 
 
 const routes = [
@@ -349,17 +348,6 @@ const routes = [
     icon: <Icon as={FaMoneyBill} width="20px" height="20px" color="inherit" />,
     roles: ['superAdmin', 'admin', 'manager', 'userReps'],
     component: Expenditures,
-  },
-
-  {
-    name: 'Products',
-    layout: '/admin',
-    path: '/products/catalogue',
-    icon: (
-      <Icon as={FaProductHunt} width="20px" height="20px" color="inherit" />
-    ),
-    roles: ['superAdmin', 'admin', 'manager', 'userReps'],
-    component: Catalogue,
   },
   {
     name: 'Products',

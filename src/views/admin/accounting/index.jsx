@@ -4,6 +4,11 @@ import {
   Flex,
   Icon,
   SimpleGrid,
+  Tabs,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
   useColorModeValue,
   // Button,
 } from '@chakra-ui/react';
@@ -16,6 +21,8 @@ import { toast } from 'react-toastify';
 import { formatNaira } from 'utils/helper';
 import { NavLink } from 'react-router-dom/cjs/react-router-dom.min';
 import BackButton from 'components/menu/BackButton';
+import DsReports from './components/DsReports';
+import SbReports from './components/sbReports';
 
 export default function Accounting() {
   const brandColor = useColorModeValue('brand.500', 'white');
@@ -131,6 +138,20 @@ export default function Accounting() {
           value={formatNaira(netBal)}
         />
       </SimpleGrid>
+      <Tabs colorScheme="blue" mt="2rem">
+        <TabList>
+          <Tab>DS Report</Tab>
+          <Tab>SB Report</Tab>
+        </TabList>
+        <TabPanels>
+          <TabPanel>
+            <DsReports />
+          </TabPanel>
+          <TabPanel>
+            <SbReports />
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
     </Box>
   );
 }

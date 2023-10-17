@@ -59,7 +59,7 @@ export default function ViewCustomer() {
     try {
       setLoading(true);
       const response = await axiosService.get(
-        `daily-savings/package?userId=${id}&accountNumber=${customerData.accountNumber}`
+        `daily-savings/package?userId=${id}`
       );
       setUserPackages(response.data);
       setLoading(false);
