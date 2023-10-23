@@ -1,12 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   Avatar,
   Box,
   Button,
   Flex,
-  Grid,
   Icon,
   Menu,
   MenuButton,
@@ -19,11 +18,9 @@ import {
   TabList,
   TabPanel,
   TabPanels,
-  Link,
   useBreakpointValue,
 } from '@chakra-ui/react';
 // import { CustomButton } from 'components/Button/CustomButton';
-import { FaCopy } from 'react-icons/fa';
 import { NavLink, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 // Assets
@@ -40,113 +37,62 @@ import { RiEyeCloseLine } from 'react-icons/ri';
 import RecentTransactions from 'components/transactions/RecentTransactions';
 import UsersPackages from 'components/package/UsersPackages';
 import SbPackage from 'components/package/SbPackage';
+import AccountDetails from './components/AccountDetails';
 
 export default function ViewCustomer() {
   const { id } = useParams();
   const [loading, setLoading] = useState(false);
-  const [isCopied, setIsCopied] = useState(false);
   const [showBalance, setShowBalance] = useState(true);
   const [transactions, setTransactions] = useState([]);
-  const [showUserDetails, setShowUserDetails] = useState(false);
+  const [activeTab, setActiveTab] = useState('ds');
 
   const { customerData, setCustomerData, userPackages, setUserPackages } =
     useAppContext();
 
   const isMobile = useBreakpointValue({ base: true, md: false });
 
-  // Function to fetch user package data
-  const fetchUserPackages = async () => {
+  const handleTabChange = (index) => {
+    setActiveTab(index === 0 ? 'ds' : 'sb');
+  };
+
+  const fetchUserData = async () => {
     try {
       setLoading(true);
-      const response = await axiosService.get(
-        `daily-savings/package?userId=${id}`
-      );
-      setUserPackages(response.data);
+      const [accountResponse, activitiesResponse, packagesResponse] =
+        await Promise.all([
+          axiosService.get(`/accounts/${id}?accountType=${activeTab}`),
+          axiosService.get(
+            `/transactions?accountNumber=${customerData.accountNumber}`
+          ),
+          axiosService.get(`daily-savings/package?userId=${id}`),
+        ]);
+
+      setCustomerData(accountResponse.data[0]);
+      setTransactions(activitiesResponse.data);
+      setUserPackages(packagesResponse.data);
+
       setLoading(false);
     } catch (error) {
       console.error(error);
       toast.error(
         error.response?.data?.message ||
-          'An error occurred while fetching user package.'
+          'An error occurred while fetching data.'
       );
       setLoading(false);
     }
   };
-
-  // Function to fetch user activities data
-  const fetchUserActivities = async () => {
-    try {
-      setLoading(true);
-      const response = await axiosService.get(
-        `/transactions?accountNumber=${customerData.accountNumber}`
-      );
-      setTransactions(response.data);
-      setLoading(false);
-    } catch (error) {
-      console.error(error);
-      toast.error(
-        error.response?.data?.message ||
-          'An error occurred while fetching user activities.'
-      );
-      setLoading(false);
-    }
-  };
-
-  // Function to fetch account data
-  const fetchAccount = async () => {
-    try {
-      setLoading(true);
-      const accountResponse = await axiosService.get(`/accounts/${id}`);
-      setCustomerData(accountResponse.data);
-      setLoading(false);
-    } catch (error) {
-      console.error(error);
-      toast.error(
-        error.response?.data?.message ||
-          'An error occurred while fetching user account data.'
-      );
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchAccount();
-  }, [id]);
-
-  useEffect(() => {
-    if (customerData) {
-      fetchUserActivities();
-      fetchUserPackages();
-    }
-  }, [customerData]);
-
-  // Function to handle copy to clipboard
-  const handleCopyToClipboard = useCallback(() => {
-    const textField = document.createElement('textarea');
-    textField.innerText = customerData.accountNumber;
-    document.body.appendChild(textField);
-    textField.select();
-    document.execCommand('copy');
-    textField.remove();
-
-    setIsCopied(true);
-    setTimeout(() => setIsCopied(false), 1500);
-  });
+    fetchUserData();
+  }, [id, activeTab]);
 
   const handleTransferSuccess = () => {
     // Fetch updated data after successful transfer here
-    fetchAccount();
-    fetchUserPackages();
+    fetchUserData();
   };
 
   const handleDepositSuccess = () => {
     // Fetch updated data after successful deposit here
-    fetchAccount();
-    fetchUserPackages();
-  };
-
-  const handleShowUserDetails = () => {
-    setShowUserDetails((prevShowUserDetails) => !prevShowUserDetails);
+    fetchUserData();
   };
 
   return (
@@ -187,7 +133,7 @@ export default function ViewCustomer() {
               <Flex flexDirection="column" justifyContent="center">
                 <Flex alignItems="center" justifyContent="center">
                   <Text fontSize="lg">
-                    SB Savings
+                    Balance
                     <Icon
                       ml="2"
                       fontSize="lg"
@@ -217,44 +163,12 @@ export default function ViewCustomer() {
             </Box>
           </Flex>
 
-          <Link onClick={handleShowUserDetails} ml="20px">
-            {showUserDetails ? 'Hide Details' : 'Show Details'}
-          </Link>
-
-          {showUserDetails && (
-            <Flex
-              direction={{ base: 'column', md: 'row' }}
-              spacing={{ base: '4', md: '0' }}
-              justifyContent={{ base: 'center', md: 'space-between' }}
-            >
-              <Flex alignItems="center" mt="4">
-                <Box px={6} py={2}>
-                  <Grid templateColumns="repeat(1fr)" gap={1}>
-                    <Text fontSize={{ base: 'md', md: 'lg' }}>
-                      Account Name: {customerData.firstName}{' '}
-                      {customerData.lastName}
-                    </Text>
-                    <Text fontSize={{ base: 'md', md: 'lg' }}>
-                      Account Number: {customerData.accountNumber}
-                      <Button size="sm" onClick={handleCopyToClipboard}>
-                        {isCopied ? 'Copied!' : <FaCopy />}
-                      </Button>
-                    </Text>
-                    <Text fontSize={{ base: 'md', md: 'lg' }}>
-                      Branch: {customerData.branchId?.name}
-                    </Text>
-                    <Text fontSize={{ base: 'md', md: 'lg' }}>
-                      Account Manager:{' '}
-                      {customerData.accountManagerId?.firstName}{' '}
-                      {customerData.accountManagerId?.lastName}
-                    </Text>
-                  </Grid>
-                </Box>
-              </Flex>
-            </Flex>
-          )}
-
-          <Tabs variant="soft-rounded" colorScheme="green" mt="2rem">
+          <Tabs
+            variant="soft-rounded"
+            colorScheme="green"
+            mt="2rem"
+            onChange={handleTabChange}
+          >
             <TabList>
               <Tab>DS Account</Tab>
               <Tab>SB Account</Tab>
@@ -262,7 +176,7 @@ export default function ViewCustomer() {
             <TabPanels>
               <TabPanel>
                 {/* Savings Summary Section */}
-
+                <AccountDetails customerData={customerData} />
                 <UsersPackages
                   userPackages={userPackages}
                   handleTransferSuccess={handleTransferSuccess}
@@ -274,6 +188,7 @@ export default function ViewCustomer() {
                 <RecentTransactions transactions={transactions} />
               </TabPanel>
               <TabPanel>
+                <AccountDetails customerData={customerData} />
                 <SbPackage />
               </TabPanel>
             </TabPanels>

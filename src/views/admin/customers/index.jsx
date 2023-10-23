@@ -65,16 +65,13 @@ export default function Customers() {
         );
         setCustomers(response.data);
         setTotalResults(response.data.length);
-      } else if(currentUser.role === 'manager') {
-
-      const response = await axiosService.get(
-        `accounts/${currentUser.branchId}/branchaccounts`
-      );
+      } else if (currentUser.role === 'manager') {
+        const response = await axiosService.get(
+          `accounts/${currentUser.branchId}/branchaccounts`
+        );
         setCustomers(response.data);
         setTotalResults(response.data.length);
-      }
-      
-      else {
+      } else {
         response = await axiosService.get('/accounts/');
         setCustomers(response.data.results);
       }

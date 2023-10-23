@@ -13,7 +13,7 @@ import {
 } from '@chakra-ui/react';
 import { toast } from 'react-toastify';
 import { useForm } from 'react-hook-form';
-import { NavLink, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import { useAppContext } from 'contexts/AppContext';
 import { useAuth } from 'contexts/AuthContext';
@@ -41,29 +41,29 @@ const SbPackage = () => {
   const [sbDepositModal, setSbDepositModal] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState(null);
 
-  useEffect(() => {
+  const fetchUserPackages = async () => {
     if (customerData) {
-      const fetchUserPackages = async () => {
-        try {
-          let userIdToFetch = id;
-          if (currentUser && currentUser.role === 'user') {
-            userIdToFetch = currentUser.id;
-          }
-
-          const response = await axiosService.get(
-            `daily-savings/sb/package?userId=${userIdToFetch}`
-          );
-          setSbPackages(response.data);
-        } catch (error) {
-          console.error(error);
-          toast.error(
-            error.response?.data?.message ||
-              'An error occurred while fetching user package.'
-          );
+      try {
+        let userIdToFetch = id;
+        if (currentUser && currentUser.role === 'user') {
+          userIdToFetch = currentUser.id;
         }
-      };
-      fetchUserPackages();
+
+        const response = await axiosService.get(
+          `daily-savings/sb/package?userId=${userIdToFetch}`
+        );
+        setSbPackages(response.data);
+      } catch (error) {
+        console.error(error);
+        toast.error(
+          error.response?.data?.message ||
+            'An error occurred while fetching user package.'
+        );
+      }
     }
+  };
+  useEffect(() => {
+    fetchUserPackages();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -81,6 +81,7 @@ const SbPackage = () => {
 
   const closeCreatePackagesModal = () => {
     setCreatePackagesModal(false);
+    fetchUserPackages();
     reset();
   };
 
@@ -99,17 +100,13 @@ const SbPackage = () => {
     showSbDepositModal();
   };
 
-   const calculateProgressValue = (packageData) => {
-     const { totalContribution, amountPerDay, startDate } = packageData;
-     console.log(packageData)
-     const totalDays = Math.floor(
-       (Date.now() - new Date(startDate)) / (1000 * 60 * 60 * 24)
-     ); // Calculate total days
-     const progressValue =
-       (totalContribution / (amountPerDay * totalDays)) * 100;
-     return Math.min(progressValue, 100); // Ensure progress value doesn't exceed 100%
-   };
+  const calculateProgressValue = (packageData) => {
+    const totalDays = 31;
+    const completedDays = packageData.totalCount;
+    return ((completedDays / totalDays) * 100).toFixed(2);
+  };
 
+  console.log(sbPackages);
   return (
     <>
       <Flex alignItems="center">
@@ -178,7 +175,7 @@ const SbPackage = () => {
               >
                 <Text>{packageData.product?.name}</Text>
                 <Text fontSize="lg" fontWeight="bold">
-                  {formatNaira(packageData.totalContribution)}
+                  {packageData?.totalContribution}
                 </Text>
               </Box>
               <Flex justifyContent="space-between" alignItems="center" mt={4}>
@@ -192,7 +189,7 @@ const SbPackage = () => {
                 <Text fontSize={{ base: '14px', md: 'lg' }}>
                   Price:{' '}
                   <Box fontWeight="bold" as="span">
-                    {formatNaira(packageData.product?.price)}
+                    {formatNaira(packageData?.product.price)}
                   </Box>{' '}
                 </Text>
               </Flex>
@@ -207,7 +204,7 @@ const SbPackage = () => {
                     thickness="6px"
                   >
                     <CircularProgressLabel>
-                      {calculateProgressValue(packageData).toFixed(2)}%{' '}
+                      {calculateProgressValue(packageData)}%{' '}
                     </CircularProgressLabel>
                   </CircularProgress>
                 </Flex>
@@ -229,9 +226,15 @@ const SbPackage = () => {
         </Grid>
       ) : (
         <Flex justifyContent="center" mt="4">
-          <Button color="green" as={NavLink} to="/admin/daily-saving/package">
-            No Package Found, Create One
-          </Button>
+          {customerData ? (
+            <Button color="green" onClick={showCreatePackagesModal}>
+              No Package Found, Create a new package.
+            </Button>
+          ) : (
+            <Button color="green" onClick={handleShowAccountModal}>
+              No Account Found, Create an account and a new package.
+            </Button>
+          )}
         </Flex>
       )}
 

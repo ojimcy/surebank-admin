@@ -11,18 +11,16 @@ import {
   ModalBody,
   ModalFooter,
   Textarea,
+  Image,
 } from '@chakra-ui/react';
 
 import { useForm, Controller } from 'react-hook-form';
-import axiosService from 'utils/axiosService';
-import { toast } from 'react-toastify';
 
 const ProductDetailsModal = ({ isOpen, onClose, product }) => {
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
 
   const {
-    handleSubmit,
     control,
     reset,
     formState: { isSubmitting },
@@ -31,33 +29,7 @@ const ProductDetailsModal = ({ isOpen, onClose, product }) => {
   const toggleDescription = () => {
     setShowFullDescription(!showFullDescription);
   };
-
-  const handleApprove = async () => {
-    try {
-      await axiosService.post(`/products/request/${product.id}/approve`);
-      toast.success('Product request approved successfully!');
-      onClose();
-    } catch (error) {
-      console.error(error);
-      console.log(error.response);
-      toast.error('An error occurred while approving the product request.');
-    }
-  };
-
-  const handleReject = async (formData) => {
-    try {
-      await axiosService.post(`/products/request/${product.id}/reject`, {
-        reasonForRejection: formData.reasonForRejection,
-      });
-      toast.success('Product request rejected successfully.');
-      setIsRejectModalOpen(false);
-      onClose();
-    } catch (error) {
-      console.error(error);
-      toast.error('An error occurred while rejecting the product request.');
-    }
-  };
-
+  console.log(product);
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -66,13 +38,18 @@ const ProductDetailsModal = ({ isOpen, onClose, product }) => {
           <ModalHeader>{product.name}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
+            <Image src="assets/img/categories/1.jpg" alt={product.name} />
             <Box mb="1rem">
-              <Text fontWeight="bold">Brand:</Text>
-              <Text>{product.brand}</Text>
+              <Text fontWeight="bold">Price:</Text>
+              <Text>{product.price}</Text>
             </Box>
             <Box mb="1rem">
-              <Text fontWeight="bold">Category:</Text>
-              <Text>{product.categoryId}</Text>
+              <Text fontWeight="bold">Sales Price:</Text>
+              <Text>{product.salesPrice}</Text>
+            </Box>
+            <Box mb="1rem">
+              <Text fontWeight="bold">Quantity:</Text>
+              <Text>{product.quantity}</Text>
             </Box>
             <Box mb="1rem">
               <Text fontWeight="bold">Description:</Text>
@@ -94,14 +71,10 @@ const ProductDetailsModal = ({ isOpen, onClose, product }) => {
               mr={3}
               onClick={() => setIsRejectModalOpen(true)}
             >
-              Reject
+              Cancel
             </Button>
-            <Button
-              colorScheme="green"
-              onClick={handleApprove}
-              isLoading={isSubmitting}
-            >
-              Approve
+            <Button colorScheme="green" isLoading={isSubmitting}>
+              Edit
             </Button>
           </ModalFooter>
         </ModalContent>
@@ -139,11 +112,7 @@ const ProductDetailsModal = ({ isOpen, onClose, product }) => {
             >
               Cancel
             </Button>
-            <Button
-              colorScheme="green"
-              onClick={handleSubmit(handleReject)}
-              isLoading={isSubmitting}
-            >
+            <Button colorScheme="green" isLoading={isSubmitting}>
               Reject
             </Button>
           </ModalFooter>

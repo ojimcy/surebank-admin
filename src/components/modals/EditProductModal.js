@@ -27,7 +27,7 @@ import axiosService from 'utils/axiosService';
 import { toast } from 'react-toastify';
 import { toSentenceCase } from 'utils/helper';
 
-export default function CreateProductModal({ isOpen, onClose }) {
+export default function EditProductModal({ isOpen, onClose, product }) {
   const [brands, setBrands] = useState([]);
   const [categories, setCategories] = useState([]);
 
@@ -37,7 +37,6 @@ export default function CreateProductModal({ isOpen, onClose }) {
   const {
     handleSubmit,
     register,
-    reset,
     formState: { errors, isSubmitting },
   } = useForm();
 
@@ -58,10 +57,9 @@ export default function CreateProductModal({ isOpen, onClose }) {
 
   const submitHandler = async (productData) => {
     try {
-      await axiosService.post(`/products/request`, productData);
+      await axiosService.patch(`/products/request`, productData);
       toast.success('Product created successfully!');
       onClose();
-      reset(); 
     } catch (error) {
       if (
         error.response &&
@@ -82,7 +80,7 @@ export default function CreateProductModal({ isOpen, onClose }) {
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Create Product</ModalHeader>
+        <ModalHeader>Edit Product</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <form onSubmit={handleSubmit(submitHandler)}>
@@ -102,6 +100,7 @@ export default function CreateProductModal({ isOpen, onClose }) {
                 <Input
                   type="text"
                   placeholder="Enter Product Name"
+                  defaultValue={product.name}
                   {...register('name', { required: true })}
                 />
               </InputGroup>
@@ -122,6 +121,7 @@ export default function CreateProductModal({ isOpen, onClose }) {
                 <Textarea
                   type="text"
                   placeholder="Enter Product Description"
+                  defaultValue={product.description}
                   {...register('description', { required: true })}
                 />
               </InputGroup>
@@ -139,7 +139,11 @@ export default function CreateProductModal({ isOpen, onClose }) {
               >
                 Brand<Text color={brandStars}>*</Text>
               </FormLabel>
-              <Select {...register('brand')} name="brand" defaultValue="">
+              <Select
+                {...register('brand')}
+                name="brand"
+                defaultValue={product.brand}
+              >
                 <option value="" disabled>
                   Select Product Brand
                 </option>
@@ -168,7 +172,7 @@ export default function CreateProductModal({ isOpen, onClose }) {
               <Select
                 {...register('categoryId')}
                 name="categoryId"
-                defaultValue=""
+                defaultValue={product.category}
               >
                 <option value="" disabled>
                   Select Product Category

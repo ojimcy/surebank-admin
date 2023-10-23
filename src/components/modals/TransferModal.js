@@ -124,7 +124,7 @@ const TransferModal = ({ isOpen, onClose, packageData, onSuccess }) => {
                 isLoading={loading}
                 loadingText="Submitting"
               >
-                Transfer to SB
+                Transfer
               </Button>
             </HStack>
           </ModalFooter>

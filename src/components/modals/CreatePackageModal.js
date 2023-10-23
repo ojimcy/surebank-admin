@@ -49,26 +49,10 @@ const CreatePackage = ({ isOpen, onClose }) => {
     // Fetch products from the backend
     const fetchProducts = async () => {
       try {
-        const response = await axiosService.get('/product');
-        setProducts(response.data.results);
-      } catch (error) {
-        console.error('Error fetching products:', error);
-      }
-    };
-
-    fetchProducts();
-  }, []);
-
-  useEffect(() => {
-    const fetchProduct = async () => {
-      try {
         setLoading(true);
-        if (selectedProduct) {
-          const response = await axiosService.get(
-            `/product/${selectedProduct.value}`
-          );
-          setProductDetails(response.data);
-        }
+        const response = await axiosService.get('products/catalogue');
+        setProducts(response.data.results);
+        setLoading(false);
       } catch (error) {
         console.error('Error fetching products:', error);
       } finally {
@@ -76,11 +60,15 @@ const CreatePackage = ({ isOpen, onClose }) => {
       }
     };
 
-    fetchProduct();
-  }, [selectedProduct]);
+    fetchProducts();
+  }, []);
 
   const handleProductSelection = (selectedOption) => {
     setSelectedProduct(selectedOption);
+    const selectedProductDetails = products.find(
+      (product) => product.id === selectedOption.value
+    );
+    setProductDetails(selectedProductDetails);
   };
 
   // Handle form submission
@@ -107,12 +95,11 @@ const CreatePackage = ({ isOpen, onClose }) => {
       }
     }
   };
-
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Transfer Funds</ModalHeader>
+        <ModalHeader>Create Package</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <form onSubmit={handleSubmit(onSubmit)}>

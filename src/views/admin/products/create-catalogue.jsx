@@ -23,11 +23,10 @@ import axiosService from 'utils/axiosService';
 import { toast } from 'react-toastify';
 import BackButton from 'components/menu/BackButton';
 
-export default function Catalogue() {
+export default function CreateCatalogue() {
   const history = useHistory();
 
   const [products, setProducts] = useState([]);
-  const [merchants, setMerchants] = useState([]);
   const [featuredImagePreview, setFeaturedImagePreview] = useState(null);
   const [imagesPreview, setImagesPreview] = useState([]);
 
@@ -46,18 +45,8 @@ export default function Catalogue() {
     }
   };
 
-  const fetchMerchants = async () => {
-    try {
-      const response = await axiosService.get('/merchants/');
-      setMerchants(response.data.results);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   useEffect(() => {
     fetchProducts();
-    fetchMerchants();
   }, []);
 
   const handleFeaturedImageChange = (event) => {
@@ -73,12 +62,12 @@ export default function Catalogue() {
 
   const handleImagesChange = (event) => {
     const files = event.target.files;
-    const previewImages = [...imagesPreview]; 
+    const previewImages = [...imagesPreview];
 
     for (let i = 0; i < files.length; i++) {
       const reader = new FileReader();
       reader.onload = () => {
-        previewImages.push(reader.result); 
+        previewImages.push(reader.result);
         if (previewImages.length === files.length) {
           setImagesPreview(previewImages);
         }
@@ -144,26 +133,6 @@ export default function Catalogue() {
                   />
                 </FormControl>
 
-                <FormControl>
-                  <FormLabel
-                    htmlFor="merchantId"
-                    display="flex"
-                    ms="4px"
-                    fontSize="sm"
-                    fontWeight="500"
-                    mb="8px"
-                    mt="24px"
-                  >
-                    Merchant<Text>*</Text>
-                  </FormLabel>
-                  <ReactSelect
-                    options={merchants.map((merchant) => ({
-                      value: merchant.id,
-                      label: `${merchant.storeName}`,
-                    }))}
-                    placeholder="Select Merchant"
-                  />
-                </FormControl>
                 {/* Featured Image */}
                 <FormControl>
                   <FormLabel

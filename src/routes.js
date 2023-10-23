@@ -50,6 +50,9 @@ import Expenditures from 'views/admin/accounting/expenditure';
 import ExpenditureDetail from 'views/admin/accounting/expenditure-detail';
 
 import Products from 'views/admin/products';
+import Catalogue from 'views/admin/products/catalogue';
+import CreateCatalogue from 'views/admin/products/create-catalogue';
+import CatalogueDetails from 'views/admin/products/single-product-catalogue';
 
 
 const routes = [
@@ -348,6 +351,37 @@ const routes = [
     icon: <Icon as={FaMoneyBill} width="20px" height="20px" color="inherit" />,
     roles: ['superAdmin', 'admin', 'manager', 'userReps'],
     component: Expenditures,
+  },
+
+  {
+    name: 'Catalogue',
+    layout: '/admin',
+    path: '/products/catalogue-details/:id',
+    icon: (
+      <Icon as={FaProductHunt} width="20px" height="20px" color="inherit" />
+    ),
+    roles: ['superAdmin', 'admin', 'manager', 'userReps'],
+    component: CatalogueDetails,
+  },
+  {
+    name: 'Catalogue',
+    layout: '/admin',
+    path: '/products/catalogue/create',
+    icon: (
+      <Icon as={FaProductHunt} width="20px" height="20px" color="inherit" />
+    ),
+    roles: ['superAdmin', 'admin', 'manager', 'userReps'],
+    component: CreateCatalogue,
+  },
+  {
+    name: 'Catalogue',
+    layout: '/admin',
+    path: '/products/catalogue',
+    icon: (
+      <Icon as={FaProductHunt} width="20px" height="20px" color="inherit" />
+    ),
+    roles: ['superAdmin', 'admin', 'manager', 'userReps'],
+    component: Catalogue,
   },
   {
     name: 'Products',

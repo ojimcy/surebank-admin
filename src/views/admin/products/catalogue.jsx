@@ -7,13 +7,9 @@ import {
   Flex,
   Button,
   Spacer,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
+  Text,
 } from '@chakra-ui/react';
 
-import { ChevronDownIcon } from '@chakra-ui/icons';
 import { NavLink } from 'react-router-dom';
 
 // Custom components
@@ -24,14 +20,12 @@ import Card from 'components/card/Card.js';
 import BackButton from 'components/menu/BackButton';
 import SimpleTable from 'components/table/SimpleTable';
 import axiosService from 'utils/axiosService';
-import CreateProductModal from 'components/modals/CreateProductModal';
-import ProductDetailsModal from 'components/modals/ProductDetailsModal';
+import CatalogueDetailsModal from 'components/modals/CatalogueDetailsModal';
 
-export default function Customers() {
+export default function Catalogue() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [totalResults, setTotalResults] = useState(1);
-  const [createProductModal, setCreateProductModal] = useState(false);
   const [productDetailsModal, setProductDetailsModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
@@ -39,7 +33,7 @@ export default function Customers() {
 
   const fetchProductRequests = async () => {
     try {
-      const response = await axiosService.get('/products/request');
+      const response = await axiosService.get('/products/catalogue');
       setProducts(response.data.results);
       setTotalResults(response.data.totalResults);
       setLoading(false);
@@ -53,30 +47,29 @@ export default function Customers() {
     fetchProductRequests();
   }, []);
 
-  const handleShowProductModal = () => {
-    setCreateProductModal(true);
-  };
-
-  const handleCloseProductModal = () => {
-    setCreateProductModal(false);
-  };
-
-  const handleShowDetailsModal = (product) => {
-    setSelectedProduct(product);
-    setProductDetailsModal(true);
-  };
-
   const closeModalAndResetProduct = () => {
     setSelectedProduct(null);
     setProductDetailsModal(false);
   };
 
-  // Columns for the user table
+  // Columns for the catalogue table
   const columns = React.useMemo(
     () => [
       {
         Header: 'Name',
         accessor: 'name',
+      },
+      {
+        Header: 'Sales Price',
+        accessor: 'salesPrice',
+      },
+      {
+        Header: 'Price',
+        accessor: 'price',
+      },
+      {
+        Header: 'Quantity',
+        accessor: 'quantity',
       },
 
       {
@@ -84,19 +77,12 @@ export default function Customers() {
         accessor: (row) => formatDate(row.createdAt),
       },
       {
-        Header: 'Status',
-        accessor: 'status',
-      },
-      {
         Header: 'Action',
         accessor: (row) => (
           <>
-            <Button
-              onClick={() => handleShowDetailsModal(row)}
-              style={{ marginRight: '10px' }}
-            >
-              View Details
-            </Button>
+            <NavLink to={`/admin/products/catalogue-details/${row.id}`}>
+              <Button style={{ marginRight: '10px' }}>View Details</Button>
+            </NavLink>
           </>
         ),
       },
@@ -119,49 +105,39 @@ export default function Customers() {
         gap={{ base: '20px', xl: '20px' }}
       >
         <Card p={{ base: '30px', md: '30px', sm: '10px' }}>
+          <BackButton />
           <Flex justifyContent="space-between" mb="20px">
-            <BackButton />
+            <Text fontSize="2xl">Catalogue</Text>
             <Spacer />
-            <Menu>
-              <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-                Manage Product
-              </MenuButton>
-              <MenuList>
-                <MenuItem>
-                  <NavLink to="#" onClick={handleShowProductModal}>
-                    New Product
-                  </NavLink>
-                </MenuItem>
-                <MenuItem>
-                  <NavLink to="/admin/products/catalogue">
-                    Product Catalogue
-                  </NavLink>
-                </MenuItem>
-              </MenuList>
-            </Menu>
+            <NavLink to="/admin/products/catalogue/create">
+              <Button bgColor="blue.700" color="white">
+                Add Product
+              </Button>
+            </NavLink>
           </Flex>
           <Box marginTop="30">
             {loading ? (
               <Spinner />
+            ) : products.length === 0 ? (
+              <Text fontSize="lg" textAlign="center" mt="20">
+                No records found!
+              </Text>
             ) : (
-              <SimpleTable
-                columns={columns}
-                data={products}
-                pageSize={pageLimit}
-                totalPages={totalResults}
-              />
+              <>
+                <SimpleTable
+                  columns={columns}
+                  data={products}
+                  pageSize={pageLimit}
+                  totalPages={totalResults}
+                />
+              </>
             )}
           </Box>
         </Card>
       </Grid>
 
-      <CreateProductModal
-        isOpen={createProductModal}
-        onClose={handleCloseProductModal}
-      />
-
       {selectedProduct && (
-        <ProductDetailsModal
+        <CatalogueDetailsModal
           isOpen={productDetailsModal}
           onClose={closeModalAndResetProduct}
           product={selectedProduct}

@@ -39,6 +39,8 @@ const hiddenRoutes = [
   '/admin/accounting/dashboard',
   '/admin/accounting/expenditure',
   '/admin/accounting/expenditure/:id',
+  '/admin/products/catalogue-details/:id',
+  '/admin/products/catalogue/create',
   '/admin/products/catalogue',
 ];
 
