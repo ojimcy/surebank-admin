@@ -9,6 +9,7 @@ import {
   Input,
   Text,
   Image,
+  Textarea,
 } from '@chakra-ui/react';
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
@@ -29,6 +30,7 @@ export default function CreateCatalogue() {
   const [products, setProducts] = useState([]);
   const [featuredImagePreview, setFeaturedImagePreview] = useState(null);
   const [imagesPreview, setImagesPreview] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
   const {
     handleSubmit,
@@ -76,9 +78,16 @@ export default function CreateCatalogue() {
     }
   };
 
+  const handleSelectedProduct = (option) => {
+    setSelectedProduct(option);
+  };
+
   const submitHandler = async (catalogueData) => {
     try {
-      await axiosService.post(`/catalogues`, catalogueData);
+      if (selectedProduct) {
+        catalogueData.productId = selectedProduct.value
+      }
+      await axiosService.post(`/products/catalogue`, catalogueData);
       toast.success('Product catalogue created successfully!');
       history.push('/admin/catalogues');
     } catch (error) {
@@ -129,7 +138,64 @@ export default function CreateCatalogue() {
                       value: product.id,
                       label: `${product.name}`,
                     }))}
+                    onChange={handleSelectedProduct}
                     placeholder="Select Product"
+                  />
+                </FormControl>
+
+                <FormControl>
+                  <FormLabel
+                    htmlFor="name"
+                    display="flex"
+                    ms="4px"
+                    fontSize="sm"
+                    fontWeight="500"
+                    mb="8px"
+                    mt="24px"
+                  >
+                    Name
+                  </FormLabel>
+                  <Input
+                    isRequired={true}
+                    variant="auth"
+                    fontSize="sm"
+                    ms={{ base: '0px', md: '0px' }}
+                    type="text"
+                    id="name"
+                    mb="24px"
+                    fontWeight="500"
+                    size="lg"
+                    {...register('name', {
+                      required: 'Product name is required',
+                    })}
+                    placeholder="Product Name"
+                  />
+                </FormControl>
+
+                <FormControl>
+                  <FormLabel
+                    htmlFor="description"
+                    display="flex"
+                    ms="4px"
+                    fontSize="sm"
+                    fontWeight="500"
+                    mb="8px"
+                  >
+                    Description
+                  </FormLabel>
+                  <Textarea
+                    isRequired={true}
+                    fontSize="sm"
+                    ms={{ base: '0px', md: '0px' }}
+                    type="text"
+                    id="description"
+                    mb="24px"
+                    fontWeight="500"
+                    size="lg"
+                    {...register('description', {
+                      required: 'Product description is required',
+                    })}
+                    placeholder="Product description"
                   />
                 </FormControl>
 

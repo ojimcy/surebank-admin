@@ -23,7 +23,7 @@ export default function SbReports() {
   const fetchDsChargedPackages = async () => {
     setLoading(true);
     try {
-      const response = await axiosService.get('/reports/sb/packages/charged');
+      const response = await axiosService.get('/reports/packages/sb/charged');
       setDsChargedPackages(response.data.packages);
       setTotalAmountPerDay(response.data.totalAmountPerDay);
       setLoading(false);

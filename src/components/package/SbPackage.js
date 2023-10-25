@@ -25,6 +25,7 @@ import axiosService from 'utils/axiosService';
 import { formatDate, formatNaira } from 'utils/helper';
 
 import testImg from 'assets/img/nfts/Nft2.png';
+import MergePackageModal from 'components/modals/mergeModal';
 
 const SbPackage = () => {
   const { id } = useParams();
@@ -40,6 +41,7 @@ const SbPackage = () => {
   const [createPackagesModal, setCreatePackagesModal] = useState(false);
   const [sbDepositModal, setSbDepositModal] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState(null);
+  const [showMergeModal, setShowMergeModal] = useState(false);
 
   const fetchUserPackages = async () => {
     if (customerData) {
@@ -66,6 +68,26 @@ const SbPackage = () => {
     fetchUserPackages();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const handleMerge = async (fromPackage, toPackage) => {
+    try {
+      await axiosService.post('/daily-savings/sb/package/merge', {
+        packageFromId: fromPackage,
+        packageToId: toPackage,
+      });
+      toast.success('Merged Successful!');
+      fetchUserPackages();
+    } catch (error) {
+      // Handle errors if needed
+      console.error('Error merging packages:', error);
+
+      // Close the modal
+      setShowMergeModal(false);
+
+      // You may want to display an error message to the user
+      toast.error('Failed to merge packages. Please try again later.');
+    }
+  };
 
   const handleShowAccountModal = () => {
     setShowAccountModal(true);
@@ -100,13 +122,26 @@ const SbPackage = () => {
     showSbDepositModal();
   };
 
+  const handleShowMergeModal = () => {
+    setShowMergeModal(true);
+    reset();
+  };
+
+  const handleCloseMergeModal = () => {
+    setShowMergeModal(false);
+    reset();
+  };
+
   const calculateProgressValue = (packageData) => {
     const totalDays = 31;
     const completedDays = packageData.totalCount;
     return ((completedDays / totalDays) * 100).toFixed(2);
   };
 
-  console.log(sbPackages);
+  const handleSuccess = () => {
+    fetchUserPackages();
+  };
+
   return (
     <>
       <Flex alignItems="center">
@@ -210,7 +245,11 @@ const SbPackage = () => {
                 </Flex>
               </Box>
               <Flex mt="4" justify="space-between">
-                <Button colorScheme="red" size="sm">
+                <Button
+                  colorScheme="red"
+                  size="sm"
+                  onClick={handleShowMergeModal}
+                >
                   Merge
                 </Button>
                 <Button
@@ -252,6 +291,14 @@ const SbPackage = () => {
         isOpen={sbDepositModal}
         onClose={closeSbDepositModal}
         packageData={selectedPackage}
+        onSuccess={handleSuccess}
+      />
+
+      <MergePackageModal
+        isOpen={showMergeModal}
+        onClose={handleCloseMergeModal}
+        packages={sbPackages}
+        onMerge={handleMerge}
       />
     </>
   );

@@ -23,9 +23,10 @@ import { formatNaira } from 'utils/helper';
 
 import axiosService from 'utils/axiosService';
 
-const SbDepositModal = ({ isOpen, onClose, packageData }) => {
+const SbDepositModal = ({ isOpen, onClose, packageData, onSuccess }) => {
   const [depositAmount, setDepositAmount] = useState('');
   const [loading, setLoading] = useState(false);
+
   const handleDeposit = async () => {
     const depositData = {
       product: packageData.product.id,
@@ -42,6 +43,7 @@ const SbDepositModal = ({ isOpen, onClose, packageData }) => {
 
       toast.success('Deposit successful');
       setLoading(false);
+      onSuccess();
       onClose();
     } catch (error) {
       console.error(error);
