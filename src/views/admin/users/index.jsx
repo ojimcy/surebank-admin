@@ -124,7 +124,6 @@ export default function Users() {
     superAdmin: 'Super Admin',
     user: 'User',
   };
-
   // Columns for the user table
   const columns = React.useMemo(
     () => [

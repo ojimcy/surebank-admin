@@ -53,6 +53,7 @@ import Products from 'views/admin/products';
 import Catalogue from 'views/admin/products/catalogue';
 import CreateCatalogue from 'views/admin/products/create-catalogue';
 import CatalogueDetails from 'views/admin/products/single-product-catalogue';
+import EditProductCatalogue from 'views/admin/products/catalogue/edit';
 
 
 const routes = [
@@ -362,6 +363,16 @@ const routes = [
     ),
     roles: ['superAdmin', 'admin', 'manager', 'userReps'],
     component: CatalogueDetails,
+  },
+  {
+    name: 'Catalogue',
+    layout: '/admin',
+    path: '/products/catalogue/edit/:id',
+    icon: (
+      <Icon as={FaProductHunt} width="20px" height="20px" color="inherit" />
+    ),
+    roles: ['superAdmin', 'admin', 'manager', 'userReps'],
+    component: EditProductCatalogue,
   },
   {
     name: 'Catalogue',

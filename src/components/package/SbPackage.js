@@ -64,6 +64,7 @@ const SbPackage = () => {
       }
     }
   };
+  
   useEffect(() => {
     fetchUserPackages();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -210,7 +211,7 @@ const SbPackage = () => {
               >
                 <Text>{packageData.product?.name}</Text>
                 <Text fontSize="lg" fontWeight="bold">
-                  {packageData?.totalContribution}
+                  {packageData?.totalContribution.toFixed(2)}
                 </Text>
               </Box>
               <Flex justifyContent="space-between" alignItems="center" mt={4}>

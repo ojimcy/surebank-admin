@@ -178,6 +178,21 @@ export default function Products() {
             </Menu>
           </Flex>
           <Box marginTop="30">
+            {/* Select for selecting status */}
+
+            <Box marginTop="20px" w="150px" justifyContent="spacce-between">
+              <Spacer />
+              <Select
+                value={selectedStatus}
+                onChange={(e) => setSelectedStatus(e.target.value)}
+              >
+                {statusOptions.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </Select>
+            </Box>
             {loading ? (
               <Spinner />
             ) : filteredProducts.length === 0 ? (
@@ -186,21 +201,6 @@ export default function Products() {
               </Text>
             ) : (
               <>
-                {/* Select for selecting status */}
-
-                <Box marginTop="20px" w="150px" justifyContent="spacce-between">
-                  <Spacer />
-                  <Select
-                    value={selectedStatus}
-                    onChange={(e) => setSelectedStatus(e.target.value)}
-                  >
-                    {statusOptions.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </Select>
-                </Box>
                 <SimpleTable
                   columns={columns}
                   data={filteredProducts}

@@ -1,105 +1,208 @@
-import React, { useEffect, useState } from 'react';
-import { NavLink, useParams } from 'react-router-dom';
-
-// Chakra imports
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
-  Center,
   Flex,
-  Grid,
-  Spinner,
   Text,
-  Heading,
   Image,
+  useColorModeValue,
+  HStack,
+  Grid,
+  List,
+  ListItem,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
+  useDisclosure,
+  useToast,
 } from '@chakra-ui/react';
-
-// Custom components
-
-// Assets
+import { Link, useParams, useHistory } from 'react-router-dom';
 import axiosService from 'utils/axiosService';
+
+import Card from 'components/card/Card.js';
 import BackButton from 'components/menu/BackButton';
 
 export default function ProductDetails() {
   const { id } = useParams();
-  const [product, setProduct] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [product, setProduct] = useState({});
+  const [showFullDescription, setShowFullDescription] = useState(false);
+
+  const textColor = useColorModeValue('navy.700', 'white');
+   const history = useHistory();
+   const toast = useToast();
+
+   const { isOpen, onOpen, onClose } = useDisclosure();
+   const cancelRef = React.useRef();
 
   useEffect(() => {
-    const fetchProduct = async () => {
-      setLoading(true);
+    const fetchProductCatalogue = async () => {
       try {
-        const response = await axiosService.get(`products/catalogue/${id}`);
+        const response = await axiosService.get(`/products/catalogue/${id}`);
         setProduct(response.data);
       } catch (error) {
         console.error(error);
-      } finally {
-        setLoading(false);
       }
     };
-    fetchProduct();
+
+    fetchProductCatalogue();
   }, [id]);
 
+   const handleDelete = async () => {
+     try {
+       await axiosService.delete(`/products/catalogue/${id}`);
+       toast({
+         title: 'Product Deleted',
+         status: 'success',
+         duration: 3000,
+         isClosable: true,
+       });
+       history.push('/'); // Redirect to a desired page after deletion
+     } catch (error) {
+       console.error(error);
+       toast({
+         title: 'Error Deleting Product',
+         description: 'An error occurred while deleting the product.',
+         status: 'error',
+         duration: 3000,
+         isClosable: true,
+       });
+     }
+   };
+
   return (
-    <Box>
-      {loading ? (
-        <Box
-          h="100vh"
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <Spinner size="xl" color="blue.500" />
-        </Box>
-      ) : (
-        <Box pt={{ base: '180px', md: '80px', xl: '80px' }}>
+    <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
+      {/* Main Fields */}
+      <Grid
+        templateColumns={{
+          base: '1fr',
+          lg: '3.96fr',
+        }}
+        templateRows={{
+          base: 'repeat(1, 1fr)',
+          lg: '1fr',
+        }}
+        gap={{ base: '20px', xl: '20px' }}
+      >
+        <Card p={{ base: '30px', md: '30px', sm: '10px' }}>
           <BackButton />
-          <Grid
-            mb="20px"
-            gridTemplateColumns={{ xl: 'repeat(3, 1fr)', '2xl': '1fr 0.46fr' }}
-            gap={{ base: '20px', xl: '20px' }}
-            display={{ base: 'block', xl: 'grid' }}
-          >
-            <Flex
-              flexDirection="column"
-              gridArea={{ xl: '1 / 1 / 2 / 3', '2xl': '1 / 1 / 2 / 2' }}
-            >
-              <Center py={6}>
-                <Box
-                  w={{ base: '90%', md: '80%' }}
-                  borderWidth="1px"
-                  borderRadius="lg"
-                  overflow="hidden"
-                  boxShadow="base"
-                >
-                  {product && (
-                    <Flex alignItems="center">
-                      <Box px={6} py={4} justifyContent='center'>
-                        <Heading fontSize="2xl" mb={4}>
-                          {product.name}
-                        </Heading>
-                        <Image
-                          src="assets/img/categories/1.jpg"
-                          alt={product.name}
-                        />
-                        <Grid templateColumns="repeat(2, 1fr)" gap={3}>
-                          <Text fontWeight="bold">Name</Text>
-                          <Text>{product.name}</Text>
-                        </Grid>
-                        <NavLink to={`/admin/products/edit/${id}`}>
-                          <Button mt={4} colorScheme="blue" size="md">
-                            Edit Product
-                          </Button>
-                        </NavLink>
-                      </Box>
-                    </Flex>
-                  )}
+
+          <Flex mt="40px" p="20px" justifyContent="center">
+            <Box w="50%" pr="20px">
+              <HStack spacing={4} mb="20px">
+                {product.images &&
+                  product.images.map((image, index) => (
+                    <Image
+                      key={index}
+                      src={image}
+                      alt={`Product Image ${index + 1}`}
+                      maxH="150px"
+                      maxW="150px"
+                    />
+                  ))}
+              </HStack>
+            </Box>
+            <Box w="50%">
+              <Text color={textColor} fontSize="xl" fontWeight="bold" mb="10px">
+                {product.name}
+              </Text>
+              <Text color={textColor} mb="10px">
+                Price: {product.price}
+              </Text>
+              <Text color={textColor} mb="10px">
+                Selling Price: {product.salesPrice}
+              </Text>
+              <Text color={textColor} mb="10px">
+                Quantity: {product.quantity}
+              </Text>
+              <Text color={textColor} mb="10px">
+                Brand: {product.brand}
+              </Text>
+              <Text color={textColor} mb="10px">
+                Category: {product.category}
+              </Text>{' '}
+              {/* Variations Section */}
+              {product.variations && product.variations.length > 0 && (
+                <Box>
+                  <Text color={textColor} fontSize="lg" mb="10px">
+                    Variations:
+                  </Text>
+                  <List>
+                    {product.variations.map((variation, index) => (
+                      <ListItem key={index}>
+                        <strong>{variation.name}:</strong>{' '}
+                        {variation.values.join(', ')}
+                      </ListItem>
+                    ))}
+                  </List>
                 </Box>
-              </Center>
-            </Flex>
-          </Grid>
-        </Box>
-      )}
+              )}
+              <Box mt="15px">
+                <Button
+                  as={Link}
+                  to={`/admin/products/catalogue/edit/${id}`}
+                  colorScheme="teal"
+                  mr="10px"
+                >
+                  Update
+                </Button>
+                <Button colorScheme="red" onClick={onOpen}>
+                  Delete
+                </Button>
+              </Box>
+            </Box>
+          </Flex>
+
+          {product.description && (
+            <Box>
+              <Text color={textColor} fontSize="lg" mb="10px">
+                Description
+              </Text>
+              <Text>
+                {showFullDescription
+                  ? product.description
+                  : product.description.slice(0, 100) + '...'}
+              </Text>
+              {!showFullDescription && (
+                <Button
+                  colorScheme="blue"
+                  size="sm"
+                  onClick={() => setShowFullDescription(true)}
+                >
+                  View All
+                </Button>
+              )}
+            </Box>
+          )}
+        </Card>
+      </Grid>
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog
+        isOpen={isOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={onClose}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Delete Product
+            </AlertDialogHeader>
+            <AlertDialogBody>
+              Are you sure you want to delete this product?
+            </AlertDialogBody>
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={onClose}>
+                Cancel
+              </Button>
+              <Button colorScheme="red" onClick={handleDelete} ml={3}>
+                Delete
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </Box>
   );
 }

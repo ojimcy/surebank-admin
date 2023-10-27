@@ -42,6 +42,7 @@ const hiddenRoutes = [
   '/admin/products/catalogue-details/:id',
   '/admin/products/catalogue/create',
   '/admin/products/catalogue',
+  '/admin/products/catalogue/edit/:id',
 ];
 
 export function SidebarLinks(props) {

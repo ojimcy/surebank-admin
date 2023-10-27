@@ -57,7 +57,13 @@ export default function Catalogue() {
     () => [
       {
         Header: 'Name',
-        accessor: 'name',
+        accessor: (row) => (
+          <>
+            <NavLink to={`/admin/products/catalogue-details/${row.id}`}>
+              {row.name}
+            </NavLink>
+          </>
+        ),
       },
       {
         Header: 'Sales Price',
