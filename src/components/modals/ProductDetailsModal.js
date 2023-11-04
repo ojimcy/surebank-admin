@@ -43,7 +43,7 @@ const ProductDetailsModal = ({ isOpen, onClose, product }) => {
       toast.error('An error occurred while approving the product request.');
     }
   };
-
+  console.log(product);
   const handleReject = async (formData) => {
     try {
       await axiosService.post(`/products/request/${product.id}/reject`, {
@@ -68,11 +68,11 @@ const ProductDetailsModal = ({ isOpen, onClose, product }) => {
           <ModalBody>
             <Box mb="1rem">
               <Text fontWeight="bold">Brand:</Text>
-              <Text>{product.brand}</Text>
+              <Text>{product.brand?.name}</Text>
             </Box>
             <Box mb="1rem">
               <Text fontWeight="bold">Category:</Text>
-              <Text>{product.categoryId}</Text>
+              <Text>{product.categoryId?.name}</Text>
             </Box>
             <Box mb="1rem">
               <Text fontWeight="bold">Description:</Text>

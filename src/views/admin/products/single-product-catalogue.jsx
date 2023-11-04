@@ -31,11 +31,11 @@ export default function ProductDetails() {
   const [showFullDescription, setShowFullDescription] = useState(false);
 
   const textColor = useColorModeValue('navy.700', 'white');
-   const history = useHistory();
-   const toast = useToast();
+  const history = useHistory();
+  const toast = useToast();
 
-   const { isOpen, onOpen, onClose } = useDisclosure();
-   const cancelRef = React.useRef();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const cancelRef = React.useRef();
 
   useEffect(() => {
     const fetchProductCatalogue = async () => {
@@ -50,28 +50,27 @@ export default function ProductDetails() {
     fetchProductCatalogue();
   }, [id]);
 
-   const handleDelete = async () => {
-     try {
-       await axiosService.delete(`/products/catalogue/${id}`);
-       toast({
-         title: 'Product Deleted',
-         status: 'success',
-         duration: 3000,
-         isClosable: true,
-       });
-       history.push('/'); // Redirect to a desired page after deletion
-     } catch (error) {
-       console.error(error);
-       toast({
-         title: 'Error Deleting Product',
-         description: 'An error occurred while deleting the product.',
-         status: 'error',
-         duration: 3000,
-         isClosable: true,
-       });
-     }
-   };
-
+  const handleDelete = async () => {
+    try {
+      await axiosService.delete(`/products/catalogue/${id}`);
+      toast({
+        title: 'Product Deleted',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+      history.push('/'); // Redirect to a desired page after deletion
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: 'Error Deleting Product',
+        description: 'An error occurred while deleting the product.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
   return (
     <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
       {/* Main Fields */}
@@ -123,14 +122,14 @@ export default function ProductDetails() {
               <Text color={textColor} mb="10px">
                 Category: {product.category}
               </Text>{' '}
-              {/* Variations Section */}
-              {product.variations && product.variations.length > 0 && (
+              {/* Specifications Section */}
+              {product.specifications && product.specifications.length > 0 && (
                 <Box>
                   <Text color={textColor} fontSize="lg" mb="10px">
-                    Variations:
+                    Specifications:
                   </Text>
                   <List>
-                    {product.variations.map((variation, index) => (
+                    {product.specifications.map((variation, index) => (
                       <ListItem key={index}>
                         <strong>{variation.name}:</strong>{' '}
                         {variation.values.join(', ')}

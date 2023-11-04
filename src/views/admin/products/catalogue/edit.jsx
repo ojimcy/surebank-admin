@@ -21,7 +21,7 @@ import { toSentenceCase } from 'utils/helper';
 
 export default function EditProductCatalogue() {
   const { id } = useParams();
-  const history = useHistory()
+  const history = useHistory();
   const [brands, setBrands] = useState([]);
   const [categories, setCategories] = useState([]);
   const [product, setProduct] = useState([]);
@@ -32,12 +32,13 @@ export default function EditProductCatalogue() {
     handleSubmit,
     register,
     control,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm();
 
   const { fields, append, remove } = useFieldArray({
     control,
-    name: 'variations',
+    name: 'specifications',
   });
 
   const fetchProductsCategories = async () => {
@@ -144,7 +145,7 @@ export default function EditProductCatalogue() {
 
             <FormControl>
               <FormLabel
-                htmlFor="variations"
+                htmlFor="specifications"
                 display="flex"
                 ms="4px"
                 fontSize="sm"
@@ -152,7 +153,7 @@ export default function EditProductCatalogue() {
                 mb="8px"
                 mt="10px"
               >
-                Variations
+                Specifications
               </FormLabel>
               {fields.map((variation, index) => (
                 <InputGroup key={variation.id}>
@@ -165,13 +166,13 @@ export default function EditProductCatalogue() {
                       type="text"
                       placeholder="Variation Name"
                       defaultValue={variation.name}
-                      {...register(`variations.${index}.name`)}
+                      {...register(`specifications.${index}.name`)}
                     />
                     <Input
                       type="text"
                       placeholder="Variation Values (comma-separated)"
                       defaultValue={variation.values}
-                      {...register(`variations.${index}.values`)}
+                      {...register(`specifications.${index}.values`)}
                     />
                     <Button type="button" onClick={() => remove(index)}>
                       Remove

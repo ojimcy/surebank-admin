@@ -44,7 +44,7 @@ export default function Products() {
   const fetchProductRequests = async () => {
     try {
       const response = await axiosService.get('/products/request');
-      setProducts(response.data.results);
+      setProducts(response.data);
       setTotalResults(response.data.totalResults);
       setLoading(false);
     } catch (error) {
@@ -195,19 +195,17 @@ export default function Products() {
             </Box>
             {loading ? (
               <Spinner />
-            ) : filteredProducts.length === 0 ? (
+            ) : filteredProducts && filteredProducts.length !== 0 ? (
+              <SimpleTable
+                columns={columns}
+                data={filteredProducts}
+                pageSize={pageLimit}
+                totalPages={totalResults}
+              />
+            ) : (
               <Text fontSize="lg" textAlign="center" mt="20">
                 No records found!
               </Text>
-            ) : (
-              <>
-                <SimpleTable
-                  columns={columns}
-                  data={filteredProducts}
-                  pageSize={pageLimit}
-                  totalPages={totalResults}
-                />
-              </>
             )}
           </Box>
         </Card>
