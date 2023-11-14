@@ -25,14 +25,14 @@ export default function EditProductCatalogue() {
   const [brands, setBrands] = useState([]);
   const [categories, setCategories] = useState([]);
   const [product, setProduct] = useState([]);
-
+  const [featuredImage, setFeaturedImage] = useState('');
+  const [images, setImages] = useState([]);
   const textColor = useColorModeValue('navy.700', 'white');
 
   const {
     handleSubmit,
     register,
     control,
-    setValue,
     formState: { errors, isSubmitting },
   } = useForm();
 
@@ -68,7 +68,7 @@ export default function EditProductCatalogue() {
       console.error(error);
     }
   }, [id]);
-
+  
   const submitHandler = async (productData) => {
     try {
       await axiosService.patch(`/products/catalogue/${id}`, productData);
@@ -89,6 +89,31 @@ export default function EditProductCatalogue() {
       }
     }
   };
+
+  const uploadFileHandler = async (e, forImages) => {
+    const file = e.target.files[0];
+    if (!file || file.size === 0) {
+      console.error('Error: Selected file is empty or undefined.');
+      toast.error('Please select a valid file.');
+      return;
+    }
+    const bodyFormData = new FormData();
+    bodyFormData.append('file', file);
+    console.log('1', bodyFormData);
+    try {
+      const { data } = await axiosService.post('/upload', bodyFormData);
+      console.log('2', bodyFormData);
+      if (forImages) {
+        setImages([...images, data.secure_url]);
+      } else {
+        setFeaturedImage(data.secure_url);
+      }
+      toast.success('Image uploaded successfully. click Update to apply it');
+    } catch (err) {
+      toast.error();
+    }
+  };
+
   return (
     <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
       <Card>
@@ -121,6 +146,7 @@ export default function EditProductCatalogue() {
                 />
               </InputGroup>
             </FormControl>
+
             <FormControl>
               <FormLabel
                 htmlFor="description"
@@ -139,6 +165,27 @@ export default function EditProductCatalogue() {
                   placeholder="Enter Product Description"
                   defaultValue={product.description}
                   {...register('description')}
+                />
+              </InputGroup>
+            </FormControl>
+
+            <FormControl>
+              <FormLabel
+                htmlFor="featuredImage"
+                display="flex"
+                ms="4px"
+                fontSize="sm"
+                fontWeight="500"
+                mb="8px"
+                mt="10px"
+              >
+                Featured Image
+              </FormLabel>
+              <InputGroup>
+                <Input
+                  type="file"
+                  onChange={uploadFileHandler}
+                  defaultValue={product.featuredImage}
                 />
               </InputGroup>
             </FormControl>
