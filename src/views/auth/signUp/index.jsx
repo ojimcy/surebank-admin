@@ -21,7 +21,6 @@ import { HSeparator } from 'components/separator/Separator';
 import DefaultAuth from 'layouts/auth/Default';
 // Assets
 import illustration from 'assets/img/auth/auth-bg.png';
-import { FcGoogle } from 'react-icons/fc';
 import { MdOutlineRemoveRedEye } from 'react-icons/md';
 import { RiEyeCloseLine } from 'react-icons/ri';
 import { useForm } from 'react-hook-form';
@@ -38,16 +37,7 @@ function SignUp() {
   const textColorDetails = useColorModeValue('navy.700', 'secondaryGray.600');
   const textColorBrand = useColorModeValue('brand.500', 'white');
   const brandStars = useColorModeValue('brand.500', 'brand.400');
-  const googleBg = useColorModeValue('secondaryGray.300', 'whiteAlpha.200');
-  const googleText = useColorModeValue('navy.700', 'white');
-  const googleHover = useColorModeValue(
-    { bg: 'gray.200' },
-    { bg: 'whiteAlpha.300' }
-  );
-  const googleActive = useColorModeValue(
-    { bg: 'secondaryGray.300' },
-    { bg: 'whiteAlpha.200' }
-  );
+ 
   const [show, setShow] = useState(false);
   const handleClick = () => setShow(!show);
 
@@ -333,28 +323,7 @@ function SignUp() {
           </form>
           <Flex align="center" mb="25px">
             <HSeparator />
-            <Text color="gray.400" mx="14px">
-              or
-            </Text>
-            <HSeparator />
           </Flex>
-          <Button
-            fontSize="sm"
-            me="0px"
-            mb="26px"
-            py="15px"
-            h="50px"
-            borderRadius="16px"
-            bgColor={googleBg}
-            color={googleText}
-            fontWeight="500"
-            _hover={googleHover}
-            _active={googleActive}
-            _focus={googleActive}
-          >
-            <Icon as={FcGoogle} w="20px" h="20px" me="10px" />
-            Sign up with Google
-          </Button>
           <Flex
             flexDirection="column"
             justifyContent="center"
@@ -364,7 +333,7 @@ function SignUp() {
           >
             <Text color={textColorDetails} fontWeight="400" fontSize="14px">
               Already registered?
-              <NavLink to="/auth/sign-up">
+              <NavLink to="/auth/sign-in">
                 <Text
                   color={textColorBrand}
                   as="span"

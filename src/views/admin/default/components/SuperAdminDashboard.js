@@ -15,11 +15,16 @@ import { FaMoneyBillWave, FaChartBar } from 'react-icons/fa';
 import axiosService from 'utils/axiosService';
 import { toast } from 'react-toastify';
 import { formatNaira } from 'utils/helper';
+import { useAuth } from 'contexts/AuthContext';
+
 
 import ActionButton from 'components/Button/CustomButton';
 import Withdrawals from './Withdrawals';
+import { useHistory } from 'react-router-dom';
 
 export default function SuperAdminDashboard() {
+  const history = useHistory();
+  const { currentUser } = useAuth();
   const brandColor = useColorModeValue('brand.500', 'white');
   const boxBg = useColorModeValue('secondaryGray.300', 'whiteAlpha.100');
 
@@ -28,6 +33,10 @@ export default function SuperAdminDashboard() {
   const [dailySavingsWithdrawals, setDailySavingsWithdrawals] = useState([]);
   const [openPackageCount, setOpenPackageCount] = useState(0);
   const [closedPackages, setClosedPackages] = useState(0);
+
+   if (!currentUser) {
+      history.push('/auth/login');
+   }
 
   useEffect(() => {
     // Fetch total contributions data from the backend API

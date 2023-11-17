@@ -17,7 +17,7 @@ export function AuthProvider({ children }) {
       const fetchUser = async () => {
         try {
           const userResponse = await axios.get(
-            'http://localhost:3001/v1/users/me',
+            'http://localhost:3000/v1/users/me',
             {
               headers: {
                 Authorization: `Bearer ${initialToken}`,
@@ -37,7 +37,7 @@ export function AuthProvider({ children }) {
   const signup = async (userData) => {
     try {
       const response = await axios.post(
-        'http://localhost:3001/v1/auth/register',
+        'http://localhost:3000/v1/auth/register',
         userData
       );
       const accessToken = response.data.tokens.access.token;
@@ -58,7 +58,7 @@ export function AuthProvider({ children }) {
 
   const login = async (email, password) => {
     try {
-      const response = await axios.post('http://localhost:3001/v1/auth/login', {
+      const response = await axios.post('http://localhost:3000/v1/auth/login', {
         email,
         password,
       });
@@ -80,7 +80,7 @@ export function AuthProvider({ children }) {
   const logout = async () => {
     try {
       const refreshToken = localStorage.getItem('REFRESH_TOKEN_KEY');
-      await axios.post('http://localhost:3001/v1/auth/logout', {
+      await axios.post('http://localhost:3000/v1/auth/logout', {
         refreshToken,
       });
       localStorage.removeItem('ACCESS_TOKEN_KEY');

@@ -44,7 +44,7 @@ export default function Products() {
   const fetchProductRequests = async () => {
     try {
       const response = await axiosService.get('/products/request');
-      setProducts(response.data);
+      setProducts(response.data.results);
       setTotalResults(response.data.totalResults);
       setLoading(false);
     } catch (error) {
@@ -52,6 +52,7 @@ export default function Products() {
       setLoading(false);
     }
   };
+      console.log(products);
 
   useEffect(() => {
     fetchProductRequests();
