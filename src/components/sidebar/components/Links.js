@@ -4,7 +4,17 @@ import { useAuth } from 'contexts/AuthContext';
 
 import { NavLink, useLocation } from 'react-router-dom';
 // chakra imports
-import { Box, Flex, HStack, Text, useColorModeValue } from '@chakra-ui/react';
+import {
+  Box,
+  Flex,
+  HStack,
+  Text,
+  useColorModeValue,
+  Collapse,
+  useDisclosure,
+} from '@chakra-ui/react';
+import { FaChevronDown } from 'react-icons/fa';
+
 
 const hiddenRoutes = [
   '/auth/sign-in',
@@ -58,7 +68,8 @@ export function SidebarLinks(props) {
   let activeIcon = useColorModeValue('brand.500', 'white');
   let textColor = useColorModeValue('secondaryGray.500', 'white');
   let brandColor = useColorModeValue('brand.500', 'brand.400');
-  ``;
+  const secondaryColor = 'gray.500';
+  const { isOpen, onToggle } = useDisclosure();
 
   const { routes } = props;
 
@@ -72,26 +83,82 @@ export function SidebarLinks(props) {
       if (hiddenRoutes.includes(route.layout + route.path)) {
         return null;
       }
-      if (route.category) {
+      if (route.subRoutes) {
         return (
-          <>
-            <Text
-              fontSize={'md'}
-              color={activeColor}
-              fontWeight="bold"
-              mx="auto"
-              ps={{
-                sm: '10px',
-                xl: '16px',
-              }}
-              pt="18px"
-              pb="12px"
-              key={index}
-            >
-              {route.name}
-            </Text>
-            {createLinks(route.items)}
-          </>
+          <Box key={index}>
+            <Box d="inline-flex" alignItems="center">
+              <HStack
+                spacing={activeRoute(route.path.toLowerCase()) ? '22px' : '6px'}
+                py="5px"
+                ps="10px"
+              >
+                <Flex alignItems="center" justifyContent="center">
+                  <Box
+                    color={
+                      activeRoute(route.path.toLowerCase())
+                        ? activeIcon
+                        : textColor
+                    }
+                    me="18px"
+                  >
+                    {route.icon}
+                  </Box>
+                  <Text
+                    fontSize="sm"
+                    color={activeColor}
+                    fontWeight="bold"
+                    letterSpacing="wide"
+                    py="6px"
+                    pr="10px"
+                    cursor="pointer"
+                    _hover={{ color: textColor }}
+                    onClick={onToggle}
+                  >
+                    {route.name}
+                  </Text>
+                  <FaChevronDown
+                    cursor="pointer"
+                    color={textColor}
+                    _hover={{ color: secondaryColor }}
+                    onClick={onToggle}
+                  />
+                </Flex>
+              </HStack>
+            </Box>
+
+            <Collapse in={isOpen}>
+              <Box ml={2} fontSize="sm">
+                {route.subRoutes.map((subRoute, subIndex) => (
+                  <NavLink key={subIndex} to={route.layout + subRoute.path}>
+                    <Flex
+                      alignItems="center"
+                      p={2}
+                      _hover={{ bg: secondaryColor }}
+                    >
+                      <Text
+                        color={
+                          activeRoute(
+                            `${route.layout}${subRoute.path}`.toLowerCase()
+                          )
+                            ? activeColor
+                            : textColor
+                        }
+                        fontWeight={
+                          activeRoute(
+                            `${route.layout}${subRoute.path}`.toLowerCase()
+                          )
+                            ? 'bold'
+                            : 'normal'
+                        }
+                      >
+                        {subRoute.name}
+                      </Text>
+                    </Flex>
+                  </NavLink>
+                ))}
+              </Box>
+            </Collapse>
+          </Box>
         );
       } else if (
         route.layout === '/admin' ||

@@ -55,7 +55,6 @@ import CreateCatalogue from 'views/admin/products/create-catalogue';
 import CatalogueDetails from 'views/admin/products/single-product-catalogue';
 import EditProductCatalogue from 'views/admin/products/catalogue/edit';
 
-
 const routes = [
   {
     name: 'Dashboard',
@@ -385,7 +384,7 @@ const routes = [
     component: CreateCatalogue,
   },
   {
-    name: 'Catalogue',
+    name: 'Products',
     layout: '/admin',
     path: '/products/catalogue',
     icon: (
@@ -394,6 +393,7 @@ const routes = [
     roles: ['superAdmin', 'admin', 'manager', 'userReps'],
     component: Catalogue,
   },
+
   {
     name: 'Products',
     layout: '/admin',

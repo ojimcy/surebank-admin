@@ -52,7 +52,6 @@ export default function Products() {
       setLoading(false);
     }
   };
-      console.log(products);
 
   useEffect(() => {
     fetchProductRequests();
@@ -162,7 +161,7 @@ export default function Products() {
             <Spacer />
             <Menu>
               <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-                Manage Product
+                Manage Products
               </MenuButton>
               <MenuList>
                 <MenuItem>
