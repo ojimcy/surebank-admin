@@ -36,7 +36,7 @@ const AccountDetails = ({ customerData }) => {
         {showUserDetails ? 'Hide Details' : 'Show Details'}
       </Link>
 
-      {showUserDetails && (
+      {showUserDetails && customerData && (
         <Flex
           direction={{ base: 'column', md: 'row' }}
           spacing={{ base: '4', md: '0' }}

@@ -19,7 +19,7 @@ import {
 } from '@chakra-ui/react';
 
 import { FaCopy } from 'react-icons/fa';
-import { toast } from 'react-toastify';
+import { useHistory } from 'react-router-dom';
 import { NavLink } from 'react-router-dom';
 
 // Custom components
@@ -36,6 +36,7 @@ import SbPackage from 'components/package/SbPackage';
 
 export default function UserDashboard() {
   const { currentUser } = useAuth();
+  const history = useHistory();
   const { customerData, setCustomerData, userPackages, setUserPackages } =
     useAppContext();
   const [loading, setLoading] = useState(false);
@@ -43,6 +44,12 @@ export default function UserDashboard() {
   const [transactions, setTransactions] = useState([]);
   const [showUserDetails, setShowUserDetails] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
+
+
+   if (!currentUser) {
+     history.push('/auth/login');
+   }
+
 
   const isMobile = useBreakpointValue({ base: true, md: false });
 
@@ -55,10 +62,6 @@ export default function UserDashboard() {
       setTransactions(response.data);
     } catch (error) {
       console.error(error);
-      toast.error(
-        error.response?.data?.message ||
-          'An error occurred while fetching user activities.'
-      );
     }
   };
   
@@ -67,16 +70,12 @@ export default function UserDashboard() {
     try {
       setLoading(true);
       const response = await axiosService.get(
-        `daily-savings/package?userId=${currentUser.id}&accountNumber=${customerData.accountNumber}`
+        `daily-savings/package?userId=${currentUser.id}}`
       );
       setUserPackages(response.data);
       setLoading(false);
     } catch (error) {
       console.error(error);
-      toast.error(
-        error.response?.data?.message ||
-          'An error occurred while fetching user packages.'
-      );
       setLoading(false);
     }
   };
@@ -90,10 +89,6 @@ export default function UserDashboard() {
       setCustomerData(accountResponse.data);
     } catch (error) {
       console.error(error);
-      toast.error(
-        error.response?.data?.message ||
-          'An error occurred while fetching user account data.'
-      );
     }
   };
 
@@ -149,7 +144,7 @@ export default function UserDashboard() {
                 <Avatar
                   size="xl"
                   name="SB"
-                  src={customerData.avatarUrl || ''}
+                  src={customerData?.avatarUrl || ''}
                   m={4}
                 />
               )}

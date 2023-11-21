@@ -64,7 +64,7 @@ const AddStaffModal = ({
                 <option value="" disabled>
                   Select User
                 </option>
-                {users.map((user) => (
+                {users?.map((user) => (
                   <option key={user.id} value={user.id}>
                     {`${user.firstName} ${user.lastName} - ${user.phoneNumber}`}
                   </option>
@@ -87,7 +87,7 @@ const AddStaffModal = ({
                 <option value="" disabled>
                   Select Branch
                 </option>
-                {allBranch.map((branch) => (
+                {allBranch?.map((branch) => (
                   <option key={branch.id} value={branch.id}>
                     {branch.name}
                   </option>
@@ -112,7 +112,7 @@ const AddStaffModal = ({
                   Select a Role
                 </option>
                 {roles &&
-                  roles.map((role) => (
+                  roles?.map((role) => (
                     <option key={role} value={role}>
                       {roleLabels[role]}
                     </option>

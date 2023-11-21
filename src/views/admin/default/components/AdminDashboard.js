@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Flex, Icon, Text, useColorModeValue, Box } from '@chakra-ui/react';
 
+import { useHistory } from 'react-router-dom';
+
 import { MdAttachMoney, MdPerson } from 'react-icons/md';
 import axiosService from 'utils/axiosService';
-import { toast } from 'react-toastify';
 import { formatNaira } from 'utils/helper';
 import Card from 'components/card/Card';
 
@@ -15,7 +16,12 @@ import ActionButton from 'components/Button/CustomButton';
 
 import Withdrawals from './Withdrawals';
 
+import { useAuth } from 'contexts/AuthContext';
+
 export default function UserRepsDashboard() {
+  const { currentUser } = useAuth();
+  const history = useHistory();
+
   const brandColor = useColorModeValue('brand.500', 'white');
   const boxBg = useColorModeValue('secondaryGray.300', 'whiteAlpha.100');
   const textColor = useColorModeValue('secondaryGray.900', 'white');
@@ -24,6 +30,10 @@ export default function UserRepsDashboard() {
   const [contributionsDailyTotal, setContributionDailyTotal] = useState([]);
   const [dailySavingsWithdrawals, setDailySavingsWithdrawals] = useState([]);
   const [openPackageCount, setOpenPackageCount] = useState(0);
+
+  if (!currentUser) {
+    history.push('/auth/login');
+  }
 
   useEffect(() => {
     try {
@@ -57,7 +67,6 @@ export default function UserRepsDashboard() {
       fetchTotalContributions();
     } catch (error) {
       console.error(error);
-      toast.error(error.response?.data?.message || 'An error occurred');
     }
   }, []);
 
@@ -71,7 +80,6 @@ export default function UserRepsDashboard() {
       fetchPackageReport();
     } catch (error) {
       console.error(error);
-      toast.error(error.response?.data?.message || 'An error occurred');
     }
   }, []);
 

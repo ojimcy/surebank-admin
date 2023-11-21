@@ -22,7 +22,6 @@ import {
 } from '@chakra-ui/react';
 // import { CustomButton } from 'components/Button/CustomButton';
 import { NavLink, useParams } from 'react-router-dom';
-import { toast } from 'react-toastify';
 // Assets
 
 // Custom components
@@ -74,10 +73,6 @@ export default function ViewCustomer() {
       setLoading(false);
     } catch (error) {
       console.error(error);
-      toast.error(
-        error.response?.data?.message ||
-          'An error occurred while fetching data.'
-      );
       setLoading(false);
     }
   };
@@ -126,7 +121,7 @@ export default function ViewCustomer() {
                 <Avatar
                   size="xl"
                   name="SB"
-                  src={customerData.avatarUrl || ''}
+                  src={(customerData && customerData.avatarUrl) || ''}
                   m={4}
                 />
               )}
