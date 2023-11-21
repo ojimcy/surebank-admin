@@ -55,6 +55,8 @@ import CreateCatalogue from 'views/admin/products/create-catalogue';
 import CatalogueDetails from 'views/admin/products/single-product-catalogue';
 import EditProductCatalogue from 'views/admin/products/catalogue/edit';
 
+import Collections from 'views/admin/stores/collections';
+
 const routes = [
   {
     name: 'Dashboard',
@@ -393,7 +395,6 @@ const routes = [
     roles: ['superAdmin', 'admin', 'manager', 'userReps'],
     component: Catalogue,
   },
-
   {
     name: 'Products',
     layout: '/admin',
@@ -403,6 +404,13 @@ const routes = [
     ),
     roles: ['superAdmin', 'admin', 'manager', 'userReps'],
     component: Products,
+  },
+  {
+    name: 'Collections',
+    layout: '/admin',
+    path: '/stores/collections',
+    roles: ['superAdmin', 'admin', 'manager', 'userReps'],
+    component: Collections,
   },
 ];
 
