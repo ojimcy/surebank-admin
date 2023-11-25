@@ -60,7 +60,7 @@ const SbPackage = () => {
       }
     }
   };
-  
+
   useEffect(() => {
     fetchUserPackages();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -81,7 +81,6 @@ const SbPackage = () => {
       // Close the modal
       setShowMergeModal(false);
 
-      // You may want to display an error message to the user
       toast.error('Failed to merge packages. Please try again later.');
     }
   };
@@ -152,7 +151,7 @@ const SbPackage = () => {
         </Flex>
 
         <Spacer />
-        {!customerData || Object.keys(customerData).length === 0 ? (
+        {!customerData ? (
           <Button
             bgColor="blue.700"
             color="white"
@@ -207,7 +206,8 @@ const SbPackage = () => {
               >
                 <Text>{packageData.product?.name}</Text>
                 <Text fontSize="lg" fontWeight="bold">
-                  {packageData?.totalContribution.toFixed(2)}
+                  {packageData.totalContribution &&
+                    packageData.totalContribution.toFixed(2)}
                 </Text>
               </Box>
               <Flex justifyContent="space-between" alignItems="center" mt={4}>
@@ -221,7 +221,8 @@ const SbPackage = () => {
                 <Text fontSize={{ base: '14px', md: 'lg' }}>
                   Price:{' '}
                   <Box fontWeight="bold" as="span">
-                    {formatNaira(packageData?.product.price)}
+                    {packageData.product &&
+                      formatNaira(packageData.product?.price)}
                   </Box>{' '}
                 </Text>
               </Flex>

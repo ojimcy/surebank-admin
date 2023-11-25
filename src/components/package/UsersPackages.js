@@ -85,9 +85,15 @@ const UsersPackages = ({
         </Grid>
       ) : (
         <Flex justifyContent="center" mt="4">
-          <Button color="green" as={NavLink} to="/admin/daily-saving/package">
-            No Package Found, Create One
-          </Button>
+          {customerData ? (
+            <Button color="green" as={NavLink} to="/admin/daily-saving/package">
+              No Package Found, Create One
+            </Button>
+          ) : (
+            <Button color="green" onClick={handleShowAccountModal}>
+              No Account Found, Create an account and a new package.
+            </Button>
+          )}
         </Flex>
       )}
 

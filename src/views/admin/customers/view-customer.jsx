@@ -44,6 +44,7 @@ export default function ViewCustomer() {
   const [showBalance, setShowBalance] = useState(true);
   const [transactions, setTransactions] = useState([]);
   const [activeTab, setActiveTab] = useState('ds');
+  
 
   const { customerData, setCustomerData, userPackages, setUserPackages } =
     useAppContext();
