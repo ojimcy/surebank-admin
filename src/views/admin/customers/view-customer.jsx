@@ -90,7 +90,7 @@ export default function ViewCustomer() {
     // Fetch updated data after successful deposit here
     fetchUserData();
   };
-
+  
   return (
     <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
       <Flex justifyContent="space-between" mb="20px">

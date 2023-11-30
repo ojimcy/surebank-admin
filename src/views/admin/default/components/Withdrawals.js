@@ -118,10 +118,7 @@ export default function Withdrawals() {
     setFilteredWithdrawals(filteredData);
   }, [withdrawals, timeRange]);
 
-
-  const totalItems = filteredWithdrawals.length;
   const itemsPerPage = 10;
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
 
   // Columns for the user table
   const columns = React.useMemo(

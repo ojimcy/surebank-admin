@@ -59,7 +59,7 @@ export default function Users() {
       console.error(error);
     }
   };
-
+ 
   useEffect(() => {
     fetchUsers();
   }, []);
