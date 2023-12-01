@@ -297,12 +297,14 @@ export default function Collections() {
             {loading ? (
               <Spinner />
             ) : (
-              <SimpleTable
-                columns={columns}
-                data={filteredCollections}
-                pageSize={totalResults}
-                totalPages={totalResults}
-              />
+              filteredCollections && (
+                <SimpleTable
+                  columns={columns}
+                  data={filteredCollections}
+                  pageSize={totalResults}
+                  totalPages={totalResults}
+                />
+              )
             )}
           </Box>
         </Card>
