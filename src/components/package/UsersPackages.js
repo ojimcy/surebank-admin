@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Button,
   Flex,
@@ -11,20 +11,19 @@ import PackageCard from 'components/package/PackageCard';
 import CreateAccountModal from 'components/modals/CreateAccountModal';
 import { useAppContext } from 'contexts/AppContext';
 
-import { NavLink } from 'react-router-dom';
+import { NavLink, useParams } from 'react-router-dom';
 
-const UsersPackages = ({
-  userPackages,
-  handleTransferSuccess,
-  handleDepositSuccess,
-}) => {
+import axiosService from 'utils/axiosService';
+
+const UsersPackages = ({ handleTransferSuccess, handleDepositSuccess }) => {
+  const { id } = useParams();
   const { customerData } = useAppContext();
 
   const textColor = useColorModeValue('secondaryGray.900', 'white');
   const textColorSecondary = 'secondaryGray.600';
 
   const [showAccountModal, setShowAccountModal] = useState(false);
-
+  const [userPackages, setUserPackages] = useState([]);
 
   const handleShowAccountModal = () => {
     setShowAccountModal(true);
@@ -33,6 +32,19 @@ const UsersPackages = ({
   const closeAccountModal = () => {
     setShowAccountModal(false);
   };
+
+  useEffect(() => {
+    const fetchPackages = async () => {
+      const response = await axiosService.get(
+        `daily-savings/package?userId=${id}`
+      );
+      setUserPackages(response.data);
+    };
+
+    fetchPackages();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
+  console.log(userPackages);
 
   return (
     <>

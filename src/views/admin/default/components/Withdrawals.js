@@ -35,6 +35,8 @@ export default function Withdrawals() {
   const [isCustomDateModalOpen, setCustomDateModalOpen] = useState(false);
   const [customRangeLabel, setCustomRangeLabel] = useState('Custom Range');
 
+  const totalPages = 10;
+
   const handleTimeRangeChange = (e) => {
     setTimeRange(e.target.value);
   };
