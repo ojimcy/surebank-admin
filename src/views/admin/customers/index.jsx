@@ -175,6 +175,10 @@ export default function Customers() {
         accessor: 'accountNumber',
       },
       {
+        Header: 'Phone Number',
+        accessor: 'phoneNumber',
+      },
+      {
         Header: 'Action',
         accessor: (row) => (
           <>

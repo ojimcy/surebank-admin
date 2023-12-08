@@ -8,8 +8,8 @@ export function useAuth() {
   return useContext(AuthContext);
 }
 
-// const baseURL = 'http://localhost:3000/v1/';
-const baseURL = 'https://l1uwu6hw65.execute-api.us-east-1.amazonaws.com';
+const baseURL = 'http://localhost:3001/v1';
+// const baseURL = 'https://l1uwu6hw65.execute-api.us-east-1.amazonaws.com/v1';
 
 export function AuthProvider({ children }) {
   const initialToken = localStorage.getItem('ACCESS_TOKEN_KEY');
@@ -19,7 +19,7 @@ export function AuthProvider({ children }) {
     if (initialToken) {
       const fetchUser = async () => {
         try {
-          const userResponse = await axios.get(`${baseURL}/v1/users/me`, {
+          const userResponse = await axios.get(`${baseURL}/users/me`, {
             headers: {
               Authorization: `Bearer ${initialToken}`,
             },
@@ -37,7 +37,7 @@ export function AuthProvider({ children }) {
   const signup = async (userData) => {
     try {
       const response = await axios.post(
-        `${baseURL}/v1/auth/register`,
+        `${baseURL}/auth/register`,
         userData
       );
       const accessToken = response.data.tokens.access.token;
@@ -58,7 +58,7 @@ export function AuthProvider({ children }) {
 
   const login = async (email, password) => {
     try {
-      const response = await axios.post(`${baseURL}/v1/auth/login`, {
+      const response = await axios.post(`${baseURL}/auth/login`, {
         email,
         password,
       });
@@ -80,7 +80,7 @@ export function AuthProvider({ children }) {
   const logout = async () => {
     try {
       const refreshToken = localStorage.getItem('REFRESH_TOKEN_KEY');
-      await axios.post(`${baseURL}/v1/auth/logout`, {
+      await axios.post(`${baseURL}/auth/logout`, {
         refreshToken,
       });
       localStorage.removeItem('ACCESS_TOKEN_KEY');

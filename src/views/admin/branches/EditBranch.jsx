@@ -27,10 +27,9 @@ export default function EditBranch() {
     formState: { isSubmitting },
     setValue,
   } = useForm();
-
   const fetchStaffs = async () => {
     try {
-      const response = await axiosService.get(`/branch/staff`);
+      const response = await axiosService.get(`/staff/${id}`);
       setStaffs(response.data);
     } catch (error) {
       console.error(error);
@@ -39,7 +38,7 @@ export default function EditBranch() {
 
   useEffect(() => {
     fetchStaffs();
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     // Extract the id from the query parameters in the URL

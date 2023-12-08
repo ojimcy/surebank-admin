@@ -46,7 +46,6 @@ export default function EditCustomer() {
         setValue('firstName', response.data.firstName);
         setValue('lastName', response.data.lastName);
         setValue('accountManagerId', response.data.accountManagerId._id);
-        setValue('accountType', response.data.accountType);
         setValue('branchId', response.data.branchId);
       } catch (error) {
         console.error(error);
@@ -123,7 +122,7 @@ export default function EditCustomer() {
 
               <FormControl mt={4}>
                 <FormLabel
-                  htmlFor="address"
+                  htmlFor="accountManagerId"
                   display="flex"
                   ms="4px"
                   fontSize="sm"
@@ -151,7 +150,7 @@ export default function EditCustomer() {
 
               <FormControl mt={4}>
                 <FormLabel
-                  htmlFor="address"
+                  htmlFor="branchId"
                   display="flex"
                   ms="4px"
                   fontSize="sm"
@@ -176,29 +175,7 @@ export default function EditCustomer() {
                     ))}
                 </Select>
               </FormControl>
-
-              <FormControl mt={4} isInvalid={errors.accountType}>
-                <FormLabel
-                  htmlFor="address"
-                  display="flex"
-                  ms="4px"
-                  fontSize="sm"
-                  fontWeight="500"
-                  color={textColor}
-                  mb="8px"
-                >
-                  Account Type<Text color={brandStars}>*</Text>
-                </FormLabel>
-                <Select
-                  {...register('accountType')}
-                  name="accountType"
-                  defaultValue={account?.accountType}
-                >
-                  <option value="">Select account type</option>
-                  <option value="ds">DS</option>
-                  <option value="sb">SB</option>
-                </Select>
-              </FormControl>
+              
               <Button
                 fontSize="sm"
                 colorScheme="green"

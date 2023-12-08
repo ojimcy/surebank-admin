@@ -45,6 +45,7 @@ export default function Users() {
     setLoading(true);
     try {
       const response = await axiosService.get('/branch/');
+      console.log(response);
       setBranches(response.data.results);
       setTotalResults(response.data.totalResults);
       setLoading(false);
@@ -149,7 +150,7 @@ export default function Users() {
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [],
   );
 
   return (

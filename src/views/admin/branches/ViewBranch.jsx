@@ -75,6 +75,7 @@ export default function User() {
       toast.success('Staff has been created successfully!');
       history.push(`/admin/branch/viewstaff/${id}`);
     } catch (error) {
+      console.error('Error adding staff to branch:', error);
       if (
         error.response &&
         error.response.data &&

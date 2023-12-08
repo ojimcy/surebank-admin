@@ -66,7 +66,7 @@ export default function Users() {
 
   useEffect(() => {
     fetchUsers(currentPage);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage]);
 
   const handleNextPageClick = () => {
@@ -80,7 +80,7 @@ export default function Users() {
       setCurrentPage(currentPage - 1);
     }
   };
-
+  console.log('klog', branch);
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return new Intl.DateTimeFormat('en-US', {
@@ -264,7 +264,6 @@ export default function Users() {
           </ModalFooter>
         </ModalContent>
       </Modal>
-      
     </Box>
   );
 }

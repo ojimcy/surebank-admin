@@ -69,8 +69,8 @@ export default function Users() {
     const filtered = users?.filter((user) => {
       const fullName = `${user.firstName} ${user.lastName}`.toLowerCase();
       return (
-        fullName.includes(searchTerm.toLowerCase()) ||
-        user.email.includes(searchTerm)
+        (user.role === 'user') &&
+        (fullName.includes(searchTerm.toLowerCase()) || user.email.includes(searchTerm))
       );
     });
     setFilteredUsers(filtered);
@@ -117,13 +117,6 @@ export default function Users() {
     }
   };
 
-  const roleLabels = {
-    userReps: 'Cashier',
-    manager: 'Manager',
-    admin: 'Admin',
-    superAdmin: 'Super Admin',
-    user: 'User',
-  };
   // Columns for the user table
   const columns = React.useMemo(
     () => [
@@ -138,10 +131,6 @@ export default function Users() {
       {
         Header: 'Email',
         accessor: 'email',
-      },
-      {
-        Header: 'Role',
-        accessor: (row) => roleLabels[row.role] || row.role,
       },
       {
         Header: 'Created Date',

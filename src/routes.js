@@ -245,7 +245,7 @@ const routes = [
     icon: (
       <Icon as={MdOutlinePerson3} width="20px" height="20px" color="inherit" />
     ),
-    roles: ['superAdmin', 'admin', 'manager', 'userReps'],
+    roles: ['superAdmin', 'admin'],
     component: Users,
   },
   {
