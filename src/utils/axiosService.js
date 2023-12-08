@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-const baseURL = 'http://localhost:3001/v1';
-// const baseURL = 'https://l1uwu6hw65.execute-api.us-east-1.amazonaws.com/v1';
+// const baseURL = 'http://localhost:3001/v1';
+const baseURL = 'https://l1uwu6hw65.execute-api.us-east-1.amazonaws.com/v1';
 
 const api = axios.create({
   baseURL,
