@@ -67,7 +67,7 @@ export default function ViewCustomer() {
           axiosService.get(`daily-savings/package?userId=${id}`),
         ]);
 
-      setCustomerData(accountResponse.data[0]);
+      setCustomerData(accountResponse.data);
       setTransactions(activitiesResponse.data);
       setUserPackages(packagesResponse.data);
 
@@ -90,6 +90,7 @@ export default function ViewCustomer() {
     // Fetch updated data after successful deposit here
     fetchUserData();
   };
+
   return (
     <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
       <Flex justifyContent="space-between" mb="20px">

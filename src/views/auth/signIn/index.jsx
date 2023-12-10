@@ -56,7 +56,7 @@ function SignIn() {
 
   const submitHandler = async (data) => {
     try {
-      await login(data.email, data.password);
+      await login(data.identifier, data.password);
       toast.success('Signin successful!');
       history.push('/admin');
     } catch (error) {
@@ -110,37 +110,37 @@ function SignIn() {
           me="auto"
           mb={{ base: '20px', md: 'auto' }}
         >
-
           <form onSubmit={handleSubmit(submitHandler)}>
-            <FormControl isInvalid={errors.email}>
+            <FormControl isInvalid={errors.identifier}>
               <FormLabel
                 display="flex"
-                htmlFor="email"
+                htmlFor="identifier"
                 ms="4px"
                 fontSize="sm"
                 fontWeight="500"
                 color={textColor}
                 mb="8px"
               >
-                Email<Text color={brandStars}>*</Text>
+                Email or Phone Number<Text color={brandStars}>*</Text>
               </FormLabel>
               <Input
                 isRequired={true}
                 variant="auth"
                 fontSize="sm"
                 ms={{ base: '0px', md: '0px' }}
-                type="email"
-                placeholder="mail@simmmple.com"
+                placeholder="mail@simmmple.com or +1234567890"
                 mb="24px"
                 fontWeight="500"
                 size="lg"
-                {...register('email')}
+                {...register('identifier')}
               />
-              {errors.email && (
-                <FormErrorMessage>{errors.email.message}</FormErrorMessage>
+              {errors.identifier && (
+                <FormErrorMessage>
+                  {errors.identifier.message}
+                </FormErrorMessage>
               )}
             </FormControl>
-            <FormControl isInvalid={errors.email}>
+            <FormControl isInvalid={errors.password}>
               <FormLabel
                 ms="4px"
                 fontSize="sm"

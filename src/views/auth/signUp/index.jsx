@@ -37,7 +37,7 @@ function SignUp() {
   const textColorDetails = useColorModeValue('navy.700', 'secondaryGray.600');
   const textColorBrand = useColorModeValue('brand.500', 'white');
   const brandStars = useColorModeValue('brand.500', 'brand.400');
- 
+
   const [show, setShow] = useState(false);
   const handleClick = () => setShow(!show);
 
@@ -86,6 +86,15 @@ function SignUp() {
           <Heading color={textColor} fontSize="36px" mb="10px">
             Sign Up
           </Heading>
+          <Text
+            mb="36px"
+            ms="4px"
+            color={textColorSecondary}
+            fontWeight="400"
+            fontSize="md"
+          >
+            The fields marked with stars are required!!!
+          </Text>
         </Box>
         <Flex
           zIndex="2"
@@ -99,9 +108,9 @@ function SignUp() {
           mb={{ base: '20px', md: 'auto' }}
         >
           <form onSubmit={handleSubmit(submitHandler)}>
-            <FormControl isInvalid={errors.email}>
+            <FormControl isInvalid={errors.phoneNumber}>
               <FormLabel
-                htmlFor="email"
+                htmlFor="phoneNumber"
                 display="flex"
                 ms="4px"
                 fontSize="sm"
@@ -109,29 +118,24 @@ function SignUp() {
                 color={textColor}
                 mb="8px"
               >
-                Email<Text color={brandStars}>*</Text>
+                Phone Number<Text color={brandStars}>*</Text>
               </FormLabel>
               <Input
                 isRequired={true}
                 variant="auth"
                 fontSize="sm"
                 ms={{ base: '0px', md: '0px' }}
-                type="email"
-                id="email"
-                placeholder="mail@sample.com"
+                type="text"
+                id="phoneNumber"
                 mb="24px"
                 fontWeight="500"
                 size="lg"
-                {...register('email', {
-                  required: 'Email is required',
-                  pattern: {
-                    value: /\S+@\S+\.\S+/,
-                    message: 'Invalid email address',
-                  },
+                {...register('phoneNumber', {
+                  required: 'Phone number is required',
                 })}
               />
               <FormErrorMessage>
-                {errors.email && errors.email.message}
+                {errors.phoneNumber && errors.phoneNumber.message}
               </FormErrorMessage>
             </FormControl>
             <FormControl isInvalid={errors.password}>
@@ -247,37 +251,7 @@ function SignUp() {
                 </FormControl>
               </Box>
             </Flex>
-            <FormControl isInvalid={errors.phoneNumber}>
-              <FormLabel
-                htmlFor="phoneNumber"
-                display="flex"
-                ms="4px"
-                fontSize="sm"
-                fontWeight="500"
-                color={textColor}
-                mb="8px"
-              >
-                Phone Number<Text color={brandStars}>*</Text>
-              </FormLabel>
-              <Input
-                isRequired={true}
-                variant="auth"
-                fontSize="sm"
-                ms={{ base: '0px', md: '0px' }}
-                type="text"
-                id="phoneNumber"
-                mb="24px"
-                fontWeight="500"
-                size="lg"
-                {...register('phoneNumber', {
-                  required: 'Phone number is required',
-                })}
-              />
-              <FormErrorMessage>
-                {errors.phoneNumber && errors.phoneNumber.message}
-              </FormErrorMessage>
-            </FormControl>
-            <FormControl isInvalid={errors.address}>
+            <FormControl>
               <FormLabel
                 htmlFor="address"
                 display="flex"
@@ -287,10 +261,10 @@ function SignUp() {
                 color={textColor}
                 mb="8px"
               >
-                Address<Text color={brandStars}>*</Text>
+                Address
               </FormLabel>
               <Input
-                isRequired={true}
+                isRequired={false}
                 variant="auth"
                 fontSize="sm"
                 ms={{ base: '0px', md: '0px' }}
@@ -299,15 +273,44 @@ function SignUp() {
                 mb="24px"
                 fontWeight="500"
                 size="lg"
-                {...register('address', {
-                  required: 'Address is required',
+                {...register('address')}
+              />
+            </FormControl>
+
+            <FormControl>
+              <FormLabel
+                htmlFor="email"
+                display="flex"
+                ms="4px"
+                fontSize="sm"
+                fontWeight="500"
+                color={textColor}
+                mb="8px"
+              >
+                Email
+              </FormLabel>
+              <Input
+                isRequired={false}
+                variant="auth"
+                fontSize="sm"
+                ms={{ base: '0px', md: '0px' }}
+                type="email"
+                id="email"
+                placeholder="mail@example.com"
+                mb="24px"
+                fontWeight="500"
+                size="lg"
+                {...register('email', {
+                  pattern: {
+                    value: /\S+@\S+\.\S+/,
+                    message: 'Invalid email address',
+                  },
                 })}
               />
               <FormErrorMessage>
-                {errors.address && errors.address.message}
+                {errors.email && errors.email.message}
               </FormErrorMessage>
             </FormControl>
-
             <Button
               fontSize="sm"
               variant="brand"

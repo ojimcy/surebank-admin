@@ -26,15 +26,12 @@ import axiosService from 'utils/axiosService';
 import { toast } from 'react-toastify';
 import { toSentenceCase } from 'utils/helper';
 import { useAppContext } from 'contexts/AppContext';
-import { useAuth } from 'contexts/AuthContext';
 
 export default function CreateAccountModal({ isOpen, onClose }) {
-  const { branches } = useAppContext();
-  const { currentUser } = useAuth();
+  const { branches, customerData } = useAppContext();
 
   const brandStars = useColorModeValue('brand.500', 'brand.400');
   const textColor = useColorModeValue('navy.700', 'white');
-
   const {
     handleSubmit,
     register,
@@ -85,7 +82,7 @@ export default function CreateAccountModal({ isOpen, onClose }) {
                 <Input
                   type="email"
                   placeholder="Enter your email"
-                  defaultValue={currentUser.email}
+                  defaultValue={customerData.email}
                   {...register('email', { required: true })}
                 />
               </InputGroup>

@@ -56,10 +56,10 @@ export function AuthProvider({ children }) {
     }
   };
 
-  const login = async (email, password) => {
+  const login = async (identifier, password) => {
     try {
       const response = await axios.post(`${baseURL}/auth/login`, {
-        email,
+        identifier,
         password,
       });
       const accessToken = response.data.tokens.access.token;
