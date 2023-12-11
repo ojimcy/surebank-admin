@@ -35,16 +35,15 @@ import Card from 'components/card/Card.js';
 import { DeleteIcon, EditIcon, SearchIcon } from '@chakra-ui/icons';
 import BackButton from 'components/menu/BackButton';
 import { toast } from 'react-toastify';
-import SimpleTable from 'components/table/SimpleTable';
 import { useForm } from 'react-hook-form';
 import { useAuth } from 'contexts/AuthContext';
+import CustomTable from 'components/table/CustomTable';
 
 export default function Customers() {
   const { currentUser } = useAuth();
   const history = useHistory();
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [totalResults, setTotalResults] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredCustomers, setFilteredCustomers] = useState([]);
 
@@ -52,27 +51,28 @@ export default function Customers() {
   const [showBranchModal, setShowBranchModal] = useState(false);
   const [allBranch, setAllBranch] = useState([]);
   const [customerToDelete, setCustomerToDelete] = useState(null);
-
-  const pageLimit = 10;
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 20, // Set your default page size here
+  });
 
   const fetchAccounts = async () => {
     setLoading(true);
+    const { pageIndex, pageSize } = pagination;
     try {
       let response;
       if (currentUser.role === 'userReps') {
         response = await axiosService.get(
-          `/accounts/${currentUser.id}/staffaccounts`
+          `/accounts/${currentUser.id}/staffaccounts?limit=${pageSize}&page=${pageIndex + 1}`
         );
         setCustomers(response.data);
-        setTotalResults(response.data.length);
       } else if (currentUser.role === 'manager') {
         const response = await axiosService.get(
-          `accounts/${currentUser.branchId}/branchaccounts`
+          `accounts/${currentUser.branchId}/branchaccounts?limit=${pageSize}&page=${pageIndex + 1}`
         );
         setCustomers(response.data);
-        setTotalResults(response.data.length);
       } else {
-        response = await axiosService.get('/accounts/');
+        response = await axiosService.get(`/accounts?limit=${pageSize}&page=${pageIndex + 1}`);
         setCustomers(response.data.results);
       }
       const branches = await axiosService.get('/branch/');
@@ -86,7 +86,12 @@ export default function Customers() {
   useEffect(() => {
     fetchAccounts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [pagination]);
+
+  
+  const onPageChange = ({ pageIndex, pageSize }) => {
+    setPagination({ pageIndex, pageSize });
+  };
 
   // Filter customers based on search term
   useEffect(() => {
@@ -293,11 +298,10 @@ export default function Customers() {
             {loading ? (
               <Spinner />
             ) : (
-              <SimpleTable
+              <CustomTable
                 columns={columns}
                 data={filteredCustomers}
-                pageSize={pageLimit}
-                totalPages={totalResults}
+                onPageChange={onPageChange} 
               />
             )}
           </Box>

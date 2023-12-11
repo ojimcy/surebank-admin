@@ -35,7 +35,7 @@ import Card from 'components/card/Card.js';
 import AssignRoleModal from 'components/modals/AssignRoleModal.js';
 import AddStaffModal from 'components/modals/AddStaffModal.js';
 import TransferStaffModal from 'components/modals/TransferStaffModal.js';
-import SimpleTable from 'components/table/SimpleTable';
+import CustomTable from 'components/table/CustomTable';
 import { ChevronDownIcon, DeleteIcon, SearchIcon } from '@chakra-ui/icons';
 import { toast } from 'react-toastify';
 
@@ -54,17 +54,23 @@ export default function Users() {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredStaffs, setFilteredStaffs] = useState([]);
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 20, // Set your default page size here
+  });
+
 
 
   const fetchUsers = async () => {
     setLoading(true);
+    const { pageIndex, pageSize } = pagination;
     try {
       const branches = await axiosService.get('/branch/');
-      const response = await axiosService.get(`/staff`);
-      const UserResponse = await axiosService.get('/users/');
+      const response = await axiosService.get(`/staff?limit=${pageSize}&page=${pageIndex + 1}`);
+      const UserResponse = await axiosService.get(`/users?limit=10000000`);
       setUsers(UserResponse.data.results);
       setAllBranch(branches.data.results);
-      setStaffs(response.data);
+      setStaffs(response.data.results);
       setLoading(false);
     } catch (error) {
       console.error(error);
@@ -73,7 +79,13 @@ export default function Users() {
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pagination]);
+
+  
+  const onPageChange = ({ pageIndex, pageSize }) => {
+    setPagination({ pageIndex, pageSize });
+  };
 
   const openTransferStaffModal = async (staffUserId) => {
     const response = await axiosService.get(`users/${staffUserId}`);
@@ -212,28 +224,24 @@ export default function Users() {
   };
 
 
-  const totalItems = filteredStaffs.length;
-  const itemsPerPage = 10;
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
-
   // Columns for the user table
   const columns = React.useMemo(
     () => [
       {
         Header: 'Staff Name',
         accessor: (row) => (
-          <NavLink to={`/admin/user/${row.staffId?.id}`}>
-            {row.staffId.firstName} {row.staffId.lastName}
+          <NavLink to={`/admin/user/${row.user?.id}`}>
+            {row.user.firstName} {row.user.lastName}
           </NavLink>
         ),
       },
       {
         Header: 'Branch',
-        accessor: (row) => row.branchId.name,
+        accessor: (row) => row.branch.name,
       },
       {
         Header: 'Role',
-        accessor: (row) => roleLabels[row.staffId.role],
+        accessor: (row) => roleLabels[row.user.role],
       },
       {
         Header: 'Status',
@@ -327,11 +335,10 @@ export default function Users() {
             {loading ? (
               <Spinner />
             ) : (
-              <SimpleTable
+              <CustomTable
                 columns={columns}
                 data={filteredStaffs}
-                pageSize={itemsPerPage}
-                totalPages={totalPages}
+                onPageChange={onPageChange} 
               />
             )}
           </Box>

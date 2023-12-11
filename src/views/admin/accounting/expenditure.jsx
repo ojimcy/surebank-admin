@@ -32,7 +32,7 @@ import axiosService from 'utils/axiosService';
 import Card from 'components/card/Card.js';
 import { SearchIcon } from '@chakra-ui/icons';
 import BackButton from 'components/menu/BackButton';
-import SimpleTable from 'components/table/SimpleTable';
+import CustomTable from 'components/table/CustomTable';
 import { NavLink } from 'react-router-dom/';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
@@ -46,6 +46,11 @@ export default function Expenditures() {
   const [timeRange, setTimeRange] = useState('all');
 
   const [showExpenditureModal, setShowExpenditureModal] = useState(false);
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 20, // Set your default page size here
+  });
+
 
   const {
     handleSubmit,
@@ -54,13 +59,14 @@ export default function Expenditures() {
   } = useForm();
   const brandStars = useColorModeValue('brand.500', 'brand.400');
   const textColor = useColorModeValue('navy.700', 'white');
-  
+
   useEffect(() => {
     const fetchExpenditures = async () => {
       setLoading(true);
       try {
         // Construct the API endpoint based on filters
         let endpoint = `/expenditure`;
+        const { pageIndex, pageSize } = pagination;
 
         if (currentUser.role === 'superAdmin' || 'admin') {
           if (timeRange === 'last7days') {
@@ -69,17 +75,23 @@ export default function Expenditures() {
             const startDate = new Date();
             startDate.setDate(endDate.getDate() - 7);
             startDate.setHours(0, 0, 0, 0);
-            endpoint += `?startDate=${startDate.getTime()}&endDate=${endDate.getTime()}`;
+            endpoint += `?startDate=${startDate.getTime()}&endDate=${endDate.getTime()}&limit=${pageSize}&page=${
+              pageIndex + 1
+            }`;
           } else if (timeRange === 'last30days') {
             const endDate = new Date();
             endDate.setHours(23, 59, 59, 999);
             const startDate = new Date();
             startDate.setDate(endDate.getDate() - 30);
             startDate.setHours(0, 0, 0, 0);
-            endpoint += `?startDate=${startDate.getTime()}&endDate=${endDate.getTime()}`;
+            endpoint += `?startDate=${startDate.getTime()}&endDate=${endDate.getTime()}&limit=${pageSize}&page=${
+              pageIndex + 1
+            }`;
           }
         } else if (currentUser.role === 'userReps') {
-          endpoint = '/expenditure/user-reps';
+          endpoint = `/expenditure/user-reps?limit=${pageSize}&page=${
+            pageIndex + 1
+          }`;
         }
 
         const response = await axiosService.get(endpoint);
@@ -89,7 +101,7 @@ export default function Expenditures() {
           (expenditure) => ({
             ...expenditure,
             date: new Date(expenditure.date).getTime(),
-          })
+          }),
         );
 
         setExpenditures(convertedExpenditures);
@@ -99,7 +111,12 @@ export default function Expenditures() {
       }
     };
     fetchExpenditures();
-  }, [currentUser.role, timeRange]);
+  }, [currentUser.role, timeRange, pagination]);
+
+  
+  const onPageChange = ({ pageIndex, pageSize }) => {
+    setPagination({ pageIndex, pageSize });
+  };
 
   // Filter expenditures based on search term
   useEffect(() => {
@@ -135,15 +152,10 @@ export default function Expenditures() {
       console.error(error);
       toast.error(
         error.response?.data?.message ||
-          'An error occurred while creating expenditure.'
+          'An error occurred while creating expenditure.',
       );
     }
   };
-
-
-  const totalItems = filteredExpenditure.length;
-  const itemsPerPage = 10;
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
 
   // Columns for the user table
   const columns = React.useMemo(
@@ -173,7 +185,7 @@ export default function Expenditures() {
         ),
       },
     ],
-    []
+    [],
   );
 
   return (
@@ -234,11 +246,10 @@ export default function Expenditures() {
             {loading ? (
               <Spinner />
             ) : (
-              <SimpleTable
+              <CustomTable
                 columns={columns}
                 data={filteredExpenditure}
-                pageSize={itemsPerPage}
-                totalPages={totalPages}
+                onPageChange={onPageChange} 
               />
             )}
           </Box>

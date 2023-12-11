@@ -31,27 +31,28 @@ import { DeleteIcon, EditIcon, SearchIcon } from '@chakra-ui/icons';
 import { toast } from 'react-toastify';
 import BackButton from 'components/menu/BackButton';
 import axios from 'axios';
-import SimpleTable from 'components/table/SimpleTable';
+import CustomTable from 'components/table/CustomTable';
 
 export default function Users() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [totalPages, setTotalTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredUsers, setFilteredUsers] = useState([]);
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
-
-  const itemsPerPage = 10;
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 20, // Set your default page size here
+  });
 
   const fetchUsers = async () => {
     setLoading(true);
+    const { pageIndex, pageSize } = pagination;
     const accessToken = localStorage.getItem('ACCESS_TOKEN_KEY');
     try {
-      const response = await axiosService.get('/users/');
+      const response = await axiosService.get(`/users?limit=${pageSize}&page=${pageIndex + 1}`);
       setUsers(response.data.results);
-      setTotalTotalPages(response.data.totalPages);
       setLoading(false);
 
       axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
@@ -62,7 +63,12 @@ export default function Users() {
  
   useEffect(() => {
     fetchUsers();
-  }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pagination]);
+
+  const onPageChange = ({ pageIndex, pageSize }) => {
+    setPagination({ pageIndex, pageSize });
+  };
 
   // Filter Users based on search term
   useEffect(() => {
@@ -220,11 +226,10 @@ export default function Users() {
                 No user records found.
               </Text>
             ) : (
-              <SimpleTable
+              <CustomTable
                 columns={columns}
                 data={filteredUsers}
-                pageSize={itemsPerPage}
-                totalPages={totalPages}
+                onPageChange={onPageChange} 
               />
             )}
           </Box>

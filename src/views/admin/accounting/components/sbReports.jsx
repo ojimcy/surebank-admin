@@ -8,17 +8,14 @@ import { NavLink } from 'react-router-dom';
 // Assets
 import axiosService from 'utils/axiosService';
 import Card from 'components/card/Card.js';
-import SimpleTable from 'components/table/SimpleTable';
 import { formatDate } from 'utils/helper';
 import { formatNaira } from 'utils/helper';
+import CustomTable from 'components/table/CustomTable';
 
 export default function SbReports() {
   const [dsChargedPackages, setDsChargedPackages] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [totalPages, setTotalPages] = useState(1);
   const [totalAmountPerDay, setTotalAmountPerDay] = useState(0);
-
-  const itemsPerPage = 10;
 
   const fetchDsChargedPackages = async () => {
     setLoading(true);
@@ -75,17 +72,15 @@ export default function SbReports() {
         <Box marginTop="30">
           {loading ? (
             <Spinner />
-          ) : dsChargedPackages.length === 0 ? (
+          ) :  dsChargedPackages && dsChargedPackages.length > 0 ? (
+            <CustomTable
+              columns={columns}
+              data={dsChargedPackages}
+            />
+          ) : (
             <Text fontSize="lg" textAlign="center" mt="20">
               No records found!
             </Text>
-          ) : (
-            <SimpleTable
-              columns={columns}
-              data={dsChargedPackages}
-              pageSize={itemsPerPage}
-              totalPages={totalPages}
-            />
           )}
         </Box>
       </Card>

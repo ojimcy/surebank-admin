@@ -54,7 +54,7 @@ export default function User() {
   const fetchStaffs = async () => {
     try {
       const response = await axiosService.get(`/staff`);
-      setStaffs(response.data);
+      setStaffs(response.data.results);
     } catch (error) {
       console.error(error);
     }

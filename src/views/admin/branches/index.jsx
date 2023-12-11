@@ -28,7 +28,7 @@ import Card from 'components/card/Card.js';
 import { DeleteIcon, EditIcon, SearchIcon } from '@chakra-ui/icons';
 import { toast } from 'react-toastify';
 
-import SimpleTable from 'components/table/SimpleTable';
+import CustomTable from 'components/table/CustomTable';
 import { useAppContext } from 'contexts/AppContext';
 
 export default function Users() {
@@ -40,11 +40,16 @@ export default function Users() {
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 20, // Set your default page size here
+  });
 
   const fetchBranches = async () => {
     setLoading(true);
+    const { pageIndex, pageSize } = pagination;
     try {
-      const response = await axiosService.get('/branch/');
+      const response = await axiosService.get(`/branch?limit=${pageSize}&page=${pageIndex + 1}`);
       console.log(response);
       setBranches(response.data.results);
       setTotalResults(response.data.totalResults);
@@ -56,7 +61,11 @@ export default function Users() {
   useEffect(() => {
     fetchBranches();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [pagination]);
+  
+  const onPageChange = ({ pageIndex, pageSize }) => {
+    setPagination({ pageIndex, pageSize });
+  };
 
   const handleDeleteIconClick = (userId) => {
     setUserToDelete(userId);
@@ -203,11 +212,10 @@ export default function Users() {
             {loading ? (
               <Spinner />
             ) : (
-              <SimpleTable
+              <CustomTable
                 columns={columns}
                 data={filteredBranches}
-                pageSize={totalResults}
-                totalPages={totalResults}
+                onPageChange={onPageChange} 
               />
             )}
           </Box>
