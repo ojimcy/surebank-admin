@@ -80,7 +80,6 @@ export default function Users() {
       setCurrentPage(currentPage - 1);
     }
   };
-  console.log('klog', branch);
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return new Intl.DateTimeFormat('en-US', {

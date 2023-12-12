@@ -70,7 +70,7 @@ export default function Users() {
       const UserResponse = await axiosService.get(`/users?limit=10000000`);
       setUsers(UserResponse.data.results);
       setAllBranch(branches.data.results);
-      setStaffs(response.data.results);
+      setStaffs(response.data);
       setLoading(false);
     } catch (error) {
       console.error(error);
@@ -92,6 +92,7 @@ export default function Users() {
     setStaffUser(response.data);
     setShowTransferStaffModal(true);
   };
+  console.log(staffs)
 
   const handleDeleteIconClick = (userId) => {
     setUserToDelete(userId);
@@ -230,18 +231,18 @@ export default function Users() {
       {
         Header: 'Staff Name',
         accessor: (row) => (
-          <NavLink to={`/admin/user/${row.user?.id}`}>
-            {row.user.firstName} {row.user.lastName}
+          <NavLink to={`/admin/user/${row.staffId?.id}`}>
+            {row.staffId.firstName} {row.staffId.lastName}
           </NavLink>
         ),
       },
       {
         Header: 'Branch',
-        accessor: (row) => row.branch.name,
+        accessor: (row) => row.branchId.name,
       },
       {
         Header: 'Role',
-        accessor: (row) => roleLabels[row.user.role],
+        accessor: (row) => roleLabels[row.staffId.role],
       },
       {
         Header: 'Status',

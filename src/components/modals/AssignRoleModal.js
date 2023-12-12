@@ -71,8 +71,8 @@ const AssignRoleModal = ({ isOpen, onClose, staffs, addRoleToStaff }) => {
                         Select a staff
                       </option>
                       {staffs?.map((staff) => (
-                        <option key={staff.id} value={staff.user.id}>
-                          {staff.user.firstName} {staff.user.lastName} (
+                        <option key={staff.id} value={staff.staffId.id}>
+                          {staff.staffId.firstName} {staff.staffId.lastName} (
                           {staff.branchId.name})
                         </option>
                       ))}

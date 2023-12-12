@@ -35,7 +35,7 @@ const AssignManager = () => {
       setLoading(false);
     }
   };
-
+console.log(staffList);
   const handleAssignManager = async () => {
     if (!selectedManager) return;
     try {

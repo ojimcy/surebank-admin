@@ -50,7 +50,6 @@ const CustomTable = ({ columns, data, onPageChange }) => {
     },
     usePagination,
   );
-
   // Render the UI for your table
   return (
     <>

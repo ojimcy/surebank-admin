@@ -8,8 +8,6 @@ import {
   Grid,
   Input,
   Select,
-  Text,
-  useColorModeValue,
 } from '@chakra-ui/react';
 import Card from 'components/card/Card';
 import { useForm } from 'react-hook-form';
@@ -24,8 +22,6 @@ export default function EditCustomer() {
   const history = useHistory();
   const { branches } = useAppContext();
 
-  const brandStars = useColorModeValue('brand.500', 'brand.400');
-  const textColor = useColorModeValue('navy.700', 'white');
 
   const [account, setAccount] = useState({});
   const [staffList, setStaffList] = useState([]);
@@ -33,7 +29,7 @@ export default function EditCustomer() {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting },
     setValue,
   } = useForm();
 
@@ -59,7 +55,7 @@ export default function EditCustomer() {
       try {
         if (account && account.branchId) {
           const response = await axiosService.get(
-            `/staff/${account?.branchId._id}`
+            `/staff/${account?.branchId._id}`,
           );
           setStaffList(response.data);
         }
@@ -141,8 +137,8 @@ export default function EditCustomer() {
                   </option>
                   {staffList &&
                     staffList.map((staff) => (
-                      <option key={staff.staffId?.id} value={staff.staffId?.id}>
-                        {staff.staffId?.firstName} {staff.staffId?.lastName}
+                      <option key={staff.user?.id} value={staff.user?.id}>
+                        {staff.user?.firstName} {staff.user?.lastName}
                       </option>
                     ))}
                 </Select>
@@ -175,7 +171,7 @@ export default function EditCustomer() {
                     ))}
                 </Select>
               </FormControl>
-              
+
               <Button
                 fontSize="sm"
                 colorScheme="green"

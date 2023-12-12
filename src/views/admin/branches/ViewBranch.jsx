@@ -153,7 +153,7 @@ export default function User() {
                           <Text fontWeight="bold">Email:</Text>
                           <Text>{branch.email}</Text>
                           <Text fontWeight="bold">Phone Number:</Text>
-                          <Text>{branch.phone}</Text>
+                          <Text>{branch.phoneNumber}</Text>
                           <Text fontWeight="bold">Address:</Text>
                           <Text>{branch.address}</Text>
                           <Text fontWeight="bold">Manager:</Text>
@@ -238,8 +238,8 @@ export default function User() {
                             </option>
                             {staffs &&
                               staffs.map((staff) => (
-                                <option key={staff.id} value={staff.staffId?.id}>
-                                  {staff.staffId?.firstName} {staff.staffId?.lastName}
+                                <option key={staff.id} value={staff.user?.id}>
+                                  {staff.user?.firstName} {staff.user?.lastName}
                                   &ensp;&ensp;
                                   {staff.phoneNumber}
                                 </option>

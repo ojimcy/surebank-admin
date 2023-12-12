@@ -51,7 +51,9 @@ export default function Users() {
     const { pageIndex, pageSize } = pagination;
     const accessToken = localStorage.getItem('ACCESS_TOKEN_KEY');
     try {
-      const response = await axiosService.get(`/users?limit=${pageSize}&page=${pageIndex + 1}`);
+      const response = await axiosService.get(
+        `/users?limit=${pageSize}&page=${pageIndex + 1}`
+      );
       setUsers(response.data.results);
       setLoading(false);
 
@@ -60,12 +62,11 @@ export default function Users() {
       console.error(error);
     }
   };
- 
+
   useEffect(() => {
     fetchUsers();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pagination]);
-
   const onPageChange = ({ pageIndex, pageSize }) => {
     setPagination({ pageIndex, pageSize });
   };
@@ -75,8 +76,9 @@ export default function Users() {
     const filtered = users?.filter((user) => {
       const fullName = `${user.firstName} ${user.lastName}`.toLowerCase();
       return (
-        (user.role === 'user') &&
-        (fullName.includes(searchTerm.toLowerCase()) || user.email.includes(searchTerm))
+        user.role === 'user' &&
+        (fullName.includes(searchTerm.toLowerCase()) ||
+          user.email.includes(searchTerm))
       );
     });
     setFilteredUsers(filtered);
@@ -229,7 +231,7 @@ export default function Users() {
               <CustomTable
                 columns={columns}
                 data={filteredUsers}
-                onPageChange={onPageChange} 
+                onPageChange={onPageChange}
               />
             )}
           </Box>
