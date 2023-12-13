@@ -29,7 +29,6 @@ const AddStaffModal = ({
   } = useForm();
 
   const handleAddStaff = (data) => {
-    console.log(data);
     addStaffToBranch(data);
   };
 

@@ -34,7 +34,6 @@ import { useAppContext } from 'contexts/AppContext';
 export default function Users() {
   const { branches, setBranches } = useAppContext();
   const [loading, setLoading] = useState(true);
-  const [totalResults, setTotalResults] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredBranches, setFilteredBranches] = useState([]);
 
@@ -42,17 +41,17 @@ export default function Users() {
   const [userToDelete, setUserToDelete] = useState(null);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
-    pageSize: 20, // Set your default page size here
+    pageSize: 20,
   });
 
   const fetchBranches = async () => {
     setLoading(true);
     const { pageIndex, pageSize } = pagination;
     try {
-      const response = await axiosService.get(`/branch?limit=${pageSize}&page=${pageIndex + 1}`);
-      console.log(response);
+      const response = await axiosService.get(
+        `/branch?limit=${pageSize}&page=${pageIndex + 1}`
+      );
       setBranches(response.data.results);
-      setTotalResults(response.data.totalResults);
       setLoading(false);
     } catch (error) {
       console.error(error);
@@ -62,7 +61,7 @@ export default function Users() {
     fetchBranches();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pagination]);
-  
+
   const onPageChange = ({ pageIndex, pageSize }) => {
     setPagination({ pageIndex, pageSize });
   };
@@ -159,7 +158,7 @@ export default function Users() {
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
+    []
   );
 
   return (
@@ -215,7 +214,7 @@ export default function Users() {
               <CustomTable
                 columns={columns}
                 data={filteredBranches}
-                onPageChange={onPageChange} 
+                onPageChange={onPageChange}
               />
             )}
           </Box>

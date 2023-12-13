@@ -29,7 +29,6 @@ const ProductDetailsModal = ({ isOpen, onClose, product }) => {
   const toggleDescription = () => {
     setShowFullDescription(!showFullDescription);
   };
-  console.log(product);
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose}>

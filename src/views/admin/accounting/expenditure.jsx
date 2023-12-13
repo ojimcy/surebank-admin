@@ -48,9 +48,8 @@ export default function Expenditures() {
   const [showExpenditureModal, setShowExpenditureModal] = useState(false);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
-    pageSize: 20, // Set your default page size here
+    pageSize: 20,
   });
-
 
   const {
     handleSubmit,
@@ -101,7 +100,7 @@ export default function Expenditures() {
           (expenditure) => ({
             ...expenditure,
             date: new Date(expenditure.date).getTime(),
-          }),
+          })
         );
 
         setExpenditures(convertedExpenditures);
@@ -113,7 +112,6 @@ export default function Expenditures() {
     fetchExpenditures();
   }, [currentUser.role, timeRange, pagination]);
 
-  
   const onPageChange = ({ pageIndex, pageSize }) => {
     setPagination({ pageIndex, pageSize });
   };
@@ -152,7 +150,7 @@ export default function Expenditures() {
       console.error(error);
       toast.error(
         error.response?.data?.message ||
-          'An error occurred while creating expenditure.',
+          'An error occurred while creating expenditure.'
       );
     }
   };
@@ -185,7 +183,7 @@ export default function Expenditures() {
         ),
       },
     ],
-    [],
+    []
   );
 
   return (
@@ -249,7 +247,7 @@ export default function Expenditures() {
               <CustomTable
                 columns={columns}
                 data={filteredExpenditure}
-                onPageChange={onPageChange} 
+                onPageChange={onPageChange}
               />
             )}
           </Box>

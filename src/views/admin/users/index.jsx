@@ -43,7 +43,7 @@ export default function Users() {
   const [userToDelete, setUserToDelete] = useState(null);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
-    pageSize: 20, // Set your default page size here
+    pageSize: 20,
   });
 
   const fetchUsers = async () => {

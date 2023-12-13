@@ -61,7 +61,6 @@ const WithdrawalDetails = () => {
   const handleApprove = async () => {
     try {
       setLoading(true);
-      console.log(requestId);
       await axiosService.post(`/transactions/withdraw?requestId=${requestId}`);
       toast.success('Withdrawal request approved successfully.');
     } catch (error) {

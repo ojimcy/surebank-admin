@@ -35,7 +35,7 @@ import Card from 'components/card/Card.js';
 import { DeleteIcon, EditIcon, SearchIcon } from '@chakra-ui/icons';
 import BackButton from 'components/menu/BackButton';
 import { toast } from 'react-toastify';
-import SimpleTable from 'components/table/SimpleTable';
+import CustomTable from 'components/table/CustomTable';
 
 export default function Customers() {
   const { id } = useParams();
@@ -63,10 +63,15 @@ export default function Customers() {
   // Fetch customers
   useEffect(() => {
     fetchAccounts();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Filter customers based on search term
   useEffect(() => {
+    if (!customers) {
+      return;
+    }
+
     const filtered = customers?.filter((customer) => {
       const fullName =
         `${customer.firstName} ${customer.lastName}`.toLowerCase();
@@ -77,9 +82,6 @@ export default function Customers() {
     });
     setFilteredCustomers(filtered);
   }, [searchTerm, customers]);
-
-console.log(customers);
-console.log(filteredCustomers);
 
   const handleDeleteIconClick = (userId) => {
     setCustomerToDelete(userId);
@@ -123,10 +125,6 @@ console.log(filteredCustomers);
       {
         Header: 'Status',
         accessor: 'status',
-      },
-      {
-        Header: 'Branch',
-        accessor: (row) => row.branchId.name,
       },
       {
         Header: 'Account Type',
@@ -241,7 +239,7 @@ console.log(filteredCustomers);
             {loading ? (
               <Spinner />
             ) : (
-              <SimpleTable columns={columns} data={filteredCustomers} />
+              <CustomTable columns={columns} data={filteredCustomers} />
             )}
           </Box>
         </Card>

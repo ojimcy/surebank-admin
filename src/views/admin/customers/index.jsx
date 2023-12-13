@@ -53,7 +53,7 @@ export default function Customers() {
   const [customerToDelete, setCustomerToDelete] = useState(null);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
-    pageSize: 20, // Set your default page size here
+    pageSize: 20,
   });
 
   const fetchAccounts = async () => {
@@ -63,16 +63,22 @@ export default function Customers() {
       let response;
       if (currentUser.role === 'userReps') {
         response = await axiosService.get(
-          `/accounts/${currentUser.id}/staffaccounts?limit=${pageSize}&page=${pageIndex + 1}`
+          `/accounts/${currentUser.id}/staffaccounts?limit=${pageSize}&page=${
+            pageIndex + 1
+          }`
         );
         setCustomers(response.data);
       } else if (currentUser.role === 'manager') {
         const response = await axiosService.get(
-          `accounts/${currentUser.branchId}/branchaccounts?limit=${pageSize}&page=${pageIndex + 1}`
+          `accounts/${
+            currentUser.branchId
+          }/branchaccounts?limit=${pageSize}&page=${pageIndex + 1}`
         );
         setCustomers(response.data);
       } else {
-        response = await axiosService.get(`/accounts?limit=${pageSize}&page=${pageIndex + 1}`);
+        response = await axiosService.get(
+          `/accounts?limit=${pageSize}&page=${pageIndex + 1}`
+        );
         setCustomers(response.data.results);
       }
       const branches = await axiosService.get('/branch/');
@@ -88,7 +94,6 @@ export default function Customers() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pagination]);
 
-  
   const onPageChange = ({ pageIndex, pageSize }) => {
     setPagination({ pageIndex, pageSize });
   };
@@ -301,7 +306,7 @@ export default function Customers() {
               <CustomTable
                 columns={columns}
                 data={filteredCustomers}
-                onPageChange={onPageChange} 
+                onPageChange={onPageChange}
               />
             )}
           </Box>

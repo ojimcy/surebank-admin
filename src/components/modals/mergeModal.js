@@ -23,7 +23,6 @@ const MergePackageModal = ({ isOpen, onClose, packages, onMerge }) => {
   } = useForm();
 
   const onSubmit = (data) => {
-    console.log(data);
     onMerge(data.fromPackage.value, data.toPackage.value);
     onClose();
   };

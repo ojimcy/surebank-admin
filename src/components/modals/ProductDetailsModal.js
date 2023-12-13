@@ -39,7 +39,6 @@ const ProductDetailsModal = ({ isOpen, onClose, product }) => {
       onClose();
     } catch (error) {
       console.error(error);
-      console.log(error.response);
       toast.error('An error occurred while approving the product request.');
     }
   };

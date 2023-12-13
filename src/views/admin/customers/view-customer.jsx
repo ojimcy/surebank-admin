@@ -61,7 +61,7 @@ export default function ViewCustomer() {
         await Promise.all([
           axiosService.get(`/accounts/${id}?accountType=${activeTab}`),
           axiosService.get(
-            `/transactions?accountNumber=${customerData.accountNumber}`
+            `/transactions?accountNumber=${customerData?.accountNumber}`
           ),
           axiosService.get(`daily-savings/package?userId=${id}`),
         ]);

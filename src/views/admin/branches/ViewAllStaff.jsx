@@ -56,17 +56,17 @@ export default function Users() {
   const [filteredStaffs, setFilteredStaffs] = useState([]);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
-    pageSize: 20, // Set your default page size here
+    pageSize: 20,
   });
-
-
 
   const fetchUsers = async () => {
     setLoading(true);
     const { pageIndex, pageSize } = pagination;
     try {
       const branches = await axiosService.get('/branch/');
-      const response = await axiosService.get(`/staff?limit=${pageSize}&page=${pageIndex + 1}`);
+      const response = await axiosService.get(
+        `/staff?limit=${pageSize}&page=${pageIndex + 1}`
+      );
       const UserResponse = await axiosService.get(`/users?limit=10000000`);
       setUsers(UserResponse.data.results);
       setAllBranch(branches.data.results);
@@ -79,10 +79,9 @@ export default function Users() {
 
   useEffect(() => {
     fetchUsers();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pagination]);
 
-  
   const onPageChange = ({ pageIndex, pageSize }) => {
     setPagination({ pageIndex, pageSize });
   };
@@ -223,7 +222,6 @@ export default function Users() {
     superAdmin: 'Super Admin',
   };
 
-
   // Columns for the user table
   const columns = React.useMemo(
     () => [
@@ -338,7 +336,7 @@ export default function Users() {
               <CustomTable
                 columns={columns}
                 data={filteredStaffs}
-                onPageChange={onPageChange} 
+                onPageChange={onPageChange}
               />
             )}
           </Box>
