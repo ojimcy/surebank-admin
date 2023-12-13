@@ -37,7 +37,7 @@ export default function User() {
           const branchResponse = await axiosService.get(
             `branch/${response.data.branchId}`
           );
-          
+
           setBranchInfo(branchResponse.data);
         }
 
@@ -49,6 +49,13 @@ export default function User() {
     };
     fetchUsers();
   }, [id]);
+
+  const roleLabels = {
+    userReps: 'Cashier',
+    manager: 'Manager',
+    admin: 'Admin',
+    superAdmin: 'Super Admin',
+  };
 
   return (
     <Box>
@@ -105,7 +112,7 @@ export default function User() {
                           <Text fontWeight="bold">Status:</Text>
                           <Text>{user.status}</Text>
                           <Text fontWeight="bold">Roles:</Text>
-                          <Text>{user.role}</Text>
+                            <Text>{roleLabels[user.role]}</Text>
                           <Text fontWeight="bold">Branch:</Text>
                           <Text>{branchInfo.name}</Text>
                         </Grid>

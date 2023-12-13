@@ -78,6 +78,9 @@ export default function Customers() {
     setFilteredCustomers(filtered);
   }, [searchTerm, customers]);
 
+console.log(customers);
+console.log(filteredCustomers);
+
   const handleDeleteIconClick = (userId) => {
     setCustomerToDelete(userId);
     setShowDeleteModal(true);

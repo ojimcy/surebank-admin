@@ -137,8 +137,8 @@ export default function EditCustomer() {
                   </option>
                   {staffList &&
                     staffList.map((staff) => (
-                      <option key={staff.user?.id} value={staff.user?.id}>
-                        {staff.user?.firstName} {staff.user?.lastName}
+                      <option key={staff.staffId?.id} value={staff.staffId?.id}>
+                        {staff.staffId?.firstName} {staff.staffId?.lastName}
                       </option>
                     ))}
                 </Select>

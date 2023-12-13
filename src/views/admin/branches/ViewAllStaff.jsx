@@ -92,7 +92,6 @@ export default function Users() {
     setStaffUser(response.data);
     setShowTransferStaffModal(true);
   };
-  console.log(staffs)
 
   const handleDeleteIconClick = (userId) => {
     setUserToDelete(userId);

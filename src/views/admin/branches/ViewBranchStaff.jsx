@@ -124,6 +124,13 @@ export default function Users() {
       toast.error(error.response?.data?.message || 'An error occurred');
     }
   };
+  
+  const roleLabels = {
+    userReps: 'Cashier',
+    manager: 'Manager',
+    admin: 'Admin',
+    superAdmin: 'Super Admin',
+  };
 
   return (
     <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
@@ -191,7 +198,7 @@ export default function Users() {
                             to={`/admin/user/${staff.staffId.id}`}
                           >{`${staff.staffId.firstName} ${staff.staffId.lastName}`}</NavLink>{' '}
                         </Td>
-                        <Td>{staff.staffId.role}</Td>
+                        <Td>{roleLabels[staff.staffId.role]}</Td>
                         <Td>{formatDate(staff.updatedAt)}</Td>
                         <Td>{formatDate(staff.createdAt)}</Td>
                         <Td>

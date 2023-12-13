@@ -82,7 +82,7 @@ export default function CreateAccountModal({ isOpen, onClose }) {
                 <Input
                   type="email"
                   placeholder="Enter your email"
-                  defaultValue={customerData.email}
+                  defaultValue={customerData && customerData.email}
                   {...register('email', { required: true })}
                 />
               </InputGroup>

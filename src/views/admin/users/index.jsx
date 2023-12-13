@@ -52,8 +52,9 @@ export default function Users() {
     const accessToken = localStorage.getItem('ACCESS_TOKEN_KEY');
     try {
       const response = await axiosService.get(
-        `/users?limit=${pageSize}&page=${pageIndex + 1}`
+        `/users?role=user&limit=${pageSize}&page=${pageIndex + 1}`
       );
+      console.log(response);
       setUsers(response.data.results);
       setLoading(false);
 
@@ -76,9 +77,8 @@ export default function Users() {
     const filtered = users?.filter((user) => {
       const fullName = `${user.firstName} ${user.lastName}`.toLowerCase();
       return (
-        user.role === 'user' &&
-        (fullName.includes(searchTerm.toLowerCase()) ||
-          user.email.includes(searchTerm))
+        fullName.includes(searchTerm.toLowerCase()) ||
+        user.email.includes(searchTerm)
       );
     });
     setFilteredUsers(filtered);

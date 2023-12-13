@@ -44,7 +44,6 @@ export default function ViewCustomer() {
   const [showBalance, setShowBalance] = useState(true);
   const [transactions, setTransactions] = useState([]);
   const [activeTab, setActiveTab] = useState('ds');
-  
 
   const { customerData, setCustomerData, userPackages, setUserPackages } =
     useAppContext();
@@ -67,10 +66,9 @@ export default function ViewCustomer() {
           axiosService.get(`daily-savings/package?userId=${id}`),
         ]);
 
-      setCustomerData(accountResponse.data);
+      setCustomerData(accountResponse.data[0]);
       setTransactions(activitiesResponse.data);
       setUserPackages(packagesResponse.data);
-
       setLoading(false);
     } catch (error) {
       console.error(error);
