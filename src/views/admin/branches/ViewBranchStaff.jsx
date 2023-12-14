@@ -124,9 +124,9 @@ export default function Users() {
       toast.error(error.response?.data?.message || 'An error occurred');
     }
   };
-  
+
   const roleLabels = {
-    userReps: 'Cashier',
+    userReps: 'Sales Rep',
     manager: 'Manager',
     admin: 'Admin',
     superAdmin: 'Super Admin',

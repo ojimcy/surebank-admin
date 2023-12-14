@@ -45,6 +45,9 @@ export default function ViewCustomer() {
   const [transactions, setTransactions] = useState([]);
   const [activeTab, setActiveTab] = useState('ds');
 
+  const [shouldFetchUserActivities, setShouldFetchUserActivities] =
+    useState(false);
+
   const { customerData, setCustomerData, userPackages, setUserPackages } =
     useAppContext();
 
@@ -57,15 +60,16 @@ export default function ViewCustomer() {
   const fetchUserData = async () => {
     try {
       setLoading(true);
-      const [accountResponse, activitiesResponse, packagesResponse] =
-        await Promise.all([
-          axiosService.get(`/accounts/${id}?accountType=${activeTab}`),
-          axiosService.get(
-            `/transactions?accountNumber=${customerData?.accountNumber}`
-          ),
-          axiosService.get(`daily-savings/package?userId=${id}`),
-        ]);
-
+      const accountResponse = await axiosService.get(
+        `/accounts/${id}?accountType=${activeTab}`
+      );
+      const activitiesResponse = await axiosService.get(
+        `/transactions?accountNumber=${customerData?.accountNumber}`
+      );
+      console.log(activitiesResponse);
+      const packagesResponse = await axiosService.get(
+        `daily-savings/package?userId=${id}`
+      );
       setCustomerData(accountResponse.data[0]);
       setTransactions(activitiesResponse.data);
       setUserPackages(packagesResponse.data);
@@ -75,18 +79,39 @@ export default function ViewCustomer() {
       setLoading(false);
     }
   };
+
+  const fetchUserActivities = async () => {
+    try {
+      setLoading(true);
+      const activitiesResponse = await axiosService.get(
+        `/transactions?accountNumber=${customerData?.accountNumber}`
+      );
+      setTransactions(activitiesResponse.data);
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchUserData();
   }, [id, activeTab]);
 
+  useEffect(() => {
+    fetchUserActivities();
+  }, [customerData]);
+
   const handleTransferSuccess = () => {
     // Fetch updated data after successful transfer here
     fetchUserData();
+    fetchUserActivities();
   };
 
   const handleDepositSuccess = () => {
     // Fetch updated data after successful deposit here
     fetchUserData();
+    fetchUserActivities();
   };
 
   return (
@@ -164,8 +189,8 @@ export default function ViewCustomer() {
             onChange={handleTabChange}
           >
             <TabList>
-              <Tab>DS Account</Tab>
-              <Tab>SB Account</Tab>
+              <Tab onClick={() => handleTabChange('ds')}>DS Account</Tab>
+              <Tab onClick={() => handleTabChange('sb')}>SB Account</Tab>
             </TabList>
             <TabPanels>
               <TabPanel>

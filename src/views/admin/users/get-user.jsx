@@ -51,7 +51,7 @@ export default function User() {
   }, [id]);
 
   const roleLabels = {
-    userReps: 'Cashier',
+    userReps: 'Sales Rep',
     manager: 'Manager',
     admin: 'Admin',
     superAdmin: 'Super Admin',
@@ -112,7 +112,7 @@ export default function User() {
                           <Text fontWeight="bold">Status:</Text>
                           <Text>{user.status}</Text>
                           <Text fontWeight="bold">Roles:</Text>
-                            <Text>{roleLabels[user.role]}</Text>
+                          <Text>{roleLabels[user.role]}</Text>
                           <Text fontWeight="bold">Branch:</Text>
                           <Text>{branchInfo.name}</Text>
                         </Grid>

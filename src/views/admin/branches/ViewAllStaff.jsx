@@ -67,7 +67,7 @@ export default function Users() {
       const response = await axiosService.get(
         `/staff?limit=${pageSize}&page=${pageIndex + 1}`
       );
-      const UserResponse = await axiosService.get(`/users?limit=10000000`);
+      const UserResponse = await axiosService.get(`/users?role=user&limit=10000000`);
       setUsers(UserResponse.data.results);
       setAllBranch(branches.data.results);
       setStaffs(response.data);
@@ -216,7 +216,7 @@ export default function Users() {
   }, [searchTerm, staffs]);
 
   const roleLabels = {
-    userReps: 'Cashier',
+    userReps: 'Sales Rep',
     manager: 'Manager',
     admin: 'Admin',
     superAdmin: 'Super Admin',

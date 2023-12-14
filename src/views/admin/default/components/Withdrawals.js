@@ -134,7 +134,7 @@ export default function Withdrawals() {
         accessor: 'amount',
       },
       {
-        Header: 'Cashier',
+        Header: 'Sales Rep',
         accessor: (row) => (
           <NavLink to={`/admin/user/${row.createdBy?._id}`}>
             {row.createdBy?.firstName} {row.createdBy?.lastName}
