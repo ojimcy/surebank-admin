@@ -1,12 +1,5 @@
 import React, { useState } from 'react';
-import {
-  Box,
-  Flex,
-  Text,
-  Button,
-  CircularProgress,
-  CircularProgressLabel,
-} from '@chakra-ui/react';
+import { Box, Flex, Text, Button } from '@chakra-ui/react';
 
 import { formatDate, formatNaira } from 'utils/helper';
 import TransferModal from 'components/modals/TransferModal';
@@ -17,10 +10,8 @@ const PackageCard = ({
   handleTransferSuccess,
   handleDepositSuccess,
 }) => {
-  const { target, amountPerDay, startDate, totalContribution, totalCount } =
+  const { target, amountPerDay, startDate, totalContribution } =
     packageData;
-
-  const progressValue = ((totalCount / 31) * 100).toFixed(2);
 
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
 
@@ -44,21 +35,30 @@ const PackageCard = ({
 
   return (
     <Box borderWidth="1px" borderRadius="md" p="6" boxShadow="md">
-      <Text fontSize="lg" fontWeight="bold">
-        {target}
-      </Text>
-      <Flex justify="space-between" alignItems="center" m="2">
+      <Flex justifyContent="center" alignItems="center">
         <Text fontSize="lg" fontWeight="bold">
-          {formatNaira(totalContribution)}
+          {target}
         </Text>
       </Flex>
-      <Text fontSize="md">Target Amount: {formatNaira(amountPerDay)}</Text>
+      <Flex justify="space-between" alignItems="center" m="2"></Flex>
       <Box mt="4">
         <Flex justifyContent="space-between" alignItems="center">
-          <Text fontSize="sm">Start Date: {formatDate(startDate)}</Text>
-          <CircularProgress value={progressValue} size="50px" thickness="6px">
-            <CircularProgressLabel>{progressValue}%</CircularProgressLabel>
-          </CircularProgress>
+          <Text fontSize="sm">Total Contribution: </Text>
+          <Text fontSize="lg" fontWeight="bold">
+            {formatNaira(totalContribution)}
+          </Text>
+        </Flex>
+      </Box>
+      <Box mt="4">
+        <Flex justifyContent="space-between" alignItems="center">
+          <Text fontSize="sm">Target Amount: </Text>
+          <Text fontSize="sm"> {formatNaira(amountPerDay)}</Text>
+        </Flex>
+      </Box>
+      <Box mt="4">
+        <Flex justifyContent="space-between" alignItems="center">
+          <Text fontSize="sm">Start Date: </Text>
+          <Text fontSize="sm">{formatDate(startDate)}</Text>
         </Flex>
       </Box>
       <Flex mt="4" justify="space-between">

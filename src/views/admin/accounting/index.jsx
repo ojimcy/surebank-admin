@@ -37,9 +37,9 @@ export default function Accounting() {
     const fetchTotalIncome = async () => {
       try {
         const response = await axiosService.get(
-          '/accounting/contribution-incomes/supperadmin'
+          '/reports/contribution-incomes/supperadmin'
         );
-        setTotalIncome(response.data);
+        setTotalIncome(response.data.totalCharge);
       } catch (error) {
         console.error(error);
         toast.error(

@@ -45,9 +45,6 @@ export default function ViewCustomer() {
   const [transactions, setTransactions] = useState([]);
   const [activeTab, setActiveTab] = useState('ds');
 
-  const [shouldFetchUserActivities, setShouldFetchUserActivities] =
-    useState(false);
-
   const { customerData, setCustomerData, userPackages, setUserPackages } =
     useAppContext();
 

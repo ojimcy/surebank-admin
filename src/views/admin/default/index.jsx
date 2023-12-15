@@ -5,6 +5,7 @@ import SuperAdminDashboard from './components/SuperAdminDashboard';
 import AdminDashboard from './components/AdminDashboard';
 import UserRepsDashboard from './components/UserRepsDashboard';
 import UserDashboard from './components/UserDashboard';
+import ManagerDashboard from './components/ManagerDashboard';
 
 export default function UserReports() {
   const { currentUser } = useAuth();
@@ -17,6 +18,8 @@ export default function UserReports() {
           <UserRepsDashboard />
         ) : currentUser.role === 'admin' ? (
           <AdminDashboard />
+        ) :currentUser.role === 'manager' ? (
+          <ManagerDashboard />
         ) : (
           <UserDashboard />
         )
