@@ -11,7 +11,8 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { SearchIcon } from '@chakra-ui/icons';
-import SimpleTable from 'components/table/SimpleTable';
+import CustomTable from 'components/table/CustomTable';
+import { formatDate } from 'utils/helper';
 
 function RecentTransactions({ transactions }) {
   const [searchTerm, setSearchTerm] = useState('');
@@ -36,7 +37,7 @@ function RecentTransactions({ transactions }) {
     () => [
       {
         Header: 'Date',
-        accessor: 'date',
+        accessor: (row) => formatDate(row.date),
       },
       {
         Header: 'Amount',
@@ -100,10 +101,9 @@ function RecentTransactions({ transactions }) {
         </Box>
       </Flex>
       {transactions && transactions.length > 0 ? (
-        <SimpleTable
+        <CustomTable
           columns={columns}
           data={filteredTransaction}
-          pageSize="10"
         />
       ) : (
         <Text>Transaction not found</Text>

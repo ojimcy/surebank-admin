@@ -97,7 +97,7 @@ export default function Charges() {
           '/reports/contribution-incomes/supperadmin'
         );
 
-        setCharges(response.data.charges);
+        setCharges(response.data);
         setTotalCharge(chargeResponse.data.totalCharge);
         setLoading(false);
       } catch (error) {
