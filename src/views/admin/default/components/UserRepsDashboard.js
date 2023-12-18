@@ -5,7 +5,6 @@ import {
   Text,
   useColorModeValue,
   Spacer,
-  IconButton,
   Box,
   Stack,
   FormControl,
@@ -30,7 +29,6 @@ import SimpleTable from 'components/table/SimpleTable';
 import ActionButton from 'components/Button/CustomButton';
 
 import { useAuth } from 'contexts/AuthContext';
-import { FaArrowDown, FaArrowUp } from 'react-icons/fa';
 
 export default function UserRepsDashboard() {
   const brandColor = useColorModeValue('brand.500', 'white');
@@ -45,8 +43,8 @@ export default function UserRepsDashboard() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredCustomers, setFilteredCustomers] = useState([]);
 
-
   const { currentUser } = useAuth();
+  const staffId = currentUser.id;
 
   useEffect(() => {
     try {
@@ -84,35 +82,21 @@ export default function UserRepsDashboard() {
     }
   }, []);
 
-  useEffect(() => {
-    try {
-      const fetchPackageReport = async () => {
-        const response = await axiosService.get('/reports/user-reps/packages');
-        setOpenPackageCount(response.data.totalOpenPackages);
-      };
-
-      fetchPackageReport();
-    } catch (error) {
-      console.error(error);
-      toast.error(error.response?.data?.message || 'An error occurred');
-    }
-  }, []);
-
   // Fetch customers
   useEffect(() => {
     const fetchAccounts = async () => {
-      const staffId = currentUser.id;
       try {
         const response = await axiosService.get(
-          `accounts/${staffId}/staffaccounts`
+          `accounts?accountManagerId=${staffId}`
         );
-        setCustomers(response.data);
+        setCustomers(response.data.results);
+        setOpenPackageCount(response.data.totalResults);
       } catch (error) {
         console.error(error);
       }
     };
     fetchAccounts();
-  }, [currentUser.id]);
+  }, [staffId]);
 
   // Filter customers based on search term
   useEffect(() => {
@@ -154,23 +138,16 @@ export default function UserRepsDashboard() {
         accessor: 'accountNumber',
       },
       {
+        Header: 'Phone Number',
+        accessor: 'phoneNumber',
+      },
+      {
         Header: 'Action',
         accessor: (row) => (
           <Box>
-            <NavLink to={`/admin/daily-savings/deposit`}>
-              <IconButton
-                colorScheme="green"
-                aria-label="Make Contribution"
-                icon={<FaArrowUp />}
-              />
-            </NavLink>
-            <NavLink to={`/admin/daily-savings/withdraw`}>
-              <IconButton
-                colorScheme="red"
-                aria-label="Withdraw"
-                icon={<FaArrowDown />}
-              />
-            </NavLink>
+          <NavLink to={`/admin/customer/${row.userId}`}>
+            Details
+          </NavLink>
           </Box>
         ),
       },

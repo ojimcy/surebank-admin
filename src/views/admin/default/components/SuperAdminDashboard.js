@@ -17,7 +17,6 @@ import { toast } from 'react-toastify';
 import { formatNaira } from 'utils/helper';
 import { useAuth } from 'contexts/AuthContext';
 
-
 import ActionButton from 'components/Button/CustomButton';
 import Withdrawals from './Withdrawals';
 import { useHistory } from 'react-router-dom';
@@ -34,9 +33,9 @@ export default function SuperAdminDashboard() {
   const [openPackageCount, setOpenPackageCount] = useState(0);
   const [closedPackages, setClosedPackages] = useState(0);
 
-   if (!currentUser) {
-      history.push('/auth/login');
-   }
+  if (!currentUser) {
+    history.push('/auth/login');
+  }
 
   useEffect(() => {
     // Fetch total contributions data from the backend API
@@ -94,9 +93,14 @@ export default function SuperAdminDashboard() {
   useEffect(() => {
     try {
       const fetchPackageReport = async () => {
-        const response = await axiosService.get('/reports/packages');
-        setOpenPackageCount(response.data.totalOpenPackages);
-        setClosedPackages(response.data.totalClosedPackages);
+        const openPackages = await axiosService.get(
+          '/reports/packages?status=open'
+        );
+        const closedPackages = await axiosService.get(
+          '/reports/packages?status=closed'
+        );
+        setOpenPackageCount(openPackages.data.totalResults);
+        setClosedPackages(closedPackages.data.totalResults);
       };
 
       fetchPackageReport();
