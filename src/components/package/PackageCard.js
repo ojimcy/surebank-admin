@@ -4,26 +4,23 @@ import { Box, Flex, Text, Button } from '@chakra-ui/react';
 import { formatDate, formatNaira } from 'utils/helper';
 import TransferModal from 'components/modals/TransferModal';
 import DepositModal from 'components/modals/DepositModal';
-
 const PackageCard = ({
   packageData,
   handleTransferSuccess,
   handleDepositSuccess,
 }) => {
-  const { target, amountPerDay, startDate, totalContribution } =
-    packageData;
+  const { target, amountPerDay, startDate, totalContribution } = packageData;
 
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
+  const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
 
   const handleTransferClick = () => {
     setIsTransferModalOpen(true);
   };
 
-  const handleCloseModal = () => {
+  const handleCloseTransferModal = () => {
     setIsTransferModalOpen(false);
   };
-
-  const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
 
   const handleDepositClick = () => {
     setIsDepositModalOpen(true);
@@ -40,7 +37,6 @@ const PackageCard = ({
           {target}
         </Text>
       </Flex>
-      <Flex justify="space-between" alignItems="center" m="2"></Flex>
       <Box mt="4">
         <Flex justifyContent="space-between" alignItems="center">
           <Text fontSize="sm">Total Contribution: </Text>
@@ -52,7 +48,7 @@ const PackageCard = ({
       <Box mt="4">
         <Flex justifyContent="space-between" alignItems="center">
           <Text fontSize="sm">Target Amount: </Text>
-          <Text fontSize="sm"> {formatNaira(amountPerDay)}</Text>
+          <Text fontSize="sm">{formatNaira(amountPerDay)}</Text>
         </Flex>
       </Box>
       <Box mt="4">
@@ -70,9 +66,10 @@ const PackageCard = ({
         </Button>
       </Flex>
 
+      {/* Modals */}
       <TransferModal
         isOpen={isTransferModalOpen}
-        onClose={handleCloseModal}
+        onClose={handleCloseTransferModal}
         packageData={packageData}
         onSuccess={handleTransferSuccess}
       />

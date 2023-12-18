@@ -14,7 +14,7 @@ import {
   ModalCloseButton,
   Button,
 } from '@chakra-ui/react';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 // Assets
 import axiosService from 'utils/axiosService';
@@ -37,27 +37,44 @@ export default function Withdrawals() {
 
   const totalPages = 10;
 
-  const handleTimeRangeChange = (e) => {
-    setTimeRange(e.target.value);
-  };
+  const handleTimeRangeChange = useCallback(
+    (e) => {
+      setTimeRange(e.target.value);
+    },
+    [setTimeRange]
+  );
 
-  const handleBranchChange = (e) => {
-    setBranch(e.target.value);
-  };
-  const handleStartDateChange = (e) => {
-    setStartDate(e.target.value);
-  };
+  const handleBranchChange = useCallback(
+    (e) => {
+      setBranch(e.target.value);
+    },
+    [setBranch]
+  );
 
-  const handleEndDateChange = (e) => {
-    setEndDate(e.target.value);
-  };
+  const handleStartDateChange = useCallback(
+    (e) => {
+      setStartDate(e.target.value);
+    },
+    [setStartDate]
+  );
 
-  const handleCustomDateApply = () => {
+  const handleEndDateChange = useCallback(
+    (e) => {
+      setEndDate(e.target.value);
+    },
+    [setEndDate]
+  );
+
+  const handleCustomDateApply = useCallback(() => {
     if (startDate && endDate) {
       setCustomRangeLabel(`${startDate} to ${endDate}`);
     }
     setCustomDateModalOpen(false);
-  };
+  }, [endDate, startDate]);
+
+  const handleCustomRangeClick = useCallback(() => {
+    setCustomDateModalOpen(true);
+  }, [setCustomDateModalOpen]);
 
   useEffect(() => {
     async function fetchWithdrawals() {
@@ -142,8 +159,8 @@ export default function Withdrawals() {
         ),
       },
       {
-        Header: 'Direction',
-        accessor: 'direction',
+        Header: 'Status',
+        accessor: 'status',
       },
 
       {
@@ -176,10 +193,7 @@ export default function Withdrawals() {
                   <option value="all">All Time</option>
                   <option value="last7days">Last 7 Days</option>
                   <option value="last30days">Last 30 Days</option>
-                  <option
-                    value="custom"
-                    onClick={() => setCustomDateModalOpen(true)}
-                  >
+                  <option value="custom" onClick={handleCustomRangeClick}>
                     {customRangeLabel}
                   </option>
                 </Select>

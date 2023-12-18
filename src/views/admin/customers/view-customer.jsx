@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 
 import {
   Avatar,
@@ -20,11 +20,8 @@ import {
   TabPanels,
   useBreakpointValue,
 } from '@chakra-ui/react';
-// import { CustomButton } from 'components/Button/CustomButton';
-import { NavLink, useParams } from 'react-router-dom';
-// Assets
 
-// Custom components
+import { NavLink, useParams } from 'react-router-dom';
 import axiosService from 'utils/axiosService';
 import { formatNaira } from 'utils/helper';
 import BackButton from 'components/menu/BackButton';
@@ -42,74 +39,47 @@ export default function ViewCustomer() {
   const { id } = useParams();
   const [loading, setLoading] = useState(false);
   const [showBalance, setShowBalance] = useState(true);
-  const [transactions, setTransactions] = useState([]);
   const [activeTab, setActiveTab] = useState('ds');
-
   const { customerData, setCustomerData, userPackages, setUserPackages } =
     useAppContext();
 
   const isMobile = useBreakpointValue({ base: true, md: false });
 
-  const handleTabChange = (index) => {
+  const handleTabChange = useCallback((index) => {
     setActiveTab(index === 0 ? 'ds' : 'sb');
-  };
+  }, []);
 
-  const fetchUserData = async () => {
+  const fetchUserData = useCallback(async () => {
     try {
       setLoading(true);
       const accountResponse = await axiosService.get(
         `/accounts/${id}?accountType=${activeTab}`
       );
-      const activitiesResponse = await axiosService.get(
-        `/transactions?accountNumber=${customerData?.accountNumber}`
-      );
-      console.log(activitiesResponse);
       const packagesResponse = await axiosService.get(
         `daily-savings/package?userId=${id}`
       );
       setCustomerData(accountResponse.data[0]);
-      setTransactions(activitiesResponse.data);
       setUserPackages(packagesResponse.data);
-      setLoading(false);
     } catch (error) {
       console.error(error);
+    } finally {
       setLoading(false);
     }
-  };
-
-  const fetchUserActivities = async () => {
-    try {
-      setLoading(true);
-      const activitiesResponse = await axiosService.get(
-        `/transactions?accountNumber=${customerData?.accountNumber}`
-      );
-      setTransactions(activitiesResponse.data);
-      setLoading(false);
-    } catch (error) {
-      console.error(error);
-      setLoading(false);
-    }
-  };
+  }, [id, activeTab, customerData?.accountNumber]);
 
   useEffect(() => {
     fetchUserData();
-  }, [id, activeTab]);
+  }, [fetchUserData]);
 
-  useEffect(() => {
-    fetchUserActivities();
-  }, [customerData]);
-
-  const handleTransferSuccess = () => {
+  const handleTransferSuccess = useCallback(() => {
     // Fetch updated data after successful transfer here
     fetchUserData();
-    fetchUserActivities();
-  };
+  }, [fetchUserData]);
 
-  const handleDepositSuccess = () => {
+  const handleDepositSuccess = useCallback(() => {
     // Fetch updated data after successful deposit here
     fetchUserData();
-    fetchUserActivities();
-  };
+  }, [fetchUserData]);
 
   return (
     <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
@@ -201,7 +171,7 @@ export default function ViewCustomer() {
 
                 {/* Recent Transactions Section */}
 
-                <RecentTransactions transactions={transactions} />
+                <RecentTransactions />
               </TabPanel>
               <TabPanel>
                 <AccountDetails customerData={customerData} />

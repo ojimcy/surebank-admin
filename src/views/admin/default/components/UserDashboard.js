@@ -15,7 +15,7 @@ import {
   Avatar,
   useBreakpointValue,
   Link,
-  Grid
+  Grid,
 } from '@chakra-ui/react';
 
 import { FaCopy } from 'react-icons/fa';
@@ -41,30 +41,15 @@ export default function UserDashboard() {
     useAppContext();
   const [loading, setLoading] = useState(false);
   const [showBalance, setShowBalance] = useState(true);
-  const [transactions, setTransactions] = useState([]);
   const [showUserDetails, setShowUserDetails] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
 
-
-   if (!currentUser) {
-     history.push('/auth/login');
-   }
-
+  if (!currentUser) {
+    history.push('/auth/login');
+  }
 
   const isMobile = useBreakpointValue({ base: true, md: false });
 
-  // Fetch user activities
-  const fetchUserActivities = async () => {
-    try {
-      const response = await axiosService.get(
-        `/transactions?accountNumber=${customerData?.accountNumber}`
-      );
-      setTransactions(response.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-  
   // Fetch user ds package data
   const fetchUserPackages = async () => {
     try {
@@ -98,7 +83,6 @@ export default function UserDashboard() {
 
   useEffect(() => {
     if (customerData) {
-      fetchUserActivities();
       fetchUserPackages();
     }
   }, [customerData]);
@@ -181,7 +165,7 @@ export default function UserDashboard() {
             </Box>
           </Flex>
 
-          <Link onClick={handleShowUserDetails} ml='20px'>
+          <Link onClick={handleShowUserDetails} ml="20px">
             {showUserDetails ? 'Hide Details' : 'Show Details'}
           </Link>
 
@@ -236,7 +220,7 @@ export default function UserDashboard() {
 
                   {/* Recent Transactions Section */}
 
-                  <RecentTransactions transactions={transactions} />
+                  <RecentTransactions />
                 </TabPanel>
                 <TabPanel>
                   <SbPackage />

@@ -11,13 +11,27 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { SearchIcon } from '@chakra-ui/icons';
-import CustomTable from 'components/table/CustomTable';
-import { formatDate } from 'utils/helper';
+import axiosService from 'utils/axiosService';
+import { useAppContext } from 'contexts/AppContext';
+import TransactionItem from 'components/transactions/TransactionItem';
 
-function RecentTransactions({ transactions }) {
+function RecentTransactions() {
+  const { customerData } = useAppContext();
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredTransaction, setFilteredTransaction] = useState([]);
   const [selectedFilter, setSelectedFilter] = useState('all');
+  const [transactions, setTransactions] = useState([]);
+  const [showAllTransactions, setShowAllTransactions] = useState(false);
+
+  useEffect(() => {
+    const fetchActivities = async () => {
+      const response = await axiosService.get(
+        `/transactions?accountNumber=${customerData?.accountNumber}`
+      );
+      setTransactions(response.data);
+    };
+    fetchActivities();
+  }, [customerData]);
 
   useEffect(() => {
     const filtered = transactions?.filter((transaction) => {
@@ -33,35 +47,10 @@ function RecentTransactions({ transactions }) {
     setFilteredTransaction(filtered);
   }, [selectedFilter, transactions]);
 
-  const columns = React.useMemo(
-    () => [
-      {
-        Header: 'Date',
-        accessor: (row) => formatDate(row.date),
-      },
-      {
-        Header: 'Amount',
-        accessor: 'amount',
-      },
-      {
-        Header: 'Naration',
-        accessor: 'narration',
-        Cell: ({ value }) => (
-          <Text>
-            {value === 'Daily contribution withdrawal'
-              ? 'Deposit'
-              : 'Withdrawal'}
-          </Text>
-        ),
-      },
-      {
-        Header: 'Created By',
-        accessor: (row) =>
-          `${row.createdBy?.firstName} ${row.createdBy?.lastName}`,
-      },
-    ],
-    []
-  );
+  const visibleTransactions = showAllTransactions
+    ? filteredTransaction
+    : filteredTransaction.slice(0, 20);
+
   return (
     <Box mt="80px">
       <Flex
@@ -100,11 +89,22 @@ function RecentTransactions({ transactions }) {
           </Stack>
         </Box>
       </Flex>
-      {transactions && transactions.length > 0 ? (
-        <CustomTable
-          columns={columns}
-          data={filteredTransaction}
-        />
+      {visibleTransactions && visibleTransactions.length > 0 ? (
+        <>
+          {visibleTransactions.map((transaction, index) => (
+            <TransactionItem key={index} transaction={transaction} />
+          ))}
+          {!showAllTransactions && (
+            <Button
+              mt="4"
+              bgColor="blue.700"
+              color="white"
+              onClick={() => setShowAllTransactions(true)}
+            >
+              View All Transactions
+            </Button>
+          )}
+        </>
       ) : (
         <Text>Transaction not found</Text>
       )}

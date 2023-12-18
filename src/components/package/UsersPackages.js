@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   Button,
   Flex,
@@ -25,24 +25,33 @@ const UsersPackages = ({ handleTransferSuccess, handleDepositSuccess }) => {
   const [showAccountModal, setShowAccountModal] = useState(false);
   const [userPackages, setUserPackages] = useState([]);
 
-  const handleShowAccountModal = () => {
+  const handleShowAccountModal = useCallback(() => {
     setShowAccountModal(true);
-  };
+  }, []);
 
-  const closeAccountModal = () => {
+  const closeAccountModal = useCallback(() => {
     setShowAccountModal(false);
-  };
+  }, []);
 
   useEffect(() => {
     const fetchPackages = async () => {
-      const response = await axiosService.get(
-        `daily-savings/package?userId=${id}`
-      );
-      setUserPackages(response.data);
+      try {
+        const response = await axiosService.get(
+          `daily-savings/package?userId=${id}`
+        );
+        setUserPackages(response.data);
+      } catch (error) {
+        // Handle error
+      } finally {
+      }
     };
 
     fetchPackages();
   }, [id]);
+
+  const handleCreateAccountClick = useCallback(() => {
+    handleShowAccountModal();
+  }, [handleShowAccountModal]);
 
   return (
     <>
@@ -57,11 +66,11 @@ const UsersPackages = ({ handleTransferSuccess, handleDepositSuccess }) => {
         </Flex>
 
         <Spacer />
-        {!customerData || Object.keys(customerData).length === 0 ? (
+        {!customerData ? (
           <Button
             bgColor="blue.700"
             color="white"
-            onClick={handleShowAccountModal}
+            onClick={handleCreateAccountClick}
           >
             Create Account
           </Button>
@@ -100,7 +109,7 @@ const UsersPackages = ({ handleTransferSuccess, handleDepositSuccess }) => {
               No Package Found, Create One
             </Button>
           ) : (
-            <Button color="green" onClick={handleShowAccountModal}>
+            <Button color="green" onClick={handleCreateAccountClick}>
               No Account Found, Create an account and a new package.
             </Button>
           )}
