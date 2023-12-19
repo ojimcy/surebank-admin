@@ -38,44 +38,40 @@ export default function Withdraw() {
     setValue,
   } = useForm();
 
-  const [user, setUser] = useState(null);
   const [ownerName, setOwnerName] = useState('');
 
-  // Set the initial value of accountNumber field
   useEffect(() => {
+    // Fetch user information when the component mounts
+    if (customerData.accountNumber) {
+      fetchUserByAccountNumber(customerData.accountNumber);
+    }
+
+    // Set the initial value of accountNumber field
     setValue('accountNumber', customerData.accountNumber || '');
   }, [setValue, customerData.accountNumber]);
 
-  const handleAccountNumberChange = (e) => {
+  const handleAccountNumberChange = async (e) => {
     const accountNumber = e.target.value.trim();
     if (accountNumber) {
       fetchUserByAccountNumber(accountNumber);
     }
   };
 
-  // Fetch user information for the given accountNumber
   const fetchUserByAccountNumber = async (accountNumber) => {
     try {
       const response = await axiosService.get(
         `/transactions/user/?accountNumber=${accountNumber}`
       );
-      setUser(response.data);
+      setOwnerName(`${response.data.firstName} ${response.data.lastName}`);
     } catch (error) {
       console.error(error);
+      setOwnerName('Invalid account');
     }
   };
 
-  useEffect(() => {
-    if (user) {
-      setOwnerName(`${user.firstName} ${user.lastName}`);
-    } else {
-      setOwnerName('Invalid account');
-    }
-  }, [user]);
-
-  // Handle form submission
   const onSubmit = async (data) => {
     try {
+      // Provide feedback to the user that the request is in progress (e.g., show a loading spinner)
       await axiosService.post('/transactions/withdraw/cash', data);
       toast.success('Withdrawal request sent successfully!');
     } catch (error) {
@@ -144,15 +140,9 @@ export default function Withdraw() {
                     })}
                     onChange={handleAccountNumberChange}
                   />
-                  {user ? (
-                    <Text fontSize="sm" color="green" mb="5px" pb="10px">
-                      {ownerName}
-                    </Text>
-                  ) : (
-                    <Text fontSize="sm" color="red" mb="5px" pb="10px">
-                      {ownerName}
-                    </Text>
-                  )}
+                  <Text fontSize="sm" color="green" mb="5px" pb="10px">
+                    {ownerName && ownerName}
+                  </Text>
                   <FormErrorMessage>
                     {errors.accountNumber && errors.accountNumber.message}
                   </FormErrorMessage>

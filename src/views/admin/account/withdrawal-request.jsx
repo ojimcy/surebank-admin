@@ -65,7 +65,6 @@ const WithdrawalDetails = () => {
       toast.success('Withdrawal request approved successfully.');
     } catch (error) {
       console.error(error);
-      console.log(error.response);
       toast.error('An error occurred while approving the withdrawal.');
     } finally {
       setLoading(false);

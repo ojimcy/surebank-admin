@@ -99,10 +99,8 @@ export default function EditProductCatalogue() {
     }
     const bodyFormData = new FormData();
     bodyFormData.append('file', file);
-    console.log('1', bodyFormData);
     try {
       const { data } = await axiosService.post('/upload', bodyFormData);
-      console.log('2', bodyFormData);
       if (forImages) {
         setImages([...images, data.secure_url]);
       } else {

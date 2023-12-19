@@ -50,16 +50,13 @@ export default function UserRepsDashboard() {
 
         // API call with date parameters as timestamps
         const contributionResponse = await axiosService.get(
-          `/reports/user-reps/total-contributions?startDate=${startTimeStamp}&endDateParam=${endTimeStamp}`
+          `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}`
         );
-
-        setContributionDailyTotal(
-          contributionResponse.data.contributionsPerDay
-        );
+        setContributionDailyTotal(contributionResponse.data);
 
         // API call to get total daily withdrawals for today
         const withdrawalResponse = await axiosService.get(
-          `/reports/user-reps/total-savings-withdrawal?startDate=${startTimeStamp}&endDateParam=${endTimeStamp}`
+          `/reports/total-savings-withdrawal?startDate=${startTimeStamp}&endDateParam=${endTimeStamp}`
         );
         setDailySavingsWithdrawals(withdrawalResponse.data);
       };
@@ -69,12 +66,13 @@ export default function UserRepsDashboard() {
       console.error(error);
     }
   }, []);
-
   useEffect(() => {
     try {
       const fetchPackageReport = async () => {
-        const response = await axiosService.get('/reports/user-reps/packages');
-        setOpenPackageCount(response.data.totalOpenPackages);
+        const response = await axiosService.get(
+          `/reports/packages?status=open`
+        );
+        setOpenPackageCount(response.data.totalResults);
       };
 
       fetchPackageReport();
@@ -117,7 +115,7 @@ export default function UserRepsDashboard() {
               }
               // growth="+23%"
               name="Total Daily contributions"
-              value={formatNaira(contributionsDailyTotal[0]?.total || 0)}
+              value={formatNaira(contributionsDailyTotal)}
             />
 
             <MiniStatistics
@@ -137,7 +135,7 @@ export default function UserRepsDashboard() {
                 />
               }
               name="Total Daily Withdrawals"
-              value={formatNaira(dailySavingsWithdrawals[0]?.total || 0)}
+              value={formatNaira(dailySavingsWithdrawals)}
             />
 
             <MiniStatistics

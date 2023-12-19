@@ -61,7 +61,7 @@ export default function StaffDetailsPage() {
 
         // API call with date parameters as timestamps
         const contributionResponse = await axiosService.get(
-          `/reports/user-reps/total-contributions?startDate=${startTimeStamp}&endDateParam=${endTimeStamp}`,
+          `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&createdBy=${id}`,
         );
 
         setContributionDailyTotal(
@@ -80,7 +80,7 @@ export default function StaffDetailsPage() {
       console.error(error);
       toast.error(error.response?.data?.message || 'An error occurred');
     }
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     try {

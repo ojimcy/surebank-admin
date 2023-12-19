@@ -54,7 +54,6 @@ export default function Users() {
       const response = await axiosService.get(
         `/users?role=user&limit=${pageSize}&page=${pageIndex + 1}`
       );
-      console.log(response);
       setUsers(response.data.results);
       setLoading(false);
 

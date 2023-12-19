@@ -25,10 +25,10 @@ import { FaMoneyBillWave } from 'react-icons/fa';
 
 import MiniStatistics from 'components/card/MiniStatistics';
 import IconBox from 'components/icons/IconBox';
-import SimpleTable from 'components/table/SimpleTable';
 import ActionButton from 'components/Button/CustomButton';
 
 import { useAuth } from 'contexts/AuthContext';
+import CustomTable from 'components/table/CustomTable';
 
 export default function UserRepsDashboard() {
   const brandColor = useColorModeValue('brand.500', 'white');
@@ -42,6 +42,11 @@ export default function UserRepsDashboard() {
   const [customers, setCustomers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredCustomers, setFilteredCustomers] = useState([]);
+
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 20,
+  });
 
   const { currentUser } = useAuth();
   const staffId = currentUser.id;
@@ -61,16 +66,13 @@ export default function UserRepsDashboard() {
 
         // API call with date parameters as timestamps
         const contributionResponse = await axiosService.get(
-          `/reports/user-reps/total-contributions?startDate=${startTimeStamp}&endDateParam=${endTimeStamp}`
+          `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&createdBy=${staffId}`
         );
-
-        setContributionDailyTotal(
-          contributionResponse.data.contributionsPerDay
-        );
+        setContributionDailyTotal(contributionResponse.data);
 
         // API call to get total daily withdrawals for today
         const withdrawalResponse = await axiosService.get(
-          `/reports/user-reps/total-savings-withdrawal?startDate=${startTimeStamp}&endDateParam=${endTimeStamp}`
+          `/reports/total-savings-withdrawal?startDate=${startTimeStamp}&endDateParam=${endTimeStamp}`
         );
         setDailySavingsWithdrawals(withdrawalResponse.data);
       };
@@ -80,23 +82,32 @@ export default function UserRepsDashboard() {
       console.error(error);
       toast.error(error.response?.data?.message || 'An error occurred');
     }
-  }, []);
+  }, [staffId]);
+
+  const fetchData = async () => {
+    const { pageIndex, pageSize } = pagination;
+    try {
+      const response = await axiosService.get(
+        `accounts?limit=${pageSize}&page=${
+          pageIndex + 1
+        }&accountManagerId=${staffId}`
+      );
+      setCustomers(response.data.results);
+      setOpenPackageCount(response.data.totalResults);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   // Fetch customers
   useEffect(() => {
-    const fetchAccounts = async () => {
-      try {
-        const response = await axiosService.get(
-          `accounts?accountManagerId=${staffId}`
-        );
-        setCustomers(response.data.results);
-        setOpenPackageCount(response.data.totalResults);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchAccounts();
-  }, [staffId]);
+    fetchData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentUser, pagination, staffId]);
+
+  const onPageChange = ({ pageIndex, pageSize }) => {
+    setPagination({ pageIndex, pageSize });
+  };
 
   // Filter customers based on search term
   useEffect(() => {
@@ -110,10 +121,6 @@ export default function UserRepsDashboard() {
     });
     setFilteredCustomers(filtered);
   }, [searchTerm, customers]);
-
-  const totalItems = filteredCustomers.length;
-  const itemsPerPage = 10;
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
 
   const columns = React.useMemo(
     () => [
@@ -145,9 +152,7 @@ export default function UserRepsDashboard() {
         Header: 'Action',
         accessor: (row) => (
           <Box>
-          <NavLink to={`/admin/customer/${row.userId}`}>
-            Details
-          </NavLink>
+            <NavLink to={`/admin/customer/${row.userId}`}>Details</NavLink>
           </Box>
         ),
       },
@@ -189,7 +194,7 @@ export default function UserRepsDashboard() {
               }
               // growth="+23%"
               name="Total Daily contributions"
-              value={formatNaira(contributionsDailyTotal[0]?.total || 0)}
+              value={formatNaira(contributionsDailyTotal)}
             />
 
             <MiniStatistics
@@ -209,7 +214,7 @@ export default function UserRepsDashboard() {
                 />
               }
               name="Total Daily Withdrawals"
-              value={formatNaira(dailySavingsWithdrawals[0]?.total || 0)}
+              value={formatNaira(dailySavingsWithdrawals)}
             />
 
             <MiniStatistics
@@ -272,11 +277,10 @@ export default function UserRepsDashboard() {
         </Flex>
       </Box>
 
-      <SimpleTable
+      <CustomTable
         columns={columns}
         data={filteredCustomers}
-        pageSize={itemsPerPage}
-        totalPages={totalPages}
+        onPageChange={onPageChange}
       />
     </>
   );

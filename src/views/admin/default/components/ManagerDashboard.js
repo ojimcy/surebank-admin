@@ -37,61 +37,71 @@ export default function ManagerDashboard() {
   }
 
   useEffect(() => {
+    let isMounted = true;
+
     const fetchStaff = async () => {
-      const getStaff = await axiosService.get(`/staff/user/${currentUser.id}`);
-      setStaffInfo(getStaff.data);
+      try {
+        const getStaff = await axiosService.get(
+          `/staff/user/${currentUser.id}`
+        );
+        if (isMounted) {
+          setStaffInfo(getStaff.data);
+        }
+      } catch (error) {
+        console.error(error);
+      }
     };
+
     fetchStaff();
+
+    return () => {
+      // Cleanup function to set the isMounted flag to false when the component unmounts
+      isMounted = false;
+    };
   }, [currentUser]);
 
-  useEffect(() => {
+  const fetchData = async () => {
     try {
-      const fetchTotalContributions = async () => {
-        // Get today's date at 00:00 and convert to timestamp
-        const startDate = new Date();
-        startDate.setHours(0, 0, 0, 0);
-        const startTimeStamp = startDate.getTime();
+      // Get today's date at 00:00 and convert to timestamp
+      const startDate = new Date();
+      startDate.setHours(0, 0, 0, 0);
+      const startTimeStamp = startDate.getTime();
 
-        // Get today's date at 23:59 and convert to timestamp
-        const endDate = new Date();
-        endDate.setHours(23, 59, 59, 999);
-        const endTimeStamp = endDate.getTime();
+      // Get today's date at 23:59 and convert to timestamp
+      const endDate = new Date();
+      endDate.setHours(23, 59, 59, 999);
+      const endTimeStamp = endDate.getTime();
 
-        // API call with date parameters as timestamps
-        const contributionResponse = await axiosService.get(
-          `/reports/${staffInfo.branchId}/total-contributions?startDate=${startTimeStamp}&endDateParam=${endTimeStamp}`
-        );
+      const contributionResponse = await axiosService.get(
+        `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&branchId=${staffInfo.branchId}`
+      );
+      setContributionDailyTotal(contributionResponse.data);
+      const withdrawalResponse = await axiosService.get(
+        `/reports/total-savings-withdrawal?startDate=${startTimeStamp}&endDateParam=${endTimeStamp}`
+      );
+      setDailySavingsWithdrawals(withdrawalResponse.data);
 
-        setContributionDailyTotal(
-          contributionResponse.data.contributionsPerDay
-        );
-
-        // API call to get total daily withdrawals for today
-        const withdrawalResponse = await axiosService.get(
-          `/reports/${staffInfo.branchId}/total-savings-withdrawal?startDate=${startTimeStamp}&endDateParam=${endTimeStamp}`
-        );
-        setDailySavingsWithdrawals(withdrawalResponse.data);
-      };
-
-      staffInfo && fetchTotalContributions();
+      const accountResponse = await axiosService.get(
+        `accounts?branchId=${staffInfo.branchId}`
+      );
+      setOpenPackageCount(accountResponse.data.totalResults);
     } catch (error) {
       console.error(error);
     }
-  }, [staffInfo]);
+  };
 
   useEffect(() => {
-    try {
-      const fetchPackageReport = async () => {
-        const response = await axiosService.get(
-          `/reports/${staffInfo.branchId}/packages`
-        );
-        setOpenPackageCount(response.data.totalOpenPackages);
-      };
+    let isMounted = true;
 
-      fetchPackageReport();
-    } catch (error) {
-      console.error(error);
+    if (staffInfo && isMounted) {
+      fetchData();
     }
+
+    return () => {
+      // Cleanup function to set the isMounted flag to false when the component unmounts
+      isMounted = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [staffInfo]);
 
   return (
@@ -128,7 +138,7 @@ export default function ManagerDashboard() {
               }
               // growth="+23%"
               name="Total Daily contributions"
-              value={formatNaira(contributionsDailyTotal[0]?.total || 0)}
+              value={formatNaira(contributionsDailyTotal)}
             />
 
             <MiniStatistics
@@ -148,7 +158,7 @@ export default function ManagerDashboard() {
                 />
               }
               name="Total Daily Withdrawals"
-              value={formatNaira(dailySavingsWithdrawals[0]?.total || 0)}
+              value={formatNaira(dailySavingsWithdrawals)}
             />
 
             <MiniStatistics

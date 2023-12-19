@@ -38,6 +38,7 @@ import TransferStaffModal from 'components/modals/TransferStaffModal.js';
 import CustomTable from 'components/table/CustomTable';
 import { ChevronDownIcon, DeleteIcon, SearchIcon } from '@chakra-ui/icons';
 import { toast } from 'react-toastify';
+import { useAuth } from 'contexts/AuthContext';
 
 export default function Users() {
   const [staffs, setStaffs] = useState([]);
@@ -51,6 +52,7 @@ export default function Users() {
   const [userToDelete, setUserToDelete] = useState(null);
   const [showCreateStaffModal, setShowCreateStaffModal] = useState(false);
   const [showRoleModal, setShowRoleModal] = useState(false);
+  const [staffInfo, setStaffInfo] = useState({});
 
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredStaffs, setFilteredStaffs] = useState([]);
@@ -59,18 +61,60 @@ export default function Users() {
     pageSize: 20,
   });
 
+  const { currentUser } = useAuth();
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchStaff = async () => {
+      try {
+        if (currentUser) {
+          const getStaff = await axiosService.get(
+            `/staff/user/${currentUser.id}`
+          );
+          if (isMounted) {
+            setStaffInfo(getStaff.data);
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchStaff();
+
+    return () => {
+      // Cleanup function to set the isMounted flag to false when the component unmounts
+      isMounted = false;
+    };
+  }, [currentUser]);
+
+  useEffect(() => {
+    if (staffInfo.branchId) {
+      fetchUsers();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pagination, staffInfo.branchId]);
+
   const fetchUsers = async () => {
     setLoading(true);
     const { pageIndex, pageSize } = pagination;
     try {
       const branches = await axiosService.get('/branch/');
-      const response = await axiosService.get(
-        `/staff?limit=${pageSize}&page=${pageIndex + 1}`
+      let staffResponse;
+      if (currentUser.role === 'manager') {
+        staffResponse = await axiosService.get(`/staff/${staffInfo.branchId}`);
+      } else {
+        staffResponse = await axiosService.get(
+          `/staff?limit=${pageSize}&page=${pageIndex + 1}`
+        );
+      }
+      const UserResponse = await axiosService.get(
+        `/users?role=user&limit=10000000`
       );
-      const UserResponse = await axiosService.get(`/users?role=user&limit=10000000`);
       setUsers(UserResponse.data.results);
       setAllBranch(branches.data.results);
-      setStaffs(response.data);
+      setStaffs(staffResponse.data);
       setLoading(false);
     } catch (error) {
       console.error(error);
@@ -78,9 +122,18 @@ export default function Users() {
   };
 
   useEffect(() => {
-    fetchUsers();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pagination]);
+    // Filter customers based on search term
+    if (!staffs) {
+      return;
+    }
+
+    const filtered = staffs?.filter((staff) => {
+      const fullName =
+        `${staff.staffId.firstName} ${staff.staffId.lastName}`.toLowerCase();
+      return fullName.includes(searchTerm.toLowerCase());
+    });
+    setFilteredStaffs(filtered);
+  }, [searchTerm, staffs]);
 
   const onPageChange = ({ pageIndex, pageSize }) => {
     setPagination({ pageIndex, pageSize });

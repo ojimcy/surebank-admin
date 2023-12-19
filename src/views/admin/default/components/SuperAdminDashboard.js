@@ -46,17 +46,21 @@ export default function SuperAdminDashboard() {
       const endTimeStamp = endDate.getTime();
 
       // Fetch total contributions and total daily withdrawals
-      const [contributionResponse, withdrawalResponse] = await Promise.all([
+      const [
+        totalContributionResponse,
+        contributionResponse,
+        withdrawalResponse,
+      ] = await Promise.all([
+        axiosService.get(`/reports/total-contributions`),
         axiosService.get(
-          `/reports/total-contributions?startDate=${startTimeStamp}&endDateParam=${endTimeStamp}`
+          `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}`
         ),
         axiosService.get(
-          `/reports/total-savings-withdrawal?startDate=${startTimeStamp}&endDateParam=${endTimeStamp}`
+          `/reports/total-savings-withdrawal?startDate=${startTimeStamp}&endDate=${endTimeStamp}`
         ),
       ]);
-
-      setContributionDailyTotal(contributionResponse.data.contributionsPerDay);
-      setTotalContributions(contributionResponse.data.sumTotal);
+      setTotalContributions(totalContributionResponse.data);
+      setContributionDailyTotal(contributionResponse.data);
       setDailySavingsWithdrawals(withdrawalResponse.data);
 
       // Fetch total open and closed packages
@@ -135,7 +139,7 @@ export default function SuperAdminDashboard() {
             }
             // growth="+23%"
             name="Total Daily contributions"
-            value={formatNaira(contributionsDailyTotal[0]?.total || 0)}
+            value={formatNaira(contributionsDailyTotal)}
           />
 
           <MiniStatistics

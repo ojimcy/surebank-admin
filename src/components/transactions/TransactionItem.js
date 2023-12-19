@@ -11,7 +11,6 @@ import { formatDate, formatNaira } from 'utils/helper';
 export default function TransactionItem({ transaction }) {
   const getIconByNarration = () => {
     const narration = transaction.narration.toLowerCase();
-    console.log(narration)
     if (narration.includes('daily contribution')) {
       return <FaMoneyCheckAlt />;
     } else if (narration.includes('daily contribution withdrawal')) {

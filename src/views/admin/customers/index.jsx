@@ -70,11 +70,11 @@ export default function Customers() {
         setCustomers(response.data);
       } else if (currentUser.role === 'manager') {
         const response = await axiosService.get(
-          `accounts/${
+          `accounts?limit=${pageSize}&page=${pageIndex + 1}&branchId=${
             currentUser.branchId
-          }/branchaccounts?limit=${pageSize}&page=${pageIndex + 1}`
+          }`
         );
-        setCustomers(response.data);
+        setCustomers(response.data.results);
       } else {
         response = await axiosService.get(
           `/accounts?limit=${pageSize}&page=${pageIndex + 1}`

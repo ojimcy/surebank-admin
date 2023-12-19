@@ -66,7 +66,6 @@ const ExpenditureDetail = () => {
       toast.success('Expenditure approved successfully.');
     } catch (error) {
       console.error(error);
-      console.log(error.response);
       toast.error('An error occurred while approving the expenditure.');
     } finally {
       setLoading(false);
