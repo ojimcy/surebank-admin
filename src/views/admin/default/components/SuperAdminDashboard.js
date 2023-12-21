@@ -94,127 +94,129 @@ export default function SuperAdminDashboard() {
       {loading ? (
         <Spinner size="lg" />
       ) : (
-        <SimpleGrid
-          columns={{ base: 1, md: 3, lg: 3, '2xl': 3 }}
-          gap="20px"
-          mb="20px"
-          mt="40px"
-        >
-          {/* Use the fetched total contributions data */}
-          <MiniStatistics
-            startContent={
-              <IconBox
-                w="56px"
-                h="56px"
-                bg={boxBg}
-                icon={
-                  <Icon
-                    w="32px"
-                    h="32px"
-                    as={MdAttachMoney}
-                    color={brandColor}
-                  />
-                }
-              />
-            }
-            name="Total Contributions"
-            value={formatNaira(totalContributions)}
-          />
+        <>
+          <SimpleGrid
+            columns={{ base: 1, md: 3, lg: 3, '2xl': 3 }}
+            gap="20px"
+            mb="20px"
+            mt="40px"
+          >
+            {/* Use the fetched total contributions data */}
+            <MiniStatistics
+              startContent={
+                <IconBox
+                  w="56px"
+                  h="56px"
+                  bg={boxBg}
+                  icon={
+                    <Icon
+                      w="32px"
+                      h="32px"
+                      as={MdAttachMoney}
+                      color={brandColor}
+                    />
+                  }
+                />
+              }
+              name="Total Contributions"
+              value={formatNaira(totalContributions)}
+            />
 
-          <MiniStatistics
-            startContent={
-              <IconBox
-                w="56px"
-                h="56px"
-                bg={boxBg}
-                icon={
-                  <Icon
-                    w="32px"
-                    h="32px"
-                    as={MdAttachMoney}
-                    color={brandColor}
-                  />
-                }
-              />
-            }
-            // growth="+23%"
-            name="Total Daily contributions"
-            value={formatNaira(contributionsDailyTotal)}
-          />
+            <MiniStatistics
+              startContent={
+                <IconBox
+                  w="56px"
+                  h="56px"
+                  bg={boxBg}
+                  icon={
+                    <Icon
+                      w="32px"
+                      h="32px"
+                      as={MdAttachMoney}
+                      color={brandColor}
+                    />
+                  }
+                />
+              }
+              // growth="+23%"
+              name="Total Daily contributions"
+              value={formatNaira(contributionsDailyTotal)}
+            />
 
-          <MiniStatistics
-            startContent={
-              <IconBox
-                w="56px"
-                h="56px"
-                bg={boxBg}
-                icon={
-                  <Icon
-                    w="32px"
-                    h="32px"
-                    as={MdAttachMoney}
-                    color={brandColor}
-                  />
-                }
-              />
-            }
-            name="Total Daily Withdrawals"
-            value={formatNaira(dailySavingsWithdrawals[0]?.total || 0)}
-          />
+            <MiniStatistics
+              startContent={
+                <IconBox
+                  w="56px"
+                  h="56px"
+                  bg={boxBg}
+                  icon={
+                    <Icon
+                      w="32px"
+                      h="32px"
+                      as={MdAttachMoney}
+                      color={brandColor}
+                    />
+                  }
+                />
+              }
+              name="Total Daily Withdrawals"
+              value={formatNaira(dailySavingsWithdrawals[0]?.total || 0)}
+            />
 
-          <MiniStatistics
-            startContent={
-              <IconBox
-                w="56px"
-                h="56px"
-                bg={boxBg}
-                icon={
-                  <Icon w="32px" h="32px" as={MdPerson} color={brandColor} />
-                }
-              />
-            }
-            name="Active Packages"
-            value={openPackageCount && openPackageCount}
-          />
+            <MiniStatistics
+              startContent={
+                <IconBox
+                  w="56px"
+                  h="56px"
+                  bg={boxBg}
+                  icon={
+                    <Icon w="32px" h="32px" as={MdPerson} color={brandColor} />
+                  }
+                />
+              }
+              name="Active Packages"
+              value={openPackageCount && openPackageCount}
+            />
 
-          <MiniStatistics
-            startContent={
-              <IconBox
-                w="56px"
-                h="56px"
-                bg={boxBg}
-                icon={
-                  <Icon w="32px" h="32px" as={MdPerson} color={brandColor} />
-                }
+            <MiniStatistics
+              startContent={
+                <IconBox
+                  w="56px"
+                  h="56px"
+                  bg={boxBg}
+                  icon={
+                    <Icon w="32px" h="32px" as={MdPerson} color={brandColor} />
+                  }
+                />
+              }
+              name="Closed Packages"
+              value={closedPackages && closedPackages}
+            />
+          </SimpleGrid>
+
+          <Box>
+            <Flex
+              justify="space-between"
+              alignItems="center"
+              mb="20px"
+              flexDirection={{ base: 'column', md: 'row' }}
+            >
+              <ActionButton
+                to="/admin/accounting/dashboard"
+                icon={FaChartBar}
+                label="Report"
               />
-            }
-            name="Closed Packages"
-            value={closedPackages && closedPackages}
-          />
-        </SimpleGrid>
+              <ActionButton
+                to="/admin/accounting/expenditure"
+                icon={FaMoneyBillWave}
+                label="Expenditure"
+              />
+            </Flex>
+          </Box>
+
+          <Withdrawals />
+        </>
       )}
-
-      <Box>
-        <Flex
-          justify="space-between"
-          alignItems="center"
-          mb="20px"
-          flexDirection={{ base: 'column', md: 'row' }}
-        >
-          <ActionButton
-            to="/admin/accounting/dashboard"
-            icon={FaChartBar}
-            label="Report"
-          />
-          <ActionButton
-            to="/admin/accounting/expenditure"
-            icon={FaMoneyBillWave}
-            label="Expenditure"
-          />
-        </Flex>
-      </Box>
-
-      <Withdrawals />
     </>
   );
 }

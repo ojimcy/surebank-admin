@@ -1,27 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { Flex, Icon, Text, useColorModeValue, Box } from '@chakra-ui/react';
-
+import {
+  Flex,
+  Icon,
+  Text,
+  useColorModeValue,
+  Box,
+  Spinner,
+} from '@chakra-ui/react';
 import { useHistory } from 'react-router-dom';
-
 import { MdAttachMoney, MdPerson } from 'react-icons/md';
 import axiosService from 'utils/axiosService';
 import { formatNaira } from 'utils/helper';
 import Card from 'components/card/Card';
-
 import { FaMoneyBillWave } from 'react-icons/fa';
-
 import MiniStatistics from 'components/card/MiniStatistics';
 import IconBox from 'components/icons/IconBox';
 import ActionButton from 'components/Button/CustomButton';
-
 import Withdrawals from './Withdrawals';
-
 import { useAuth } from 'contexts/AuthContext';
 
 export default function ManagerDashboard() {
   const { currentUser } = useAuth();
   const history = useHistory();
-
   const brandColor = useColorModeValue('brand.500', 'white');
   const boxBg = useColorModeValue('secondaryGray.300', 'whiteAlpha.100');
   const textColor = useColorModeValue('secondaryGray.900', 'white');
@@ -31,10 +31,13 @@ export default function ManagerDashboard() {
   const [dailySavingsWithdrawals, setDailySavingsWithdrawals] = useState([]);
   const [openPackageCount, setOpenPackageCount] = useState(0);
   const [staffInfo, setStaffInfo] = useState({});
+  const [loading, setLoading] = useState(true);
 
-  if (!currentUser) {
-    history.push('/auth/login');
-  }
+  useEffect(() => {
+    if (!currentUser) {
+      history.push('/auth/login');
+    }
+  }, [currentUser, history]);
 
   useEffect(() => {
     let isMounted = true;
@@ -52,57 +55,50 @@ export default function ManagerDashboard() {
       }
     };
 
+    const fetchData = async () => {
+      try {
+        const startDate = new Date();
+        startDate.setHours(0, 0, 0, 0);
+        const startTimeStamp = startDate.getTime();
+
+        const endDate = new Date();
+        endDate.setHours(23, 59, 59, 999);
+        const endTimeStamp = endDate.getTime();
+
+        const [contributionResponse, withdrawalResponse, accountResponse] =
+          await Promise.all([
+            axiosService.get(
+              `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&branchId=${staffInfo.branchId}`
+            ),
+            axiosService.get(
+              `/reports/total-savings-withdrawal?startDate=${startTimeStamp}&endDate=${endTimeStamp}`
+            ),
+            axiosService.get(`accounts?branchId=${staffInfo.branchId}`),
+          ]);
+
+        setContributionDailyTotal(contributionResponse.data);
+        setDailySavingsWithdrawals(withdrawalResponse.data);
+        setOpenPackageCount(accountResponse.data.totalResults);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
     fetchStaff();
+    fetchData();
 
     return () => {
-      // Cleanup function to set the isMounted flag to false when the component unmounts
       isMounted = false;
     };
-  }, [currentUser]);
+  }, [currentUser, staffInfo]);
 
-  const fetchData = async () => {
-    try {
-      // Get today's date at 00:00 and convert to timestamp
-      const startDate = new Date();
-      startDate.setHours(0, 0, 0, 0);
-      const startTimeStamp = startDate.getTime();
-
-      // Get today's date at 23:59 and convert to timestamp
-      const endDate = new Date();
-      endDate.setHours(23, 59, 59, 999);
-      const endTimeStamp = endDate.getTime();
-
-      const contributionResponse = await axiosService.get(
-        `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&branchId=${staffInfo.branchId}`
-      );
-      setContributionDailyTotal(contributionResponse.data);
-      const withdrawalResponse = await axiosService.get(
-        `/reports/total-savings-withdrawal?startDate=${startTimeStamp}&endDateParam=${endTimeStamp}`
-      );
-      setDailySavingsWithdrawals(withdrawalResponse.data);
-
-      const accountResponse = await axiosService.get(
-        `accounts?branchId=${staffInfo.branchId}`
-      );
-      setOpenPackageCount(accountResponse.data.totalResults);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  useEffect(() => {
-    let isMounted = true;
-
-    if (staffInfo && isMounted) {
-      fetchData();
-    }
-
-    return () => {
-      // Cleanup function to set the isMounted flag to false when the component unmounts
-      isMounted = false;
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [staffInfo]);
+  if (loading) {
+    return <Spinner size="lg" />;
+  }
 
   return (
     <>
@@ -136,7 +132,6 @@ export default function ManagerDashboard() {
                   }
                 />
               }
-              // growth="+23%"
               name="Total Daily contributions"
               value={formatNaira(contributionsDailyTotal)}
             />
@@ -158,7 +153,7 @@ export default function ManagerDashboard() {
                 />
               }
               name="Total Daily Withdrawals"
-              value={formatNaira(dailySavingsWithdrawals)}
+              value={formatNaira(dailySavingsWithdrawals[0]?.total || 0)}
             />
 
             <MiniStatistics

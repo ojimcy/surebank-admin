@@ -1,7 +1,6 @@
 // Chakra imports
 import {
   Box,
-  Spinner,
   Flex,
   Stack,
   Select,
@@ -18,14 +17,14 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 // Assets
 import axiosService from 'utils/axiosService';
-import SimpleTable from 'components/table/SimpleTable';
+import CustomTable from 'components/table/CustomTable';
 import { NavLink } from 'react-router-dom/';
 
 import { useAppContext } from 'contexts/AppContext';
+import { formatDate } from 'utils/helper';
 
 export default function Withdrawals() {
-  const { branches } = useAppContext();
-  const [loading, setLoading] = useState(true);
+  const { branches, setLoading } = useAppContext();
   const [withdrawals, setWithdrawals] = useState([]);
   const [filteredWithdrawals, setFilteredWithdrawals] = useState([]);
   const [timeRange, setTimeRange] = useState('all');
@@ -35,7 +34,10 @@ export default function Withdrawals() {
   const [isCustomDateModalOpen, setCustomDateModalOpen] = useState(false);
   const [customRangeLabel, setCustomRangeLabel] = useState('Custom Range');
 
-  const totalPages = 10;
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 20,
+  });
 
   const handleTimeRangeChange = useCallback(
     (e) => {
@@ -79,29 +81,32 @@ export default function Withdrawals() {
   useEffect(() => {
     async function fetchWithdrawals() {
       setLoading(true);
+      const { pageIndex, pageSize } = pagination;
 
-      let endpoint = `/transactions/withdraw/cash`;
+      let endpoint = `/transactions/withdraw/cash?limit=${pageSize}&page=${
+        pageIndex + 1
+      }`;
       if (timeRange === 'last7days') {
         const endDate = new Date();
         endDate.setHours(23, 59, 59, 999);
         const startDate = new Date();
         startDate.setDate(endDate.getDate() - 7);
         startDate.setHours(0, 0, 0, 0);
-        endpoint += `?startDate=${startDate.getTime()}&endDate=${endDate.getTime()}`;
+        endpoint += `&startDate=${startDate.getTime()}&endDate=${endDate.getTime()}`;
       } else if (timeRange === 'last30days') {
         const endDate = new Date();
         endDate.setHours(23, 59, 59, 999);
         const startDate = new Date();
         startDate.setDate(endDate.getDate() - 30);
         startDate.setHours(0, 0, 0, 0);
-        endpoint += `?startDate=${startDate.getTime()}&endDate=${endDate.getTime()}`;
+        endpoint += `&startDate=${startDate.getTime()}&endDate=${endDate.getTime()}`;
       } else if (timeRange === 'custom') {
         if (startDate && endDate) {
           const customStartDate = new Date(startDate);
           customStartDate.setHours(0, 0, 0, 0);
           const customEndDate = new Date(endDate);
           customEndDate.setHours(23, 59, 59, 999);
-          endpoint += `?startDate=${customStartDate.getTime()}&endDate=${customEndDate.getTime()}`;
+          endpoint += `&startDate=${customStartDate.getTime()}&endDate=${customEndDate.getTime()}`;
         }
       }
       try {
@@ -115,7 +120,8 @@ export default function Withdrawals() {
     }
 
     fetchWithdrawals();
-  }, [timeRange, branch, startDate, endDate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timeRange, branch, startDate, endDate, pagination]);
 
   useEffect(() => {
     let filteredData = withdrawals;
@@ -137,14 +143,16 @@ export default function Withdrawals() {
     setFilteredWithdrawals(filteredData);
   }, [withdrawals, timeRange]);
 
-  const itemsPerPage = 10;
+  const onPageChange = ({ pageIndex, pageSize }) => {
+    setPagination({ pageIndex, pageSize });
+  };
 
   // Columns for the user table
   const columns = React.useMemo(
     () => [
       {
         Header: 'Date',
-        accessor: 'date',
+        accessor: (row) => formatDate(row.date),
       },
       {
         Header: 'Amount',
@@ -212,16 +220,11 @@ export default function Withdrawals() {
           </Flex>
         </Box>
         <Box marginTop="30">
-          {loading ? (
-            <Spinner />
-          ) : (
-            <SimpleTable
-              columns={columns}
-              data={filteredWithdrawals}
-              pageSize={itemsPerPage}
-              totalPages={totalPages}
-            />
-          )}
+          <CustomTable
+            columns={columns}
+            data={filteredWithdrawals}
+            onPageChange={onPageChange}
+          />
         </Box>
       </Box>
 

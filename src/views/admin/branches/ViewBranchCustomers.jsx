@@ -35,7 +35,7 @@ import Card from 'components/card/Card.js';
 import { DeleteIcon, EditIcon, SearchIcon } from '@chakra-ui/icons';
 import BackButton from 'components/menu/BackButton';
 import { toast } from 'react-toastify';
-import SimpleTable from 'components/table/SimpleTable';
+import CustomTable from 'components/table/CustomTable';
 
 export default function Customers() {
   const { branchId } = useParams();
@@ -46,12 +46,19 @@ export default function Customers() {
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [customerToDelete, setCustomerToDelete] = useState(null);
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 20,
+  });
 
   const fetchAccounts = async () => {
     setLoading(true);
+    const { pageIndex, pageSize } = pagination;
     try {
       const response = await axiosService.get(
-        `accounts/${branchId}/branchaccounts`
+        `accounts/${branchId}/branchaccounts?limit=${pageSize}&page=${
+          pageIndex + 1
+        }`
       );
       setCustomers(response.data);
       setLoading(false);
@@ -62,8 +69,12 @@ export default function Customers() {
   // Fetch customers
   useEffect(() => {
     fetchAccounts();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pagination]);
+
+  const onPageChange = ({ pageIndex, pageSize }) => {
+    setPagination({ pageIndex, pageSize });
+  };
 
   // Filter customers based on search term
   useEffect(() => {
@@ -105,11 +116,6 @@ export default function Customers() {
       toast.error(error.response?.data?.message || 'An error occurred');
     }
   };
-
-
-  const totalItems = filteredCustomers.length;
-  const itemsPerPage = 10;
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
 
   // Columns for the user table
   const columns = React.useMemo(
@@ -243,11 +249,10 @@ export default function Customers() {
             {loading ? (
               <Spinner />
             ) : (
-              <SimpleTable
+              <CustomTable
                 columns={columns}
                 data={filteredCustomers}
-                pageSize={itemsPerPage}
-                totalPages={totalPages}
+                onPageChange={onPageChange}
               />
             )}
           </Box>
