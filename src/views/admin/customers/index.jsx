@@ -236,15 +236,18 @@ export default function Customers() {
             <BackButton />
           </Flex>
           <Flex justifyContent="flex-end">
-            <Button
-              bgColor="blue.700"
-              color="white"
-              borderRadius="5px"
-              mr={4}
-              onClick={openbranchcustomermodal}
-            >
-              View Branch Customer
-            </Button>
+            {currentUser.role === 'superAdmin' ||
+              (currentUser.role === 'admin' && (
+                <Button
+                  bgColor="blue.700"
+                  color="white"
+                  borderRadius="5px"
+                  mr={4}
+                  onClick={openbranchcustomermodal}
+                >
+                  View Branch Customer
+                </Button>
+              ))}
             <Menu isLazy>
               <MenuButton
                 bgColor="blue.700"

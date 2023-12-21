@@ -109,7 +109,7 @@ export default function User() {
                           <Text fontWeight="bold">Branch:</Text>
                           <Text>{branchInfo.name}</Text>
                         </Grid>
-                        <NavLink to={`/admin/branch/staff/${id}`}>
+                        <NavLink to={`/admin/branch/staff/${id}`} mr={4}>
                           <Button mt={4} colorScheme="blue" size="md">
                             Details
                           </Button>

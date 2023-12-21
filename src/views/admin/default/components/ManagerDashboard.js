@@ -5,7 +5,6 @@ import {
   Text,
   useColorModeValue,
   Box,
-  Grid,
 } from '@chakra-ui/react';
 import { useHistory } from 'react-router-dom';
 import { MdAttachMoney, MdPerson } from 'react-icons/md';
@@ -117,123 +116,110 @@ export default function ManagerDashboard() {
       ) : (
         <Box pt={{ base: '180px', md: '80px', xl: '80px' }}>
           <BackButton />
-          <Grid
-            mb="20px"
-            gridTemplateColumns={{ xl: 'repeat(3, 1fr)', '2xl': '1fr 0.46fr' }}
-            gap={{ base: '20px', xl: '20px' }}
-            display={{ base: 'block', xl: 'grid' }}
-          >
-            <>
-              <Flex
-                direction={{ base: 'column', md: 'row' }}
-                mb="20px"
-                mt="40px"
-              >
-                <Card>
-                  <Text
-                    fontWeight="bold"
-                    fontSize="xl"
-                    mt="10px"
-                    color={textColor}
-                  >
-                    Overview
-                  </Text>
-                  <Text fontSize="sm" color={textColorSecondary} pb="20px">
-                    Overview of your activities
-                  </Text>
-                  <hr color={textColor} />
-                  <Flex
-                    direction={{ base: 'column', md: 'row' }}
-                    justifyContent="space-between"
-                    mt="20px"
-                  >
-                    <MiniStatistics
-                      startContent={
-                        <IconBox
-                          w="56px"
-                          h="56px"
-                          bg={boxBg}
-                          icon={
-                            <Icon
-                              w="32px"
-                              h="32px"
-                              as={MdAttachMoney}
-                              color={brandColor}
-                            />
-                          }
-                        />
-                      }
-                      name="Total Daily contributions"
-                      value={formatNaira(contributionsDailyTotal)}
-                    />
-
-                    <MiniStatistics
-                      startContent={
-                        <IconBox
-                          w="56px"
-                          h="56px"
-                          bg={boxBg}
-                          icon={
-                            <Icon
-                              w="32px"
-                              h="32px"
-                              as={MdAttachMoney}
-                              color={brandColor}
-                            />
-                          }
-                        />
-                      }
-                      name="Total Daily Withdrawals"
-                      value={formatNaira(
-                        dailySavingsWithdrawals[0]?.total || 0
-                      )}
-                    />
-
-                    <MiniStatistics
-                      startContent={
-                        <IconBox
-                          w="56px"
-                          h="56px"
-                          bg={boxBg}
-                          icon={
-                            <Icon
-                              w="32px"
-                              h="32px"
-                              as={MdPerson}
-                              color={brandColor}
-                            />
-                          }
-                        />
-                      }
-                      name="Active customers"
-                      value={openPackageCount && openPackageCount}
-                    />
-                  </Flex>
-                </Card>
-              </Flex>
-
-              <Box>
-                <Flex
-                  justify="end"
-                  alignItems="center"
-                  mb="20px"
-                  flexDirection={{ base: 'column', md: 'row' }}
+          <>
+            <Flex direction={{ base: 'column', md: 'row' }} mb="20px" mt="40px">
+              <Card>
+                <Text
+                  fontWeight="bold"
+                  fontSize="xl"
+                  mt="10px"
+                  color={textColor}
                 >
-                  <ActionButton
-                    to="/admin/accounting/expenditure"
-                    icon={FaMoneyBillWave}
-                    label="Expenditure"
+                  Overview
+                </Text>
+                <Text fontSize="sm" color={textColorSecondary} pb="20px">
+                  Overview of your activities
+                </Text>
+                <hr color={textColor} />
+                <Flex
+                  direction={{ base: 'column', md: 'row' }}
+                  justifyContent="space-between"
+                  mt="20px"
+                >
+                  <MiniStatistics
+                    startContent={
+                      <IconBox
+                        w="56px"
+                        h="56px"
+                        bg={boxBg}
+                        icon={
+                          <Icon
+                            w="32px"
+                            h="32px"
+                            as={MdAttachMoney}
+                            color={brandColor}
+                          />
+                        }
+                      />
+                    }
+                    name="Total Daily contributions"
+                    value={formatNaira(contributionsDailyTotal)}
+                  />
+
+                  <MiniStatistics
+                    startContent={
+                      <IconBox
+                        w="56px"
+                        h="56px"
+                        bg={boxBg}
+                        icon={
+                          <Icon
+                            w="32px"
+                            h="32px"
+                            as={MdAttachMoney}
+                            color={brandColor}
+                          />
+                        }
+                      />
+                    }
+                    name="Total Daily Withdrawals"
+                    value={formatNaira(dailySavingsWithdrawals[0]?.total || 0)}
+                  />
+
+                  <MiniStatistics
+                    startContent={
+                      <IconBox
+                        w="56px"
+                        h="56px"
+                        bg={boxBg}
+                        icon={
+                          <Icon
+                            w="32px"
+                            h="32px"
+                            as={MdPerson}
+                            color={brandColor}
+                          />
+                        }
+                      />
+                    }
+                    name="Active customers"
+                    value={openPackageCount && openPackageCount}
                   />
                 </Flex>
-              </Box>
+              </Card>
+            </Flex>
 
-              <Text fontSize="2xl" mt="5rem">
-                Transactions
-              </Text>
+            <Box>
+              <Flex
+                justify="end"
+                alignItems="center"
+                mb="20px"
+                flexDirection={{ base: 'column', md: 'row' }}
+              >
+                <ActionButton
+                  to="/admin/accounting/expenditure"
+                  icon={FaMoneyBillWave}
+                  label="Expenditure"
+                />
+              </Flex>
+            </Box>
 
-              <Withdrawals />
-            </>
-          </Grid>
+            <Text fontSize="2xl" mt="5rem">
+              Transactions
+            </Text>
+
+            <Withdrawals />
+          </>
         </Box>
       )}
     </Box>
