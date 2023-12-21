@@ -8,7 +8,6 @@ import {
   Button,
   Center,
   Avatar,
-  Spinner,
   Flex,
   Text,
   Spacer,
@@ -32,6 +31,7 @@ import BackButton from 'components/menu/BackButton';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { useHistory } from 'react-router-dom';
+import LoadingSpinner from 'components/scroll/LoadingSpinner';
 
 export default function User() {
   const history = useHistory();
@@ -109,14 +109,7 @@ export default function User() {
   return (
     <Box>
       {loading ? (
-        <Box
-          h="100vh"
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <Spinner size="xl" color="blue.500" />
-        </Box>
+        <LoadingSpinner />
       ) : (
         <Box pt={{ base: '180px', md: '80px', xl: '80px' }}>
           <BackButton />

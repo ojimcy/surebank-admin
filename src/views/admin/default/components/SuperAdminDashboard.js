@@ -5,8 +5,6 @@ import {
   SimpleGrid,
   useColorModeValue,
   Flex,
-  Spinner,
-  // Button,
 } from '@chakra-ui/react';
 import MiniStatistics from 'components/card/MiniStatistics';
 import IconBox from 'components/icons/IconBox';
@@ -20,6 +18,7 @@ import { useAuth } from 'contexts/AuthContext';
 import ActionButton from 'components/Button/CustomButton';
 import Withdrawals from './Withdrawals';
 import { useHistory } from 'react-router-dom';
+import LoadingSpinner from 'components/scroll/LoadingSpinner';
 
 export default function SuperAdminDashboard() {
   const history = useHistory();
@@ -90,9 +89,9 @@ export default function SuperAdminDashboard() {
   }, [fetchDashboardData]);
 
   return (
-    <>
+    <Box>
       {loading ? (
-        <Spinner size="lg" />
+        <LoadingSpinner />
       ) : (
         <>
           <SimpleGrid
@@ -217,6 +216,6 @@ export default function SuperAdminDashboard() {
           <Withdrawals />
         </>
       )}
-    </>
+    </Box>
   );
 }

@@ -56,6 +56,7 @@ import CatalogueDetails from 'views/admin/products/single-product-catalogue';
 import EditProductCatalogue from 'views/admin/products/catalogue/edit';
 
 import Collections from 'views/admin/stores/collections';
+import StaffDetailsPage from 'views/admin/branches/StaffDetails';
 
 const routes = [
   {
@@ -110,9 +111,19 @@ const routes = [
     name: 'Branches',
     layout: '/admin',
     icon: <Icon as={MdBarChart} width="20px" height="20px" color="inherit" />,
-    roles: ['superAdmin', 'admin', 'manager', 'userReps'],
+    roles: ['superAdmin', 'admin', 'manager'],
     path: '/branch/viewstaff/:id',
     component: ViewStaff,
+  },
+  {
+    name: 'Branches',
+    layout: '/admin',
+    path: '/branch/staff/:id',
+    icon: (
+      <Icon as={MdOutlinePerson3} width="20px" height="20px" color="inherit" />
+    ),
+    roles: ['superAdmin', 'admin', 'manager', 'userReps'],
+    component: StaffDetailsPage,
   },
   {
     name: 'Profile',

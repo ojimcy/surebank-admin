@@ -10,7 +10,6 @@ import {
   FormControl,
   Input,
   Button,
-  Spinner,
 } from '@chakra-ui/react';
 import { SearchIcon } from '@chakra-ui/icons';
 import { MdAttachMoney, MdPerson } from 'react-icons/md';
@@ -25,6 +24,7 @@ import ActionButton from 'components/Button/CustomButton';
 import { useAuth } from 'contexts/AuthContext';
 import CustomTable from 'components/table/CustomTable';
 import { NavLink } from 'react-router-dom';
+import LoadingSpinner from 'components/scroll/LoadingSpinner';
 
 export default function UserRepsDashboard() {
   const brandColor = useColorModeValue('brand.500', 'white');
@@ -148,9 +148,9 @@ export default function UserRepsDashboard() {
   );
 
   return (
-    <>
+    <Box>
       {loading ? (
-        <Spinner size="lg" />
+        <LoadingSpinner />
       ) : (
         <>
           <Flex direction={{ base: 'column', md: 'row' }} mb="20px" mt="40px">
@@ -279,6 +279,6 @@ export default function UserRepsDashboard() {
           />
         </>
       )}
-    </>
+    </Box>
   );
 }

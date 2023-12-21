@@ -3,7 +3,6 @@ import {
   Box,
   Grid,
   Button,
-  Spinner,
   Flex,
   Text,
   Spacer,
@@ -32,6 +31,7 @@ import { toast } from 'react-toastify';
 import BackButton from 'components/menu/BackButton';
 import axios from 'axios';
 import CustomTable from 'components/table/CustomTable';
+import LoadingSpinner from 'components/scroll/LoadingSpinner';
 
 export default function Users() {
   const [users, setUsers] = useState([]);
@@ -221,7 +221,7 @@ export default function Users() {
           </Box>
           <Box marginTop="30">
             {loading ? (
-              <Spinner />
+              <LoadingSpinner />
             ) : filteredUsers.length === 0 ? (
               <Text fontSize="lg" textAlign="center" mt="20">
                 No user records found.

@@ -48,12 +48,13 @@ const AssignManager = () => {
         'The selected staff member has been assigned as the account manager.'
       );
       setAssigning(false);
-      history.goBack()
+      history.goBack();
       // Handle success or show a notification to the user
     } catch (error) {
       console.error(error);
       toast.error(
-        'An error occurred while assigning the manager. Please try again later.'
+        error.response?.data?.message ||
+          'An error occurred while assigning the manager. Please try again later.'
       );
       setAssigning(false);
     }

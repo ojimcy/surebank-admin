@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom';
 import {
   Box,
   Text,
-  Spinner,
   Grid,
   Flex,
   Center,
@@ -23,6 +22,7 @@ import { formatNaira, formatDate } from 'utils/helper';
 
 import BackButton from 'components/menu/BackButton';
 import { useForm } from 'react-hook-form';
+import LoadingSpinner from 'components/scroll/LoadingSpinner';
 
 const WithdrawalDetails = () => {
   const { requestId } = useParams();
@@ -65,7 +65,10 @@ const WithdrawalDetails = () => {
       toast.success('Withdrawal request approved successfully.');
     } catch (error) {
       console.error(error);
-      toast.error('An error occurred while approving the withdrawal.');
+      toast.error(
+        error.response?.data?.message ||
+          'An error occurred while approving the withdrawal.'
+      );
     } finally {
       setLoading(false);
     }
@@ -91,7 +94,7 @@ const WithdrawalDetails = () => {
   return (
     <Box p={4}>
       {loading ? (
-        <Spinner size="lg" />
+        <LoadingSpinner />
       ) : (
         <Box pt={{ base: '180px', md: '80px', xl: '80px' }}>
           <BackButton />
@@ -127,7 +130,7 @@ const WithdrawalDetails = () => {
                           <Text fontWeight="bold">Amount:</Text>
                           <Text>{formatNaira(withdrawal?.amount)}</Text>
                           <Text fontWeight="bold">Status:</Text>
-                          <Text>{formatNaira(withdrawal?.direction)}</Text>
+                          <Text>{formatNaira(withdrawal?.status)}</Text>
                         </Grid>
 
                         <Flex justifyContent="center" mt={10}>

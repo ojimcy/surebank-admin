@@ -13,7 +13,6 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Spinner,
   Text,
   Textarea,
 } from '@chakra-ui/react';
@@ -23,6 +22,7 @@ import { formatNaira, formatDate } from 'utils/helper';
 
 import BackButton from 'components/menu/BackButton';
 import { useForm, Controller } from 'react-hook-form';
+import LoadingSpinner from 'components/scroll/LoadingSpinner';
 
 const ExpenditureDetail = () => {
   const { id } = useParams();
@@ -93,14 +93,7 @@ const ExpenditureDetail = () => {
   return (
     <Box>
       {loading ? (
-        <Box
-          h="100vh"
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <Spinner size="xl" color="blue.500" />
-        </Box>
+        <LoadingSpinner />
       ) : (
         <Box pt={{ base: '180px', md: '80px', xl: '80px' }}>
           <BackButton />

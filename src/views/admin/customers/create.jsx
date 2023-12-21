@@ -77,6 +77,7 @@ export default function Customer() {
     };
     fetchBranches();
   }, []);
+  
   const submitHandler = async (customerData) => {
     try {
       await axiosService.post(`/customer`, customerData);

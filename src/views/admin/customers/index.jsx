@@ -3,7 +3,6 @@ import {
   Box,
   Grid,
   Button,
-  Spinner,
   Flex,
   Text,
   Spacer,
@@ -38,6 +37,7 @@ import { toast } from 'react-toastify';
 import { useForm } from 'react-hook-form';
 import { useAuth } from 'contexts/AuthContext';
 import CustomTable from 'components/table/CustomTable';
+import LoadingSpinner from 'components/scroll/LoadingSpinner';
 
 export default function Customers() {
   const { currentUser } = useAuth();
@@ -301,7 +301,7 @@ export default function Customers() {
           </Box>
           <Box marginTop="30">
             {loading ? (
-              <Spinner />
+              <LoadingSpinner />
             ) : (
               <CustomTable
                 columns={columns}

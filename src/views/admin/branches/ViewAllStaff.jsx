@@ -3,7 +3,6 @@ import {
   Box,
   Grid,
   Button,
-  Spinner,
   Flex,
   Text,
   Spacer,
@@ -39,6 +38,7 @@ import CustomTable from 'components/table/CustomTable';
 import { ChevronDownIcon, DeleteIcon, SearchIcon } from '@chakra-ui/icons';
 import { toast } from 'react-toastify';
 import { useAuth } from 'contexts/AuthContext';
+import LoadingSpinner from 'components/scroll/LoadingSpinner';
 
 export default function Users() {
   const [staffs, setStaffs] = useState([]);
@@ -384,7 +384,7 @@ export default function Users() {
           </Box>
           <Box marginTop="30">
             {loading ? (
-              <Spinner />
+              <LoadingSpinner />
             ) : (
               <CustomTable
                 columns={columns}

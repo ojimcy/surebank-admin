@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import {
   Box,
   Grid,
-  Spinner,
   Flex,
   Button,
   Spacer,
@@ -27,6 +26,7 @@ import axiosService from 'utils/axiosService';
 import CreateProductModal from 'components/modals/CreateProductModal';
 import ProductDetailsModal from 'components/modals/ProductDetailsModal';
 import EditProductModal from 'components/modals/EditProductModal';
+import LoadingSpinner from 'components/scroll/LoadingSpinner';
 
 export default function Products() {
   const [products, setProducts] = useState([]);
@@ -194,7 +194,7 @@ export default function Products() {
               </Select>
             </Box>
             {loading ? (
-              <Spinner />
+              <LoadingSpinner />
             ) : filteredProducts && filteredProducts.length !== 0 ? (
               <SimpleTable
                 columns={columns}

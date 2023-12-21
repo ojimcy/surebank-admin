@@ -9,7 +9,6 @@ import {
   Center,
   Flex,
   Grid,
-  Spinner,
   Text,
 } from '@chakra-ui/react';
 
@@ -18,6 +17,7 @@ import {
 // Assets
 import axiosService from 'utils/axiosService';
 import BackButton from 'components/menu/BackButton';
+import LoadingSpinner from 'components/scroll/LoadingSpinner';
 
 export default function User() {
   const { id } = useParams();
@@ -60,14 +60,7 @@ export default function User() {
   return (
     <Box>
       {loading ? (
-        <Box
-          h="100vh"
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <Spinner size="xl" color="blue.500" />
-        </Box>
+        <LoadingSpinner />
       ) : (
         <Box pt={{ base: '180px', md: '80px', xl: '80px' }}>
           <BackButton />
@@ -116,6 +109,11 @@ export default function User() {
                           <Text fontWeight="bold">Branch:</Text>
                           <Text>{branchInfo.name}</Text>
                         </Grid>
+                        <NavLink to={`/admin/branch/staff/${id}`}>
+                          <Button mt={4} colorScheme="blue" size="md">
+                            Details
+                          </Button>
+                        </NavLink>
                         <NavLink to={`/admin/customer/staffaccounts/${id}`}>
                           <Button mt={4} colorScheme="blue" size="md">
                             View customers

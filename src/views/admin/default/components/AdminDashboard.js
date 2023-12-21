@@ -66,6 +66,7 @@ export default function UserRepsDashboard() {
       console.error(error);
     }
   }, []);
+
   useEffect(() => {
     try {
       const fetchPackageReport = async () => {

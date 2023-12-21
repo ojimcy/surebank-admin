@@ -3,7 +3,6 @@ import {
   Box,
   Grid,
   Button,
-  Spinner,
   Flex,
   Text,
   Spacer,
@@ -40,6 +39,7 @@ import { toast } from 'react-toastify';
 import SimpleTable from 'components/table/SimpleTable';
 import CreateCollectionModal from 'components/modals/CreateCollectionModal';
 import AddProductToCollectionModal from 'components/modals/AddProductToCollectionModal';
+import LoadingSpinner from 'components/scroll/LoadingSpinner';
 
 import { formatDate } from 'utils/helper';
 
@@ -295,7 +295,7 @@ export default function Collections() {
           </Box>
           <Box marginTop="30">
             {loading ? (
-              <Spinner />
+              <LoadingSpinner />
             ) : (
               filteredCollections && (
                 <SimpleTable

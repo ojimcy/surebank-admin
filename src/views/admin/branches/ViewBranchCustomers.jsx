@@ -3,7 +3,6 @@ import {
   Box,
   Grid,
   Button,
-  Spinner,
   HStack,
   Flex,
   Text,
@@ -36,6 +35,7 @@ import { DeleteIcon, EditIcon, SearchIcon } from '@chakra-ui/icons';
 import BackButton from 'components/menu/BackButton';
 import { toast } from 'react-toastify';
 import CustomTable from 'components/table/CustomTable';
+import LoadingSpinner from 'components/scroll/LoadingSpinner';
 
 export default function Customers() {
   const { branchId } = useParams();
@@ -247,7 +247,7 @@ export default function Customers() {
           </Box>
           <Box marginTop="30">
             {loading ? (
-              <Spinner />
+              <LoadingSpinner />
             ) : (
               <CustomTable
                 columns={columns}

@@ -9,7 +9,8 @@ const PackageCard = ({
   handleTransferSuccess,
   handleDepositSuccess,
 }) => {
-  const { target, amountPerDay, startDate, totalContribution } = packageData;
+  const { target, amountPerDay, startDate, totalContribution, totalCount } =
+    packageData;
 
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
   const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
@@ -42,6 +43,14 @@ const PackageCard = ({
           <Text fontSize="sm">Total Contribution: </Text>
           <Text fontSize="lg" fontWeight="bold">
             {formatNaira(totalContribution)}
+          </Text>
+        </Flex>
+      </Box>
+      <Box mt="4">
+        <Flex justifyContent="space-between" alignItems="center">
+          <Text fontSize="sm">Total Count: </Text>
+          <Text fontSize="lg" fontWeight="bold">
+            {totalCount}
           </Text>
         </Flex>
       </Box>

@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Flex,
   Icon,
   Text,
   useColorModeValue,
   Box,
-  Spinner,
+  Grid,
 } from '@chakra-ui/react';
 import { useHistory } from 'react-router-dom';
 import { MdAttachMoney, MdPerson } from 'react-icons/md';
@@ -18,6 +18,8 @@ import IconBox from 'components/icons/IconBox';
 import ActionButton from 'components/Button/CustomButton';
 import Withdrawals from './Withdrawals';
 import { useAuth } from 'contexts/AuthContext';
+import LoadingSpinner from 'components/scroll/LoadingSpinner';
+import BackButton from 'components/menu/BackButton';
 
 export default function ManagerDashboard() {
   const { currentUser } = useAuth();
@@ -32,6 +34,8 @@ export default function ManagerDashboard() {
   const [openPackageCount, setOpenPackageCount] = useState(0);
   const [staffInfo, setStaffInfo] = useState({});
   const [loading, setLoading] = useState(true);
+  // useRef to track the mounted state
+  const isMounted = useRef(true);
 
   useEffect(() => {
     if (!currentUser) {
@@ -40,14 +44,14 @@ export default function ManagerDashboard() {
   }, [currentUser, history]);
 
   useEffect(() => {
-    let isMounted = true;
+    isMounted.current = true;
 
     const fetchStaff = async () => {
       try {
         const getStaff = await axiosService.get(
           `/staff/user/${currentUser.id}`
         );
-        if (isMounted) {
+        if (isMounted.current) {
           setStaffInfo(getStaff.data);
         }
       } catch (error) {
@@ -55,8 +59,17 @@ export default function ManagerDashboard() {
       }
     };
 
-    const fetchData = async () => {
-      try {
+    fetchStaff();
+
+    return () => {
+      // Cleanup function to set the isMounted flag to false when the component unmounts
+      isMounted.current = false;
+    };
+  }, [currentUser]);
+
+  const fetchData = async () => {
+    try {
+      if (staffInfo.branchId) {
         const startDate = new Date();
         startDate.setHours(0, 0, 0, 0);
         const startTimeStamp = startDate.getTime();
@@ -76,124 +89,153 @@ export default function ManagerDashboard() {
             axiosService.get(`accounts?branchId=${staffInfo.branchId}`),
           ]);
 
-        setContributionDailyTotal(contributionResponse.data);
-        setDailySavingsWithdrawals(withdrawalResponse.data);
-        setOpenPackageCount(accountResponse.data.totalResults);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        if (isMounted) {
+        if (isMounted.current) {
+          setContributionDailyTotal(contributionResponse.data);
+          setDailySavingsWithdrawals(withdrawalResponse.data);
+          setOpenPackageCount(accountResponse.data.totalResults);
           setLoading(false);
         }
       }
-    };
+    } catch (error) {
+      console.error(error);
+    } finally {
+      if (isMounted.current) {
+        setLoading(false);
+      }
+    }
+  };
 
-    fetchStaff();
+  useEffect(() => {
     fetchData();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [currentUser, staffInfo]);
-
-  if (loading) {
-    return <Spinner size="lg" />;
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [staffInfo.branchId]); // Update the dependency here
 
   return (
-    <>
-      <Flex direction={{ base: 'column', md: 'row' }} mb="20px" mt="40px">
-        <Card>
-          <Text fontWeight="bold" fontSize="xl" mt="10px" color={textColor}>
-            Overview
-          </Text>
-          <Text fontSize="sm" color={textColorSecondary} pb="20px">
-            Overview of your activities
-          </Text>
-          <hr color={textColor} />
-          <Flex
-            direction={{ base: 'column', md: 'row' }}
-            justifyContent="space-between"
-            mt="20px"
+    <Box>
+      {loading ? (
+        <LoadingSpinner />
+      ) : (
+        <Box pt={{ base: '180px', md: '80px', xl: '80px' }}>
+          <BackButton />
+          <Grid
+            mb="20px"
+            gridTemplateColumns={{ xl: 'repeat(3, 1fr)', '2xl': '1fr 0.46fr' }}
+            gap={{ base: '20px', xl: '20px' }}
+            display={{ base: 'block', xl: 'grid' }}
           >
-            <MiniStatistics
-              startContent={
-                <IconBox
-                  w="56px"
-                  h="56px"
-                  bg={boxBg}
-                  icon={
-                    <Icon
-                      w="32px"
-                      h="32px"
-                      as={MdAttachMoney}
-                      color={brandColor}
+            <>
+              <Flex
+                direction={{ base: 'column', md: 'row' }}
+                mb="20px"
+                mt="40px"
+              >
+                <Card>
+                  <Text
+                    fontWeight="bold"
+                    fontSize="xl"
+                    mt="10px"
+                    color={textColor}
+                  >
+                    Overview
+                  </Text>
+                  <Text fontSize="sm" color={textColorSecondary} pb="20px">
+                    Overview of your activities
+                  </Text>
+                  <hr color={textColor} />
+                  <Flex
+                    direction={{ base: 'column', md: 'row' }}
+                    justifyContent="space-between"
+                    mt="20px"
+                  >
+                    <MiniStatistics
+                      startContent={
+                        <IconBox
+                          w="56px"
+                          h="56px"
+                          bg={boxBg}
+                          icon={
+                            <Icon
+                              w="32px"
+                              h="32px"
+                              as={MdAttachMoney}
+                              color={brandColor}
+                            />
+                          }
+                        />
+                      }
+                      name="Total Daily contributions"
+                      value={formatNaira(contributionsDailyTotal)}
                     />
-                  }
-                />
-              }
-              name="Total Daily contributions"
-              value={formatNaira(contributionsDailyTotal)}
-            />
 
-            <MiniStatistics
-              startContent={
-                <IconBox
-                  w="56px"
-                  h="56px"
-                  bg={boxBg}
-                  icon={
-                    <Icon
-                      w="32px"
-                      h="32px"
-                      as={MdAttachMoney}
-                      color={brandColor}
+                    <MiniStatistics
+                      startContent={
+                        <IconBox
+                          w="56px"
+                          h="56px"
+                          bg={boxBg}
+                          icon={
+                            <Icon
+                              w="32px"
+                              h="32px"
+                              as={MdAttachMoney}
+                              color={brandColor}
+                            />
+                          }
+                        />
+                      }
+                      name="Total Daily Withdrawals"
+                      value={formatNaira(
+                        dailySavingsWithdrawals[0]?.total || 0
+                      )}
                     />
-                  }
-                />
-              }
-              name="Total Daily Withdrawals"
-              value={formatNaira(dailySavingsWithdrawals[0]?.total || 0)}
-            />
 
-            <MiniStatistics
-              startContent={
-                <IconBox
-                  w="56px"
-                  h="56px"
-                  bg={boxBg}
-                  icon={
-                    <Icon w="32px" h="32px" as={MdPerson} color={brandColor} />
-                  }
-                />
-              }
-              name="Active customers"
-              value={openPackageCount && openPackageCount}
-            />
-          </Flex>
-        </Card>
-      </Flex>
+                    <MiniStatistics
+                      startContent={
+                        <IconBox
+                          w="56px"
+                          h="56px"
+                          bg={boxBg}
+                          icon={
+                            <Icon
+                              w="32px"
+                              h="32px"
+                              as={MdPerson}
+                              color={brandColor}
+                            />
+                          }
+                        />
+                      }
+                      name="Active customers"
+                      value={openPackageCount && openPackageCount}
+                    />
+                  </Flex>
+                </Card>
+              </Flex>
 
-      <Box>
-        <Flex
-          justify="end"
-          alignItems="center"
-          mb="20px"
-          flexDirection={{ base: 'column', md: 'row' }}
-        >
-          <ActionButton
-            to="/admin/accounting/expenditure"
-            icon={FaMoneyBillWave}
-            label="Expenditure"
-          />
-        </Flex>
-      </Box>
+              <Box>
+                <Flex
+                  justify="end"
+                  alignItems="center"
+                  mb="20px"
+                  flexDirection={{ base: 'column', md: 'row' }}
+                >
+                  <ActionButton
+                    to="/admin/accounting/expenditure"
+                    icon={FaMoneyBillWave}
+                    label="Expenditure"
+                  />
+                </Flex>
+              </Box>
 
-      <Text fontSize="2xl" mt="5rem">
-        Transactions
-      </Text>
+              <Text fontSize="2xl" mt="5rem">
+                Transactions
+              </Text>
 
-      <Withdrawals />
-    </>
+              <Withdrawals />
+            </>
+          </Grid>
+        </Box>
+      )}
+    </Box>
   );
 }

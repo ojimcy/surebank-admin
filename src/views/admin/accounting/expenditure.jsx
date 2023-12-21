@@ -3,7 +3,6 @@ import {
   Box,
   Grid,
   Button,
-  Spinner,
   Flex,
   Spacer,
   Stack,
@@ -36,6 +35,7 @@ import CustomTable from 'components/table/CustomTable';
 import { NavLink } from 'react-router-dom/';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
+import LoadingSpinner from 'components/scroll/LoadingSpinner';
 
 export default function Expenditures() {
   const { currentUser } = useAuth();
@@ -242,7 +242,7 @@ export default function Expenditures() {
           </Box>
           <Box marginTop="30">
             {loading ? (
-              <Spinner />
+              <LoadingSpinner />
             ) : (
               <CustomTable
                 columns={columns}

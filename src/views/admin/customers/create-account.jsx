@@ -22,18 +22,17 @@ import { useForm } from 'react-hook-form';
 import axiosService from 'utils/axiosService';
 import { toast } from 'react-toastify';
 import { toSentenceCase } from 'utils/helper';
-import { useAppContext } from 'contexts/AppContext';
 import BackButton from 'components/menu/BackButton';
 
 export default function CreateAccount() {
   const history = useHistory();
-  const { branches } = useAppContext();
 
   const brandStars = useColorModeValue('brand.500', 'brand.400');
   const textColor = useColorModeValue('navy.700', 'white');
 
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [branches, setBranches] = useState(null);
 
   const {
     handleSubmit,
@@ -50,8 +49,18 @@ export default function CreateAccount() {
     }
   };
 
+  const fetchBranches = async () => {
+    try {
+      const response = await axiosService.get('/branch/');
+      setBranches(response.data.results);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     fetchUsers();
+    fetchBranches();
   }, []);
 
   const handleUserSelect = (selectedOption) => {
@@ -63,6 +72,7 @@ export default function CreateAccount() {
       // If a user is selected
       if (selectedUser) {
         accountData.email = selectedUser.value;
+        accountData.phoneNumber = selectedUser.phoneNumber
       }
       await axiosService.post(`/accounts`, accountData);
       toast.success('Account created successfully!');

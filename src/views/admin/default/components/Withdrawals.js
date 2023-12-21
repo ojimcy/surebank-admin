@@ -12,6 +12,7 @@ import {
   ModalBody,
   ModalCloseButton,
   Button,
+  Text,
 } from '@chakra-ui/react';
 import React, { useCallback, useEffect, useState } from 'react';
 
@@ -220,11 +221,17 @@ export default function Withdrawals() {
           </Flex>
         </Box>
         <Box marginTop="30">
-          <CustomTable
-            columns={columns}
-            data={filteredWithdrawals}
-            onPageChange={onPageChange}
-          />
+          {filteredWithdrawals && filteredWithdrawals.length !== 0 ? (
+            <CustomTable
+              columns={columns}
+              data={filteredWithdrawals}
+              onPageChange={onPageChange}
+            />
+          ) : (
+            <Text fontSize="lg" textAlign="center" mt="20">
+              No records found!
+            </Text>
+          )}
         </Box>
       </Box>
 

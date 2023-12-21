@@ -3,7 +3,6 @@ import {
   Box,
   Grid,
   Button,
-  Spinner,
   Flex,
   Text,
   Spacer,
@@ -30,6 +29,7 @@ import { toast } from 'react-toastify';
 
 import CustomTable from 'components/table/CustomTable';
 import { useAppContext } from 'contexts/AppContext';
+import LoadingSpinner from 'components/scroll/LoadingSpinner';
 
 export default function Users() {
   const { branches, setBranches } = useAppContext();
@@ -209,7 +209,7 @@ export default function Users() {
           </Box>
           <Box marginTop="30">
             {loading ? (
-              <Spinner />
+              <LoadingSpinner />
             ) : (
               <CustomTable
                 columns={columns}
