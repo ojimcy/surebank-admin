@@ -1,4 +1,3 @@
-// Chakra imports
 import {
   Box,
   Grid,
@@ -20,13 +19,9 @@ import {
   useColorModeValue,
   FormErrorMessage,
 } from '@chakra-ui/react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { useAuth } from 'contexts/AuthContext';
-
-// Custom components
-
-// Assets
 import axiosService from 'utils/axiosService';
 import Card from 'components/card/Card.js';
 import { SearchIcon } from '@chakra-ui/icons';
@@ -36,6 +31,9 @@ import { NavLink } from 'react-router-dom/';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import LoadingSpinner from 'components/scroll/LoadingSpinner';
+import { formatDate } from 'utils/helper';
+import { getStartDate } from 'utils/helper';
+import { getEndDate } from 'utils/helper';
 
 export default function Expenditures() {
   const { currentUser } = useAuth();
@@ -44,7 +42,8 @@ export default function Expenditures() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredExpenditure, setFilteredExpenditure] = useState([]);
   const [timeRange, setTimeRange] = useState('all');
-
+  const [staffInfo, setStaffInfo] = useState({});
+  const isMounted = useRef(true);
   const [showExpenditureModal, setShowExpenditureModal] = useState(false);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
@@ -59,64 +58,85 @@ export default function Expenditures() {
   const brandStars = useColorModeValue('brand.500', 'brand.400');
   const textColor = useColorModeValue('navy.700', 'white');
 
-  useEffect(() => {
-    const fetchExpenditures = async () => {
-      setLoading(true);
-      try {
-        // Construct the API endpoint based on filters
-        let endpoint = `/expenditure`;
-        const { pageIndex, pageSize } = pagination;
-
-        if (currentUser.role === 'superAdmin' || 'admin') {
-          if (timeRange === 'last7days') {
-            const endDate = new Date();
-            endDate.setHours(23, 59, 59, 999);
-            const startDate = new Date();
-            startDate.setDate(endDate.getDate() - 7);
-            startDate.setHours(0, 0, 0, 0);
-            endpoint += `?startDate=${startDate.getTime()}&endDate=${endDate.getTime()}&limit=${pageSize}&page=${
-              pageIndex + 1
-            }`;
-          } else if (timeRange === 'last30days') {
-            const endDate = new Date();
-            endDate.setHours(23, 59, 59, 999);
-            const startDate = new Date();
-            startDate.setDate(endDate.getDate() - 30);
-            startDate.setHours(0, 0, 0, 0);
-            endpoint += `?startDate=${startDate.getTime()}&endDate=${endDate.getTime()}&limit=${pageSize}&page=${
-              pageIndex + 1
-            }`;
-          }
-        } else if (currentUser.role === 'userReps') {
-          endpoint = `/expenditure/user-reps?limit=${pageSize}&page=${
-            pageIndex + 1
-          }`;
-        }
-
-        const response = await axiosService.get(endpoint);
-
-        // Convert the "date" field to Unix timestamps in the response data
-        const convertedExpenditures = response.data.results.map(
-          (expenditure) => ({
-            ...expenditure,
-            date: new Date(expenditure.date).getTime(),
-          })
-        );
-
-        setExpenditures(convertedExpenditures);
-        setLoading(false);
-      } catch (error) {
-        console.error(error);
+  const fetchStaff = async () => {
+    try {
+      const { data } = await axiosService.get(`/staff/user/${currentUser.id}`);
+      if (isMounted.current) {
+        setStaffInfo(data);
       }
-    };
-    fetchExpenditures();
-  }, [currentUser.role, timeRange, pagination]);
-
-  const onPageChange = ({ pageIndex, pageSize }) => {
-    setPagination({ pageIndex, pageSize });
+    } catch (error) {
+      console.error(error);
+      // Handle error (e.g., show a toast)
+      toast.error('Failed to fetch staff information');
+    }
   };
 
-  // Filter expenditures based on search term
+  const constructApiEndpoint = () => {
+    let endpoint = `/expenditure`;
+    const { pageIndex, pageSize } = pagination;
+
+    // Default parameters
+    const params = {
+      limit: pageSize,
+      page: pageIndex + 1,
+    };
+
+    if (currentUser) {
+      // If currentUser is available, add user-specific parameters
+      if (currentUser.role === 'userReps') {
+        params.createdBy = currentUser.id;
+      } else if (currentUser.role === 'manager') {
+        params.branchId = staffInfo.branchId;
+      }
+    }
+
+    // Add date range parameters based on timeRange
+    if (timeRange === 'last7days') {
+      Object.assign(params, getStartDate(7));
+    } else if (timeRange === 'last30days') {
+      Object.assign(params, getEndDate(30));
+    }
+
+    // Construct endpoint with parameters
+    endpoint += `?${new URLSearchParams(params)}`;
+
+    return endpoint;
+  };
+
+  const fetchExpenditures = async () => {
+    setLoading(true);
+    try {
+      const endpoint = constructApiEndpoint();
+      const response = await axiosService.get(endpoint);
+
+      const convertedExpenditures = response.data.results.map(
+        (expenditure) => ({
+          ...expenditure,
+          date: new Date(expenditure.date).getTime(),
+        })
+      );
+
+      setExpenditures(convertedExpenditures);
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+      // Handle error (e.g., show a toast)
+      toast.error('Failed to fetch expenditures');
+    }
+  };
+
+  useEffect(() => {
+    isMounted.current = true;
+    fetchStaff();
+    return () => (isMounted.current = false);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentUser]);
+
+  useEffect(() => {
+    fetchExpenditures();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentUser.role, timeRange, pagination]);
+
   useEffect(() => {
     const filtered = expenditures?.filter((expenditure) => {
       const fullName =
@@ -144,8 +164,9 @@ export default function Expenditures() {
   const handleCreateExpenditure = async (expenditureData) => {
     try {
       await axiosService.post('/expenditure', expenditureData);
-      toast.success('Expenditure succesfully created');
+      toast.success('Expenditure successfully created');
       handleExpenditureModalClosed();
+      fetchExpenditures();
     } catch (error) {
       console.error(error);
       toast.error(
@@ -155,12 +176,11 @@ export default function Expenditures() {
     }
   };
 
-  // Columns for the user table
   const columns = React.useMemo(
     () => [
       {
         Header: 'Date',
-        accessor: 'date',
+        accessor: (row) => formatDate(row.date),
       },
       {
         Header: 'Amount',
@@ -188,7 +208,6 @@ export default function Expenditures() {
 
   return (
     <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
-      {/* Main Fields */}
       <Grid
         templateColumns={{
           base: '1fr',
@@ -203,7 +222,6 @@ export default function Expenditures() {
         <Card p={{ base: '30px', md: '30px', sm: '10px' }}>
           <Flex justifyContent="space-between" mb="20px">
             <BackButton />
-
             <Button
               bgColor="blue.700"
               color="white"
@@ -247,14 +265,12 @@ export default function Expenditures() {
               <CustomTable
                 columns={columns}
                 data={filteredExpenditure}
-                onPageChange={onPageChange}
+                onPageChange={setPagination}
               />
             )}
           </Box>
         </Card>
       </Grid>
-
-      {/* Expenditure modal */}
       <Modal
         isOpen={showExpenditureModal}
         onClose={handleExpenditureModalClosed}

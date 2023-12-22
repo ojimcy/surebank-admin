@@ -17,6 +17,23 @@ export const formatNaira = (number) => {
   });
 };
 
-export  const toSentenceCase = (text) => {
+export const toSentenceCase = (text) => {
   return text.toLowerCase().charAt(0).toUpperCase() + text.slice(1);
+};
+
+// Helper function to get the start date based on the number of days
+export const getStartDate = (days) => {
+  const endDate = new Date();
+  endDate.setHours(23, 59, 59, 999);
+  const startDate = new Date();
+  startDate.setDate(endDate.getDate() - days);
+  startDate.setHours(0, 0, 0, 0);
+  return startDate.getTime();
+};
+
+// Helper function to get the end date
+export const getEndDate = () => {
+  const endDate = new Date();
+  endDate.setHours(23, 59, 59, 999);
+  return endDate.getTime();
 };

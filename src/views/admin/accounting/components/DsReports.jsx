@@ -1,7 +1,6 @@
 // Chakra imports
 import {
   Box,
-  Spinner,
   Flex,
   Stack,
   Select,
@@ -24,6 +23,7 @@ import { NavLink } from 'react-router-dom/';
 
 import { useAppContext } from 'contexts/AppContext';
 import { formatNaira, formatDate } from 'utils/helper';
+import LoadingSpinner from 'components/scroll/LoadingSpinner';
 
 export default function Charges() {
   const { branches } = useAppContext();
@@ -159,56 +159,58 @@ export default function Charges() {
 
   return (
     <>
-      <Box pt={{ base: '80px', md: '80px', xl: '80px' }}>
-        <Box mt="5">
-          <Flex justifyContent="space-between" alignItems="center">
-            <Text fontSize="2xl">DS Income</Text>
-            <Text fontSize="2xl" fontWeight="bold">
-              {formatNaira(totalCharge)}
-            </Text>
-          </Flex>
-        </Box>
-        <Box mt="10">
-          <Stack direction="row">
-            <Select
-              value={timeRange}
-              onChange={handleTimeRangeChange}
-              minWidth="150px"
-            >
-              <option value="all">All Time</option>
-              <option value="last7days">Last 7 Days</option>
-              <option value="last30days">Last 30 Days</option>
-              <option
-                value="custom"
-                onClick={() => setCustomDateModalOpen(true)}
+      {loading ? (
+        <LoadingSpinner />
+      ) : (
+        <Box pt={{ base: '80px', md: '80px', xl: '80px' }}>
+          <Box mt="5">
+            <Flex justifyContent="space-between" alignItems="center">
+              <Text fontSize="2xl">DS Income</Text>
+              <Text fontSize="2xl" fontWeight="bold">
+                {formatNaira(totalCharge)}
+              </Text>
+            </Flex>
+          </Box>
+          <Box mt="10">
+            <Stack direction="row">
+              <Select
+                value={timeRange}
+                onChange={handleTimeRangeChange}
+                minWidth="150px"
               >
-                {customRangeLabel}
-              </option>
-            </Select>
+                <option value="all">All Time</option>
+                <option value="last7days">Last 7 Days</option>
+                <option value="last30days">Last 30 Days</option>
+                <option
+                  value="custom"
+                  onClick={() => setCustomDateModalOpen(true)}
+                >
+                  {customRangeLabel}
+                </option>
+              </Select>
 
-            <Select value={branch} onChange={handleBranchChange}>
-              <option>Select Branch</option>
-              {branches &&
-                branches.map((branch) => (
-                  <option key={branch.id} value={branch.id}>
-                    {branch?.name}
-                  </option>
-                ))}
-            </Select>
-          </Stack>
+              <Select value={branch} onChange={handleBranchChange}>
+                <option>Select Branch</option>
+                {branches &&
+                  branches.map((branch) => (
+                    <option key={branch.id} value={branch.id}>
+                      {branch?.name}
+                    </option>
+                  ))}
+              </Select>
+            </Stack>
+          </Box>
+          <Box marginTop="30">
+            {filterdCharges && filterdCharges.length > 0 ? (
+              <CustomTable columns={columns} data={filterdCharges} />
+            ) : (
+              <Text fontSize="lg" textAlign="center" mt="20">
+                No records found!
+              </Text>
+            )}
+          </Box>
         </Box>
-        <Box marginTop="30">
-          {loading ? (
-            <Spinner />
-          ) : filterdCharges && filterdCharges.length > 0 ? (
-            <CustomTable columns={columns} data={filterdCharges} />
-          ) : (
-            <Text fontSize="lg" textAlign="center" mt="20">
-              No records found!
-            </Text>
-          )}
-        </Box>
-      </Box>
+      )}
 
       <Modal
         isOpen={isCustomDateModalOpen}
