@@ -120,6 +120,7 @@ export default function Expenditures() {
       setLoading(false);
     } catch (error) {
       console.error(error);
+      console.log(error);
       // Handle error (e.g., show a toast)
       toast.error('Failed to fetch expenditures');
     }
@@ -129,7 +130,7 @@ export default function Expenditures() {
     isMounted.current = true;
     fetchStaff();
     return () => (isMounted.current = false);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser]);
 
   useEffect(() => {

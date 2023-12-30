@@ -6,6 +6,7 @@ import {
   Center,
   Flex,
   Grid,
+  Input,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -29,6 +30,7 @@ const ExpenditureDetail = () => {
   const [expenditure, setExpenditure] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const {
     handleSubmit,
@@ -44,17 +46,7 @@ const ExpenditureDetail = () => {
   };
 
   useEffect(() => {
-    try {
-      fetchExpenditure();
-    } catch (error) {
-      console.error(error);
-      toast.error(
-        error.response?.data?.message ||
-          'An error occurred while fetching expenditure details.'
-      );
-    } finally {
-      setLoading(false);
-    }
+    fetchExpenditure();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
@@ -85,6 +77,23 @@ const ExpenditureDetail = () => {
     } catch (error) {
       console.error(error);
       toast.error('An error occurred while rejecting the expenditure.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEdit = async (formData) => {
+    try {
+      setLoading(true);
+      // Send PATCH request to update expenditure details
+      await axiosService.patch(`/expenditure/${id}`, formData);
+      toast.success('Expenditure updated successfully.');
+      setIsEditModalOpen(false);
+      fetchExpenditure();
+    } catch (error) {
+      console.error(error);
+      console.log(error)
+      toast.error('An error occurred while updating the expenditure.');
     } finally {
       setLoading(false);
     }
@@ -158,6 +167,16 @@ const ExpenditureDetail = () => {
                           >
                             Reject
                           </Button>
+                          {/* Edit button */}
+                          <Button
+                            colorScheme="blue"
+                            variant="outline"
+                            onClick={() => setIsEditModalOpen(true)}
+                            ml={4}
+                            isLoading={isSubmitting}
+                          >
+                            Edit
+                          </Button>
                         </Flex>
                       </Box>
                     </Flex>
@@ -168,6 +187,8 @@ const ExpenditureDetail = () => {
           </Grid>
         </Box>
       )}
+
+      {/* Reject Modal */}
 
       <Modal
         isOpen={isRejectModalOpen}
@@ -207,6 +228,60 @@ const ExpenditureDetail = () => {
               isLoading={isSubmitting}
             >
               Reject
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* Edit Modal */}
+      <Modal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Edit Expenditure</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Text fontWeight="bold" mb={2}>
+              Edit Expenditure Details
+            </Text>
+            <Controller
+              name="reason"
+              control={control}
+              defaultValue={expenditure?.reason} // Prepopulate reason
+              render={({ field }) => (
+                <Textarea {...field} placeholder="Enter updated reason..." />
+              )}
+            />
+            <Controller
+              name="amount"
+              control={control}
+              defaultValue={expenditure?.amount} // Prepopulate amount
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  type="number"
+                  placeholder="Enter updated amount..."
+                />
+              )}
+            />
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              colorScheme="red"
+              mr={3}
+              onClick={() => {
+                setIsEditModalOpen(false);
+                reset(); // Reset the form on cancel
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              colorScheme="blue"
+              type="submit"
+              onSubmit={handleSubmit(handleEdit)}
+              isLoading={isSubmitting}
+            >
+              Save Changes
             </Button>
           </ModalFooter>
         </ModalContent>

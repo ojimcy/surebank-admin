@@ -11,7 +11,6 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
-  Spinner,
   Text,
   Tabs,
   Tab,
@@ -34,6 +33,7 @@ import RecentTransactions from 'components/transactions/RecentTransactions';
 import UsersPackages from 'components/package/UsersPackages';
 import SbPackage from 'components/package/SbPackage';
 import AccountDetails from './components/AccountDetails';
+import LoadingSpinner from 'components/scroll/LoadingSpinner';
 
 export default function ViewCustomer() {
   const { id } = useParams();
@@ -99,7 +99,7 @@ export default function ViewCustomer() {
         </Menu>
       </Flex>
       {loading ? (
-        <Spinner />
+        <LoadingSpinner />
       ) : (
         <Box>
           <Flex
