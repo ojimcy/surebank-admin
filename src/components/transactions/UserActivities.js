@@ -22,7 +22,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 // Custom components
 import Card from 'components/card/Card';
 import Menu from 'components/menu/MainMenu';
-import { formatNaira, formatDate } from 'utils/helper';
+import {  formatDate } from 'utils/helper';
 
 const TableComponent = ({ columns, data, pageSize = 10 }) => {
   // Create a table instance using the provided columns and data

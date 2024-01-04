@@ -66,12 +66,8 @@ const ProductDetailsModal = ({ isOpen, onClose, product }) => {
           <ModalCloseButton />
           <ModalBody>
             <Box mb="1rem">
-              <Text fontWeight="bold">Brand:</Text>
-              <Text>{product.brand?.name}</Text>
-            </Box>
-            <Box mb="1rem">
-              <Text fontWeight="bold">Category:</Text>
-              <Text>{product.categoryId?.name}</Text>
+              <Text fontWeight="bold">Status:</Text>
+              <Text>{product.status}</Text>
             </Box>
             <Box mb="1rem">
               <Text fontWeight="bold">Description:</Text>

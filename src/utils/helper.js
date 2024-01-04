@@ -10,6 +10,20 @@ export const formatDate = (timestamp) => {
   return date.toLocaleDateString('en-US', options);
 };
 
+export  const formatMdbDate = (dateString) => {
+  const date = new Date(dateString);
+  return new Intl.DateTimeFormat('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+    hour12: true,
+  }).format(date);
+};
+
+
 export const formatNaira = (number) => {
   return number.toLocaleString('en-NG', {
     style: 'currency',

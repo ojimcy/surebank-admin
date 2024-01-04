@@ -10,13 +10,10 @@ import {
   ModalCloseButton,
   Input,
   InputGroup,
-  InputRightElement,
   VStack,
-  IconButton,
   Button,
 } from '@chakra-ui/react';
 
-import { MdEdit } from 'react-icons/md';
 import { toast } from 'react-toastify';
 
 import { formatNaira } from 'utils/helper';
@@ -66,9 +63,7 @@ const SbDepositModal = ({ isOpen, onClose, packageData, onSuccess }) => {
           {packageData && (
             <VStack spacing={4}>
               <Text>Product: {packageData.product.name}</Text>
-              <Text>
-                Amount per day: {formatNaira(packageData.amountPerDay)}
-              </Text>
+              <Text>Price: {formatNaira(packageData.product.price)}</Text>
               <Text>Account Number: {packageData.accountNumber}</Text>
               <InputGroup>
                 <Input
@@ -77,14 +72,6 @@ const SbDepositModal = ({ isOpen, onClose, packageData, onSuccess }) => {
                   value={depositAmount}
                   onChange={(e) => setDepositAmount(e.target.value)}
                 />
-                <InputRightElement width="4.5rem">
-                  <IconButton
-                    h="1.75rem"
-                    size="sm"
-                    icon={<MdEdit />}
-                    onClick={() => setDepositAmount(packageData.amountPerDay)}
-                  />
-                </InputRightElement>
               </InputGroup>
             </VStack>
           )}

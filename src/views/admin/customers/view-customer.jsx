@@ -55,6 +55,8 @@ export default function ViewCustomer() {
       const accountResponse = await axiosService.get(
         `/accounts/${id}?accountType=${activeTab}`
       );
+      console.log(activeTab);
+
       const packagesResponse = await axiosService.get(
         `daily-savings/package?userId=${id}`
       );
@@ -71,6 +73,7 @@ export default function ViewCustomer() {
     fetchUserData();
   }, [fetchUserData]);
 
+  console.log(customerData);
   const handleTransferSuccess = useCallback(() => {
     // Fetch updated data after successful transfer here
     fetchUserData();

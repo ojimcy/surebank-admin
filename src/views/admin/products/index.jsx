@@ -18,10 +18,10 @@ import {
 import { ChevronDownIcon, EditIcon } from '@chakra-ui/icons';
 
 import { NavLink } from 'react-router-dom';
-import { formatDate } from 'utils/helper';
+import {  formatMdbDate } from 'utils/helper';
 import Card from 'components/card/Card.js';
 import BackButton from 'components/menu/BackButton';
-import SimpleTable from 'components/table/SimpleTable';
+import CustomTable from 'components/table/CustomTable';
 import axiosService from 'utils/axiosService';
 import CreateProductModal from 'components/modals/CreateProductModal';
 import ProductDetailsModal from 'components/modals/ProductDetailsModal';
@@ -31,21 +31,25 @@ import LoadingSpinner from 'components/scroll/LoadingSpinner';
 export default function Products() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [totalResults, setTotalResults] = useState(1);
   const [createProductModal, setCreateProductModal] = useState(false);
   const [editProductModal, setEditProductModal] = useState(false);
   const [productDetailsModal, setProductDetailsModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState('All');
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 20,
+  });
 
-  const pageLimit = 10;
   const statusOptions = ['All', 'Pending', 'Approved', 'Rejected'];
 
   const fetchProductRequests = async () => {
+    const { pageIndex, pageSize } = pagination;
     try {
-      const response = await axiosService.get('/products/request');
+      const response = await axiosService.get(
+        `/products/request?role=user&limit=${pageSize}&page=${pageIndex + 1}`
+      );
       setProducts(response.data.results);
-      setTotalResults(response.data.totalResults);
       setLoading(false);
     } catch (error) {
       console.error('Error fetching products:', error);
@@ -55,7 +59,12 @@ export default function Products() {
 
   useEffect(() => {
     fetchProductRequests();
-  }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pagination]);
+  
+  const onPageChange = ({ pageIndex, pageSize }) => {
+    setPagination({ pageIndex, pageSize });
+  };
 
   const handleShowProductModal = () => {
     setCreateProductModal(true);
@@ -109,7 +118,7 @@ export default function Products() {
 
       {
         Header: 'Created At',
-        accessor: (row) => formatDate(row.createdAt),
+        accessor: (row) => formatMdbDate(row.createdAt),
       },
       {
         Header: 'Status',
@@ -157,7 +166,7 @@ export default function Products() {
         <Card p={{ base: '30px', md: '30px', sm: '10px' }}>
           <BackButton />
           <Flex justifyContent="space-between" mb="20px">
-            <Text fontSize="2xl">Products</Text>
+            <Text fontSize="2xl">Product Requests</Text>
             <Spacer />
             <Menu>
               <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
@@ -196,11 +205,10 @@ export default function Products() {
             {loading ? (
               <LoadingSpinner />
             ) : filteredProducts && filteredProducts.length !== 0 ? (
-              <SimpleTable
+              <CustomTable
                 columns={columns}
                 data={filteredProducts}
-                pageSize={pageLimit}
-                totalPages={totalResults}
+                onPageChange={onPageChange}
               />
             ) : (
               <Text fontSize="lg" textAlign="center" mt="20">

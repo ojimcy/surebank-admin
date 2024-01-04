@@ -33,6 +33,8 @@ import axios from 'axios';
 import CustomTable from 'components/table/CustomTable';
 import LoadingSpinner from 'components/scroll/LoadingSpinner';
 
+import {  formatMdbDate } from 'utils/helper';
+
 export default function Users() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -83,18 +85,6 @@ export default function Users() {
     setFilteredUsers(filtered);
   }, [searchTerm, users]);
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric',
-      second: 'numeric',
-      hour12: true,
-    }).format(date);
-  };
   const handleDeleteIconClick = (userId) => {
     setUserToDelete(userId);
     setShowDeleteModal(true);
@@ -141,7 +131,7 @@ export default function Users() {
       },
       {
         Header: 'Created Date',
-        accessor: (row) => formatDate(row.createdAt),
+        accessor: (row) => formatMdbDate(row.createdAt),
       },
       {
         Header: 'Action',

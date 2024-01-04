@@ -41,7 +41,7 @@ import CreateCollectionModal from 'components/modals/CreateCollectionModal';
 import AddProductToCollectionModal from 'components/modals/AddProductToCollectionModal';
 import LoadingSpinner from 'components/scroll/LoadingSpinner';
 
-import { formatDate } from 'utils/helper';
+import {  formatMdbDate } from 'utils/helper';
 
 export default function Collections() {
   const [collections, setCollections] = useState(false);
@@ -204,7 +204,7 @@ export default function Collections() {
       },
       {
         Header: 'Created At',
-        accessor: (row) => formatDate(row.createdAt),
+        accessor: (row) => formatMdbDate(row.createdAt),
       },
 
       {

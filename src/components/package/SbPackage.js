@@ -129,9 +129,12 @@ const SbPackage = () => {
   };
 
   const calculateProgressValue = (packageData) => {
-    const totalDays = 31;
-    const completedDays = packageData.totalCount;
-    return ((completedDays / totalDays) * 100).toFixed(2);
+    // Calculate the percentage of the price that the user has paid
+    const paidPercentage =
+      (packageData.totalContribution / packageData.product?.price) * 100;
+
+    // Return the calculated paid percentage
+    return paidPercentage.toFixed(2);
   };
 
   const handleSuccess = () => {
@@ -170,7 +173,6 @@ const SbPackage = () => {
         )}
       </Flex>
       <hr color={textColor} />
-
       {sbPackages.length !== 0 ? (
         <Grid
           templateColumns={{
@@ -190,51 +192,68 @@ const SbPackage = () => {
               alignItems="cemter"
               key={packageData._id}
             >
-              <Box display="flex" justifyContent="center">
-                <Image
-                  borderRadius="10px"
-                  boxSize="150px"
-                  src={testImg}
-                  alt={packageData.product?.name}
-                />
-              </Box>
-              <Box
-                display="flex"
-                flexDirection="column"
-                justifyContent="center"
-                alignItems="center"
-              >
-                <Text>{packageData.product?.name}</Text>
+              <Flex justifyContent="center" alignItems="center">
                 <Text fontSize="lg" fontWeight="bold">
-                  {packageData.totalContribution &&
-                    packageData.totalContribution.toFixed(2)}
-                </Text>
-              </Box>
-              <Flex justifyContent="space-between" alignItems="center" mt={4}>
-                <Text fontSize={{ base: '14px', md: 'lg' }}>
-                  Amount:{' '}
-                  <Box fontWeight="bold" as="span">
-                    {formatNaira(packageData?.amountPerDay)}
-                  </Box>{' '}
-                  / Day
-                </Text>
-                <Text fontSize={{ base: '14px', md: 'lg' }}>
-                  Price:{' '}
-                  <Box fontWeight="bold" as="span">
-                    {packageData.product &&
-                      formatNaira(packageData.product?.price)}
-                  </Box>{' '}
+                  <Image
+                    borderRadius="10px"
+                    boxSize="150px"
+                    src={testImg}
+                    alt={packageData.product?.name}
+                  />
                 </Text>
               </Flex>
               <Box mt="4">
                 <Flex justifyContent="space-between" alignItems="center">
-                  <Text fontSize="sm">
-                    Start Date: {formatDate(packageData?.startDate)}
+                  <Text fontSize="sm">Name: </Text>
+                  <Text fontSize="lg" fontWeight="bold">
+                    {packageData.product?.name}
                   </Text>
+                </Flex>
+              </Box>
+              <Box mt="4">
+                <Flex justifyContent="space-between" alignItems="center">
+                  <Text fontSize="sm">Price: </Text>
+                  <Text fontSize="lg" fontWeight="bold">
+                    {formatNaira(packageData.product?.price)}
+                  </Text>
+                </Flex>
+              </Box>
+              <Box mt="4">
+                <Flex justifyContent="space-between" alignItems="center">
+                  <Text fontSize="sm">Total Contribution: </Text>
+                  <Text fontSize="lg" fontWeight="bold">
+                    {packageData.totalContribution &&
+                      packageData.totalContribution.toFixed(2)}
+                  </Text>
+                </Flex>
+              </Box>
+              <Box mt="4">
+                <Flex justifyContent="space-between" alignItems="center">
+                  <Text fontSize="sm">Remaining Balance: </Text>
+                  <Text fontSize="lg" fontWeight="bold">
+                    {formatNaira(
+                      packageData.product?.price - packageData.totalContribution
+                    )}
+                  </Text>
+                </Flex>
+              </Box>
+              <Box mt="4">
+                <Flex justifyContent="space-between" alignItems="center">
+                  <Text fontSize="sm">Start Date: </Text>
+                  <Text fontSize="sm">
+                    {formatDate(packageData?.startDate)}
+                  </Text>
+                </Flex>
+              </Box>
+              <Box mt="4">
+                <Flex justifyContent="space-between" alignItems="center">
+                  <Text fontSize="sm">Progress: </Text>
+
                   <CircularProgress
                     value={calculateProgressValue(packageData)}
                     size="50px"
                     thickness="6px"
+                    p={4}
                   >
                     <CircularProgressLabel>
                       {calculateProgressValue(packageData)}%{' '}
@@ -242,6 +261,7 @@ const SbPackage = () => {
                   </CircularProgress>
                 </Flex>
               </Box>
+
               <Flex mt="4" justify="space-between">
                 <Button
                   colorScheme="red"
@@ -274,24 +294,20 @@ const SbPackage = () => {
           )}
         </Flex>
       )}
-
       <CreateAccountModal
         isOpen={showAccountModal}
         onClose={closeAccountModal}
       />
-
       <CreatePackageModal
         isOpen={createPackagesModal}
         onClose={closeCreatePackagesModal}
       />
-
       <SbDepositModal
         isOpen={sbDepositModal}
         onClose={closeSbDepositModal}
         packageData={selectedPackage}
         onSuccess={handleSuccess}
       />
-
       <MergePackageModal
         isOpen={showMergeModal}
         onClose={handleCloseMergeModal}

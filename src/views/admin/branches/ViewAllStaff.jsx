@@ -26,7 +26,8 @@ import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 
 // Custom components
-import { formatDate } from 'utils/helper';
+import {  formatMdbDate } from 'utils/helper';
+
 
 // Assets
 import axiosService from 'utils/axiosService';
@@ -300,7 +301,7 @@ export default function Users() {
       },
       {
         Header: 'Created At',
-        accessor: (row) => formatDate(row.createdAt),
+        accessor: (row) => formatMdbDate(row.createdAt),
       },
       {
         Header: 'Action',

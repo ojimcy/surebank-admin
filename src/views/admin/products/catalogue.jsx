@@ -13,7 +13,7 @@ import {
 import { NavLink } from 'react-router-dom';
 
 // Custom components
-import { formatDate } from 'utils/helper';
+import {  formatMdbDate } from 'utils/helper';
 
 // Assets
 import Card from 'components/card/Card.js';
@@ -80,7 +80,7 @@ export default function Catalogue() {
 
       {
         Header: 'Created At',
-        accessor: (row) => formatDate(row.createdAt),
+        accessor: (row) => formatMdbDate(row.createdAt),
       },
       {
         Header: 'Action',

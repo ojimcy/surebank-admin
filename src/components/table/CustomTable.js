@@ -12,18 +12,9 @@ import {
   Text,
   Tooltip,
   Select,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
+  TableContainer,
 } from '@chakra-ui/react';
-import {
-  ArrowRightIcon,
-  ArrowLeftIcon,
-  ChevronRightIcon,
-  ChevronLeftIcon,
-} from '@chakra-ui/icons';
+import { ChevronRightIcon, ChevronLeftIcon } from '@chakra-ui/icons';
 
 const CustomTable = ({ columns, data, onPageChange }) => {
   const {
@@ -36,8 +27,6 @@ const CustomTable = ({ columns, data, onPageChange }) => {
     canPreviousPage,
     canNextPage,
     pageOptions,
-    pageCount,
-    gotoPage,
     nextPage,
     previousPage,
     setPageSize,
@@ -48,50 +37,45 @@ const CustomTable = ({ columns, data, onPageChange }) => {
       data,
       initialState: { pageIndex: 0 },
     },
-    usePagination,
+    usePagination
   );
-  // Render the UI for your table
+
   return (
-    <>
-      <Table {...getTableProps()}>
-        <Thead>
-          {headerGroups.map((headerGroup) => (
-            <Tr {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((column) => (
-                <Th {...column.getHeaderProps()}>{column.render('Header')}</Th>
-              ))}
-            </Tr>
-          ))}
-        </Thead>
-        <Tbody {...getTableBodyProps()}>
-          {page.map((row, i) => {
-            prepareRow(row);
-            return (
-              <Tr {...row.getRowProps()}>
-                {row.cells.map((cell) => {
-                  return (
-                    <Td {...cell.getCellProps()}>{cell.render('Cell')}</Td>
-                  );
-                })}
+    <Flex direction="column" w="100%">
+      <TableContainer>
+        <Table
+          {...getTableProps()}
+          variant="striped"
+          colorScheme="blue"
+        >
+          <Thead>
+            {headerGroups.map((headerGroup) => (
+              <Tr {...headerGroup.getHeaderGroupProps()}>
+                {headerGroup.headers.map((column) => (
+                  <Th {...column.getHeaderProps()}>
+                    {column.render('Header')}
+                  </Th>
+                ))}
               </Tr>
-            );
-          })}
-        </Tbody>
-      </Table>
+            ))}
+          </Thead>
+          <Tbody {...getTableBodyProps()}>
+            {page.map((row, i) => {
+              prepareRow(row);
+              return (
+                <Tr {...row.getRowProps()}>
+                  {row.cells.map((cell) => (
+                    <Td {...cell.getCellProps()}>{cell.render('Cell')}</Td>
+                  ))}
+                </Tr>
+              );
+            })}
+          </Tbody>
+        </Table>
+      </TableContainer>
 
       <Flex justifyContent="space-between" m={4} alignItems="center">
         <Flex>
-          <Tooltip label="First Page">
-            <IconButton
-              onClick={() => {
-                gotoPage(0);
-                onPageChange({ pageIndex: 0, pageSize });
-              }}
-              isDisabled={!canPreviousPage}
-              icon={<ArrowLeftIcon h={3} w={3} />}
-              mr={4}
-            />
-          </Tooltip>
           <Tooltip label="Previous Page">
             <IconButton
               onClick={() => {
@@ -104,38 +88,28 @@ const CustomTable = ({ columns, data, onPageChange }) => {
           </Tooltip>
         </Flex>
 
-        <Flex alignItems="center">
-          <Text flexShrink="0" mr={8}>
-            Page{' '}
+        <Flex
+          direction={{ base: 'column', md: 'row' }}
+          alignItems="center"
+          justifyContent="center"
+        >
+          <Text
+            mb={{ base: 2, md: 0 }}
+            flexShrink="0"
+            mr={8}
+            display={{ base: 'none', md: 'block' }}
+          >
             <Text fontWeight="bold" as="span">
-              {pageIndex + 1}
+              Page {pageIndex + 1}
             </Text>{' '}
             of{' '}
             <Text fontWeight="bold" as="span">
               {pageOptions.length}
             </Text>
           </Text>
-          <Text flexShrink="0">Go to page:</Text>{' '}
-          <NumberInput
-            ml={2}
-            mr={8}
-            w={28}
-            min={1}
-            max={pageOptions.length}
-            onChange={(value) => {
-              const page = value ? value - 1 : 0;
-              gotoPage(page);
-            }}
-            defaultValue={pageIndex + 1}
-          >
-            <NumberInputField />
-            <NumberInputStepper>
-              <NumberIncrementStepper />
-              <NumberDecrementStepper />
-            </NumberInputStepper>
-          </NumberInput>
+
           <Select
-            w={32}
+            p={3}
             value={pageSize}
             onChange={(e) => {
               setPageSize(Number(e.target.value));
@@ -143,7 +117,7 @@ const CustomTable = ({ columns, data, onPageChange }) => {
           >
             {[10, 20, 30, 40, 50].map((pageSize) => (
               <option key={pageSize} value={pageSize}>
-                Show {pageSize}
+                {pageSize}
               </option>
             ))}
           </Select>
@@ -160,20 +134,9 @@ const CustomTable = ({ columns, data, onPageChange }) => {
               icon={<ChevronRightIcon h={6} w={6} />}
             />
           </Tooltip>
-          <Tooltip label="Last Page">
-            <IconButton
-              onClick={() => {
-                gotoPage(pageCount - 1);
-                onPageChange({ pageIndex: pageCount - 1, pageSize });
-              }}
-              isDisabled={!canNextPage}
-              icon={<ArrowRightIcon h={3} w={3} />}
-              ml={4}
-            />
-          </Tooltip>
         </Flex>
       </Flex>
-    </>
+    </Flex>
   );
 };
 
