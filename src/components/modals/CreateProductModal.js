@@ -48,7 +48,7 @@ export default function CreateProductModal({ isOpen, onClose }) {
 
   const fetchProductsBrands = async () => {
     const response = await axiosService.get('/store/brands');
-    setBrands(response.data);
+    setBrands(response.data.results);
   };
 
   useEffect(() => {

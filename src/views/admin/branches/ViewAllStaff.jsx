@@ -26,8 +26,7 @@ import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 
 // Custom components
-import {  formatMdbDate } from 'utils/helper';
-
+import { formatMdbDate } from 'utils/helper';
 
 // Assets
 import axiosService from 'utils/axiosService';
@@ -91,11 +90,9 @@ export default function Users() {
   }, [currentUser]);
 
   useEffect(() => {
-    if (staffInfo.branchId) {
-      fetchUsers();
-    }
+    fetchUsers();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pagination, staffInfo.branchId]);
+  }, [pagination]);
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -113,6 +110,7 @@ export default function Users() {
       const UserResponse = await axiosService.get(
         `/users?role=user&limit=10000000`
       );
+
       setUsers(UserResponse.data.results);
       setAllBranch(branches.data.results);
       setStaffs(staffResponse.data);
@@ -121,7 +119,7 @@ export default function Users() {
       console.error(error);
     }
   };
-
+  
   useEffect(() => {
     // Filter customers based on search term
     if (!staffs) {

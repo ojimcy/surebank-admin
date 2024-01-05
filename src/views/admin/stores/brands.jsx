@@ -66,7 +66,7 @@ export default function Collections() {
       const response = await axiosService.get(
         `/store/brands?&limit=${pageSize}&page=${pageIndex + 1}`
       );
-      setBrands(response.data);
+      setBrands(response.data.results);
       setLoading(false);
     } catch (error) {
       console.error(error);
