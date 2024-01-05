@@ -160,7 +160,7 @@ export default function Merchants() {
               </MenuButton>
               <MenuList>
                 <MenuItem>
-                  <NavLink to="#" onClick={handleShowMerchantModal}>New Merchant</NavLink>
+                  <NavLink to="#" onClick={handleShowMerchantModal}>New Merchant Request</NavLink>
                 </MenuItem>
                 <MenuItem>
                   <NavLink to="/admin/stores/collections">
@@ -170,6 +170,11 @@ export default function Merchants() {
                 <MenuItem>
                   <NavLink to="/admin/stores/categories">
                     Categories
+                  </NavLink>
+                </MenuItem>
+                <MenuItem>
+                  <NavLink to="/admin/stores/brands">
+                    Brands
                   </NavLink>
                 </MenuItem>
               </MenuList>

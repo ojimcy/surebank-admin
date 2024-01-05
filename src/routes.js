@@ -57,6 +57,7 @@ import EditProductCatalogue from 'views/admin/products/catalogue/edit';
 
 import Collections from 'views/admin/stores/collections';
 import Categories from 'views/admin/stores/category';
+import Brands from 'views/admin/stores/brands';
 import StaffDetailsPage from 'views/admin/branches/StaffDetails';
 
 import Stores from 'views/admin/stores';
@@ -442,6 +443,13 @@ const routes = [
     path: '/stores/categories',
     roles: ['superAdmin', 'admin', 'manager', 'userReps'],
     component: Categories,
+  },
+  {
+    name: 'Brands',
+    layout: '/admin',
+    path: '/stores/brands',
+    roles: ['superAdmin', 'admin', 'manager', 'userReps'],
+    component: Brands,
   },
 ];
 

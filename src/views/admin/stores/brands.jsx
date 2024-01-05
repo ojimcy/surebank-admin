@@ -37,61 +37,44 @@ import {
 import { toast } from 'react-toastify';
 
 import CustomTable from 'components/table/CustomTable';
-import CreateCollectionModal from 'components/modals/CreateCollectionModal';
-import AddProductToCollectionModal from 'components/modals/AddProductToCollectionModal';
+import CreateBrandModal from 'components/modals/CreateBrandModal';
 import LoadingSpinner from 'components/scroll/LoadingSpinner';
 import BackButton from 'components/menu/BackButton';
 
 import { formatMdbDate } from 'utils/helper';
 
 export default function Collections() {
-  const [collections, setCollections] = useState(false);
-  const [products, setProducts] = useState(false);
+  const [brands, setBrands] = useState(false);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filteredCollections, setFilteredCollections] = useState([]);
+  const [filteredBrands, setFilteredBrands] = useState([]);
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [collectionToDelete, setCollectionsToDelete] = useState(null);
+  const [collectionToDelete, setBrandToDelete] = useState(null);
 
-  const [createCollectionModal, setCreateCollectionModal] = useState(false);
-  const [addProductToCollectionModal, setAddProductToCollectionModal] =
-    useState(false);
+  const [createBrandModal, setCreateBrandModal] = useState(false);
 
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 20,
   });
 
-  const fetchCollections = async () => {
+  const fetchBrands = async () => {
     setLoading(true);
     const { pageIndex, pageSize } = pagination;
     try {
       const response = await axiosService.get(
-        `/collections?&limit=${pageSize}&page=${pageIndex + 1}`
+        `/store/brands?&limit=${pageSize}&page=${pageIndex + 1}`
       );
-      setCollections(response.data);
+      setBrands(response.data);
       setLoading(false);
     } catch (error) {
       console.error(error);
     }
   };
 
-  const fetchProducts = async () => {
-    setLoading(true);
-    try {
-      const response = await axiosService.get('/products/catalogue');
-      setProducts(response.data.results);
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching products:', error);
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchCollections();
-    fetchProducts();
+    fetchBrands();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pagination]);
 
@@ -100,7 +83,7 @@ export default function Collections() {
   };
 
   const handleDeleteIconClick = (collectionId) => {
-    setCollectionsToDelete(collectionId);
+    setBrandToDelete(collectionId);
     setShowDeleteModal(true);
   };
 
@@ -115,27 +98,20 @@ export default function Collections() {
     setShowDeleteModal(false);
   };
 
-  const handleCreateCollectionModal = () => {
-    setCreateCollectionModal(true);
+  const handleCreateBrandModal = () => {
+    setCreateBrandModal(true);
   };
 
-  const handleCloseCreateCollectionModal = () => {
-    setCreateCollectionModal(false);
+  const handleCloseCreateBrandModal = () => {
+    setCreateBrandModal(false);
   };
-  const handleAddProductToCollectionModal = () => {
-    setAddProductToCollectionModal(true);
-  };
-
-  const handleCloseAddProductToCollectionModal = () => {
-    setAddProductToCollectionModal(false);
-  };
-
+  
   // Function to handle user deletion
-  const handleDeleteCollection = async (collectionId) => {
+  const handleDeleteCollection = async (brandId) => {
     try {
-      await axiosService.delete(`/collections/${collectionId}`);
-      toast.success('Collection deleted successfully!');
-      fetchCollections();
+      await axiosService.delete(`/store/brands/${brandId}`);
+      toast.success('Brand deleted successfully!');
+      fetchBrands();
     } catch (error) {
       console.error(error);
       toast.error(error.response?.data?.message || 'An error occurred');
@@ -144,32 +120,10 @@ export default function Collections() {
 
   const handleCreateCollection = async (data) => {
     try {
-      await axiosService.post(`/collections`, data);
+      await axiosService.post(`/store/brands`, data);
       toast.success('Collection created successfully!');
-      fetchCollections();
-      handleCloseCreateCollectionModal();
-    } catch (error) {
-      if (
-        error.response &&
-        error.response.data &&
-        error.response.data.message
-      ) {
-        // Backend error with a specific error message
-        const errorMessage = error.response.data.message;
-        toast.error(errorMessage);
-      } else {
-        // Network error or other error
-        toast.error('Something went wrong. Please try again later.');
-      }
-    }
-  };
-
-  const addProductToCollection = async (data) => {
-    try {
-      await axiosService.post(
-        `/products/collections?productCatalogueId=${data.productCatalogueId}&collectionId=${data.collectionId}`
-      );
-      toast.success('Product added to collection successfully');
+      fetchBrands();
+      handleCloseCreateBrandModal();
     } catch (error) {
       if (
         error.response &&
@@ -189,28 +143,20 @@ export default function Collections() {
   // Filter Users based on search term
   useEffect(() => {
     const filtered =
-      collections &&
-      collections?.filter((collection) => {
-        const title = `${collection.title}`.toLowerCase();
-        return title.includes(searchTerm.toLowerCase());
+      brands &&
+      brands?.filter((brand) => {
+        const name = `${brand.name}`.toLowerCase();
+        return name.includes(searchTerm.toLowerCase());
       });
-    setFilteredCollections(filtered);
-  }, [searchTerm, collections]);
+    setFilteredBrands(filtered);
+  }, [searchTerm, brands]);
 
   // Columns for the user table
   const columns = React.useMemo(
     () => [
       {
-        Header: 'Title',
-        accessor: 'title',
-      },
-      {
-        Header: 'Description',
-        accessor: 'description',
-      },
-      {
-        Header: 'Slug',
-        accessor: 'slug',
+        Header: 'Name',
+        accessor: 'name',
       },
       {
         Header: 'Created At',
@@ -262,22 +208,17 @@ export default function Collections() {
         <Card p={{ base: '30px', md: '30px', sm: '10px' }}>
           <BackButton />
           <Flex>
-            <Text fontSize="2xl">Collections</Text>
+            <Text fontSize="2xl">Brands</Text>
             <Spacer />
 
             <Menu>
               <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-                Manage Collections
+                Manage Brands
               </MenuButton>
               <MenuList>
                 <MenuItem>
-                  <NavLink to="#" onClick={handleCreateCollectionModal}>
-                    New Collection
-                  </NavLink>
-                </MenuItem>
-                <MenuItem>
-                  <NavLink to="#" onClick={handleAddProductToCollectionModal}>
-                    Add Product to collection
+                  <NavLink to="#" onClick={handleCreateBrandModal}>
+                    New Brand
                   </NavLink>
                 </MenuItem>
               </MenuList>
@@ -308,10 +249,10 @@ export default function Collections() {
             {loading ? (
               <LoadingSpinner />
             ) : (
-              filteredCollections && (
+              filteredBrands && (
                 <CustomTable
                   columns={columns}
-                  data={filteredCollections}
+                  data={filteredBrands}
                   onPageChange={onPageChange}
                 />
               )
@@ -320,28 +261,20 @@ export default function Collections() {
         </Card>
       </Grid>
 
-      <CreateCollectionModal
-        isOpen={createCollectionModal}
-        onClose={handleCloseCreateCollectionModal}
+      <CreateBrandModal
+        isOpen={createBrandModal}
+        onClose={handleCloseCreateBrandModal}
         createCollection={handleCreateCollection}
-      />
-
-      <AddProductToCollectionModal
-        isOpen={addProductToCollectionModal}
-        onClose={handleCloseAddProductToCollectionModal}
-        addProductToCollection={addProductToCollection}
-        collections={collections}
-        products={products}
       />
 
       {/* Delete confirmation modal */}
       <Modal isOpen={showDeleteModal} onClose={handleDeleteCancel}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Delete Collection</ModalHeader>
+          <ModalHeader>Delete Brand</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            Are you sure you want to delete this collection?
+            Are you sure you want to delete this brand?
           </ModalBody>
           <ModalFooter>
             <Button colorScheme="red" mr={3} onClick={handleDeleteConfirm}>
