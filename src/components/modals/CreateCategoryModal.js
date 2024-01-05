@@ -17,29 +17,25 @@ import {
 } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 
-const AddStaffModal = ({
-  isOpen,
-  onClose,
-  createCollection,
-}) => {
+const CreateCategoryModal = ({ isOpen, onClose, createCategory }) => {
   const {
     handleSubmit,
     register,
     formState: { errors, isSubmitting },
   } = useForm();
 
-  const handleCreateCollection = (data) => {
-    createCollection(data);
+  const handleCreateCategory = (data) => {
+    createCategory(data);
   };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Create Collection</ModalHeader>
+        <ModalHeader>Create Category</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <form onSubmit={handleSubmit(handleCreateCollection)}>
+          <form onSubmit={handleSubmit(handleCreateCategory)}>
             <FormControl isInvalid={errors.title}>
               <FormLabel
                 htmlFor="title"
@@ -55,7 +51,7 @@ const AddStaffModal = ({
               <InputGroup>
                 <Input
                   type="text"
-                  placeholder="Enter Collection Name"
+                  placeholder="Enter Category Name"
                   {...register('title', { required: true })}
                 />
               </InputGroup>
@@ -89,7 +85,7 @@ const AddStaffModal = ({
             color="white"
             type="submit"
             isLoading={isSubmitting}
-            onClick={handleSubmit(handleCreateCollection)}
+            onClick={handleSubmit(handleCreateCategory)}
           >
             Save
           </Button>
@@ -102,4 +98,4 @@ const AddStaffModal = ({
   );
 };
 
-export default AddStaffModal;
+export default CreateCategoryModal;

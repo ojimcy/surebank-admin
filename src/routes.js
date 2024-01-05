@@ -8,7 +8,7 @@ import {
   MdLock,
   MdOutlinePerson3,
 } from 'react-icons/md';
-import { FaProductHunt, FaSitemap, FaUsers } from 'react-icons/fa';
+import { FaProductHunt, FaSitemap, FaUsers, FaShoppingBag } from 'react-icons/fa';
 import { AiOutlineUsergroupAdd } from 'react-icons/ai';
 
 // Admin Imports
@@ -56,7 +56,10 @@ import CatalogueDetails from 'views/admin/products/single-product-catalogue';
 import EditProductCatalogue from 'views/admin/products/catalogue/edit';
 
 import Collections from 'views/admin/stores/collections';
+import Categories from 'views/admin/stores/category';
 import StaffDetailsPage from 'views/admin/branches/StaffDetails';
+
+import Stores from 'views/admin/stores';
 
 const routes = [
   {
@@ -417,11 +420,28 @@ const routes = [
     component: Products,
   },
   {
+    name: 'Stores',
+    layout: '/admin',
+    path: '/store',
+    icon: (
+      <Icon as={FaShoppingBag} width="20px" height="20px" color="inherit" />
+    ),
+    roles: ['superAdmin', 'admin', 'manager', 'userReps'],
+    component: Stores,
+  },
+  {
     name: 'Collections',
     layout: '/admin',
     path: '/stores/collections',
     roles: ['superAdmin', 'admin', 'manager', 'userReps'],
     component: Collections,
+  },
+  {
+    name: 'Categories',
+    layout: '/admin',
+    path: '/stores/categories',
+    roles: ['superAdmin', 'admin', 'manager', 'userReps'],
+    component: Categories,
   },
 ];
 
