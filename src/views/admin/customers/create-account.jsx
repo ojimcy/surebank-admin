@@ -42,7 +42,7 @@ export default function CreateAccount() {
 
   const fetchUsers = async () => {
     try {
-      const UserResponse = await axiosService.get(`/users?limit=10000000`);
+      const UserResponse = await axiosService.get(`/users?role=user&limit=10000000`);
       setUsers(UserResponse.data.results);
     } catch (error) {
       console.error(error);

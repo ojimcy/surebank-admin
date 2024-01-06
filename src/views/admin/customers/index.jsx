@@ -253,6 +253,7 @@ export default function Customers() {
                 bgColor="blue.700"
                 color="white"
                 px="15px"
+                py="15px"
                 borderRadius="5px"
               >
                 Create Customer
@@ -305,6 +306,10 @@ export default function Customers() {
           <Box marginTop="30">
             {loading ? (
               <LoadingSpinner />
+            ): filteredCustomers.length === 0 ? (
+              <Text fontSize="lg" textAlign="center" mt="20">
+                No customer found.
+              </Text>
             ) : (
               <CustomTable
                 columns={columns}

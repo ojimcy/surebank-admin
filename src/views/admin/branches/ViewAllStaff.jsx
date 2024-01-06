@@ -32,13 +32,14 @@ import { formatMdbDate } from 'utils/helper';
 import axiosService from 'utils/axiosService';
 import Card from 'components/card/Card.js';
 import AssignRoleModal from 'components/modals/AssignRoleModal.js';
-import AddStaffModal from 'components/modals/AddStaffModal.js';
+import CreateStaffModal from 'components/modals/CreateStaffModal.js';
 import TransferStaffModal from 'components/modals/TransferStaffModal.js';
 import CustomTable from 'components/table/CustomTable';
 import { ChevronDownIcon, DeleteIcon, SearchIcon } from '@chakra-ui/icons';
 import { toast } from 'react-toastify';
 import { useAuth } from 'contexts/AuthContext';
 import LoadingSpinner from 'components/scroll/LoadingSpinner';
+import BackButton from 'components/menu/BackButton';
 
 export default function Users() {
   const [staffs, setStaffs] = useState([]);
@@ -119,7 +120,7 @@ export default function Users() {
       console.error(error);
     }
   };
-  
+
   useEffect(() => {
     // Filter customers based on search term
     if (!staffs) {
@@ -209,7 +210,8 @@ export default function Users() {
     setShowCreateStaffModal(false);
   };
 
-  const addStaffToBranch = async (data) => {
+  const createStaff = async (data) => {
+    console.log(data);
     try {
       await axiosService.post(`/staff`, data);
       toast.success('Staff has been created successfully!');
@@ -273,7 +275,6 @@ export default function Users() {
     admin: 'Admin',
     superAdmin: 'Super Admin',
   };
-
   // Columns for the user table
   const columns = React.useMemo(
     () => [
@@ -344,6 +345,7 @@ export default function Users() {
         gap={{ base: '20px', xl: '20px' }}
       >
         <Card p={{ base: '30px', md: '30px', sm: '10px' }}>
+          <BackButton />
           <Flex>
             <Text fontSize="2xl">All Staff</Text>
             <Spacer />
@@ -384,6 +386,10 @@ export default function Users() {
           <Box marginTop="30">
             {loading ? (
               <LoadingSpinner />
+            ) : filteredStaffs.length === 0 ? (
+              <Text fontSize="lg" textAlign="center" mt="20">
+                No staff found.
+              </Text>
             ) : (
               <CustomTable
                 columns={columns}
@@ -423,12 +429,11 @@ export default function Users() {
       />
 
       {/* Modal for adding new staff */}
-      <AddStaffModal
+      <CreateStaffModal
         isOpen={showCreateStaffModal}
         onClose={onClosestaffModal}
-        users={users}
         allBranch={allBranch}
-        addStaffToBranch={addStaffToBranch}
+        createStaff={createStaff}
       />
 
       {/* Modal for assigning role to staff */}

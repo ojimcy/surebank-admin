@@ -34,7 +34,7 @@ const AddStaffModal = ({
 
   const roles = ['userReps', 'manager', 'admin', 'superAdmin'];
   const roleLabels = {
-    userReps: 'Cashier',
+    userReps: 'Sales Rep',
     manager: 'Manager',
     admin: 'Admin',
     superAdmin: 'Super Admin',

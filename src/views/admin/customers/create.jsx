@@ -34,6 +34,7 @@ import { RiEyeCloseLine } from 'react-icons/ri';
 import axiosService from 'utils/axiosService';
 import { toast } from 'react-toastify';
 import { toSentenceCase } from 'utils/helper';
+import BackButton from 'components/menu/BackButton';
 
 export default function Customer() {
   const history = useHistory();
@@ -77,7 +78,7 @@ export default function Customer() {
     };
     fetchBranches();
   }, []);
-  
+
   const submitHandler = async (customerData) => {
     try {
       await axiosService.post(`/customer`, customerData);
@@ -114,6 +115,7 @@ export default function Customer() {
         gap={{ base: '20px', xl: '20px' }}
       >
         <Card p={{ base: '30px', md: '30px', sm: '10px' }}>
+          <BackButton />
           <Text marginBottom="20px" fontSize="3xl" fontWeight="bold">
             Create Customer
           </Text>

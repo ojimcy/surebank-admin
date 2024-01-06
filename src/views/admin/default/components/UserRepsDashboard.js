@@ -272,11 +272,17 @@ export default function UserRepsDashboard() {
             </Flex>
           </Box>
 
-          <CustomTable
-            columns={columns}
-            data={filteredCustomers}
-            onPageChange={onPageChange}
-          />
+          {filteredCustomers.length === 0 ? (
+            <Text fontSize="lg" textAlign="center" mt="20">
+              No customer found.
+            </Text>
+          ) : (
+            <CustomTable
+              columns={columns}
+              data={filteredCustomers}
+              onPageChange={onPageChange}
+            />
+          )}
         </>
       )}
     </Box>
