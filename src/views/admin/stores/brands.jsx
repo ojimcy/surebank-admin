@@ -43,30 +43,29 @@ import BackButton from 'components/menu/BackButton';
 
 import { formatMdbDate } from 'utils/helper';
 
-export default function Collections() {
-  const [brands, setBrands] = useState(false);
+export default function Brand() {
+  const [collections, setCollections] = useState(false);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filteredBrands, setFilteredBrands] = useState([]);
+  const [filteredBrand, setFilteredBrand] = useState([]);
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [collectionToDelete, setBrandToDelete] = useState(null);
+  const [brandToDelete, setBrandToDelete] = useState(null);
 
   const [createBrandModal, setCreateBrandModal] = useState(false);
-
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 20,
   });
 
-  const fetchBrands = async () => {
+  const fetchCollections = async () => {
     setLoading(true);
     const { pageIndex, pageSize } = pagination;
     try {
       const response = await axiosService.get(
-        `/store/brands?&limit=${pageSize}&page=${pageIndex + 1}`
+        `/stores/brands?&limit=${pageSize}&page=${pageIndex + 1}`
       );
-      setBrands(response.data.results);
+      setCollections(response.data);
       setLoading(false);
     } catch (error) {
       console.error(error);
@@ -74,7 +73,7 @@ export default function Collections() {
   };
 
   useEffect(() => {
-    fetchBrands();
+    fetchCollections();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pagination]);
 
@@ -82,14 +81,14 @@ export default function Collections() {
     setPagination({ pageIndex, pageSize });
   };
 
-  const handleDeleteIconClick = (collectionId) => {
-    setBrandToDelete(collectionId);
+  const handleDeleteIconClick = (brandId) => {
+    setBrandToDelete(brandId);
     setShowDeleteModal(true);
   };
 
   const handleDeleteConfirm = () => {
-    if (collectionToDelete) {
-      handleDeleteCollection(collectionToDelete);
+    if (brandToDelete) {
+      handleDeleteCollection(brandToDelete);
       setShowDeleteModal(false);
     }
   };
@@ -105,24 +104,24 @@ export default function Collections() {
   const handleCloseCreateBrandModal = () => {
     setCreateBrandModal(false);
   };
-  
+
   // Function to handle user deletion
   const handleDeleteCollection = async (brandId) => {
     try {
-      await axiosService.delete(`/store/brands/${brandId}`);
+      await axiosService.delete(`/stores/brands/${brandId}`);
       toast.success('Brand deleted successfully!');
-      fetchBrands();
+      fetchCollections();
     } catch (error) {
       console.error(error);
       toast.error(error.response?.data?.message || 'An error occurred');
     }
   };
 
-  const handleCreateCollection = async (data) => {
+  const handleCreateBrand = async (data) => {
     try {
-      await axiosService.post(`/store/brands`, data);
+      await axiosService.post(`/stores/brands`, data);
       toast.success('Collection created successfully!');
-      fetchBrands();
+      fetchCollections();
       handleCloseCreateBrandModal();
     } catch (error) {
       if (
@@ -143,13 +142,13 @@ export default function Collections() {
   // Filter Users based on search term
   useEffect(() => {
     const filtered =
-      brands &&
-      brands?.filter((brand) => {
-        const name = `${brand.name}`.toLowerCase();
-        return name.includes(searchTerm.toLowerCase());
+      collections &&
+      collections?.filter((collection) => {
+        const title = `${collection.title}`.toLowerCase();
+        return title.includes(searchTerm.toLowerCase());
       });
-    setFilteredBrands(filtered);
-  }, [searchTerm, brands]);
+    setFilteredBrand(filtered);
+  }, [searchTerm, collections]);
 
   // Columns for the user table
   const columns = React.useMemo(
@@ -208,12 +207,12 @@ export default function Collections() {
         <Card p={{ base: '30px', md: '30px', sm: '10px' }}>
           <BackButton />
           <Flex>
-            <Text fontSize="2xl">Brands</Text>
+            <Text fontSize="2xl">Brand</Text>
             <Spacer />
 
             <Menu>
               <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-                Manage Brands
+                Manage Brand
               </MenuButton>
               <MenuList>
                 <MenuItem>
@@ -248,11 +247,15 @@ export default function Collections() {
           <Box marginTop="30">
             {loading ? (
               <LoadingSpinner />
+            ) : filteredBrand.length === 0 ? (
+              <Text fontSize="lg" textAlign="center" mt="20">
+                No records found!
+              </Text>
             ) : (
-              filteredBrands && (
+              filteredBrand && (
                 <CustomTable
                   columns={columns}
-                  data={filteredBrands}
+                  data={filteredBrand}
                   onPageChange={onPageChange}
                 />
               )
@@ -264,7 +267,7 @@ export default function Collections() {
       <CreateBrandModal
         isOpen={createBrandModal}
         onClose={handleCloseCreateBrandModal}
-        createCollection={handleCreateCollection}
+        createBrand={handleCreateBrand}
       />
 
       {/* Delete confirmation modal */}
@@ -273,9 +276,7 @@ export default function Collections() {
         <ModalContent>
           <ModalHeader>Delete Brand</ModalHeader>
           <ModalCloseButton />
-          <ModalBody>
-            Are you sure you want to delete this brand?
-          </ModalBody>
+          <ModalBody>Are you sure you want to delete this brand?</ModalBody>
           <ModalFooter>
             <Button colorScheme="red" mr={3} onClick={handleDeleteConfirm}>
               Delete

@@ -307,6 +307,10 @@ export default function Collections() {
           <Box marginTop="30">
             {loading ? (
               <LoadingSpinner />
+            ): filteredCollections.length === 0 ? (
+              <Text fontSize="lg" textAlign="center" mt="20">
+                No records found!
+              </Text>
             ) : (
               filteredCollections && (
                 <CustomTable

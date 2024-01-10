@@ -34,7 +34,7 @@ export default function CreateMerchantRequestModal({ isOpen, onClose }) {
 
   const submitHandler = async (merchantData) => {
     try {
-      await axiosService.post(`/merchant/request`, merchantData);
+      await axiosService.post(`/merchants/requests`, merchantData);
       toast.success('Merchant request created successfully!');
       onClose();
       reset();

@@ -55,12 +55,10 @@ export default function ViewCustomer() {
       const accountResponse = await axiosService.get(
         `/accounts/${id}?accountType=${activeTab}`
       );
-      console.log(activeTab);
-
       const packagesResponse = await axiosService.get(
         `daily-savings/package?userId=${id}`
       );
-      setCustomerData(accountResponse.data[0]);
+      setCustomerData(accountResponse.data);
       setUserPackages(packagesResponse.data);
     } catch (error) {
       console.error(error);

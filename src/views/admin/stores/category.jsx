@@ -44,10 +44,10 @@ import BackButton from 'components/menu/BackButton';
 import { formatMdbDate } from 'utils/helper';
 
 export default function Categories() {
-  const [collections, setCollections] = useState(false);
+  const [categories, setCategories] = useState(false);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filteredCollections, setFilteredCollections] = useState([]);
+  const [filteredCategories, setFilteredCategories] = useState([]);
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [categoryToDelete, setCategoryToDelete] = useState(null);
@@ -58,14 +58,14 @@ export default function Categories() {
     pageSize: 20,
   });
 
-  const fetchCollections = async () => {
+  const fetchCategories = async () => {
     setLoading(true);
     const { pageIndex, pageSize } = pagination;
     try {
       const response = await axiosService.get(
-        `/store/categories?&limit=${pageSize}&page=${pageIndex + 1}`
+        `/stores/categories?&limit=${pageSize}&page=${pageIndex + 1}`
       );
-      setCollections(response.data);
+      setCategories(response.data);
       setLoading(false);
     } catch (error) {
       console.error(error);
@@ -73,7 +73,7 @@ export default function Categories() {
   };
 
   useEffect(() => {
-    fetchCollections();
+    fetchCategories();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pagination]);
 
@@ -110,7 +110,7 @@ export default function Categories() {
     try {
       await axiosService.delete(`/stores/categories/${categoryId}`);
       toast.success('Category deleted successfully!');
-      fetchCollections();
+      fetchCategories();
     } catch (error) {
       console.error(error);
       toast.error(error.response?.data?.message || 'An error occurred');
@@ -121,7 +121,7 @@ export default function Categories() {
     try {
       await axiosService.post(`/stores/categories`, data);
       toast.success('Collection created successfully!');
-      fetchCollections();
+      fetchCategories();
       handleCloseCreateCategoryModal();
     } catch (error) {
       if (
@@ -142,24 +142,20 @@ export default function Categories() {
   // Filter Users based on search term
   useEffect(() => {
     const filtered =
-      collections &&
-      collections?.filter((collection) => {
-        const title = `${collection.title}`.toLowerCase();
+      categories &&
+      categories?.filter((category) => {
+        const title = `${category.title}`.toLowerCase();
         return title.includes(searchTerm.toLowerCase());
       });
-    setFilteredCollections(filtered);
-  }, [searchTerm, collections]);
+    setFilteredCategories(filtered);
+  }, [searchTerm, categories]);
 
   // Columns for the user table
   const columns = React.useMemo(
     () => [
       {
-        Header: 'Name',
-        accessor: 'name',
-      },
-      {
-        Header: 'Description',
-        accessor: 'description',
+        Header: 'Title',
+        accessor: 'title',
       },
       {
         Header: 'Slug',
@@ -174,20 +170,20 @@ export default function Categories() {
         Header: 'Action',
         accessor: (row) => (
           <>
-            {/* Edit collection icon */}
+            {/* Edit category icon */}
             <NavLink to={`#`}>
               <IconButton
                 icon={<EditIcon />}
                 colorScheme="blue"
                 mr={2}
-                aria-label="Edit collection"
+                aria-label="Edit category"
               />
             </NavLink>
-            {/* Delete collection icon */}
+            {/* Delete category icon */}
             <IconButton
               icon={<DeleteIcon />}
               colorScheme="red"
-              aria-label="Delete collection"
+              aria-label="Delete category"
               onClick={() => handleDeleteIconClick(row.id)}
             />
           </>
@@ -255,11 +251,15 @@ export default function Categories() {
           <Box marginTop="30">
             {loading ? (
               <LoadingSpinner />
+            ) : filteredCategories.length === 0 ? (
+              <Text fontSize="lg" textAlign="center" mt="20">
+                No records found!
+              </Text>
             ) : (
-              filteredCollections && (
+              filteredCategories && (
                 <CustomTable
                   columns={columns}
-                  data={filteredCollections}
+                  data={filteredCategories}
                   onPageChange={onPageChange}
                 />
               )

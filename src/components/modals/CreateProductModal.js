@@ -42,12 +42,12 @@ export default function CreateProductModal({ isOpen, onClose }) {
   } = useForm();
 
   const fetchProductsCategories = async () => {
-    const response = await axiosService.get('/store/categories');
+    const response = await axiosService.get('/stores/categories');
     setCategories(response.data);
   };
 
   const fetchProductsBrands = async () => {
-    const response = await axiosService.get('/store/brands');
+    const response = await axiosService.get('/stores/brands');
     setBrands(response.data.results);
   };
 
