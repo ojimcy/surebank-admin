@@ -48,7 +48,7 @@ export default function CreateProductModal({ isOpen, onClose }) {
 
   const fetchProductsBrands = async () => {
     const response = await axiosService.get('/stores/brands');
-    setBrands(response.data.results);
+    setBrands(response.data);
   };
 
   useEffect(() => {
@@ -176,7 +176,7 @@ export default function CreateProductModal({ isOpen, onClose }) {
                 {categories &&
                   categories?.map((category) => (
                     <option key={category.id} value={category.id}>
-                      {toSentenceCase(category?.name)}
+                      {toSentenceCase(category?.title)}
                     </option>
                   ))}
               </Select>

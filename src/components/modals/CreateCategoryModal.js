@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Modal,
   ModalOverlay,
@@ -14,18 +14,28 @@ import {
   InputGroup,
   Input,
   Textarea,
+  Select, // Import Select from Chakra UI
 } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 
-const CreateCategoryModal = ({ isOpen, onClose, createCategory }) => {
+const CreateCategoryModal = ({
+  isOpen,
+  onClose,
+  createCategory,
+  parentCategories,
+}) => {
   const {
     handleSubmit,
     register,
     formState: { errors, isSubmitting },
   } = useForm();
 
+  const [showParentCategoryField, setShowParentCategoryField] = useState(false);
+  const [selectedParentCategory, setSelectedParentCategory] = useState(null);
+
   const handleCreateCategory = (data) => {
-    createCategory(data);
+    // Include selectedParentCategory in the data
+    createCategory({ ...data, parentCategoryId: selectedParentCategory });
   };
 
   return (
@@ -77,6 +87,43 @@ const CreateCategoryModal = ({ isOpen, onClose, createCategory }) => {
                 />
               </InputGroup>
             </FormControl>
+
+            <Button
+              mt={4}
+              variant="link"
+              color="blue.500"
+              onClick={() =>
+                setShowParentCategoryField(!showParentCategoryField)
+              }
+            >
+              {showParentCategoryField ? 'Hide' : 'Show'} Parent Category
+            </Button>
+
+            {showParentCategoryField && (
+              <FormControl mt={4}>
+                <FormLabel
+                  htmlFor="parentCategory"
+                  display="flex"
+                  ms="4px"
+                  fontSize="sm"
+                  fontWeight="500"
+                  mb="8px"
+                >
+                  Parent Category
+                </FormLabel>
+                <Select
+                  placeholder="Select a parent category"
+                  {...register('parentCategoryId')}
+                  onChange={(e) => setSelectedParentCategory(e.target.value)}
+                >
+                  {parentCategories.map((category) => (
+                    <option key={category._id} value={category._id}>
+                      {category.title}
+                    </option>
+                  ))}
+                </Select>
+              </FormControl>
+            )}
           </form>
         </ModalBody>
         <ModalFooter>

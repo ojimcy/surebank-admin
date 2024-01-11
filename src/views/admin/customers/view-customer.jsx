@@ -71,7 +71,6 @@ export default function ViewCustomer() {
     fetchUserData();
   }, [fetchUserData]);
 
-  console.log(customerData);
   const handleTransferSuccess = useCallback(() => {
     // Fetch updated data after successful transfer here
     fetchUserData();

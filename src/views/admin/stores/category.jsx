@@ -272,6 +272,7 @@ export default function Categories() {
         isOpen={createCategoryModal}
         onClose={handleCloseCreateCategoryModal}
         createCategory={handleCreateCategory}
+        parentCategories={filteredCategories}
       />
 
       {/* Delete confirmation modal */}

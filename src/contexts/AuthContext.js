@@ -9,7 +9,7 @@ export function useAuth() {
 }
 
 const baseURL = 'http://localhost:3001/v1';
-// const baseURL = 'https://l1uwu6hw65.execute-api.us-east-1.amazonaws.com/v1';
+// const baseURL = 'api.surebankstores.ng/v1';
 
 export function AuthProvider({ children }) {
   const initialToken = localStorage.getItem('ACCESS_TOKEN_KEY');
