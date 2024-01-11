@@ -195,7 +195,7 @@ export default function Categories() {
   );
 
   return (
-    <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
+    <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
       {/* Main Fields */}
       <Grid
         templateColumns={{

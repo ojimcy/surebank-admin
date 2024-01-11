@@ -18,7 +18,7 @@ import {
 import { ChevronDownIcon, EditIcon } from '@chakra-ui/icons';
 
 import { NavLink } from 'react-router-dom';
-import {  formatMdbDate } from 'utils/helper';
+import { formatMdbDate } from 'utils/helper';
 import Card from 'components/card/Card.js';
 import BackButton from 'components/menu/BackButton';
 import CustomTable from 'components/table/CustomTable';
@@ -59,9 +59,9 @@ export default function Products() {
 
   useEffect(() => {
     fetchProductRequests();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pagination]);
-  
+
   const onPageChange = ({ pageIndex, pageSize }) => {
     setPagination({ pageIndex, pageSize });
   };
@@ -150,7 +150,7 @@ export default function Products() {
   );
 
   return (
-    <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
+    <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
       {/* Main Fields */}
       <Grid
         templateColumns={{

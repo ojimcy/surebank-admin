@@ -83,12 +83,12 @@ export default function User() {
                   boxShadow="base"
                 >
                   {user && (
-                    <Flex alignItems="center">
+                    <Flex alignItems="center" flexDirection={{ base: 'column', md: 'row' }}>
                       <Avatar
                         size="xl"
                         name={user.firstName || ''}
                         src={user.avatarUrl || ''}
-                        m={4}
+                        m={{ base: 4, md: 0 }}
                       />
                       <Box px={6} py={4}>
                         <Grid templateColumns="repeat(2, 1fr)" gap={4}>
@@ -109,16 +109,18 @@ export default function User() {
                           <Text fontWeight="bold">Branch:</Text>
                           <Text>{branchInfo.name}</Text>
                         </Grid>
-                        <NavLink to={`/admin/branch/staff/${id}`} mr={4}>
-                          <Button mt={4} mr={2} colorScheme="blue" size="md">
-                            Details
-                          </Button>
-                        </NavLink>
-                        <NavLink to={`/admin/customer/staffaccounts/${id}`}>
-                          <Button mt={4} colorScheme="blue" size="md">
-                            View customers
-                          </Button>
-                        </NavLink>
+                        <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }} gap={4} mt={4}>
+                          <NavLink to={`/admin/branch/staff/${id}`}>
+                            <Button colorScheme="blue" size="md" w="100%">
+                              Details
+                            </Button>
+                          </NavLink>
+                          <NavLink to={`/admin/customer/staffaccounts/${id}`}>
+                            <Button colorScheme="blue" size="md" w="100%">
+                              View Customers
+                            </Button>
+                          </NavLink>
+                        </Grid>
                       </Box>
                     </Flex>
                   )}

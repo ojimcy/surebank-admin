@@ -63,7 +63,7 @@ export default function Customers() {
   // Fetch customers
   useEffect(() => {
     fetchAccounts();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Filter customers based on search term
@@ -161,7 +161,7 @@ export default function Customers() {
   );
 
   return (
-    <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
+    <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
       {/* Main Fields */}
       <Grid
         templateColumns={{

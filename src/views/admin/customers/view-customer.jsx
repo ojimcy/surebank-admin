@@ -82,7 +82,7 @@ export default function ViewCustomer() {
   }, [fetchUserData]);
 
   return (
-    <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
+    <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
       <Flex justifyContent="space-between" mb="20px">
         <BackButton />
         <Menu>

@@ -85,7 +85,7 @@ export default function CreateCatalogue() {
   const submitHandler = async (catalogueData) => {
     try {
       if (selectedProduct) {
-        catalogueData.productId = selectedProduct.value
+        catalogueData.productId = selectedProduct.value;
       }
       await axiosService.post(`/products/catalogue`, catalogueData);
       toast.success('Product catalogue created successfully!');
@@ -97,7 +97,7 @@ export default function CreateCatalogue() {
   };
 
   return (
-    <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
+    <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
       {/* Main Fields */}
       <Grid
         templateColumns={{

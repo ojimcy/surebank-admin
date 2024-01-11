@@ -22,7 +22,6 @@ export default function EditCustomer() {
   const history = useHistory();
   const { branches } = useAppContext();
 
-
   const [account, setAccount] = useState({});
   const [staffList, setStaffList] = useState([]);
 
@@ -55,7 +54,7 @@ export default function EditCustomer() {
       try {
         if (account && account.branchId) {
           const response = await axiosService.get(
-            `/staff/${account?.branchId._id}`,
+            `/staff/${account?.branchId._id}`
           );
           setStaffList(response.data);
         }
@@ -78,7 +77,7 @@ export default function EditCustomer() {
   };
 
   return (
-    <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
+    <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
       {/* Main Fields */}
       <Grid
         templateColumns={{

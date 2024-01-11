@@ -36,7 +36,7 @@ const AddProductToCollectionModal = ({
     products &&
     products.map((product) => ({
       value: product.id,
-      label: product.name,
+      label: product.title,
     }));
 
   const collectionOptions =

@@ -218,7 +218,7 @@ export default function Customers() {
   );
 
   return (
-    <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
+    <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
       {/* Main Fields */}
       <Grid
         templateColumns={{
@@ -306,7 +306,7 @@ export default function Customers() {
           <Box marginTop="30">
             {loading ? (
               <LoadingSpinner />
-            ): filteredCustomers.length === 0 ? (
+            ) : filteredCustomers.length === 0 ? (
               <Text fontSize="lg" textAlign="center" mt="20">
                 No customer found.
               </Text>

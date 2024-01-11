@@ -83,7 +83,7 @@ export default function DailySavingsDashboard() {
   }, [currentUser.id]);
 
   return (
-    <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
+    <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
       {loading ? (
         <Spinner />
       ) : (

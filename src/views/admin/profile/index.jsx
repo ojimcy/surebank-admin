@@ -13,7 +13,7 @@ import { useAuth } from 'contexts/AuthContext';
 export default function Overview() {
   const { currentUser } = useAuth();
   return (
-    <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
+    <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
       {/* Main Fields */}
       <Grid
         templateColumns={{

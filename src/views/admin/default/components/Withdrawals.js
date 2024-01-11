@@ -152,8 +152,8 @@ export default function Withdrawals() {
   const columns = React.useMemo(
     () => [
       {
-        Header: 'Date',
-        accessor: (row) => formatDate(row.date),
+        Header: 'Narration',
+        accessor: 'narration',
       },
       {
         Header: 'Amount',
@@ -171,7 +171,10 @@ export default function Withdrawals() {
         Header: 'Status',
         accessor: 'status',
       },
-
+      {
+        Header: 'Date',
+        accessor: (row) => formatDate(row.date),
+      },
       {
         Header: 'Action',
         accessor: (row) => (
@@ -189,7 +192,7 @@ export default function Withdrawals() {
 
   return (
     <>
-      <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
+      <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
         <Box marginTop="30">
           <Flex>
             <Box>

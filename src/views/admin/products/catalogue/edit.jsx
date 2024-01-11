@@ -68,7 +68,7 @@ export default function EditProductCatalogue() {
       console.error(error);
     }
   }, [id]);
-  
+
   const submitHandler = async (productData) => {
     try {
       await axiosService.patch(`/products/catalogue/${id}`, productData);
@@ -113,7 +113,7 @@ export default function EditProductCatalogue() {
   };
 
   return (
-    <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
+    <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
       <Card>
         <Flex>
           <BackButton />

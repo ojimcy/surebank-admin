@@ -42,7 +42,9 @@ export default function CreateAccount() {
 
   const fetchUsers = async () => {
     try {
-      const UserResponse = await axiosService.get(`/users?role=user&limit=10000000`);
+      const UserResponse = await axiosService.get(
+        `/users?role=user&limit=10000000`
+      );
       setUsers(UserResponse.data.results);
     } catch (error) {
       console.error(error);
@@ -72,7 +74,7 @@ export default function CreateAccount() {
       // If a user is selected
       if (selectedUser) {
         accountData.email = selectedUser.value;
-        accountData.phoneNumber = selectedUser.phoneNumber
+        accountData.phoneNumber = selectedUser.phoneNumber;
       }
       await axiosService.post(`/accounts`, accountData);
       toast.success('Account created successfully!');
@@ -94,7 +96,7 @@ export default function CreateAccount() {
   };
 
   return (
-    <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
+    <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
       {/* Main Fields */}
       <Grid
         templateColumns={{

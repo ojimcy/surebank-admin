@@ -74,7 +74,6 @@ export default function Merchants() {
     fetchMerchants();
   };
 
-  
   const handleShowMerchantModal = () => {
     setCreateMerchantModal(true);
   };
@@ -136,7 +135,7 @@ export default function Merchants() {
   );
 
   return (
-    <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
+    <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
       {/* Main Fields */}
       <Grid
         templateColumns={{
@@ -160,22 +159,18 @@ export default function Merchants() {
               </MenuButton>
               <MenuList>
                 <MenuItem>
-                  <NavLink to="#" onClick={handleShowMerchantModal}>New Merchant Request</NavLink>
-                </MenuItem>
-                <MenuItem>
-                  <NavLink to="/admin/stores/collections">
-                    Collections
+                  <NavLink to="#" onClick={handleShowMerchantModal}>
+                    New Merchant Request
                   </NavLink>
                 </MenuItem>
                 <MenuItem>
-                  <NavLink to="/admin/stores/categories">
-                    Categories
-                  </NavLink>
+                  <NavLink to="/admin/stores/collections">Collections</NavLink>
                 </MenuItem>
                 <MenuItem>
-                  <NavLink to="/admin/stores/brands">
-                    Brands
-                  </NavLink>
+                  <NavLink to="/admin/stores/categories">Categories</NavLink>
+                </MenuItem>
+                <MenuItem>
+                  <NavLink to="/admin/stores/brands">Brands</NavLink>
                 </MenuItem>
               </MenuList>
             </Menu>
@@ -212,7 +207,6 @@ export default function Merchants() {
         </Card>
       </Grid>
 
-      
       <CreateMerchantModal
         isOpen={createMerchantModal}
         onClose={handleCloseMerchantModal}

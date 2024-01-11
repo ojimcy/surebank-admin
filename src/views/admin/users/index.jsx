@@ -33,7 +33,7 @@ import axios from 'axios';
 import CustomTable from 'components/table/CustomTable';
 import LoadingSpinner from 'components/scroll/LoadingSpinner';
 
-import {  formatMdbDate } from 'utils/helper';
+import { formatMdbDate } from 'utils/helper';
 
 export default function Users() {
   const [users, setUsers] = useState([]);
@@ -164,7 +164,7 @@ export default function Users() {
   );
 
   return (
-    <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
+    <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
       {/* Main Fields */}
       <Grid
         templateColumns={{

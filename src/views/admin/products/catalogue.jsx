@@ -13,7 +13,7 @@ import {
 import { NavLink } from 'react-router-dom';
 
 // Custom components
-import {  formatMdbDate } from 'utils/helper';
+import { formatMdbDate } from 'utils/helper';
 
 // Assets
 import Card from 'components/card/Card.js';
@@ -97,7 +97,7 @@ export default function Catalogue() {
   );
 
   return (
-    <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
+    <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
       {/* Main Fields */}
       <Grid
         templateColumns={{

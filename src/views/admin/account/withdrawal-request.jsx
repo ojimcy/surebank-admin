@@ -120,6 +120,8 @@ const WithdrawalDetails = () => {
                     <Flex alignItems="center">
                       <Box px={6} py={4}>
                         <Grid templateColumns="repeat(2, 1fr)" gap={4}>
+                          <Text fontWeight="bold">narration</Text>
+                          <Text>{withdrawal?.narration}</Text>
                           <Text fontWeight="bold">Sales Rep</Text>
                           <Text>
                             {withdrawal.userReps?.firstName}{' '}

@@ -208,7 +208,7 @@ export default function Expenditures() {
   );
 
   return (
-    <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
+    <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
       <Grid
         templateColumns={{
           base: '1fr',
@@ -262,6 +262,10 @@ export default function Expenditures() {
           <Box marginTop="30">
             {loading ? (
               <LoadingSpinner />
+            ) : filteredExpenditure.length === 0 ? (
+              <Text fontSize="lg" textAlign="center" mt="20">
+                No records found!
+              </Text>
             ) : (
               <CustomTable
                 columns={columns}

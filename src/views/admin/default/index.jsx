@@ -10,7 +10,7 @@ import ManagerDashboard from './components/ManagerDashboard';
 export default function UserReports() {
   const { currentUser } = useAuth();
   return (
-    <Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
+    <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
       {currentUser ? (
         currentUser.role === 'superAdmin' ? (
           <SuperAdminDashboard />
@@ -18,7 +18,7 @@ export default function UserReports() {
           <UserRepsDashboard />
         ) : currentUser.role === 'admin' ? (
           <AdminDashboard />
-        ) :currentUser.role === 'manager' ? (
+        ) : currentUser.role === 'manager' ? (
           <ManagerDashboard />
         ) : (
           <UserDashboard />
