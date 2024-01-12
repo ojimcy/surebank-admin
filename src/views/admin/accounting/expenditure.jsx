@@ -180,10 +180,6 @@ export default function Expenditures() {
   const columns = React.useMemo(
     () => [
       {
-        Header: 'Date',
-        accessor: (row) => formatDate(row.date),
-      },
-      {
         Header: 'Amount',
         accessor: 'amount',
       },
@@ -194,6 +190,10 @@ export default function Expenditures() {
       {
         Header: 'Status',
         accessor: 'status',
+      },
+      {
+        Header: 'Date',
+        accessor: (row) => formatDate(row.date),
       },
       {
         Header: 'Details',

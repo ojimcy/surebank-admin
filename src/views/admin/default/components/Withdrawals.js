@@ -34,6 +34,7 @@ export default function Withdrawals() {
   const [branch, setBranch] = useState('');
   const [isCustomDateModalOpen, setCustomDateModalOpen] = useState(false);
   const [customRangeLabel, setCustomRangeLabel] = useState('Custom Range');
+  const [selectedStatus, setSelectedStatus] = useState('all');
 
   const [pagination, setPagination] = useState({
     pageIndex: 0,
@@ -66,6 +67,13 @@ export default function Withdrawals() {
       setEndDate(e.target.value);
     },
     [setEndDate]
+  );
+
+  const handleStatusChange = useCallback(
+    (e) => {
+      setSelectedStatus(e.target.value);
+    },
+    [setSelectedStatus]
   );
 
   const handleCustomDateApply = useCallback(() => {
@@ -110,6 +118,12 @@ export default function Withdrawals() {
           endpoint += `&startDate=${customStartDate.getTime()}&endDate=${customEndDate.getTime()}`;
         }
       }
+      if(branch) {
+        endpoint += `&branchId=${branch}`
+      }
+      if (selectedStatus !== 'all') {
+        endpoint += `&status=${selectedStatus}`;
+      }
       try {
         const response = await axiosService.get(endpoint);
         setWithdrawals(response.data);
@@ -141,8 +155,14 @@ export default function Withdrawals() {
         (item) => new Date(item.date) >= last30Days
       );
     }
+    if (selectedStatus !== 'all') {
+      filteredData = filteredData.filter(
+        (item) => item.status === selectedStatus
+      );
+    }
+
     setFilteredWithdrawals(filteredData);
-  }, [withdrawals, timeRange]);
+  }, [withdrawals, timeRange, selectedStatus]);
 
   const onPageChange = ({ pageIndex, pageSize }) => {
     setPagination({ pageIndex, pageSize });
@@ -200,7 +220,6 @@ export default function Withdrawals() {
                 <Select
                   value={timeRange}
                   onChange={handleTimeRangeChange}
-                  minWidth="150px"
                 >
                   <option value="all">All Time</option>
                   <option value="last7days">Last 7 Days</option>
@@ -218,6 +237,15 @@ export default function Withdrawals() {
                         {branch?.name}
                       </option>
                     ))}
+                </Select>
+                <Select
+                  value={selectedStatus}
+                  onChange={handleStatusChange}
+                >
+                  <option value="all">All</option>
+                  <option value="approved">Approved</option>
+                  <option value="pending">Pending</option>
+                  <option value="rejected">Rejected</option>
                 </Select>
               </Stack>
             </Box>

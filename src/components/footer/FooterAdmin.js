@@ -62,7 +62,7 @@ export default function Footer() {
           <Link
             fontWeight="500"
             color={textColor}
-            href="mailto:hello@simmmple.com"
+            href="mailto:info@surebankstores.ng"
           >
             Support
           </Link>
