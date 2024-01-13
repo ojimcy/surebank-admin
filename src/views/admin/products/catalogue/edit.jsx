@@ -288,7 +288,7 @@ export default function EditProductCatalogue() {
                 {categories &&
                   categories?.map((category) => (
                     <option key={category.id} value={category.id}>
-                      {toSentenceCase(category?.name)}
+                      {toSentenceCase(category?.title)}
                     </option>
                   ))}
               </Select>

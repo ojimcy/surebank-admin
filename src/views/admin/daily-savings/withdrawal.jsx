@@ -55,10 +55,7 @@ export default function Withdrawal() {
   const handleContributionSubmit = useCallback(
     async (withdrawData) => {
       try {
-        await axiosService.post(
-          `/daily-savings/withdraw`,
-          withdrawData
-        );
+        await axiosService.post(`/daily-savings/withdraw`, withdrawData);
         toast.success('Contribution successful!');
         history.push(`/admin/default`);
       } catch (error) {
@@ -73,7 +70,7 @@ export default function Withdrawal() {
   );
 
   return (
-    <Box pt={{ base: '180px', md: '80px', xl: '80px' }}>
+    <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
       <BackButton />
       <Grid
         mb="20px"

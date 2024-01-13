@@ -62,7 +62,7 @@ export default function User() {
       {loading ? (
         <LoadingSpinner />
       ) : (
-        <Box pt={{ base: '180px', md: '80px', xl: '80px' }}>
+        <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
           <BackButton />
           <Grid
             mb="20px"
@@ -83,7 +83,10 @@ export default function User() {
                   boxShadow="base"
                 >
                   {user && (
-                    <Flex alignItems="center" flexDirection={{ base: 'column', md: 'row' }}>
+                    <Flex
+                      alignItems="center"
+                      flexDirection={{ base: 'column', md: 'row' }}
+                    >
                       <Avatar
                         size="xl"
                         name={user.firstName || ''}
@@ -109,7 +112,14 @@ export default function User() {
                           <Text fontWeight="bold">Branch:</Text>
                           <Text>{branchInfo.name}</Text>
                         </Grid>
-                        <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }} gap={4} mt={4}>
+                        <Grid
+                          templateColumns={{
+                            base: '1fr',
+                            md: 'repeat(2, 1fr)',
+                          }}
+                          gap={4}
+                          mt={4}
+                        >
                           <NavLink to={`/admin/branch/staff/${id}`}>
                             <Button colorScheme="blue" size="md" w="100%">
                               Details

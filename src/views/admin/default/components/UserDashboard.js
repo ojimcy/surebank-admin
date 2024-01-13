@@ -150,7 +150,6 @@ export default function UserDashboard() {
                 <Text
                   fontSize={{ base: 'xl', md: '2xl' }}
                   fontWeight="bold"
-                  color={showBalance ? 'gray.800' : 'gray.400'}
                 >
                   {customerData && customerData?.availableBalance && showBalance
                     ? formatNaira(customerData.availableBalance)

@@ -111,7 +111,7 @@ export default function User() {
       {loading ? (
         <LoadingSpinner />
       ) : (
-        <Box pt={{ base: '180px', md: '80px', xl: '80px' }}>
+        <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
           <BackButton />
           <Grid
             mb="20px"
@@ -132,7 +132,10 @@ export default function User() {
                   boxShadow="base"
                 >
                   {branch && (
-                    <Flex alignItems="center">
+                    <Flex
+                      alignItems="center"
+                      flexDirection={{ base: 'column', md: 'row' }}
+                    >
                       <Avatar
                         size="xl"
                         name={branch.name || ''}
@@ -231,8 +234,12 @@ export default function User() {
                             </option>
                             {staffs &&
                               staffs.map((staff) => (
-                                <option key={staff.id} value={staff.staffId?.id}>
-                                  {staff.staffId?.firstName} {staff.staffId?.lastName}
+                                <option
+                                  key={staff.id}
+                                  value={staff.staffId?.id}
+                                >
+                                  {staff.staffId?.firstName}{' '}
+                                  {staff.staffId?.lastName}
                                   &ensp;&ensp;
                                   {staff.phoneNumber}
                                 </option>

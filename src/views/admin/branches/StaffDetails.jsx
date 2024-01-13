@@ -152,7 +152,7 @@ export default function StaffDetailsPage() {
       {loading ? (
         <LoadingSpinner />
       ) : (
-        <Box pt={{ base: '180px', md: '80px', xl: '80px' }}>
+        <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
           <BackButton />
           <>
             <Flex direction={{ base: 'column', md: 'row' }} mb="20px" mt="40px">

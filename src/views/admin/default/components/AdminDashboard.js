@@ -91,7 +91,7 @@ export default function UserRepsDashboard() {
       {loading ? (
         <LoadingSpinner />
       ) : (
-        <Box pt={{ base: '180px', md: '80px', xl: '80px' }}>
+        <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
           <>
             <Flex direction={{ base: 'column', md: 'row' }} mb="20px" mt="40px">
               <Card>

@@ -114,7 +114,7 @@ const ExpenditureDetail = () => {
       {loading ? (
         <LoadingSpinner />
       ) : (
-        <Box pt={{ base: '180px', md: '80px', xl: '80px' }}>
+        <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
           <BackButton />
           <Grid
             mb="20px"

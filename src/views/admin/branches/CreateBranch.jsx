@@ -49,12 +49,12 @@ export default function CreateBranch() {
     }
   };
   return (
-    <Box pt={{ base: '180px', md: '80px', xl: '80px' }}>
+    <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
       <Card p={{ base: '30px', md: '30px', sm: '10px' }}>
         <Text marginBottom="20px" fontSize="3xl" fontWeight="bold">
           Create Branch
         </Text>
-        
+
         <form onSubmit={handleSubmit(submitHandler)}>
           <Flex
             gap="20px"

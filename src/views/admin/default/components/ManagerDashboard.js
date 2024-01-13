@@ -1,11 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {
-  Flex,
-  Icon,
-  Text,
-  useColorModeValue,
-  Box,
-} from '@chakra-ui/react';
+import { Flex, Icon, Text, useColorModeValue, Box } from '@chakra-ui/react';
 import { useHistory } from 'react-router-dom';
 import { MdAttachMoney, MdPerson } from 'react-icons/md';
 import axiosService from 'utils/axiosService';
@@ -114,7 +108,7 @@ export default function ManagerDashboard() {
       {loading ? (
         <LoadingSpinner />
       ) : (
-        <Box pt={{ base: '180px', md: '80px', xl: '80px' }}>
+        <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
           <BackButton />
           <>
             <Flex direction={{ base: 'column', md: 'row' }} mb="20px" mt="40px">

@@ -18,34 +18,44 @@ import { formatMdbDate } from 'utils/helper';
 // Assets
 import Card from 'components/card/Card.js';
 import BackButton from 'components/menu/BackButton';
-import SimpleTable from 'components/table/SimpleTable';
+import CustomTable from 'components/table/CustomTable';
 import axiosService from 'utils/axiosService';
 import CatalogueDetailsModal from 'components/modals/CatalogueDetailsModal';
 
 export default function Catalogue() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [totalResults, setTotalResults] = useState(1);
   const [productDetailsModal, setProductDetailsModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
-
-  const pageLimit = 10;
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 20,
+  });
 
   const fetchProductRequests = async () => {
+    const { pageIndex, pageSize } = pagination;
     try {
-      const response = await axiosService.get('/products/catalogue');
-      setProducts(response.data.results);
-      setTotalResults(response.data.totalResults);
-      setLoading(false);
+      const response = await axiosService.get(
+        `/products/catalogue?&limit=${pageSize}&page=${pageIndex + 1}`
+      );
+      setProducts(response.data);
+      console.log(response);
     } catch (error) {
       console.error('Error fetching products:', error);
+      setLoading(false);
+    } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchProductRequests();
-  }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pagination]);
+
+  const onPageChange = ({ pageIndex, pageSize }) => {
+    setPagination({ pageIndex, pageSize });
+  };
 
   const closeModalAndResetProduct = () => {
     setSelectedProduct(null);
@@ -130,11 +140,10 @@ export default function Catalogue() {
               </Text>
             ) : (
               <>
-                <SimpleTable
+                <CustomTable
                   columns={columns}
                   data={products}
-                  pageSize={pageLimit}
-                  totalPages={totalResults}
+                  onPageChange={onPageChange}
                 />
               </>
             )}

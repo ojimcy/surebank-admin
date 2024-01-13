@@ -51,8 +51,7 @@ const CreatePackage = ({ isOpen, onClose }) => {
       try {
         setLoading(true);
         const response = await axiosService.get('products/catalogue');
-        setProducts(response.data.results);
-        setLoading(false);
+        setProducts(response.data);
       } catch (error) {
         console.error('Error fetching products:', error);
       } finally {
