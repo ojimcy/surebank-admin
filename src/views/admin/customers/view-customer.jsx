@@ -62,6 +62,7 @@ export default function ViewCustomer() {
       setUserPackages(packagesResponse.data);
     } catch (error) {
       console.error(error);
+      setCustomerData(null)
     } finally {
       setLoading(false);
     }
