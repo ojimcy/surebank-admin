@@ -29,7 +29,7 @@ const MerchantDetailsModal = ({ isOpen, onClose, merchant }) => {
 
   const handleApprove = async () => {
     try {
-      await axiosService.post(`/merchants/requests/${merchant.id}/approve`);
+      await axiosService.post(`/merchants/${merchant.id}/approve`);
       toast.success('merchant request approved successfully!');
       onClose();
     } catch (error) {
@@ -40,7 +40,7 @@ const MerchantDetailsModal = ({ isOpen, onClose, merchant }) => {
 
   const handleReject = async (formData) => {
     try {
-      await axiosService.post(`/merchants/requests/${merchant.id}/reject`, {
+      await axiosService.post(`/merchants/${merchant.id}/reject`, {
         reasonForRejection: formData.reasonForRejection,
       });
       toast.success('Merchant request rejected successfully.');
@@ -60,10 +60,6 @@ const MerchantDetailsModal = ({ isOpen, onClose, merchant }) => {
           <ModalHeader>{merchant.name}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Box mb="1rem">
-              <Text fontWeight="bold">Name:</Text>
-              <Text>{merchant.name}</Text>
-            </Box>
             <Box mb="1rem">
               <Text fontWeight="bold">Store name:</Text>
               <Text>{merchant.storeName}</Text>

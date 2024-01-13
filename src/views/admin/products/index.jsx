@@ -115,14 +115,13 @@ export default function Products() {
         Header: 'Name',
         accessor: 'name',
       },
-
-      {
-        Header: 'Created At',
-        accessor: (row) => formatMdbDate(row.createdAt),
-      },
       {
         Header: 'Status',
         accessor: 'status',
+      },
+      {
+        Header: 'Created At',
+        accessor: (row) => formatMdbDate(row.createdAt),
       },
       {
         Header: 'Action',

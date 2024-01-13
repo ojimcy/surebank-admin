@@ -180,7 +180,7 @@ export default function EditProductModal({ isOpen, onClose, product }) {
                 {categories &&
                   categories?.map((category) => (
                     <option key={category.id} value={category.id}>
-                      {toSentenceCase(category?.name)}
+                      {toSentenceCase(category?.title)}
                     </option>
                   ))}
               </Select>

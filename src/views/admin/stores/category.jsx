@@ -118,6 +118,7 @@ export default function Categories() {
   };
 
   const handleCreateCategory = async (data) => {
+    console.log(data);
     try {
       await axiosService.post(`/stores/categories`, data);
       toast.success('Collection created successfully!');
