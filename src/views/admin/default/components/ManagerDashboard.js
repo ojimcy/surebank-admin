@@ -12,7 +12,6 @@ import ActionButton from 'components/Button/CustomButton';
 import Withdrawals from './Withdrawals';
 import { useAuth } from 'contexts/AuthContext';
 import LoadingSpinner from 'components/scroll/LoadingSpinner';
-import BackButton from 'components/menu/BackButton';
 
 export default function ManagerDashboard() {
   const { currentUser } = useAuth();
@@ -70,14 +69,13 @@ export default function ManagerDashboard() {
         const endDate = new Date();
         endDate.setHours(23, 59, 59, 999);
         const endTimeStamp = endDate.getTime();
-
         const [contributionResponse, withdrawalResponse, accountResponse] =
           await Promise.all([
             axiosService.get(
               `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&branchId=${staffInfo.branchId}`
             ),
             axiosService.get(
-              `/reports/total-savings-withdrawal?startDate=${startTimeStamp}&endDate=${endTimeStamp}`
+              `/reports/total-savings-withdrawal?startDate=${startTimeStamp}&endDate=${endTimeStamp}&branchId=${staffInfo.branchId}`
             ),
             axiosService.get(`accounts?branchId=${staffInfo.branchId}`),
           ]);
@@ -109,7 +107,6 @@ export default function ManagerDashboard() {
         <LoadingSpinner />
       ) : (
         <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
-          <BackButton />
           <>
             <Flex direction={{ base: 'column', md: 'row' }} mb="20px" mt="40px">
               <Card>

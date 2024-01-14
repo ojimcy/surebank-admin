@@ -49,6 +49,14 @@ export default function EditUser() {
     fetchUser();
   }, [setValue, id]);
 
+  const roles = ['userReps', 'manager', 'admin', 'superAdmin'];
+  const roleLabels = {
+    userReps: 'Sales Rep',
+    manager: 'Manager',
+    admin: 'Admin',
+    superAdmin: 'Super Admin',
+  };
+
   const submitHandler = async (userData) => {
     // Convert the 'role' field to a string if it's an array
     if (Array.isArray(userData.role)) {
@@ -157,6 +165,30 @@ export default function EditUser() {
                         branches.map((branch) => (
                           <option key={branch.id} value={branch.id}>
                             {branch.name}
+                          </option>
+                        ))}
+                    </Select>
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel
+                      htmlFor="role"
+                      display="flex"
+                      ms="4px"
+                      fontSize="sm"
+                      fontWeight="500"
+                      mb="8px"
+                    >
+                      Role
+                    </FormLabel>
+                    <Select {...register('role')} name="role" 
+                      defaultValue={user?.role}>
+                      <option value="" disabled>
+                        Select a Role
+                      </option>
+                      {roles &&
+                        roles?.map((role) => (
+                          <option key={role} value={role}>
+                            {roleLabels[role]}
                           </option>
                         ))}
                     </Select>

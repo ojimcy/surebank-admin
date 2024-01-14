@@ -1,3 +1,4 @@
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Box,
   Grid,
@@ -19,7 +20,6 @@ import {
   useColorModeValue,
   FormErrorMessage,
 } from '@chakra-ui/react';
-import React, { useEffect, useRef, useState } from 'react';
 
 import { useAuth } from 'contexts/AuthContext';
 import axiosService from 'utils/axiosService';
@@ -31,9 +31,7 @@ import { NavLink } from 'react-router-dom/';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import LoadingSpinner from 'components/scroll/LoadingSpinner';
-import { formatDate } from 'utils/helper';
-import { getStartDate } from 'utils/helper';
-import { getEndDate } from 'utils/helper';
+import { formatDate, getStartDate, getEndDate } from 'utils/helper';
 
 export default function Expenditures() {
   const { currentUser } = useAuth();
@@ -58,20 +56,59 @@ export default function Expenditures() {
   const brandStars = useColorModeValue('brand.500', 'brand.400');
   const textColor = useColorModeValue('navy.700', 'white');
 
-  const fetchStaff = async () => {
-    try {
-      const { data } = await axiosService.get(`/staff/user/${currentUser.id}`);
-      if (isMounted.current) {
-        setStaffInfo(data);
+  useEffect(() => {
+    isMounted.current = true;
+
+    const fetchStaffAndExpenditures = async () => {
+      try {
+        const getStaff = await axiosService.get(
+          `/staff/user/${currentUser.id}`
+        );
+
+        if (isMounted.current) {
+          setStaffInfo(getStaff.data);
+          await fetchExpenditures(getStaff.data);
+        }
+      } catch (error) {
+        console.error(error);
+        // Handle error (e.g., show a toast)
+        toast.error('Failed to fetch staff information');
       }
+    };
+
+    fetchStaffAndExpenditures();
+
+    return () => {
+      // Cleanup function to set the isMounted flag to false when the component unmounts
+      isMounted.current = false;
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentUser]);
+
+  const fetchExpenditures = async (staffData) => {
+    setLoading(true);
+
+    try {
+      const endpoint = constructApiEndpoint(staffData);
+      const response = await axiosService.get(endpoint);
+
+      const convertedExpenditures = response.data.results.map(
+        (expenditure) => ({
+          ...expenditure,
+          date: new Date(expenditure.date).getTime(),
+        })
+      );
+
+      setExpenditures(convertedExpenditures);
+      setLoading(false);
     } catch (error) {
       console.error(error);
       // Handle error (e.g., show a toast)
-      toast.error('Failed to fetch staff information');
+      toast.error('Failed to fetch expenditures');
     }
   };
 
-  const constructApiEndpoint = () => {
+  const constructApiEndpoint = (staffData) => {
     let endpoint = `/expenditure`;
     const { pageIndex, pageSize } = pagination;
 
@@ -86,7 +123,7 @@ export default function Expenditures() {
       if (currentUser.role === 'userReps') {
         params.createdBy = currentUser.id;
       } else if (currentUser.role === 'manager') {
-        params.branchId = staffInfo.branchId;
+        params.branchId = staffData.branchId;
       }
     }
 
@@ -103,45 +140,9 @@ export default function Expenditures() {
     return endpoint;
   };
 
-  const fetchExpenditures = async () => {
-    setLoading(true);
-    try {
-      const endpoint = constructApiEndpoint();
-      const response = await axiosService.get(endpoint);
-
-      const convertedExpenditures = response.data.results.map(
-        (expenditure) => ({
-          ...expenditure,
-          date: new Date(expenditure.date).getTime(),
-        })
-      );
-
-      setExpenditures(convertedExpenditures);
-      setLoading(false);
-    } catch (error) {
-      console.error(error);
-      console.log(error);
-      // Handle error (e.g., show a toast)
-      toast.error('Failed to fetch expenditures');
-    }
-  };
-
-  useEffect(() => {
-    isMounted.current = true;
-    fetchStaff();
-    return () => (isMounted.current = false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentUser]);
-
-  useEffect(() => {
-    fetchExpenditures();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentUser.role, timeRange, pagination]);
-
   useEffect(() => {
     const filtered = expenditures?.filter((expenditure) => {
-      const fullName =
-        `${expenditure.createdBy.firstName} ${expenditure.createdBy.lastName}`.toLowerCase();
+      const fullName = `${expenditure.createdBy.firstName} ${expenditure.createdBy.lastName}`.toLowerCase();
       return (
         fullName.includes(searchTerm.toLowerCase()) ||
         expenditure.reason.includes(searchTerm)
@@ -167,7 +168,7 @@ export default function Expenditures() {
       await axiosService.post('/expenditure', expenditureData);
       toast.success('Expenditure successfully created');
       handleExpenditureModalClosed();
-      fetchExpenditures();
+      await fetchExpenditures(staffInfo);
     } catch (error) {
       console.error(error);
       toast.error(

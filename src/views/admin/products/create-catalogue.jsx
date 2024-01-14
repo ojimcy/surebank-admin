@@ -8,7 +8,6 @@ import {
   Grid,
   Input,
   Text,
-  Image,
   Textarea,
 } from '@chakra-ui/react';
 import React, { useState, useEffect } from 'react';
@@ -28,8 +27,6 @@ export default function CreateCatalogue() {
   const history = useHistory();
 
   const [products, setProducts] = useState([]);
-  const [featuredImagePreview, setFeaturedImagePreview] = useState(null);
-  const [imagesPreview, setImagesPreview] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
   const {
@@ -51,33 +48,7 @@ export default function CreateCatalogue() {
     fetchProducts();
   }, []);
 
-  const handleFeaturedImageChange = (event) => {
-    const file = event.target.files[0];
-    const reader = new FileReader();
-
-    reader.onload = () => {
-      setFeaturedImagePreview(reader.result);
-    };
-
-    reader.readAsDataURL(file);
-  };
-
-  const handleImagesChange = (event) => {
-    const files = event.target.files;
-    const previewImages = [...imagesPreview];
-
-    for (let i = 0; i < files.length; i++) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        previewImages.push(reader.result);
-        if (previewImages.length === files.length) {
-          setImagesPreview(previewImages);
-        }
-      };
-      reader.readAsDataURL(files[i]);
-    }
-  };
-
+  
   const handleSelectedProduct = (option) => {
     setSelectedProduct(option);
   };
@@ -197,79 +168,6 @@ export default function CreateCatalogue() {
                     })}
                     placeholder="Product description"
                   />
-                </FormControl>
-
-                {/* Featured Image */}
-                <FormControl>
-                  <FormLabel
-                    htmlFor="featuredImage"
-                    display="flex"
-                    ms="4px"
-                    fontSize="sm"
-                    fontWeight="500"
-                    mb="8px"
-                    mt="24px"
-                  >
-                    Featured Image
-                  </FormLabel>
-                  <Input
-                    type="file"
-                    isRequired={true}
-                    variant="auth"
-                    id="featuredImage"
-                    size="lg"
-                    onChange={handleFeaturedImageChange}
-                    mb="24px"
-                  />
-                  {featuredImagePreview && (
-                    <Box mt="12px">
-                      <Text fontSize="sm">Preview:</Text>
-                      <Image
-                        w="100px"
-                        src={featuredImagePreview}
-                        alt="Featured Preview"
-                      />
-                    </Box>
-                  )}
-                </FormControl>
-
-                <FormControl>
-                  <FormLabel
-                    htmlFor="images"
-                    display="flex"
-                    ms="4px"
-                    fontSize="sm"
-                    fontWeight="500"
-                    mb="8px"
-                  >
-                    Images
-                  </FormLabel>
-                  <Input
-                    type="file"
-                    isRequired={true}
-                    variant="auth"
-                    id="images"
-                    size="lg"
-                    onChange={handleImagesChange}
-                    mb="24px"
-                    multiple
-                  />
-                  {imagesPreview.length > 0 && (
-                    <Box mt="12px">
-                      <Text fontSize="sm">Preview:</Text>
-                      <Flex flexWrap="wrap">
-                        {imagesPreview.map((preview, index) => (
-                          <Box key={index} m="6px">
-                            <Image
-                              w="100px"
-                              src={preview}
-                              alt={`Image Preview ${index}`}
-                            />
-                          </Box>
-                        ))}
-                      </Flex>
-                    </Box>
-                  )}
                 </FormControl>
 
                 <FormControl>

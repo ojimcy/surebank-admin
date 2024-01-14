@@ -427,7 +427,7 @@ const routes = [
     icon: (
       <Icon as={FaShoppingBag} width="20px" height="20px" color="inherit" />
     ),
-    roles: ['superAdmin', 'admin', 'manager', 'userReps'],
+    roles: ['superAdmin', 'admin', 'manager'],
     component: Stores,
   },
   {

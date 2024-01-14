@@ -90,11 +90,6 @@ export default function Users() {
     };
   }, [currentUser]);
 
-  useEffect(() => {
-    fetchUsers();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pagination]);
-
   const fetchUsers = async () => {
     setLoading(true);
     const { pageIndex, pageSize } = pagination;
@@ -102,7 +97,7 @@ export default function Users() {
       const branches = await axiosService.get('/branch/');
       let staffResponse;
       if (currentUser.role === 'manager') {
-        staffResponse = await axiosService.get(`/staff/${staffInfo.branchId}`);
+        staffResponse = await axiosService.get(`/staff/${staffInfo?.branchId}`);
       } else {
         staffResponse = await axiosService.get(
           `/staff?limit=${pageSize}&page=${pageIndex + 1}`
@@ -120,6 +115,13 @@ export default function Users() {
       console.error(error);
     }
   };
+
+  useEffect(() => {
+    if (staffInfo) {
+      fetchUsers();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pagination, staffInfo]);
 
   useEffect(() => {
     // Filter customers based on search term

@@ -136,7 +136,7 @@ export default function CreateMerchantRequestModal({ isOpen, onClose }) {
               </FormLabel>
               <InputGroup>
                 <Input
-                  type="url"
+                  type="text"
                   placeholder="Enter Website"
                   {...register('website')}
                 />
