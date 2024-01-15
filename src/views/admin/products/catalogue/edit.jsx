@@ -31,12 +31,12 @@ export default function EditProductCatalogue() {
     handleSubmit,
     register,
     control,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting },
   } = useForm();
 
   const { fields, append, remove } = useFieldArray({
     control,
-    name: 'specifications',
+    name: 'variations',
   });
 
   const fetchProductsCategories = async () => {
@@ -68,6 +68,7 @@ export default function EditProductCatalogue() {
   }, [id]);
 
   const submitHandler = async (productData) => {
+    console.log(productData);
     try {
       await axiosService.patch(`/products/catalogue/${id}`, productData);
       toast.success('Product catalogue updated successfully!');
@@ -145,7 +146,7 @@ export default function EditProductCatalogue() {
 
             <FormControl>
               <FormLabel
-                htmlFor="specifications"
+                htmlFor="variations"
                 display="flex"
                 ms="4px"
                 fontSize="sm"
@@ -153,7 +154,7 @@ export default function EditProductCatalogue() {
                 mb="8px"
                 mt="10px"
               >
-                Specifications
+                Variations
               </FormLabel>
               {fields.map((variation, index) => (
                 <InputGroup key={variation.id}>
@@ -166,13 +167,13 @@ export default function EditProductCatalogue() {
                       type="text"
                       placeholder="Variation Name"
                       defaultValue={variation.name}
-                      {...register(`specifications.${index}.name`)}
+                      {...register(`variations.${index}.name`)}
                     />
                     <Input
                       type="text"
                       placeholder="Variation Values (comma-separated)"
                       defaultValue={variation.values}
-                      {...register(`specifications.${index}.values`)}
+                      {...register(`variations.${index}.values`)}
                     />
                     <Button type="button" onClick={() => remove(index)}>
                       Remove
@@ -188,7 +189,7 @@ export default function EditProductCatalogue() {
               </Button>
             </FormControl>
 
-            <FormControl isInvalid={errors.brand}>
+            <FormControl>
               <FormLabel
                 htmlFor="brand"
                 display="flex"
@@ -218,7 +219,7 @@ export default function EditProductCatalogue() {
               </Select>
             </FormControl>
 
-            <FormControl isInvalid={errors.category}>
+            <FormControl>
               <FormLabel
                 htmlFor="category"
                 display="flex"
@@ -310,6 +311,29 @@ export default function EditProductCatalogue() {
               <Box width={{ base: '50%', md: '50%', sm: '50%' }} mt="15px">
                 <FormControl>
                   <FormLabel
+                    htmlFor="discount"
+                    display="flex"
+                    ms="4px"
+                    fontSize="sm"
+                    fontWeight="500"
+                    mb="8px"
+                    mt="10px"
+                  >
+                    Discount Price
+                  </FormLabel>
+                  <InputGroup>
+                    <Input
+                      type="number"
+                      placeholder="Enter Product Discount Price"
+                      defaultValue={product.discount}
+                      {...register('discount')}
+                    />
+                  </InputGroup>
+                </FormControl>
+              </Box>
+              <Box width={{ base: '50%', md: '50%', sm: '50%' }} mt="15px">
+                <FormControl>
+                  <FormLabel
                     htmlFor="quantity"
                     display="flex"
                     ms="4px"
@@ -331,29 +355,6 @@ export default function EditProductCatalogue() {
                 </FormControl>
               </Box>
             </Flex>
-            <Box width={{ base: '50%', md: '50%', sm: '50%' }} mt="15px">
-                <FormControl>
-                  <FormLabel
-                    htmlFor="discount"
-                    display="flex"
-                    ms="4px"
-                    fontSize="sm"
-                    fontWeight="500"
-                    mb="8px"
-                    mt="10px"
-                  >
-                    Discount Price
-                  </FormLabel>
-                  <InputGroup>
-                    <Input
-                      type="number"
-                      placeholder="Enter Product Discount Price"
-                      defaultValue={product.discount}
-                      {...register('discount')}
-                    />
-                  </InputGroup>
-                </FormControl>
-              </Box>
             <Box width={{ base: '50%', md: '50%', sm: '50%' }} mt="15px">
               <Button
                 colorScheme="green"

@@ -120,6 +120,9 @@ export default function Withdrawals() {
           endpoint += `&startDate=${customStartDate.getTime()}&endDate=${customEndDate.getTime()}`;
         }
       }
+      if (currentUser.role === 'manager') {
+        endpoint += `&branchId=${branch}`;
+      }
       if (branch) {
         endpoint += `&branchId=${branch}`;
       }
@@ -211,7 +214,7 @@ export default function Withdrawals() {
     ],
     []
   );
-
+  console.log(currentUser.role);
   return (
     <>
       <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
@@ -228,17 +231,19 @@ export default function Withdrawals() {
                   </option>
                 </Select>
                 {currentUser.role === 'superAdmin' ||
-                  (currentUser.role === 'admin' && (
-                    <Select value={branch} onChange={handleBranchChange}>
-                      <option>Select Branch</option>
-                      {branches &&
-                        branches.map((branch) => (
-                          <option key={branch.id} value={branch.id}>
-                            {branch?.name}
-                          </option>
-                        ))}
-                    </Select>
-                  ))}
+                currentUser.role === 'admin' ? (
+                  <Select value={branch} onChange={handleBranchChange}>
+                    <option>Select Branch</option>
+                    {branches &&
+                      branches.map((branch) => (
+                        <option key={branch.id} value={branch.id}>
+                          {branch?.name}
+                        </option>
+                      ))}
+                  </Select>
+                ) : (
+                  ''
+                )}
 
                 <Select value={selectedStatus} onChange={handleStatusChange}>
                   <option value="all">All</option>

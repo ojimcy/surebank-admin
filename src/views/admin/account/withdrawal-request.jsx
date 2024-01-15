@@ -17,6 +17,7 @@ import {
   Textarea,
 } from '@chakra-ui/react';
 import { toast } from 'react-toastify';
+import { useHistory } from 'react-router-dom';
 import axiosService from 'utils/axiosService';
 import { formatNaira, formatDate } from 'utils/helper';
 
@@ -25,6 +26,7 @@ import { useForm } from 'react-hook-form';
 import LoadingSpinner from 'components/scroll/LoadingSpinner';
 
 const WithdrawalDetails = () => {
+  const history = useHistory();
   const { requestId } = useParams();
   const [withdrawal, setWithdrawal] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -63,6 +65,8 @@ const WithdrawalDetails = () => {
       setLoading(true);
       await axiosService.post(`/transactions/withdraw?requestId=${requestId}`);
       toast.success('Withdrawal request approved successfully.');
+      
+      history.push('/admin/');
     } catch (error) {
       console.error(error);
       toast.error(

@@ -59,7 +59,7 @@ export default function CreateCatalogue() {
       }
       await axiosService.post(`/products/catalogue`, catalogueData);
       toast.success('Product catalogue created successfully!');
-      history.push('/admin/catalogues');
+      history.push('/admin/products/catalogue');
     } catch (error) {
       console.error('Error creating product catalogue:', error);
       toast.error('Something went wrong. Please try again later.');
@@ -181,34 +181,6 @@ export default function CreateCatalogue() {
 
                 <FormControl>
                   <FormLabel
-                    htmlFor="sellingPrice"
-                    display="flex"
-                    ms="4px"
-                    fontSize="sm"
-                    fontWeight="500"
-                    mb="8px"
-                  >
-                    Selling Price
-                  </FormLabel>
-                  <Input
-                    isRequired={true}
-                    variant="auth"
-                    fontSize="sm"
-                    ms={{ base: '0px', md: '0px' }}
-                    type="number"
-                    id="sellingPrice"
-                    mb="24px"
-                    fontWeight="500"
-                    size="lg"
-                    {...register('sellingPrice', {
-                      required: 'Sales price is required',
-                    })}
-                    placeholder="Sales Price"
-                  />
-                </FormControl>
-
-                <FormControl>
-                  <FormLabel
                     htmlFor="costPrice"
                     display="flex"
                     ms="4px"
@@ -235,6 +207,33 @@ export default function CreateCatalogue() {
                   />
                 </FormControl>
 
+                <FormControl>
+                  <FormLabel
+                    htmlFor="sellingPrice"
+                    display="flex"
+                    ms="4px"
+                    fontSize="sm"
+                    fontWeight="500"
+                    mb="8px"
+                  >
+                    Selling Price
+                  </FormLabel>
+                  <Input
+                    isRequired={true}
+                    variant="auth"
+                    fontSize="sm"
+                    ms={{ base: '0px', md: '0px' }}
+                    type="number"
+                    id="sellingPrice"
+                    mb="24px"
+                    fontWeight="500"
+                    size="lg"
+                    {...register('sellingPrice', {
+                      required: 'Sales price is required',
+                    })}
+                    placeholder="Sales Price"
+                  />
+                </FormControl>
                 <FormControl>
                   <FormLabel
                     htmlFor="discount"

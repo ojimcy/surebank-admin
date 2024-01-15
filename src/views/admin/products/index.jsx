@@ -27,8 +27,10 @@ import CreateProductModal from 'components/modals/CreateProductModal';
 import ProductDetailsModal from 'components/modals/ProductDetailsModal';
 import EditProductModal from 'components/modals/EditProductModal';
 import LoadingSpinner from 'components/scroll/LoadingSpinner';
+import { useAuth } from 'contexts/AuthContext';
 
 export default function Products() {
+  const { currentUser } = useAuth();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [createProductModal, setCreateProductModal] = useState(false);
@@ -127,14 +129,17 @@ export default function Products() {
         Header: 'Action',
         accessor: (row) => (
           <>
-            <NavLink to="#" style={{ marginRight: '10px' }}>
-              <IconButton
-                icon={<EditIcon />}
-                colorScheme="blue"
-                aria-label="Edit Product"
-                onClick={() => handleShowEditModal(row)}
-              />
-            </NavLink>
+            {(currentUser && currentUser.role === 'superAdmin') ||
+              (currentUser.role === 'admin' && (
+                <NavLink to="#" style={{ marginRight: '10px' }}>
+                  <IconButton
+                    icon={<EditIcon />}
+                    colorScheme="blue"
+                    aria-label="Edit Product"
+                    onClick={() => handleShowEditModal(row)}
+                  />
+                </NavLink>
+              ))}
             <Button
               onClick={() => handleShowDetailsModal(row)}
               style={{ marginRight: '10px' }}
@@ -145,7 +150,7 @@ export default function Products() {
         ),
       },
     ],
-    []
+    [currentUser]
   );
 
   return (
