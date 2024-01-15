@@ -23,8 +23,10 @@ import { NavLink } from 'react-router-dom/';
 
 import { useAppContext } from 'contexts/AppContext';
 import { formatDate } from 'utils/helper';
+import { useAuth } from 'contexts/AuthContext';
 
 export default function Withdrawals() {
+  const { currentUser } = useAuth();
   const { branches, setLoading } = useAppContext();
   const [withdrawals, setWithdrawals] = useState([]);
   const [filteredWithdrawals, setFilteredWithdrawals] = useState([]);
@@ -118,8 +120,8 @@ export default function Withdrawals() {
           endpoint += `&startDate=${customStartDate.getTime()}&endDate=${customEndDate.getTime()}`;
         }
       }
-      if(branch) {
-        endpoint += `&branchId=${branch}`
+      if (branch) {
+        endpoint += `&branchId=${branch}`;
       }
       if (selectedStatus !== 'all') {
         endpoint += `&status=${selectedStatus}`;
@@ -217,10 +219,7 @@ export default function Withdrawals() {
           <Flex>
             <Box>
               <Stack direction="row">
-                <Select
-                  value={timeRange}
-                  onChange={handleTimeRangeChange}
-                >
+                <Select value={timeRange} onChange={handleTimeRangeChange}>
                   <option value="all">All Time</option>
                   <option value="last7days">Last 7 Days</option>
                   <option value="last30days">Last 30 Days</option>
@@ -228,20 +227,20 @@ export default function Withdrawals() {
                     {customRangeLabel}
                   </option>
                 </Select>
+                {currentUser.role === 'superAdmin' ||
+                  (currentUser.role === 'admin' && (
+                    <Select value={branch} onChange={handleBranchChange}>
+                      <option>Select Branch</option>
+                      {branches &&
+                        branches.map((branch) => (
+                          <option key={branch.id} value={branch.id}>
+                            {branch?.name}
+                          </option>
+                        ))}
+                    </Select>
+                  ))}
 
-                <Select value={branch} onChange={handleBranchChange}>
-                  <option>Select Branch</option>
-                  {branches &&
-                    branches.map((branch) => (
-                      <option key={branch.id} value={branch.id}>
-                        {branch?.name}
-                      </option>
-                    ))}
-                </Select>
-                <Select
-                  value={selectedStatus}
-                  onChange={handleStatusChange}
-                >
+                <Select value={selectedStatus} onChange={handleStatusChange}>
                   <option value="all">All</option>
                   <option value="approved">Approved</option>
                   <option value="pending">Pending</option>

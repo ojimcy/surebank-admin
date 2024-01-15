@@ -48,7 +48,6 @@ export default function CreateCatalogue() {
     fetchProducts();
   }, []);
 
-  
   const handleSelectedProduct = (option) => {
     setSelectedProduct(option);
   };
@@ -109,6 +108,16 @@ export default function CreateCatalogue() {
                       value: product.id,
                       label: `${product.name}`,
                     }))}
+                    styles={{
+                      control: (provided) => ({
+                        ...provided,
+                        color: 'black',
+                      }),
+                      singleValue: (provided) => ({
+                        ...provided,
+                        color: 'black',
+                      }),
+                    }}
                     onChange={handleSelectedProduct}
                     placeholder="Select Product"
                   />

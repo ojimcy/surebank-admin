@@ -11,7 +11,6 @@ import {
   ModalBody,
   ModalFooter,
   Textarea,
-  Image,
 } from '@chakra-ui/react';
 
 import { useForm, Controller } from 'react-hook-form';
@@ -37,7 +36,6 @@ const ProductDetailsModal = ({ isOpen, onClose, product }) => {
           <ModalHeader>{product.name}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Image src="assets/img/categories/1.jpg" alt={product.name} />
             <Box mb="1rem">
               <Text fontWeight="bold">Price:</Text>
               <Text>{product.price}</Text>

@@ -7,9 +7,6 @@ import {
   useColorModeValue,
   Spacer,
   Box,
-  CircularProgress,
-  CircularProgressLabel,
-  Image,
 } from '@chakra-ui/react';
 import { toast } from 'react-toastify';
 import { useForm } from 'react-hook-form';
@@ -24,7 +21,6 @@ import SbDepositModal from 'components/modals/SbDepositModal';
 import axiosService from 'utils/axiosService';
 import { formatDate, formatNaira } from 'utils/helper';
 
-import testImg from 'assets/img/nfts/Nft2.png';
 import MergePackageModal from 'components/modals/mergeModal';
 
 const SbPackage = () => {
@@ -128,15 +124,6 @@ const SbPackage = () => {
     reset();
   };
 
-  const calculateProgressValue = (packageData) => {
-    // Calculate the percentage of the price that the user has paid
-    const paidPercentage =
-      (packageData.totalContribution / packageData.product?.price) * 100;
-
-    // Return the calculated paid percentage
-    return paidPercentage.toFixed(2);
-  };
-
   const handleSuccess = () => {
     fetchUserPackages();
   };
@@ -192,16 +179,6 @@ const SbPackage = () => {
               alignItems="cemter"
               key={packageData._id}
             >
-              <Flex justifyContent="center" alignItems="center">
-                <Text fontSize="lg" fontWeight="bold">
-                  <Image
-                    borderRadius="10px"
-                    boxSize="150px"
-                    src={testImg}
-                    alt={packageData.product?.name}
-                  />
-                </Text>
-              </Flex>
               <Box mt="4">
                 <Flex justifyContent="space-between" alignItems="center">
                   <Text fontSize="sm">Name: </Text>
@@ -245,23 +222,6 @@ const SbPackage = () => {
                   </Text>
                 </Flex>
               </Box>
-              <Box mt="4">
-                <Flex justifyContent="space-between" alignItems="center">
-                  <Text fontSize="sm">Progress: </Text>
-
-                  <CircularProgress
-                    value={calculateProgressValue(packageData)}
-                    size="50px"
-                    thickness="6px"
-                    p={4}
-                  >
-                    <CircularProgressLabel>
-                      {calculateProgressValue(packageData)}%{' '}
-                    </CircularProgressLabel>
-                  </CircularProgress>
-                </Flex>
-              </Box>
-
               <Flex mt="4" justify="space-between">
                 <Button
                   colorScheme="red"

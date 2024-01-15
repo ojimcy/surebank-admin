@@ -176,6 +176,7 @@ export default function ViewCustomer() {
               <TabPanel>
                 <AccountDetails customerData={customerData} />
                 <SbPackage />
+                <RecentTransactions />
               </TabPanel>
             </TabPanels>
           </Tabs>

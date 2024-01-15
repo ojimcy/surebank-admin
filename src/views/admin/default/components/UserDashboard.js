@@ -147,10 +147,7 @@ export default function UserDashboard() {
                     />
                   </Text>
                 </Flex>
-                <Text
-                  fontSize={{ base: 'xl', md: '2xl' }}
-                  fontWeight="bold"
-                >
+                <Text fontSize={{ base: 'xl', md: '2xl' }} fontWeight="bold">
                   {customerData && customerData?.availableBalance && showBalance
                     ? formatNaira(customerData.availableBalance)
                     : '****'}
@@ -223,6 +220,7 @@ export default function UserDashboard() {
                 </TabPanel>
                 <TabPanel>
                   <SbPackage />
+                  <RecentTransactions />
                 </TabPanel>
               </TabPanels>
             </Tabs>

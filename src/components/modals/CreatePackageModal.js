@@ -15,7 +15,6 @@ import {
   Text,
   useColorModeValue,
   Box,
-  Image,
   Spinner,
 } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
@@ -26,7 +25,6 @@ import axiosService from 'utils/axiosService';
 import { useAppContext } from 'contexts/AppContext';
 import { formatNaira } from 'utils/helper';
 
-import testImg from 'assets/img/nfts/Nft2.png';
 
 const CreatePackage = ({ isOpen, onClose }) => {
   const brandStars = useColorModeValue('brand.500', 'brand.400');
@@ -163,15 +161,6 @@ const CreatePackage = ({ isOpen, onClose }) => {
                   <Spinner size="lg" />
                 ) : (
                   <>
-                    <Box display="flex" justifyContent="center">
-                      <Image
-                        borderRadius="10px"
-                        boxSize="150px"
-                        // TODO: display product image
-                        src={testImg}
-                        alt={productDetails?.name}
-                      />
-                    </Box>
                     <Box
                       display="flex"
                       flexDirection="column"
