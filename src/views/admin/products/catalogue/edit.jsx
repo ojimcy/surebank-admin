@@ -257,7 +257,7 @@ export default function EditProductCatalogue() {
               <Box width={{ base: '50%', md: '50%', sm: '50%' }} mt="15px">
                 <FormControl>
                   <FormLabel
-                    htmlFor="price"
+                    htmlFor="costPrice"
                     display="flex"
                     ms="4px"
                     fontSize="sm"
@@ -265,14 +265,14 @@ export default function EditProductCatalogue() {
                     mb="8px"
                     mt="10px"
                   >
-                    Price
+                    Cost Price
                   </FormLabel>
                   <InputGroup>
                     <Input
                       type="number"
-                      placeholder="Enter Product Price"
-                      defaultValue={product.price}
-                      {...register('price')}
+                      placeholder="Enter Product Cost Price"
+                      defaultValue={product.costPrice}
+                      {...register('costPrice')}
                     />
                   </InputGroup>
                 </FormControl>
@@ -280,7 +280,7 @@ export default function EditProductCatalogue() {
               <Box width={{ base: '50%', md: '50%', sm: '50%' }} mt="15px">
                 <FormControl>
                   <FormLabel
-                    htmlFor="salesPrice"
+                    htmlFor="sellingPrice"
                     display="flex"
                     ms="4px"
                     fontSize="sm"
@@ -288,43 +288,72 @@ export default function EditProductCatalogue() {
                     mb="8px"
                     mt="10px"
                   >
-                    Sales Price
+                    Selling Price
                   </FormLabel>
                   <InputGroup>
                     <Input
                       type="number"
                       placeholder="Enter Product Sales Price"
-                      defaultValue={product.salesPrice}
-                      {...register('salesPrice')}
+                      defaultValue={product.sellingPrice}
+                      {...register('sellingPrice')}
+                    />
+                  </InputGroup>
+                </FormControl>
+              </Box>
+            </Flex>
+
+            <Flex
+              gap="20px"
+              marginBottom="20px"
+              flexDirection={{ base: 'column', md: 'row' }}
+            >
+              <Box width={{ base: '50%', md: '50%', sm: '50%' }} mt="15px">
+                <FormControl>
+                  <FormLabel
+                    htmlFor="quantity"
+                    display="flex"
+                    ms="4px"
+                    fontSize="sm"
+                    fontWeight="500"
+                    mb="8px"
+                    mt="10px"
+                  >
+                    Quantity
+                  </FormLabel>
+                  <InputGroup>
+                    <Input
+                      type="number"
+                      placeholder="Enter Product Quantity"
+                      defaultValue={product.quantity}
+                      {...register('quantity')}
                     />
                   </InputGroup>
                 </FormControl>
               </Box>
             </Flex>
             <Box width={{ base: '50%', md: '50%', sm: '50%' }} mt="15px">
-              <FormControl>
-                <FormLabel
-                  htmlFor="quantity"
-                  display="flex"
-                  ms="4px"
-                  fontSize="sm"
-                  fontWeight="500"
-                  mb="8px"
-                  mt="10px"
-                >
-                  Quantity
-                </FormLabel>
-                <InputGroup>
-                  <Input
-                    type="number"
-                    placeholder="Enter Product Quantity"
-                    defaultValue={product.quantity}
-                    {...register('quantity')}
-                  />
-                </InputGroup>
-              </FormControl>
-            </Box>
-
+                <FormControl>
+                  <FormLabel
+                    htmlFor="discount"
+                    display="flex"
+                    ms="4px"
+                    fontSize="sm"
+                    fontWeight="500"
+                    mb="8px"
+                    mt="10px"
+                  >
+                    Discount Price
+                  </FormLabel>
+                  <InputGroup>
+                    <Input
+                      type="number"
+                      placeholder="Enter Product Discount Price"
+                      defaultValue={product.discount}
+                      {...register('discount')}
+                    />
+                  </InputGroup>
+                </FormControl>
+              </Box>
             <Box width={{ base: '50%', md: '50%', sm: '50%' }} mt="15px">
               <Button
                 colorScheme="green"

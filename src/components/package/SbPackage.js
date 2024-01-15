@@ -191,7 +191,7 @@ const SbPackage = () => {
                 <Flex justifyContent="space-between" alignItems="center">
                   <Text fontSize="sm">Price: </Text>
                   <Text fontSize="lg" fontWeight="bold">
-                    {formatNaira(packageData.product?.price)}
+                    {formatNaira(packageData.product?.sellingPrice)}
                   </Text>
                 </Flex>
               </Box>
@@ -209,7 +209,7 @@ const SbPackage = () => {
                   <Text fontSize="sm">Remaining Balance: </Text>
                   <Text fontSize="lg" fontWeight="bold">
                     {formatNaira(
-                      packageData.product?.price - packageData.totalContribution
+                      packageData.product?.sellingPrice - packageData.totalContribution
                     )}
                   </Text>
                 </Flex>

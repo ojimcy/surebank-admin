@@ -171,8 +171,8 @@ const CreatePackage = ({ isOpen, onClose }) => {
                       <Text fontSize="lg" fontWeight="bold">
                         {selectedProduct &&
                         productDetails &&
-                        productDetails.price
-                          ? formatNaira(productDetails.price)
+                        productDetails.sellingPrice
+                          ? formatNaira(productDetails.sellingPrice)
                           : 'Price not available'}
                       </Text>
                     </Box>

@@ -181,14 +181,14 @@ export default function CreateCatalogue() {
 
                 <FormControl>
                   <FormLabel
-                    htmlFor="salesPrice"
+                    htmlFor="sellingPrice"
                     display="flex"
                     ms="4px"
                     fontSize="sm"
                     fontWeight="500"
                     mb="8px"
                   >
-                    Sales Price
+                    Selling Price
                   </FormLabel>
                   <Input
                     isRequired={true}
@@ -196,11 +196,11 @@ export default function CreateCatalogue() {
                     fontSize="sm"
                     ms={{ base: '0px', md: '0px' }}
                     type="number"
-                    id="salesPrice"
+                    id="sellingPrice"
                     mb="24px"
                     fontWeight="500"
                     size="lg"
-                    {...register('salesPrice', {
+                    {...register('sellingPrice', {
                       required: 'Sales price is required',
                     })}
                     placeholder="Sales Price"
@@ -209,14 +209,14 @@ export default function CreateCatalogue() {
 
                 <FormControl>
                   <FormLabel
-                    htmlFor="price"
+                    htmlFor="costPrice"
                     display="flex"
                     ms="4px"
                     fontSize="sm"
                     fontWeight="500"
                     mb="8px"
                   >
-                    Price
+                    Cost Price
                   </FormLabel>
                   <Input
                     isRequired={true}
@@ -224,14 +224,40 @@ export default function CreateCatalogue() {
                     fontSize="sm"
                     ms={{ base: '0px', md: '0px' }}
                     type="text"
-                    id="price"
+                    id="costPrice"
                     mb="24px"
                     fontWeight="500"
                     size="lg"
-                    {...register('price', {
-                      required: 'Price is required',
+                    {...register('costPrice', {
+                      required: 'Cost price is required',
                     })}
-                    placeholder="Product original price"
+                    placeholder="Product cost price"
+                  />
+                </FormControl>
+
+                <FormControl>
+                  <FormLabel
+                    htmlFor="discount"
+                    display="flex"
+                    ms="4px"
+                    fontSize="sm"
+                    fontWeight="500"
+                    mb="8px"
+                  >
+                    Discount Price (optional)
+                  </FormLabel>
+                  <Input
+                    isRequired={false}
+                    variant="auth"
+                    fontSize="sm"
+                    ms={{ base: '0px', md: '0px' }}
+                    type="text"
+                    id="discount"
+                    mb="24px"
+                    fontWeight="500"
+                    size="lg"
+                    {...register('discount')}
+                    placeholder="Product discount price"
                   />
                 </FormControl>
 

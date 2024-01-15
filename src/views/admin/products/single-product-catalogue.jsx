@@ -4,9 +4,7 @@ import {
   Button,
   Flex,
   Text,
-  Image,
   useColorModeValue,
-  HStack,
   Grid,
   List,
   ListItem,
@@ -18,6 +16,9 @@ import {
   AlertDialogOverlay,
   useDisclosure,
   useToast,
+  Center,
+  Avatar,
+  Stack,
 } from '@chakra-ui/react';
 import { Link, useParams, useHistory } from 'react-router-dom';
 import axiosService from 'utils/axiosService';
@@ -87,94 +88,121 @@ export default function ProductDetails() {
       >
         <Card p={{ base: '30px', md: '30px', sm: '10px' }}>
           <BackButton />
+          <Grid
+            mb="20px"
+            gridTemplateColumns={{ xl: 'repeat(3, 1fr)', '2xl': '1fr 0.46fr' }}
+            gap={{ base: '20px', xl: '20px' }}
+            display={{ base: 'block', xl: 'grid' }}
+          >
+            <Flex
+              flexDirection="column"
+              gridArea={{ xl: '1 / 1 / 2 / 3', '2xl': '1 / 1 / 2 / 2' }}
+            >
+              <Center py={6}>
+                <Box
+                  w={{ base: '90%', md: '80%' }}
+                  borderWidth="1px"
+                  borderRadius="lg"
+                  overflow="hidden"
+                  boxShadow="base"
+                >
+                  {product && (
+                    <Flex
+                      alignItems="center"
+                      flexDirection={{ base: 'column', md: 'row' }}
+                    >
+                      <Avatar
+                        size="xl"
+                        name={product.name || ''}
+                        src={product.avatarUrl || ''}
+                        m={4}
+                      />
+                      <Box px={6} py={4}>
+                        <Grid templateColumns="repeat(2, 1fr)" gap={4}>
+                          <Text>Name</Text>
+                          <Text fontWeight="bold">{product.name}</Text>
+                          <Text>Cost Price</Text>
+                          <Text fontWeight="bold">{product.costPrice}</Text>
+                          <Text>Seling Price:</Text>
+                          <Text fontWeight="bold">{product.sellingPrice}</Text>
+                          <Text>Discount Price:</Text>
+                          <Text fontWeight="bold">
+                            {product.discount ? product.discount : 'None'}
+                          </Text>
+                          <Text>Quantity:</Text>
+                          <Text fontWeight="bold">{product.quantity}</Text>
+                          <Text>Brand:</Text>
+                          <Text fontWeight="bold">{product.brand}</Text>
+                          <Text>Category:</Text>
+                          <Text fontWeight="bold">{product.category}</Text>
+                        </Grid>
 
-          <Flex mt="40px" p="20px" justifyContent="center">
-            <Box w="50%" pr="20px">
-              <HStack spacing={4} mb="20px">
-                {product.images &&
-                  product.images.map((image, index) => (
-                    <Image
-                      key={index}
-                      src={image}
-                      alt={`Product Image ${index + 1}`}
-                      maxH="150px"
-                      maxW="150px"
-                    />
-                  ))}
-              </HStack>
-            </Box>
-            <Box w="50%">
-              <Text color={textColor} fontSize="xl" fontWeight="bold" mb="10px">
-                {product.name}
-              </Text>
-              <Text color={textColor} mb="10px">
-                Price: {product.price}
-              </Text>
-              <Text color={textColor} mb="10px">
-                Selling Price: {product.salesPrice}
-              </Text>
-              <Text color={textColor} mb="10px">
-                Quantity: {product.quantity}
-              </Text>
-              <Text color={textColor} mb="10px">
-                Brand: {product.brand}
-              </Text>
-              <Text color={textColor} mb="10px">
-                Category: {product.category}
-              </Text>{' '}
-              {/* Specifications Section */}
-              {product.specifications && product.specifications.length > 0 && (
-                <Box>
-                  <Text color={textColor} fontSize="lg" mb="10px">
-                    Specifications:
-                  </Text>
-                  <List>
-                    {product.specifications.map((variation, index) => (
-                      <ListItem key={index}>
-                        <strong>{variation.name}:</strong>{' '}
-                        {variation.values.join(', ')}
-                      </ListItem>
-                    ))}
-                  </List>
+                        {/* Specifications Section */}
+                        {product.specifications &&
+                          product.specifications.length > 0 && (
+                            <Box>
+                              <Text color={textColor} fontSize="lg" mb="10px">
+                                Specifications:
+                              </Text>
+                              <List>
+                                {product.specifications.map(
+                                  (variation, index) => (
+                                    <ListItem key={index}>
+                                      <strong>{variation.name}:</strong>{' '}
+                                      {variation.values.join(', ')}
+                                    </ListItem>
+                                  )
+                                )}
+                              </List>
+                            </Box>
+                          )}
+                        {product.description && (
+                          <Box mt={2}>
+                            <Text color={textColor} fontSize="lg" mb="10px">
+                              Description:
+                            </Text>
+                            <Text>
+                              {showFullDescription
+                                ? product.description
+                                : product.description.slice(0, 100) + '...'}
+                            </Text>
+                            {!showFullDescription && (
+                              <Button
+                                colorScheme="blue"
+                                size="sm"
+                                onClick={() => setShowFullDescription(true)}
+                              >
+                                View All
+                              </Button>
+                            )}
+                          </Box>
+                        )}
+                        <Stack
+                          spacing={4}
+                          direction="row"
+                          alignItems="center"
+                          justifyContent="space-between"
+                          mt={4}
+                        >
+                          <Button
+                            as={Link}
+                            to={`/admin/products/catalogue/edit/${id}`}
+                            colorScheme="teal"
+                            mr="10px"
+                          >
+                            Update
+                          </Button>
+                          <Button colorScheme="red" onClick={onOpen}>
+                            Delete
+                          </Button>
+                        </Stack>
+                      </Box>
+                    </Flex>
+                  )}
                 </Box>
-              )}
-              <Box mt="15px">
-                <Button
-                  as={Link}
-                  to={`/admin/products/catalogue/edit/${id}`}
-                  colorScheme="teal"
-                  mr="10px"
-                >
-                  Update
-                </Button>
-                <Button colorScheme="red" onClick={onOpen}>
-                  Delete
-                </Button>
-              </Box>
-            </Box>
-          </Flex>
-
-          {product.description && (
-            <Box>
-              <Text color={textColor} fontSize="lg" mb="10px">
-                Description
-              </Text>
-              <Text>
-                {showFullDescription
-                  ? product.description
-                  : product.description.slice(0, 100) + '...'}
-              </Text>
-              {!showFullDescription && (
-                <Button
-                  colorScheme="blue"
-                  size="sm"
-                  onClick={() => setShowFullDescription(true)}
-                >
-                  View All
-                </Button>
-              )}
-            </Box>
-          )}
+              </Center>
+            </Flex>
+          </Grid>
         </Card>
       </Grid>
       {/* Delete Confirmation Dialog */}

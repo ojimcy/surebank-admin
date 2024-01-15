@@ -37,12 +37,16 @@ const ProductDetailsModal = ({ isOpen, onClose, product }) => {
           <ModalCloseButton />
           <ModalBody>
             <Box mb="1rem">
-              <Text fontWeight="bold">Price:</Text>
-              <Text>{product.price}</Text>
+              <Text fontWeight="bold">Cost Price:</Text>
+              <Text>{product.costPrice}</Text>
             </Box>
             <Box mb="1rem">
-              <Text fontWeight="bold">Sales Price:</Text>
-              <Text>{product.salesPrice}</Text>
+              <Text fontWeight="bold">Selling Price:</Text>
+              <Text>{product.sellingPrice}</Text>
+            </Box>
+            <Box mb="1rem">
+              <Text fontWeight="bold">Discount Price:</Text>
+              <Text>{product.discount}</Text>
             </Box>
             <Box mb="1rem">
               <Text fontWeight="bold">Quantity:</Text>

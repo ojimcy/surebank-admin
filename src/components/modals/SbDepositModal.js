@@ -63,7 +63,7 @@ const SbDepositModal = ({ isOpen, onClose, packageData, onSuccess }) => {
           {packageData && (
             <VStack spacing={4}>
               <Text>Product: {packageData.product.name}</Text>
-              <Text>Price: {formatNaira(packageData.product.price)}</Text>
+              <Text>Price: {formatNaira(packageData.product.sellingPrice)}</Text>
               <Text>Account Number: {packageData.accountNumber}</Text>
               <InputGroup>
                 <Input

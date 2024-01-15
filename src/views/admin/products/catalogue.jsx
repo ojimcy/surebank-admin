@@ -76,12 +76,16 @@ export default function Catalogue() {
         ),
       },
       {
-        Header: 'Sales Price',
-        accessor: 'salesPrice',
+        Header: 'Cost Price',
+        accessor: 'costPrice',
       },
       {
-        Header: 'Price',
-        accessor: 'price',
+        Header: 'Selling Price',
+        accessor: 'sellingPrice',
+      },
+      {
+        Header: 'Discount Price',
+        accessor: 'discount',
       },
       {
         Header: 'Quantity',
