@@ -25,9 +25,11 @@ import axiosService from 'utils/axiosService';
 
 import Card from 'components/card/Card.js';
 import BackButton from 'components/menu/BackButton';
+import { useAuth } from 'contexts/AuthContext';
 
 export default function ProductDetails() {
   const { id } = useParams();
+  const { currentUser } = useAuth();
   const [product, setProduct] = useState({});
   const [showFullDescription, setShowFullDescription] = useState(false);
 
@@ -184,17 +186,24 @@ export default function ProductDetails() {
                           justifyContent="space-between"
                           mt={4}
                         >
-                          <Button
-                            as={Link}
-                            to={`/admin/products/catalogue/edit/${id}`}
-                            colorScheme="teal"
-                            mr="10px"
-                          >
-                            Update
-                          </Button>
-                          <Button colorScheme="red" onClick={onOpen}>
-                            Delete
-                          </Button>
+                          {currentUser.role === 'superAdmin' ||
+                          currentUser.role === 'admin' ? (
+                            <>
+                              <Button
+                                as={Link}
+                                to={`/admin/products/catalogue/edit/${id}`}
+                                colorScheme="teal"
+                                mr="10px"
+                              >
+                                Update
+                              </Button>
+                              <Button colorScheme="red" onClick={onOpen}>
+                                Delete
+                              </Button>
+                            </>
+                          ) : (
+                            ''
+                          )}
                         </Stack>
                       </Box>
                     </Flex>

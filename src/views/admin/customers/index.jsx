@@ -192,29 +192,36 @@ export default function Customers() {
         Header: 'Action',
         accessor: (row) => (
           <>
-            {/* Edit user icon */}
-            <NavLink
-              to={`/admin/customer/edit-customer/${row.id}`}
-              style={{ marginRight: '10px' }}
-            >
-              <IconButton
-                icon={<EditIcon />}
-                colorScheme="blue"
-                aria-label="Edit user"
-              />
-            </NavLink>
-            {/* Delete user icon */}
-            <IconButton
-              icon={<DeleteIcon />}
-              colorScheme="red"
-              aria-label="Delete user"
-              onClick={() => handleDeleteIconClick(row.id)}
-            />
+            {currentUser.role === 'superAdmin' ||
+            currentUser.role === 'admin' ? (
+              <>
+                {/* Edit user icon */}
+                <NavLink
+                  to={`/admin/customer/edit-customer/${row.id}`}
+                  style={{ marginRight: '10px' }}
+                >
+                  <IconButton
+                    icon={<EditIcon />}
+                    colorScheme="blue"
+                    aria-label="Edit user"
+                  />
+                </NavLink>
+                {/* Delete user icon */}
+                <IconButton
+                  icon={<DeleteIcon />}
+                  colorScheme="red"
+                  aria-label="Delete user"
+                  onClick={() => handleDeleteIconClick(row.id)}
+                />
+              </>
+            ) : (
+              <NavLink to={`/admin/customer/${row.userId}`}>Details</NavLink>
+            )}
           </>
         ),
       },
     ],
-    []
+    [currentUser.role]
   );
 
   return (

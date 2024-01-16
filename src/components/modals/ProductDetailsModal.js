@@ -16,8 +16,10 @@ import {
 import { useForm, Controller } from 'react-hook-form';
 import axiosService from 'utils/axiosService';
 import { toast } from 'react-toastify';
+import { useAuth } from 'contexts/AuthContext';
 
 const ProductDetailsModal = ({ isOpen, onClose, product }) => {
+  const { currentUser } = useAuth();
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
 
@@ -84,20 +86,27 @@ const ProductDetailsModal = ({ isOpen, onClose, product }) => {
             </Box>
           </ModalBody>
           <ModalFooter>
-            <Button
-              colorScheme="red"
-              mr={3}
-              onClick={() => setIsRejectModalOpen(true)}
-            >
-              Reject
-            </Button>
-            <Button
-              colorScheme="green"
-              onClick={handleApprove}
-              isLoading={isSubmitting}
-            >
-              Approve
-            </Button>
+            {currentUser.role === 'superAdmin' ||
+            currentUser.role === 'admin' ? (
+              <>
+                <Button
+                  colorScheme="red"
+                  mr={3}
+                  onClick={() => setIsRejectModalOpen(true)}
+                >
+                  Reject
+                </Button>
+                <Button
+                  colorScheme="green"
+                  onClick={handleApprove}
+                  isLoading={isSubmitting}
+                >
+                  Approve
+                </Button>
+              </>
+            ) : (
+              ''
+            )}
           </ModalFooter>
         </ModalContent>
       </Modal>
