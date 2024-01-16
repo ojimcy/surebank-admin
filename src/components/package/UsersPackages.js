@@ -6,6 +6,10 @@ import {
   Text,
   useColorModeValue,
   Spacer,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
 } from '@chakra-ui/react';
 import PackageCard from 'components/package/PackageCard';
 import CreateAccountModal from 'components/modals/CreateAccountModal';
@@ -14,6 +18,7 @@ import { useAppContext } from 'contexts/AppContext';
 import { NavLink, useParams } from 'react-router-dom';
 
 import axiosService from 'utils/axiosService';
+import { ChevronDownIcon } from '@chakra-ui/icons';
 
 const UsersPackages = ({ handleTransferSuccess, handleDepositSuccess }) => {
   const { id } = useParams();
@@ -66,21 +71,29 @@ const UsersPackages = ({ handleTransferSuccess, handleDepositSuccess }) => {
         </Flex>
 
         <Spacer />
-        {!customerData ? (
-          <Button
-            bgColor="blue.700"
-            color="white"
-            onClick={handleCreateAccountClick}
-          >
-            Create Account
-          </Button>
-        ) : (
-          <NavLink to="/admin/daily-saving/package">
-            <Button bgColor="blue.700" color="white">
-              Create Package
-            </Button>
-          </NavLink>
-        )}
+        <Menu>
+          <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+            Manage Account
+          </MenuButton>
+          <MenuList>
+            <MenuItem>
+              <NavLink to="/admin/account/assign-manager">
+                Assign Account Manager
+              </NavLink>
+            </MenuItem>
+            <MenuItem>
+              {!customerData ? (
+                <NavLink to="#" onClick={handleCreateAccountClick}>
+                  Create Account
+                </NavLink>
+              ) : (
+                <NavLink to="/admin/daily-saving/package">
+                  Create Package
+                </NavLink>
+              )}
+            </MenuItem>
+          </MenuList>
+        </Menu>
       </Flex>
       <hr color={textColor} />
 

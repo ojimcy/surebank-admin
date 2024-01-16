@@ -7,10 +7,14 @@ import {
   useColorModeValue,
   Spacer,
   Box,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
 } from '@chakra-ui/react';
 import { toast } from 'react-toastify';
 import { useForm } from 'react-hook-form';
-import { useParams } from 'react-router-dom';
+import { useParams, NavLink } from 'react-router-dom';
 
 import { useAppContext } from 'contexts/AppContext';
 import { useAuth } from 'contexts/AuthContext';
@@ -22,6 +26,7 @@ import axiosService from 'utils/axiosService';
 import { formatDate, formatNaira } from 'utils/helper';
 
 import MergePackageModal from 'components/modals/mergeModal';
+import { ChevronDownIcon } from '@chakra-ui/icons';
 
 const SbPackage = () => {
   const { id } = useParams();
@@ -141,23 +146,38 @@ const SbPackage = () => {
         </Flex>
 
         <Spacer />
-        {!customerData ? (
-          <Button
-            bgColor="blue.700"
-            color="white"
-            onClick={handleShowAccountModal}
-          >
-            Create Account
-          </Button>
-        ) : (
-          <Button
-            onClick={showCreatePackagesModal}
-            bgColor="blue.700"
-            color="white"
-          >
-            Create Package
-          </Button>
-        )}
+
+        <Menu>
+          <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+            Manage Account
+          </MenuButton>
+          <MenuList>
+            <MenuItem>
+              <NavLink to="/admin/account/assign-manager">
+                Assign Account Manager
+              </NavLink>
+            </MenuItem>
+            <MenuItem>
+              {!customerData ? (
+                <Button
+                  bgColor="blue.700"
+                  color="white"
+                  onClick={handleShowAccountModal}
+                >
+                  Create Account
+                </Button>
+              ) : (
+                <Button
+                  onClick={showCreatePackagesModal}
+                  bgColor="blue.700"
+                  color="white"
+                >
+                  Create Package
+                </Button>
+              )}
+            </MenuItem>
+          </MenuList>
+        </Menu>
       </Flex>
       <hr color={textColor} />
       {sbPackages.length !== 0 ? (
@@ -209,7 +229,8 @@ const SbPackage = () => {
                   <Text fontSize="sm">Remaining Balance: </Text>
                   <Text fontSize="lg" fontWeight="bold">
                     {formatNaira(
-                      packageData.product?.sellingPrice - packageData.totalContribution
+                      packageData.product?.sellingPrice -
+                        packageData.totalContribution
                     )}
                   </Text>
                 </Flex>

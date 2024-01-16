@@ -7,10 +7,6 @@ import {
   Button,
   Flex,
   Icon,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
   Text,
   Tabs,
   Tab,
@@ -25,7 +21,6 @@ import axiosService from 'utils/axiosService';
 import { formatNaira } from 'utils/helper';
 import BackButton from 'components/menu/BackButton';
 import { useAppContext } from 'contexts/AppContext';
-import { ChevronDownIcon } from '@chakra-ui/icons';
 import { MdOutlineRemoveRedEye } from 'react-icons/md';
 import { RiEyeCloseLine } from 'react-icons/ri';
 
@@ -62,7 +57,7 @@ export default function ViewCustomer() {
       setUserPackages(packagesResponse.data);
     } catch (error) {
       console.error(error);
-      setCustomerData(null)
+      setCustomerData(null);
     } finally {
       setLoading(false);
     }
@@ -85,70 +80,12 @@ export default function ViewCustomer() {
     <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
       <Flex justifyContent="space-between" mb="20px">
         <BackButton />
-        <Menu>
-          <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-            Manage Account
-          </MenuButton>
-          <MenuList>
-            <MenuItem>
-              <NavLink to="/admin/account/assign-manager">
-                Assign Account Manager
-              </NavLink>
-            </MenuItem>
-          </MenuList>
-        </Menu>
+        
       </Flex>
       {loading ? (
         <LoadingSpinner />
       ) : (
         <Box>
-          <Flex
-            flexDirection="row"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Flex>
-              {isMobile ? null : (
-                <Avatar
-                  size="xl"
-                  name="SB"
-                  src={(customerData && customerData.avatarUrl) || ''}
-                  m={4}
-                />
-              )}
-              <Flex flexDirection="column" justifyContent="center">
-                <Flex alignItems="center" justifyContent="center">
-                  <Text fontSize="lg">
-                    Balance
-                    <Icon
-                      ml="2"
-                      fontSize="lg"
-                      _hover={{ cursor: 'pointer', color: 'blue.500' }}
-                      as={showBalance ? RiEyeCloseLine : MdOutlineRemoveRedEye}
-                      onClick={() =>
-                        setShowBalance((prevShowBalance) => !prevShowBalance)
-                      }
-                    />
-                  </Text>
-                </Flex>
-                <Text
-                  fontSize={{ base: 'xl', md: '2xl' }}
-                  fontWeight="bold"
-                  
-                >
-                  {customerData && customerData?.availableBalance && showBalance
-                    ? formatNaira(customerData.availableBalance)
-                    : '****'}
-                </Text>
-              </Flex>
-            </Flex>
-            <Box>
-              <NavLink to="/admin/transaction/withdraw">
-                <Button colorScheme="green">Withdraw Cash</Button>
-              </NavLink>
-            </Box>
-          </Flex>
-
           <Tabs
             variant="soft-rounded"
             colorScheme="green"
@@ -161,6 +98,60 @@ export default function ViewCustomer() {
             </TabList>
             <TabPanels>
               <TabPanel>
+                <Flex
+                  flexDirection="row"
+                  justifyContent="space-between"
+                  alignItems="center"
+                >
+                  <Flex>
+                    {isMobile ? null : (
+                      <Avatar
+                        size="xl"
+                        name="SB"
+                        src={(customerData && customerData.avatarUrl) || ''}
+                        m={4}
+                      />
+                    )}
+                    <Flex flexDirection="column" justifyContent="center">
+                      <Flex alignItems="center" justifyContent="center">
+                        <Text fontSize="lg">
+                          Balance
+                          <Icon
+                            ml="2"
+                            fontSize="lg"
+                            _hover={{ cursor: 'pointer', color: 'blue.500' }}
+                            as={
+                              showBalance
+                                ? RiEyeCloseLine
+                                : MdOutlineRemoveRedEye
+                            }
+                            onClick={() =>
+                              setShowBalance(
+                                (prevShowBalance) => !prevShowBalance
+                              )
+                            }
+                          />
+                        </Text>
+                      </Flex>
+                      <Text
+                        fontSize={{ base: 'xl', md: '2xl' }}
+                        fontWeight="bold"
+                      >
+                        {customerData &&
+                        customerData?.availableBalance &&
+                        showBalance
+                          ? formatNaira(customerData.availableBalance)
+                          : '****'}
+                      </Text>
+                    </Flex>
+                  </Flex>
+                  <Box>
+                    <NavLink to="/admin/transaction/withdraw">
+                      <Button colorScheme="green">Withdraw Cash</Button>
+                    </NavLink>
+                  </Box>
+                </Flex>
+
                 {/* Savings Summary Section */}
                 <AccountDetails customerData={customerData} />
                 <UsersPackages
