@@ -34,7 +34,7 @@ export default function ViewCustomer() {
   const { id } = useParams();
   const [loading, setLoading] = useState(false);
   const [showBalance, setShowBalance] = useState(true);
-  const [activeTab, setActiveTab] = useState('ds');
+  const [activeTab, setActiveTab] = useState('');
   const { customerData, setCustomerData, userPackages, setUserPackages } =
     useAppContext();
 

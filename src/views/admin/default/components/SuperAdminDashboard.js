@@ -158,7 +158,7 @@ export default function SuperAdminDashboard() {
                   }
                 />
               }
-              name="Total Daily Withdrawals"
+              name="Total Daily Withdrawal Requests"
               value={formatNaira(dailySavingsWithdrawals[0]?.total || 0)}
             />
 

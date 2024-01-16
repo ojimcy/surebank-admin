@@ -16,7 +16,7 @@ import { useAppContext } from 'contexts/AppContext';
 import TransactionItem from 'components/transactions/TransactionItem';
 import { useAuth } from 'contexts/AuthContext';
 
-function RecentTransactions() {
+function RecentTransactions({ staffId }) {
   const { customerData } = useAppContext();
   const { currentUser } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
@@ -27,23 +27,15 @@ function RecentTransactions() {
 
   useEffect(() => {
     const fetchActivities = async () => {
-      let response;
-
-      if (currentUser.role === 'userReps') {
-        response = await axiosService.get(
-          `/transactions?createdBy=${currentUser.id}`
-        );
-      } else {
-        response = await axiosService.get(
-          `/transactions?accountNumber=${customerData?.accountNumber}`
-        );
-      }
+      const response = await axiosService.get(
+        `/transactions?createdBy=${staffId}`
+      );
 
       setTransactions(response.data);
     };
 
     fetchActivities();
-  }, [currentUser.id, currentUser.role, customerData?.accountNumber]);
+  }, [currentUser.id, currentUser.role, customerData?.accountNumber, staffId]);
 
   useEffect(() => {
     const filtered = transactions?.filter((transaction) => {

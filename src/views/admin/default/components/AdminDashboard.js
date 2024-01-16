@@ -149,7 +149,7 @@ export default function UserRepsDashboard() {
                         }
                       />
                     }
-                    name="Total Daily Withdrawals"
+                    name="Total Daily Withdrawal Requests"
                     value={formatNaira(dailySavingsWithdrawals)}
                   />
 

@@ -1,17 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Flex,
-  Icon,
-  Text,
-  useColorModeValue,
-  Spacer,
-  Box,
-  Stack,
-  FormControl,
-  Input,
-  Button,
-} from '@chakra-ui/react';
-import { SearchIcon } from '@chakra-ui/icons';
+import { Flex, Icon, Text, useColorModeValue, Box } from '@chakra-ui/react';
 import { MdAttachMoney, MdPerson } from 'react-icons/md';
 import { FaMoneyBillWave } from 'react-icons/fa';
 import axiosService from 'utils/axiosService';
@@ -21,10 +9,10 @@ import Card from 'components/card/Card';
 import MiniStatistics from 'components/card/MiniStatistics';
 import IconBox from 'components/icons/IconBox';
 import ActionButton from 'components/Button/CustomButton';
-import CustomTable from 'components/table/CustomTable';
-import { NavLink, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import LoadingSpinner from 'components/scroll/LoadingSpinner';
 import BackButton from 'components/menu/BackButton';
+import StaffRecentTransactions from 'components/transactions/StaffRecentTransactions';
 
 export default function StaffDetailsPage() {
   const brandColor = useColorModeValue('brand.500', 'white');
@@ -36,14 +24,6 @@ export default function StaffDetailsPage() {
   const [contributionsDailyTotal, setContributionsDailyTotal] = useState([]);
   const [dailySavingsWithdrawals, setDailySavingsWithdrawals] = useState([]);
   const [openPackageCount, setOpenPackageCount] = useState(0);
-  const [customers, setCustomers] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filteredCustomers, setFilteredCustomers] = useState([]);
-
-  const [pagination, setPagination] = useState({
-    pageIndex: 0,
-    pageSize: 20,
-  });
 
   const { id } = useParams();
   const staffId = id;
@@ -70,15 +50,10 @@ export default function StaffDetailsPage() {
           axiosService.get(
             `/reports/total-savings-withdrawal?startDate=${startTimeStamp}&endDate=${endTimeStamp}`
           ),
-          axiosService.get(
-            `accounts?limit=${pagination.pageSize}&page=${
-              pagination.pageIndex + 1
-            }&accountManagerId=${staffId}`
-          ),
+          axiosService.get(`accounts?accountManagerId=${staffId}`),
         ]);
         setContributionsDailyTotal(totalContributionsResponse.data);
         setDailySavingsWithdrawals(withdrawalResponse.data);
-        setCustomers(accountsResponse.data.results);
         setOpenPackageCount(accountsResponse.data.totalResults);
       } catch (error) {
         console.error(error);
@@ -92,60 +67,7 @@ export default function StaffDetailsPage() {
     };
 
     fetchData();
-  }, [staffId, pagination]);
-
-  const onPageChange = ({ pageIndex, pageSize }) => {
-    setPagination({ pageIndex, pageSize });
-  };
-
-  useEffect(() => {
-    const filtered = customers?.filter((customer) => {
-      const fullName =
-        `${customer.firstName} ${customer.lastName}`.toLowerCase();
-      return (
-        fullName.includes(searchTerm.toLowerCase()) ||
-        customer.accountNumber.includes(searchTerm)
-      );
-    });
-    setFilteredCustomers(filtered);
-  }, [searchTerm, customers]);
-  const columns = React.useMemo(
-    () => [
-      {
-        Header: 'Name',
-        accessor: (row) => (
-          <NavLink to={`/admin/customer/${row.userId}`}>
-            {row.firstName} {row.lastName}
-          </NavLink>
-        ),
-      },
-      {
-        Header: 'Status',
-        accessor: 'status',
-      },
-      {
-        Header: 'Account Type',
-        accessor: 'accountType',
-      },
-      {
-        Header: 'Account Number',
-        accessor: 'accountNumber',
-      },
-      {
-        Header: 'Phone Number',
-        accessor: 'phoneNumber',
-      },
-      {
-        Header: 'Action',
-        accessor: (row) => (
-          <Box>
-            <NavLink to={`/admin/customer/${row.userId}`}>Details</NavLink>
-          </Box>
-        ),
-      },
-    ],
-    []
-  );
+  }, [staffId]);
 
   return (
     <Box>
@@ -210,7 +132,7 @@ export default function StaffDetailsPage() {
                         }
                       />
                     }
-                    name="Total Daily Withdrawals"
+                    name="Total Daily Withdrawal Requests"
                     value={formatNaira(dailySavingsWithdrawals[0]?.total || 0)}
                   />
 
@@ -252,38 +174,7 @@ export default function StaffDetailsPage() {
               </Flex>
             </Box>
 
-            <Text fontSize="2xl" mt="5rem">
-              My Customers
-            </Text>
-            <Spacer />
-
-            <Box marginTop="30">
-              <Flex>
-                <Spacer />
-                <Box>
-                  <Stack direction="row">
-                    <FormControl>
-                      <Input
-                        type="search"
-                        placeholder="Search"
-                        borderColor="black"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                      />
-                    </FormControl>
-                    <Button bgColor="blue.700" color="white">
-                      <SearchIcon />
-                    </Button>
-                  </Stack>
-                </Box>
-              </Flex>
-            </Box>
-
-            <CustomTable
-              columns={columns}
-              data={filteredCustomers}
-              onPageChange={onPageChange}
-            />
+            <StaffRecentTransactions staffId={staffId} />
           </>
         </Box>
       )}
