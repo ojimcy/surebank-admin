@@ -139,6 +139,16 @@ export default function CreateAccount() {
                     }))}
                     onChange={handleUserSelect}
                     placeholder="Select User"
+                    styles={{
+                      control: (provided) => ({
+                        ...provided,
+                        color: 'black',
+                      }),
+                      singleValue: (provided) => ({
+                        ...provided,
+                        color: 'black',
+                      }),
+                    }}
                   />
                 </FormControl>
               </Box>

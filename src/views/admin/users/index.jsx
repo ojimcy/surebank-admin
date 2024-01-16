@@ -34,8 +34,10 @@ import CustomTable from 'components/table/CustomTable';
 import LoadingSpinner from 'components/scroll/LoadingSpinner';
 
 import { formatMdbDate } from 'utils/helper';
+import { useAuth } from 'contexts/AuthContext';
 
 export default function Users() {
+  const { currentUser } = useAuth();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -137,24 +139,31 @@ export default function Users() {
         Header: 'Action',
         accessor: (row) => (
           <>
-            {/* Edit user icon */}
-            <NavLink
-              to={`/admin/user/edit-user/${row.id}`}
-              style={{ marginRight: '10px' }}
-            >
-              <IconButton
-                icon={<EditIcon />}
-                colorScheme="blue"
-                aria-label="Edit user"
-              />
-            </NavLink>
-            {/* Delete user icon */}
-            <IconButton
-              icon={<DeleteIcon />}
-              colorScheme="red"
-              aria-label="Delete user"
-              onClick={() => handleDeleteIconClick(row.id)}
-            />
+            {currentUser.role === 'superAdmin' ||
+            currentUser.role === 'admin' ? (
+              <>
+                {/* Edit user icon */}
+                <NavLink
+                  to={`/admin/user/edit-user/${row.id}`}
+                  style={{ marginRight: '10px' }}
+                >
+                  <IconButton
+                    icon={<EditIcon />}
+                    colorScheme="blue"
+                    aria-label="Edit user"
+                  />
+                </NavLink>
+                {/* Delete user icon */}
+                <IconButton
+                  icon={<DeleteIcon />}
+                  colorScheme="red"
+                  aria-label="Delete user"
+                  onClick={() => handleDeleteIconClick(row.id)}
+                />
+              </>
+            ) : (
+              <NavLink to={`/admin/customer/${row.id}`}>Details</NavLink>
+            )}
           </>
         ),
       },

@@ -58,6 +58,16 @@ const MergePackageModal = ({ isOpen, onClose, packages, onMerge }) => {
                       label: sbPackage.product.name,
                     }))}
                     placeholder="Select a package"
+                    styles={{
+                      control: (provided) => ({
+                        ...provided,
+                        color: 'black',
+                      }),
+                      singleValue: (provided) => ({
+                        ...provided,
+                        color: 'black',
+                      }),
+                    }}
                   />
                 )}
               />
@@ -86,6 +96,16 @@ const MergePackageModal = ({ isOpen, onClose, packages, onMerge }) => {
                       label: sbPackage.product.name,
                     }))}
                     placeholder="Select a package"
+                    styles={{
+                      control: (provided) => ({
+                        ...provided,
+                        color: 'black',
+                      }),
+                      singleValue: (provided) => ({
+                        ...provided,
+                        color: 'black',
+                      }),
+                    }}
                   />
                 )}
               />

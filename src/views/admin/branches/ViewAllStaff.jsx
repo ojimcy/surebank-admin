@@ -308,22 +308,29 @@ export default function Users() {
         Header: 'Action',
         accessor: (row) => (
           <>
-            {/* Delete user icon */}
-            <IconButton
-              icon={<DeleteIcon />}
-              colorScheme="red"
-              aria-label="Delete branch"
-              onClick={() => handleDeleteIconClick(row.staffId?.id)}
-            />
-            <Button
-              mt={0}
-              ml={2}
-              colorScheme="blue"
-              size="md"
-              onClick={() => openTransferStaffModal(row.staffId?.id)}
-            >
-              Transfer
-            </Button>
+            {currentUser.role === 'superAdmin' ||
+            currentUser.role === 'admin' ? (
+              <>
+                {/* Delete user icon */}
+                <IconButton
+                  icon={<DeleteIcon />}
+                  colorScheme="red"
+                  aria-label="Delete branch"
+                  onClick={() => handleDeleteIconClick(row.staffId?.id)}
+                />
+                <Button
+                  mt={0}
+                  ml={2}
+                  colorScheme="blue"
+                  size="md"
+                  onClick={() => openTransferStaffModal(row.staffId?.id)}
+                >
+                  Transfer
+                </Button>
+              </>
+            ) : (
+              <NavLink to={`/admin/user/${row.staffId?.id}`}>Details</NavLink>
+            )}
           </>
         ),
       },

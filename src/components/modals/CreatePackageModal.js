@@ -25,7 +25,6 @@ import axiosService from 'utils/axiosService';
 import { useAppContext } from 'contexts/AppContext';
 import { formatNaira } from 'utils/helper';
 
-
 const CreatePackage = ({ isOpen, onClose }) => {
   const brandStars = useColorModeValue('brand.500', 'brand.400');
   const textColor = useColorModeValue('navy.700', 'white');
@@ -152,6 +151,16 @@ const CreatePackage = ({ isOpen, onClose }) => {
                   }))}
                   onChange={handleProductSelection}
                   placeholder="Select a product"
+                  styles={{
+                    control: (provided) => ({
+                      ...provided,
+                      color: 'black',
+                    }),
+                    singleValue: (provided) => ({
+                      ...provided,
+                      color: 'black',
+                    }),
+                  }}
                 />
               </FormControl>
             </Grid>
