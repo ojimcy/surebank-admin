@@ -172,23 +172,28 @@ export default function Products() {
           <Flex justifyContent="space-between" mb="20px">
             <Text fontSize="2xl">Product Requests</Text>
             <Spacer />
-            <Menu>
-              <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-                Manage Products
-              </MenuButton>
-              <MenuList>
-                <MenuItem>
-                  <NavLink to="#" onClick={handleShowProductModal}>
-                    New Product
-                  </NavLink>
-                </MenuItem>
-                <MenuItem>
-                  <NavLink to="/admin/products/catalogue">
-                    Product Catalogue
-                  </NavLink>
-                </MenuItem>
-              </MenuList>
-            </Menu>
+            {currentUser.role === 'superAdmin' ||
+            currentUser.role === 'admin' ? (
+              <Menu>
+                <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+                  Manage Products
+                </MenuButton>
+                <MenuList>
+                  <MenuItem>
+                    <NavLink to="#" onClick={handleShowProductModal}>
+                      New Product
+                    </NavLink>
+                  </MenuItem>
+                  <MenuItem>
+                    <NavLink to="/admin/products/catalogue">
+                      Product Catalogue
+                    </NavLink>
+                  </MenuItem>
+                </MenuList>
+              </Menu>
+            ) : (
+              ''
+            )}
           </Flex>
           <Box marginTop="30">
             {/* Select for selecting status */}

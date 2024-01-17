@@ -21,8 +21,10 @@ import BackButton from 'components/menu/BackButton';
 import CustomTable from 'components/table/CustomTable';
 import axiosService from 'utils/axiosService';
 import CatalogueDetailsModal from 'components/modals/CatalogueDetailsModal';
+import { useAuth } from 'contexts/AuthContext';
 
 export default function Catalogue() {
+  const { currentUser } = useAuth();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [productDetailsModal, setProductDetailsModal] = useState(false);
@@ -50,7 +52,7 @@ export default function Catalogue() {
 
   useEffect(() => {
     fetchProductRequests();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pagination]);
 
   const onPageChange = ({ pageIndex, pageSize }) => {
@@ -129,11 +131,16 @@ export default function Catalogue() {
           <Flex justifyContent="space-between" mb="20px">
             <Text fontSize="2xl">Catalogue</Text>
             <Spacer />
-            <NavLink to="/admin/products/catalogue/create">
-              <Button bgColor="blue.700" color="white">
-                Add Product
-              </Button>
-            </NavLink>
+            {currentUser.role === 'superAdmin' ||
+            currentUser.role === 'admin' ? (
+              <NavLink to="/admin/products/catalogue/create">
+                <Button bgColor="blue.700" color="white">
+                  Add Product
+                </Button>
+              </NavLink>
+            ) : (
+              ''
+            )}
           </Flex>
           <Box marginTop="30">
             {loading ? (
