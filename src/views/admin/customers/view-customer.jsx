@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState, useCallback } from 'react';
 
 import {
@@ -30,19 +29,88 @@ import SbPackage from 'components/package/SbPackage';
 import AccountDetails from './components/AccountDetails';
 import LoadingSpinner from 'components/scroll/LoadingSpinner';
 
-export default function ViewCustomer() {
+const ViewCustomer = () => {
   const { id } = useParams();
   const [loading, setLoading] = useState(false);
   const [showBalance, setShowBalance] = useState(true);
-  const [activeTab, setActiveTab] = useState('sb');
+  const [activeTab, setActiveTab] = useState('ds');
   const { customerData, setCustomerData, userPackages, setUserPackages } =
     useAppContext();
 
   const isMobile = useBreakpointValue({ base: true, md: false });
 
-  const handleTabChange = useCallback((index) => {
-    setActiveTab(index === 0 ? 'ds' : 'sb');
-  }, []);
+  const lazyLoadTabContent = (tabKey) => {
+    switch (tabKey) {
+      case 'ds':
+        return (
+          <>
+            <Flex
+              flexDirection="row"
+              justifyContent="space-between"
+              alignItems="center"
+            >
+              <Flex>
+                {isMobile ? null : (
+                  <Avatar
+                    size="xl"
+                    name="SB"
+                    src={(customerData && customerData.avatarUrl) || ''}
+                    m={4}
+                  />
+                )}
+                <Flex flexDirection="column" justifyContent="center">
+                  <Flex alignItems="center" justifyContent="center">
+                    <Text fontSize="lg">
+                      Balance
+                      <Icon
+                        ml="2"
+                        fontSize="lg"
+                        _hover={{ cursor: 'pointer', color: 'blue.500' }}
+                        as={
+                          showBalance ? RiEyeCloseLine : MdOutlineRemoveRedEye
+                        }
+                        onClick={() =>
+                          setShowBalance((prevShowBalance) => !prevShowBalance)
+                        }
+                      />
+                    </Text>
+                  </Flex>
+                  <Text fontSize={{ base: 'xl', md: '2xl' }} fontWeight="bold">
+                    {customerData &&
+                    customerData?.availableBalance &&
+                    showBalance
+                      ? formatNaira(customerData.availableBalance)
+                      : '****'}
+                  </Text>
+                </Flex>
+              </Flex>
+              <Box>
+                <NavLink to="/admin/transaction/withdraw">
+                  <Button colorScheme="green">Withdraw Cash</Button>
+                </NavLink>
+              </Box>
+            </Flex>
+            <AccountDetails customerData={customerData} />
+            <UsersPackages
+              userPackages={userPackages}
+              handleTransferSuccess={handleTransferSuccess}
+              handleDepositSuccess={handleDepositSuccess}
+            />
+            <RecentTransactions />
+          </>
+        );
+      case 'sb':
+        return (
+          <>
+            <AccountDetails customerData={customerData} />
+            <SbPackage />
+            <RecentTransactions />
+          </>
+        );
+      default:
+        return null;
+    }
+  };
 
   const fetchUserData = useCallback(async () => {
     try {
@@ -61,18 +129,17 @@ export default function ViewCustomer() {
     } finally {
       setLoading(false);
     }
-  }, [id, activeTab, customerData?.accountNumber]);
+  }, [id, activeTab, setCustomerData, setUserPackages]);
+
   useEffect(() => {
     fetchUserData();
   }, [fetchUserData]);
 
   const handleTransferSuccess = useCallback(() => {
-    // Fetch updated data after successful transfer here
     fetchUserData();
   }, [fetchUserData]);
 
   const handleDepositSuccess = useCallback(() => {
-    // Fetch updated data after successful deposit here
     fetchUserData();
   }, [fetchUserData]);
 
@@ -80,7 +147,6 @@ export default function ViewCustomer() {
     <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
       <Flex justifyContent="space-between" mb="20px">
         <BackButton />
-        
       </Flex>
       {loading ? (
         <LoadingSpinner />
@@ -90,89 +156,21 @@ export default function ViewCustomer() {
             variant="soft-rounded"
             colorScheme="green"
             mt="2rem"
-            onChange={handleTabChange}
+            onChange={(index) => setActiveTab(index === 0 ? 'ds' : 'sb')}
           >
             <TabList>
-              <Tab onClick={() => handleTabChange('ds')}>DS Account</Tab>
-              <Tab onClick={() => handleTabChange('sb')}>SB Account</Tab>
+              <Tab>DS Account</Tab>
+              <Tab>SB Account</Tab>
             </TabList>
             <TabPanels>
-              <TabPanel>
-                <Flex
-                  flexDirection="row"
-                  justifyContent="space-between"
-                  alignItems="center"
-                >
-                  <Flex>
-                    {isMobile ? null : (
-                      <Avatar
-                        size="xl"
-                        name="SB"
-                        src={(customerData && customerData.avatarUrl) || ''}
-                        m={4}
-                      />
-                    )}
-                    <Flex flexDirection="column" justifyContent="center">
-                      <Flex alignItems="center" justifyContent="center">
-                        <Text fontSize="lg">
-                          Balance
-                          <Icon
-                            ml="2"
-                            fontSize="lg"
-                            _hover={{ cursor: 'pointer', color: 'blue.500' }}
-                            as={
-                              showBalance
-                                ? RiEyeCloseLine
-                                : MdOutlineRemoveRedEye
-                            }
-                            onClick={() =>
-                              setShowBalance(
-                                (prevShowBalance) => !prevShowBalance
-                              )
-                            }
-                          />
-                        </Text>
-                      </Flex>
-                      <Text
-                        fontSize={{ base: 'xl', md: '2xl' }}
-                        fontWeight="bold"
-                      >
-                        {customerData &&
-                        customerData?.availableBalance &&
-                        showBalance
-                          ? formatNaira(customerData.availableBalance)
-                          : '****'}
-                      </Text>
-                    </Flex>
-                  </Flex>
-                  <Box>
-                    <NavLink to="/admin/transaction/withdraw">
-                      <Button colorScheme="green">Withdraw Cash</Button>
-                    </NavLink>
-                  </Box>
-                </Flex>
-
-                {/* Savings Summary Section */}
-                <AccountDetails customerData={customerData} />
-                <UsersPackages
-                  userPackages={userPackages}
-                  handleTransferSuccess={handleTransferSuccess}
-                  handleDepositSuccess={handleDepositSuccess}
-                />
-
-                {/* Recent Transactions Section */}
-
-                <RecentTransactions />
-              </TabPanel>
-              <TabPanel>
-                <AccountDetails customerData={customerData} />
-                <SbPackage />
-                <RecentTransactions />
-              </TabPanel>
+              <TabPanel>{lazyLoadTabContent('ds')}</TabPanel>
+              <TabPanel>{lazyLoadTabContent('sb')}</TabPanel>
             </TabPanels>
           </Tabs>
         </Box>
       )}
     </Box>
   );
-}
+};
+
+export default ViewCustomer;

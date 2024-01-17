@@ -1,9 +1,5 @@
 import React from 'react';
-import {
-  Box,
-  Flex,
-  Text,
-} from '@chakra-ui/react';
+import { Box, Flex, Text } from '@chakra-ui/react';
 import { RiArrowDownSLine } from 'react-icons/ri';
 import { FaMoneyBillWave, FaMoneyCheckAlt } from 'react-icons/fa';
 import { formatDate, formatNaira } from 'utils/helper';
@@ -44,12 +40,15 @@ export default function TransactionItem({ transaction }) {
           {transaction.narration}
         </Text>
         <Text fontSize="sm" color="gray.500">
-          {formatDate(transaction.date)}
+          {transaction.userId.lastName} {transaction.userId.firstName}
         </Text>
       </Box>
       <Box>
         <Text fontWeight="bold" fontSize="md" color={getAmountColor()}>
           {formatNaira(transaction.amount)}
+        </Text>
+        <Text fontSize="sm" color="gray.500">
+          {formatDate(transaction.date)}
         </Text>
         <Text
           fontSize="sm"

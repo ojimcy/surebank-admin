@@ -214,7 +214,6 @@ export default function Withdrawals() {
     ],
     []
   );
-  console.log(currentUser.role);
   return (
     <>
       <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
