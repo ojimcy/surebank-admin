@@ -58,7 +58,7 @@ export default function UserRepsDashboard() {
 
         // API call to get total daily withdrawals for today
         const withdrawalResponse = await axiosService.get(
-          `/reports/total-savings-withdrawal?startDate=${startTimeStamp}&endDateParam=${endTimeStamp}`
+          `/reports/total-savings-withdrawal?startDate=${startTimeStamp}&endDate=${endTimeStamp}`
         );
         setDailySavingsWithdrawals(withdrawalResponse.data);
       };

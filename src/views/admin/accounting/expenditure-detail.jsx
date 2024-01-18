@@ -68,7 +68,10 @@ const ExpenditureDetail = () => {
       toast.success('Expenditure approved successfully.');
     } catch (error) {
       console.error(error);
-      toast.error('An error occurred while approving the expenditure.');
+      toast.error(
+        error.response?.data?.message ||
+          'An error occurred while approving the expenditure.'
+      );
     } finally {
       setLoading(false);
     }
@@ -86,7 +89,10 @@ const ExpenditureDetail = () => {
       fetchExpenditure();
     } catch (error) {
       console.error(error);
-      toast.error('An error occurred while rejecting the expenditure.');
+      toast.error(
+        error.response?.data?.message ||
+          'An error occurred while rejecting the expenditure.'
+      );
     } finally {
       setLoading(false);
     }

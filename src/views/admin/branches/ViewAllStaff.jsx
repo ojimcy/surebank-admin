@@ -9,18 +9,10 @@ import {
   Stack,
   FormControl,
   Input,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
   Menu,
   MenuButton,
   MenuList,
   MenuItem,
-  IconButton,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
@@ -35,7 +27,7 @@ import AssignRoleModal from 'components/modals/AssignRoleModal.js';
 import CreateStaffModal from 'components/modals/CreateStaffModal.js';
 import TransferStaffModal from 'components/modals/TransferStaffModal.js';
 import CustomTable from 'components/table/CustomTable';
-import { ChevronDownIcon, DeleteIcon, SearchIcon } from '@chakra-ui/icons';
+import { ChevronDownIcon, SearchIcon } from '@chakra-ui/icons';
 import { toast } from 'react-toastify';
 import { useAuth } from 'contexts/AuthContext';
 import LoadingSpinner from 'components/scroll/LoadingSpinner';
@@ -48,9 +40,7 @@ export default function Users() {
   const [allBranch, setAllBranch] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showTransferStaffModal, setShowTransferStaffModal] = useState(false);
-  const [userToDelete, setUserToDelete] = useState(null);
   const [showCreateStaffModal, setShowCreateStaffModal] = useState(false);
   const [showRoleModal, setShowRoleModal] = useState(false);
   const [staffInfo, setStaffInfo] = useState({});
@@ -147,45 +137,12 @@ export default function Users() {
     setShowTransferStaffModal(true);
   };
 
-  const handleDeleteIconClick = (userId) => {
-    setUserToDelete(userId);
-    setShowDeleteModal(true);
-  };
-
-  const handleDeleteConfirm = () => {
-    if (userToDelete) {
-      handleDeleteUser(userToDelete);
-      setShowDeleteModal(false);
-    }
-  };
-
-  const handleDeleteCancel = () => {
-    setShowDeleteModal(false);
-  };
-
-  const onCloseModal = () => {
-    setShowDeleteModal(false);
-  };
-
   const closeTransferModal = () => {
     setShowTransferStaffModal(false);
   };
 
   const closeRoleModal = () => {
     setShowRoleModal(false);
-  };
-
-  // Function to handle user deletion
-  const handleDeleteUser = async (staffId) => {
-    try {
-      await axiosService.delete(`/${staffId}/staff`);
-      toast.success('Staff deleted successfully!');
-      // After successful deletion, refetch the users to update the list
-      fetchUsers();
-    } catch (error) {
-      console.error(error);
-      toast.error(error.response?.data?.message || 'An error occurred');
-    }
   };
 
   const transferStaffToBranch = async (data) => {
@@ -213,7 +170,6 @@ export default function Users() {
   };
 
   const createStaff = async (data) => {
-    console.log(data);
     try {
       await axiosService.post(`/staff`, data);
       toast.success('Staff has been created successfully!');
@@ -257,6 +213,28 @@ export default function Users() {
     }
   };
 
+  const handleDeactivateStaff = async (staffId) => {
+    try {
+      await axiosService.post(`/staff/${staffId}/deactivate`);
+      toast.success('Staff deactivated!');
+      fetchUsers();
+    } catch (error) {
+      console.error(error);
+      toast.error(error.response?.data?.message || 'An error occurred');
+    }
+  };
+
+  const handleReactivateStaff = async (staffId) => {
+    try {
+      await axiosService.post(`/staff/${staffId}/activate`);
+      toast.success('Staff activated!');
+      fetchUsers();
+    } catch (error) {
+      console.error(error);
+      toast.error(error.response?.data?.message || 'An error occurred');
+    }
+  };
+
   // Filter customers based on search term
   useEffect(() => {
     if (!staffs) {
@@ -277,6 +255,7 @@ export default function Users() {
     admin: 'Admin',
     superAdmin: 'Super Admin',
   };
+
   // Columns for the user table
   const columns = React.useMemo(
     () => [
@@ -311,13 +290,28 @@ export default function Users() {
             {currentUser.role === 'superAdmin' ||
             currentUser.role === 'admin' ? (
               <>
-                {/* Delete user icon */}
-                <IconButton
-                  icon={<DeleteIcon />}
-                  colorScheme="red"
-                  aria-label="Delete branch"
-                  onClick={() => handleDeleteIconClick(row.staffId?.id)}
-                />
+                {row.isActive ? (
+                  <Button
+                    mt={0}
+                    ml={2}
+                    colorScheme="red"
+                    size="md"
+                    onClick={() => handleDeactivateStaff(row.staffId?.id)}
+                  >
+                    Deactivate
+                  </Button>
+                ) : (
+                  <Button
+                    mt={0}
+                    ml={2}
+                    colorScheme="red"
+                    size="md"
+                    onClick={() => handleReactivateStaff(row.staffId?.id)}
+                  >
+                    Activate
+                  </Button>
+                )}
+
                 <Button
                   mt={0}
                   ml={2}
@@ -409,24 +403,6 @@ export default function Users() {
           </Box>
         </Card>
       </Grid>
-
-      {/* Delete confirmation modal */}
-      <Modal isOpen={showDeleteModal} onClose={onCloseModal}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Delete Branch</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>Are you sure you want to delete this staff?</ModalBody>
-          <ModalFooter>
-            <Button colorScheme="red" mr={3} onClick={handleDeleteConfirm}>
-              Delete
-            </Button>
-            <Button variant="ghost" onClick={handleDeleteCancel}>
-              Cancel
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
 
       {/* Transfer staff modal */}
       <TransferStaffModal
