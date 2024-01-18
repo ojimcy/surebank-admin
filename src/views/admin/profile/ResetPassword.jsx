@@ -13,6 +13,7 @@ import {
 } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import axiosService from 'utils/axiosService';
+import BackButton from 'components/menu/BackButton';
 import { RiEyeCloseLine } from 'react-icons/ri';
 import { MdOutlineRemoveRedEye } from 'react-icons/md';
 import { toast } from 'react-toastify';
@@ -63,7 +64,8 @@ const ResetPassword = () => {
   };
 
   return (
-    <Box maxW="md" mx="auto" mt="6">
+    <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
+      <BackButton />
       <form onSubmit={handleSubmit(onSubmit)}>
         <FormControl isInvalid={errors.password}>
           <FormLabel
