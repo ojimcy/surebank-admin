@@ -7,7 +7,6 @@ import {
   FormLabel,
   Grid,
   Input,
-  Select,
 } from '@chakra-ui/react';
 import Card from 'components/card/Card';
 import { useForm } from 'react-hook-form';
@@ -15,15 +14,11 @@ import axiosService from 'utils/axiosService';
 import { useParams, useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import BackButton from 'components/menu/BackButton';
-import { useAppContext } from 'contexts/AppContext';
-import { useAuth } from 'contexts/AuthContext';
 
 export default function EditUser() {
   const [user, setUser] = useState(null);
   const history = useHistory();
   const { id } = useParams();
-  const { branches } = useAppContext();
-  const { currentUser } = useAuth();
   const {
     register,
     handleSubmit,
@@ -48,14 +43,6 @@ export default function EditUser() {
     };
     fetchUser();
   }, [setValue, id]);
-
-  const roles = ['userReps', 'manager', 'admin', 'superAdmin'];
-  const roleLabels = {
-    userReps: 'Sales Rep',
-    manager: 'Manager',
-    admin: 'Admin',
-    superAdmin: 'Super Admin',
-  };
 
   const submitHandler = async (userData) => {
     // Convert the 'role' field to a string if it's an array
@@ -137,66 +124,6 @@ export default function EditUser() {
                   defaultValue={user?.phoneNumber || ''}
                 />
               </FormControl>
-
-              {currentUser &&
-              (currentUser.role === 'superAdmin' ||
-                currentUser.role === 'admin') ? (
-                <>
-                  <FormControl mt={4}>
-                    <FormLabel
-                      htmlFor="address"
-                      display="flex"
-                      ms="4px"
-                      fontSize="sm"
-                      fontWeight="500"
-                      mb="8px"
-                    >
-                      Branch
-                    </FormLabel>
-                    <Select
-                      {...register('branchId')}
-                      name="branchId"
-                      defaultValue={user?.branch}
-                    >
-                      <option value="" disabled>
-                        Select a branch
-                      </option>
-                      {branches &&
-                        branches.map((branch) => (
-                          <option key={branch.id} value={branch.id}>
-                            {branch.name}
-                          </option>
-                        ))}
-                    </Select>
-                  </FormControl>
-                  <FormControl>
-                    <FormLabel
-                      htmlFor="role"
-                      display="flex"
-                      ms="4px"
-                      fontSize="sm"
-                      fontWeight="500"
-                      mb="8px"
-                    >
-                      Role
-                    </FormLabel>
-                    <Select {...register('role')} name="role" 
-                      defaultValue={user?.role}>
-                      <option value="" disabled>
-                        Select a Role
-                      </option>
-                      {roles &&
-                        roles?.map((role) => (
-                          <option key={role} value={role}>
-                            {roleLabels[role]}
-                          </option>
-                        ))}
-                    </Select>
-                  </FormControl>
-                </>
-              ) : (
-                ' '
-              )}
 
               <Button
                 fontSize="sm"

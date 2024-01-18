@@ -115,7 +115,7 @@ export default function User() {
                         <Grid
                           templateColumns={{
                             base: '1fr',
-                            md: 'repeat(2, 1fr)',
+                            md: 'repeat(3, 1fr)',
                           }}
                           gap={4}
                           mt={4}
@@ -128,6 +128,11 @@ export default function User() {
                           <NavLink to={`/admin/customer/staffaccounts/${id}`}>
                             <Button colorScheme="blue" size="md" w="100%">
                               View Customers
+                            </Button>
+                          </NavLink>
+                          <NavLink to={`/admin/user/edit-user/${id}`}>
+                            <Button colorScheme="blue" size="md" w="100%">
+                              Edit Profile
                             </Button>
                           </NavLink>
                         </Grid>
