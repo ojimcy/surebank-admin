@@ -61,6 +61,7 @@ import Brands from 'views/admin/stores/brands';
 import StaffDetailsPage from 'views/admin/branches/StaffDetails';
 
 import Stores from 'views/admin/stores';
+import ResetPassword from 'views/admin/profile/ResetPassword';
 
 const routes = [
   {
@@ -128,6 +129,14 @@ const routes = [
     ),
     roles: ['superAdmin', 'admin', 'manager', 'userReps'],
     component: StaffDetailsPage,
+  },
+  {
+    name: 'Profile',
+    layout: '/admin',
+    path: '/profile/reset-password',
+    icon: <Icon as={MdPerson} width="20px" height="20px" color="inherit" />,
+    roles: [],
+    component: ResetPassword,
   },
   {
     name: 'Profile',

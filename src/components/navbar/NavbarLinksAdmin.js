@@ -120,7 +120,7 @@ export default function HeaderLinks(props) {
               borderRadius="8px"
               px="14px"
             >
-              <NavLink to="/admin/profile">Update Profile</NavLink>
+              <NavLink to="/admin/profile/reset-password">Change password</NavLink>
             </MenuItem>
             <HSeparator />
             <MenuItem
