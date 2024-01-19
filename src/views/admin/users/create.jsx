@@ -48,6 +48,11 @@ export default function CreateCustomer() {
   const handleClick = () => setShow(!show);
 
   const submitHandler = async (userData) => {
+    console.log(userData);
+    // Remove email property if it's an empty string
+    if (userData.email === '') {
+      delete userData.email;
+    }
     try {
       await axiosService.post(`/users`, userData);
       toast.success('User has been created successfully!');
@@ -164,9 +169,9 @@ export default function CreateCustomer() {
               flexDirection={{ base: 'column', md: 'row' }}
             >
               <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
-                <FormControl isInvalid={errors.email}>
+                <FormControl isInvalid={errors.phoneNumber}>
                   <FormLabel
-                    htmlFor="email"
+                    htmlFor="phoneNumber"
                     display="flex"
                     ms="4px"
                     fontSize="sm"
@@ -174,29 +179,24 @@ export default function CreateCustomer() {
                     color={textColor}
                     mb="8px"
                   >
-                    Email<Text color={brandStars}>*</Text>
+                    Phone Number<Text color={brandStars}>*</Text>
                   </FormLabel>
                   <Input
                     isRequired={true}
                     variant="auth"
                     fontSize="sm"
                     ms={{ base: '0px', md: '0px' }}
-                    type="email"
-                    id="email"
-                    placeholder="mail@sample.com"
+                    type="text"
+                    id="phoneNumber"
                     mb="24px"
                     fontWeight="500"
                     size="lg"
-                    {...register('email', {
-                      required: 'Email is required',
-                      pattern: {
-                        value: /\S+@\S+\.\S+/,
-                        message: 'Invalid email address',
-                      },
+                    {...register('phoneNumber', {
+                      required: 'Phone number is required',
                     })}
                   />
                   <FormErrorMessage>
-                    {errors.email && errors.email.message}
+                    {errors.phoneNumber && errors.phoneNumber.message}
                   </FormErrorMessage>
                 </FormControl>
               </Box>
@@ -256,6 +256,43 @@ export default function CreateCustomer() {
               flexDirection={{ base: 'column', md: 'row' }}
             >
               <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
+                <FormControl isInvalid={errors.email}>
+                  <FormLabel
+                    htmlFor="email"
+                    display="flex"
+                    ms="4px"
+                    fontSize="sm"
+                    fontWeight="500"
+                    color={textColor}
+                    mb="8px"
+                  >
+                    Email
+                  </FormLabel>
+                  <Input
+                    isRequired={false}
+                    variant="auth"
+                    fontSize="sm"
+                    ms={{ base: '0px', md: '0px' }}
+                    type="email"
+                    id="email"
+                    placeholder="mail@surebank.com"
+                    mb="24px"
+                    fontWeight="500"
+                    size="lg"
+                    {...register('email', {
+                      pattern: {
+                        value: /\S+@\S+\.\S+/,
+                        message: 'Invalid email address',
+                      },
+                    })}
+                  />
+                  <FormErrorMessage>
+                    {errors.email && errors.email.message}
+                  </FormErrorMessage>
+                </FormControl>
+              </Box>
+
+              <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
                 <FormControl isInvalid={errors.address}>
                   <FormLabel
                     htmlFor="address"
@@ -284,39 +321,6 @@ export default function CreateCustomer() {
                   />
                   <FormErrorMessage>
                     {errors.address && errors.address.message}
-                  </FormErrorMessage>
-                </FormControl>
-              </Box>
-
-              <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
-                <FormControl isInvalid={errors.phoneNumber}>
-                  <FormLabel
-                    htmlFor="phoneNumber"
-                    display="flex"
-                    ms="4px"
-                    fontSize="sm"
-                    fontWeight="500"
-                    color={textColor}
-                    mb="8px"
-                  >
-                    Phone Number<Text color={brandStars}>*</Text>
-                  </FormLabel>
-                  <Input
-                    isRequired={true}
-                    variant="auth"
-                    fontSize="sm"
-                    ms={{ base: '0px', md: '0px' }}
-                    type="text"
-                    id="phoneNumber"
-                    mb="24px"
-                    fontWeight="500"
-                    size="lg"
-                    {...register('phoneNumber', {
-                      required: 'Phone number is required',
-                    })}
-                  />
-                  <FormErrorMessage>
-                    {errors.phoneNumber && errors.phoneNumber.message}
                   </FormErrorMessage>
                 </FormControl>
               </Box>

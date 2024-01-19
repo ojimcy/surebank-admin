@@ -80,6 +80,11 @@ export default function Customer() {
   }, []);
 
   const submitHandler = async (customerData) => {
+    console.log(customerData);
+    // Remove email property if it's an empty string
+    if (customerData.email === '') {
+      delete customerData.email;
+    }
     try {
       await axiosService.post(`/customer`, customerData);
       toast.success('Customer created successfully!');
@@ -126,9 +131,9 @@ export default function Customer() {
               flexDirection={{ base: 'column', md: 'row' }}
             >
               <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
-                <FormControl isInvalid={errors.email}>
+                <FormControl isInvalid={errors.phoneNumber}>
                   <FormLabel
-                    htmlFor="email"
+                    htmlFor="phoneNumber"
                     display="flex"
                     ms="4px"
                     fontSize="sm"
@@ -136,29 +141,24 @@ export default function Customer() {
                     color={textColor}
                     mb="8px"
                   >
-                    Email<Text color={brandStars}>*</Text>
+                    Phone Number<Text color={brandStars}>*</Text>
                   </FormLabel>
                   <Input
                     isRequired={true}
                     variant="auth"
                     fontSize="sm"
                     ms={{ base: '0px', md: '0px' }}
-                    type="email"
-                    id="email"
-                    placeholder="mail@sample.com"
+                    type="text"
+                    id="phoneNumber"
                     mb="24px"
                     fontWeight="500"
                     size="lg"
-                    {...register('email', {
-                      required: 'Email is required',
-                      pattern: {
-                        value: /\S+@\S+\.\S+/,
-                        message: 'Invalid email address',
-                      },
+                    {...register('phoneNumber', {
+                      required: 'Phone number is required',
                     })}
                   />
                   <FormErrorMessage>
-                    {errors.email && errors.email.message}
+                    {errors.phoneNumber && errors.phoneNumber.message}
                   </FormErrorMessage>
                 </FormControl>
               </Box>
@@ -320,9 +320,9 @@ export default function Customer() {
               </Box>
 
               <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
-                <FormControl isInvalid={errors.phoneNumber}>
+                <FormControl isInvalid={errors.email}>
                   <FormLabel
-                    htmlFor="phoneNumber"
+                    htmlFor="email"
                     display="flex"
                     ms="4px"
                     fontSize="sm"
@@ -330,24 +330,28 @@ export default function Customer() {
                     color={textColor}
                     mb="8px"
                   >
-                    Phone Number<Text color={brandStars}>*</Text>
+                    Email
                   </FormLabel>
                   <Input
-                    isRequired={true}
+                    isRequired={false}
                     variant="auth"
                     fontSize="sm"
                     ms={{ base: '0px', md: '0px' }}
-                    type="text"
-                    id="phoneNumber"
+                    type="email"
+                    id="email"
+                    placeholder="mail@surebank.com"
                     mb="24px"
                     fontWeight="500"
                     size="lg"
-                    {...register('phoneNumber', {
-                      required: 'Phone number is required',
+                    {...register('email', {
+                      pattern: {
+                        value: /\S+@\S+\.\S+/,
+                        message: 'Invalid email address',
+                      },
                     })}
                   />
                   <FormErrorMessage>
-                    {errors.phoneNumber && errors.phoneNumber.message}
+                    {errors.email && errors.email.message}
                   </FormErrorMessage>
                 </FormControl>
               </Box>
