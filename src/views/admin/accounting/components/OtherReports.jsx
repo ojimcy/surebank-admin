@@ -64,32 +64,32 @@ export default function OtherCharges() {
     async function fetchCharges() {
       setLoading(true);
 
-      let endpoint = `/reports/charges/others`;
+      let endpoint = `/reports/charges/others?`;
       if (timeRange === 'last7days') {
         const endDate = new Date();
         endDate.setHours(23, 59, 59, 999);
         const startDate = new Date();
         startDate.setDate(endDate.getDate() - 7);
         startDate.setHours(0, 0, 0, 0);
-        endpoint += `?startDate=${startDate.getTime()}&endDate=${endDate.getTime()}`;
+        endpoint += `startDate=${startDate.getTime()}&endDate=${endDate.getTime()}`;
       } else if (timeRange === 'last30days') {
         const endDate = new Date();
         endDate.setHours(23, 59, 59, 999);
         const startDate = new Date();
         startDate.setDate(endDate.getDate() - 30);
         startDate.setHours(0, 0, 0, 0);
-        endpoint += `?startDate=${startDate.getTime()}&endDate=${endDate.getTime()}`;
+        endpoint += `startDate=${startDate.getTime()}&endDate=${endDate.getTime()}`;
       } else if (timeRange === 'custom') {
         if (startDate && endDate) {
           const customStartDate = new Date(startDate);
           customStartDate.setHours(0, 0, 0, 0);
           const customEndDate = new Date(endDate);
           customEndDate.setHours(23, 59, 59, 999);
-          endpoint += `?startDate=${customStartDate.getTime()}&endDate=${customEndDate.getTime()}`;
+          endpoint += `startDate=${customStartDate.getTime()}&endDate=${customEndDate.getTime()}`;
         }
       }
       if (branch) {
-        endpoint += `&branchId=${branch}`;
+        endpoint += `branchId=${branch}`;
       }
 
       try {

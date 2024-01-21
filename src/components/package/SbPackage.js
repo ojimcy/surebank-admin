@@ -139,7 +139,7 @@ const SbPackage = () => {
   const closeChargeModal = () => {
     setShowChargeModal(false);
     reset();
-    fetchUserPackages();
+    fetchUserPackages()
   };
 
   const handleSuccess = () => {

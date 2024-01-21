@@ -29,27 +29,43 @@ export default function Accounting() {
   const brandColor = useColorModeValue('brand.500', 'white');
   const boxBg = useColorModeValue('secondaryGray.300', 'whiteAlpha.100');
 
-  const [totalIncome, setTotalIncome] = useState(0);
+  const [dsTotalCharge, setDsTotalCharge] = useState(0);
+  const [sbTotalCharge, setSbTotalCharge] = useState(0);
   const [totalExpenditure, setTotalExpenditure] = useState(0);
 
-  const netBal = totalIncome - totalExpenditure;
+  const fetchDsTotalCharges = async () => {
+    try {
+      const response = await axiosService.get(
+        '/reports/contribution-incomes/ds/supperadmin'
+      );
+      setDsTotalCharge(response.data.totalCharge);
+    } catch (error) {
+      console.error(error);
+      toast.error(
+        error.response?.data?.message ||
+          'An error occurred while fetching total income.'
+      );
+    }
+  };
+
+  const fetchSbTotalCharges = async () => {
+    try {
+      const response = await axiosService.get(
+        '/reports/contribution-incomes/others/supperadmin'
+      );
+      setSbTotalCharge(response.data.totalCharge);
+    } catch (error) {
+      console.error(error);
+      toast.error(
+        error.response?.data?.message ||
+          'An error occurred while fetching total income.'
+      );
+    }
+  };
 
   useEffect(() => {
-    const fetchTotalIncome = async () => {
-      try {
-        const response = await axiosService.get(
-          '/reports/contribution-incomes/supperadmin'
-        );
-        setTotalIncome(response.data.totalCharge);
-      } catch (error) {
-        console.error(error);
-        toast.error(
-          error.response?.data?.message ||
-            'An error occurred while fetching total income.'
-        );
-      }
-    };
-    fetchTotalIncome();
+    fetchDsTotalCharges();
+    fetchSbTotalCharges();
   }, []);
 
   useEffect(() => {
@@ -67,6 +83,9 @@ export default function Accounting() {
     };
     fetchTotalExpenditure();
   }, []);
+
+  const totalIncome = dsTotalCharge + sbTotalCharge;
+  const netBal = totalIncome - totalExpenditure;
 
   return (
     <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
