@@ -40,14 +40,18 @@ const CustomTable = ({ columns, data, onPageChange }) => {
     usePagination
   );
 
+  function handleNextPage() {
+    nextPage();
+  }
+
+  function handlePrevPage() {
+    previousPage();
+  }
+
   return (
     <Flex direction="column" w="100%">
       <TableContainer>
-        <Table
-          {...getTableProps()}
-          variant="striped"
-          colorScheme="blue"
-        >
+        <Table {...getTableProps()} variant="striped" colorScheme="blue">
           <Thead>
             {headerGroups.map((headerGroup) => (
               <Tr {...headerGroup.getHeaderGroupProps()}>
@@ -79,8 +83,7 @@ const CustomTable = ({ columns, data, onPageChange }) => {
           <Tooltip label="Previous Page">
             <IconButton
               onClick={() => {
-                previousPage();
-                onPageChange({ pageIndex: pageIndex - 1, pageSize });
+                handlePrevPage();
               }}
               isDisabled={!canPreviousPage}
               icon={<ChevronLeftIcon h={6} w={6} />}
@@ -127,8 +130,7 @@ const CustomTable = ({ columns, data, onPageChange }) => {
           <Tooltip label="Next Page">
             <IconButton
               onClick={() => {
-                nextPage();
-                onPageChange({ pageIndex: pageIndex + 1, pageSize });
+                handleNextPage();
               }}
               isDisabled={!canNextPage}
               icon={<ChevronRightIcon h={6} w={6} />}

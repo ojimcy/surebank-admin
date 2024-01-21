@@ -14,6 +14,7 @@ import {
 import PackageCard from 'components/package/PackageCard';
 import CreateAccountModal from 'components/modals/CreateAccountModal';
 import { useAppContext } from 'contexts/AppContext';
+import ChargeModal from 'components/modals/DsChargeModal';
 
 import { NavLink, useParams } from 'react-router-dom';
 
@@ -29,6 +30,7 @@ const UsersPackages = ({ handleTransferSuccess, handleDepositSuccess }) => {
 
   const [showAccountModal, setShowAccountModal] = useState(false);
   const [userPackages, setUserPackages] = useState([]);
+  const [showChargeModal, setShowChargeModal] = useState(false);
 
   const handleShowAccountModal = useCallback(() => {
     setShowAccountModal(true);
@@ -58,6 +60,14 @@ const UsersPackages = ({ handleTransferSuccess, handleDepositSuccess }) => {
     handleShowAccountModal();
   }, [handleShowAccountModal]);
 
+  const handleShowChargeModal = () => {
+    setShowChargeModal(true);
+  };
+
+  const closeChargeModal = () => {
+    setShowChargeModal(false);
+  };
+
   return (
     <>
       <Flex alignItems="center">
@@ -81,6 +91,7 @@ const UsersPackages = ({ handleTransferSuccess, handleDepositSuccess }) => {
                 Assign Account Manager
               </NavLink>
             </MenuItem>
+
             <MenuItem>
               {!customerData ? (
                 <NavLink to="#" onClick={handleCreateAccountClick}>
@@ -91,6 +102,11 @@ const UsersPackages = ({ handleTransferSuccess, handleDepositSuccess }) => {
                   Create Package
                 </NavLink>
               )}
+            </MenuItem>
+            <MenuItem>
+              <NavLink to="#" onClick={handleShowChargeModal}>
+                Record charge
+              </NavLink>
             </MenuItem>
           </MenuList>
         </Menu>
@@ -132,6 +148,12 @@ const UsersPackages = ({ handleTransferSuccess, handleDepositSuccess }) => {
       <CreateAccountModal
         isOpen={showAccountModal}
         onClose={closeAccountModal}
+      />
+      
+      <ChargeModal
+        isOpen={showChargeModal}
+        onClose={closeChargeModal}
+        packages={userPackages}
       />
     </>
   );

@@ -37,7 +37,7 @@ export default function CreateCatalogue() {
 
   const fetchProducts = async () => {
     try {
-      const response = await axiosService.get('/products/');
+      const response = await axiosService.get(`/products?limit=100000000`);
       setProducts(response.data.results);
     } catch (error) {
       console.error(error);

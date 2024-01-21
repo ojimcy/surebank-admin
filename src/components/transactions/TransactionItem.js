@@ -5,7 +5,6 @@ import { FaMoneyBillWave, FaMoneyCheckAlt } from 'react-icons/fa';
 import { formatDate, formatNaira } from 'utils/helper';
 
 export default function TransactionItem({ transaction }) {
-  console.log(transaction);
   const getIconByNarration = () => {
     const narration = transaction.narration.toLowerCase();
     if (narration.includes('daily contribution')) {

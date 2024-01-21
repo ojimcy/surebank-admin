@@ -23,6 +23,7 @@ import { NavLink } from 'react-router-dom/cjs/react-router-dom.min';
 import BackButton from 'components/menu/BackButton';
 import DsReports from './components/DsReports';
 import SbReports from './components/sbReports';
+import OtherCharges from './components/OtherReports';
 
 export default function Accounting() {
   const brandColor = useColorModeValue('brand.500', 'white');
@@ -142,6 +143,7 @@ export default function Accounting() {
         <TabList>
           <Tab>DS Report</Tab>
           <Tab>SB Report</Tab>
+          <Tab>Other Charges</Tab>
         </TabList>
         <TabPanels>
           <TabPanel>
@@ -149,6 +151,9 @@ export default function Accounting() {
           </TabPanel>
           <TabPanel>
             <SbReports />
+          </TabPanel>
+          <TabPanel>
+            <OtherCharges />
           </TabPanel>
         </TabPanels>
       </Tabs>

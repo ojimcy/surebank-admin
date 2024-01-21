@@ -21,6 +21,7 @@ import { useAuth } from 'contexts/AuthContext';
 import CreateAccountModal from 'components/modals/CreateAccountModal';
 import CreatePackageModal from 'components/modals/CreatePackageModal';
 import SbDepositModal from 'components/modals/SbDepositModal';
+import ChargeModal from 'components/modals/SbChargeModal';
 
 import axiosService from 'utils/axiosService';
 import { formatDate, formatNaira } from 'utils/helper';
@@ -43,6 +44,7 @@ const SbPackage = () => {
   const [sbDepositModal, setSbDepositModal] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState(null);
   const [showMergeModal, setShowMergeModal] = useState(false);
+  const [showChargeModal, setShowChargeModal] = useState(false);
 
   const fetchUserPackages = async () => {
     if (customerData) {
@@ -129,6 +131,16 @@ const SbPackage = () => {
     reset();
   };
 
+  const handleShowChargeModal = () => {
+    setShowChargeModal(true);
+    reset();
+  };
+
+  const closeChargeModal = () => {
+    setShowChargeModal(false);
+    reset();
+  };
+
   const handleSuccess = () => {
     fetchUserPackages();
   };
@@ -159,22 +171,19 @@ const SbPackage = () => {
             </MenuItem>
             <MenuItem>
               {!customerData ? (
-                <Button
-                  bgColor="blue.700"
-                  color="white"
-                  onClick={handleShowAccountModal}
-                >
+                <NavLink to="#" onClick={handleShowAccountModal}>
                   Create Account
-                </Button>
+                </NavLink>
               ) : (
-                <Button
-                  onClick={showCreatePackagesModal}
-                  bgColor="blue.700"
-                  color="white"
-                >
+                <NavLink to="#" onClick={showCreatePackagesModal}>
                   Create Package
-                </Button>
+                </NavLink>
               )}
+            </MenuItem>
+            <MenuItem>
+              <NavLink to="#" onClick={handleShowChargeModal}>
+                Record charge
+              </NavLink>
             </MenuItem>
           </MenuList>
         </Menu>
@@ -294,6 +303,11 @@ const SbPackage = () => {
         onClose={handleCloseMergeModal}
         packages={sbPackages}
         onMerge={handleMerge}
+      />
+      <ChargeModal
+        isOpen={showChargeModal}
+        onClose={closeChargeModal}
+        packages={sbPackages}
       />
     </>
   );
