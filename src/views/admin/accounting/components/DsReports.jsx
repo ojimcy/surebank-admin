@@ -64,7 +64,7 @@ export default function Charges() {
     async function fetchCharges() {
       setLoading(true);
 
-      let endpoint = `/reports/charges`;
+      let endpoint = `/reports/charges?reasons='DS charge`;
       if (timeRange === 'last7days') {
         const endDate = new Date();
         endDate.setHours(23, 59, 59, 999);
@@ -89,7 +89,7 @@ export default function Charges() {
         }
       }
       if (branch) {
-        endpoint += `?branchId=${branch}`;
+        endpoint += `&branchId=${branch}`;
       }
       try {
         const response = await axiosService.get(endpoint);

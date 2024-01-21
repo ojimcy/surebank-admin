@@ -139,6 +139,7 @@ const SbPackage = () => {
   const closeChargeModal = () => {
     setShowChargeModal(false);
     reset();
+    fetchUserPackages();
   };
 
   const handleSuccess = () => {
@@ -252,6 +253,17 @@ const SbPackage = () => {
                   </Text>
                 </Flex>
               </Box>
+              {/* Show badge for completed payment */}
+              {packageData.totalContribution >=
+                packageData.product?.sellingPrice && (
+                <Box mt="4">
+                  <Flex justifyContent="center">
+                    <Text fontSize="sm" color="green.500" fontWeight="bold">
+                      Payment Completed
+                    </Text>
+                  </Flex>
+                </Box>
+              )}
               <Flex mt="4" justify="space-between">
                 <Button
                   colorScheme="red"
@@ -260,13 +272,39 @@ const SbPackage = () => {
                 >
                   Merge
                 </Button>
-                <Button
-                  colorScheme="green"
-                  size="sm"
-                  onClick={() => handleDepositModalOpen(packageData)}
-                >
-                  Deposit
-                </Button>
+
+                {packageData.totalContribution >=
+                packageData.product?.sellingPrice ? (
+                  <>
+                    {currentUser &&
+                    (currentUser.role === 'admin' ||
+                      currentUser.role === 'superAdmin') ? (
+                      <Button
+                        colorScheme="blue"
+                        size="sm"
+                        onClick={() => handleDepositModalOpen(packageData)}
+                      >
+                        Sell
+                      </Button>
+                    ) : (
+                      <Button
+                        colorScheme="blue"
+                        size="sm"
+                        onClick={() => handleDepositModalOpen(packageData)}
+                      >
+                        Buy
+                      </Button>
+                    )}
+                  </>
+                ) : (
+                  <Button
+                    colorScheme="green"
+                    size="sm"
+                    onClick={() => handleDepositModalOpen(packageData)}
+                  >
+                    Deposit
+                  </Button>
+                )}
               </Flex>
             </Box>
           ))}

@@ -40,7 +40,10 @@ export default function TransactionItem({ transaction }) {
           {transaction.narration}
         </Text>
         <Text fontSize="sm" color="gray.500">
-          {transaction.userId.lastName} {transaction.userId.firstName}
+          Rep: {transaction.createdBy.firstName}
+        </Text>
+        <Text fontSize="sm" color="gray.500">
+          Acc: {transaction.userId.lastName} {transaction.userId.firstName}
         </Text>
       </Box>
       <Box>

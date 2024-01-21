@@ -50,8 +50,7 @@ const SbChargesModal = ({ isOpen, onClose, packages }) => {
         packageId: chargeData.packageId.value,
         userId: selectedPackage.userId,
       };
-
-      await axiosService.post('/charge/sb', chargeDetails);
+      await axiosService.post('/charge', chargeDetails);
 
       toast.success('Charges saved successfully!');
       onClose();

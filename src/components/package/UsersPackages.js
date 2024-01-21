@@ -40,20 +40,20 @@ const UsersPackages = ({ handleTransferSuccess, handleDepositSuccess }) => {
     setShowAccountModal(false);
   }, []);
 
+  const fetchPackages = async () => {
+    try {
+      const response = await axiosService.get(
+        `daily-savings/package?userId=${id}`
+      );
+      setUserPackages(response.data);
+    } catch (error) {
+      // Handle error
+    } finally {
+    }
+  };
   useEffect(() => {
-    const fetchPackages = async () => {
-      try {
-        const response = await axiosService.get(
-          `daily-savings/package?userId=${id}`
-        );
-        setUserPackages(response.data);
-      } catch (error) {
-        // Handle error
-      } finally {
-      }
-    };
-
     fetchPackages();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const handleCreateAccountClick = useCallback(() => {
@@ -66,6 +66,7 @@ const UsersPackages = ({ handleTransferSuccess, handleDepositSuccess }) => {
 
   const closeChargeModal = () => {
     setShowChargeModal(false);
+    fetchPackages();
   };
 
   return (
@@ -149,7 +150,7 @@ const UsersPackages = ({ handleTransferSuccess, handleDepositSuccess }) => {
         isOpen={showAccountModal}
         onClose={closeAccountModal}
       />
-      
+
       <ChargeModal
         isOpen={showChargeModal}
         onClose={closeChargeModal}
