@@ -167,7 +167,11 @@ export default function Customers() {
       {
         Header: 'Name',
         accessor: (row) => (
-          <NavLink to={`/admin/customer/${row.userId}`}>
+          <NavLink
+            to={`/admin/customer/${row.accountType.toLowerCase()}/${
+              row.userId
+            }`}
+          >
             {row.firstName} {row.lastName}
           </NavLink>
         ),

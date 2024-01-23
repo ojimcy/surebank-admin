@@ -39,7 +39,8 @@ import User from 'views/admin/users/get-user';
 import EditUser from 'views/admin/users/edit';
 import CreateCustomer from 'views/admin/customers/create';
 import CustomerByStaff from 'views/admin/customers/customerByStaff';
-import ViewCustomer from 'views/admin/customers/view-customer';
+import ViewCustomerDs from 'views/admin/daily-savings/ds-package';
+import ViewCustomerSb from 'views/admin/daily-savings/sb-package';
 import EditCustomer from 'views/admin/customers/edit-customer';
 import Deposit from 'views/admin/account/deposit';
 import Withdraw from 'views/admin/account/withdrawal';
@@ -234,12 +235,23 @@ const routes = [
   {
     name: 'Customer',
     layout: '/admin',
-    path: '/customer/:id',
+    path: '/customer/ds/:id',
     icon: (
       <Icon as={MdOutlinePerson3} width="20px" height="20px" color="inherit" />
     ),
     roles: ['superAdmin', 'admin', 'manager', 'userReps'],
-    component: ViewCustomer,
+    component: ViewCustomerDs,
+  },
+
+  {
+    name: 'Customer',
+    layout: '/admin',
+    path: '/customer/sb/:id',
+    icon: (
+      <Icon as={MdOutlinePerson3} width="20px" height="20px" color="inherit" />
+    ),
+    roles: ['superAdmin', 'admin', 'manager', 'userReps'],
+    component: ViewCustomerSb,
   },
 
   // account routes
