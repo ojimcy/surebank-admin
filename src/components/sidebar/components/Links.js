@@ -15,7 +15,6 @@ import {
 } from '@chakra-ui/react';
 import { FaChevronDown } from 'react-icons/fa';
 
-
 const hiddenRoutes = [
   '/auth/sign-in',
   '/auth/sign-up',
@@ -56,7 +55,8 @@ const hiddenRoutes = [
   '/admin/branch/staff/:id',
   '/admin/stores/collections',
   '/admin/stores/categories',
-  '/admin/stores/brands'
+  '/admin/stores/brands',
+  '/admin/order/placeorder'
 ];
 
 export function SidebarLinks(props) {

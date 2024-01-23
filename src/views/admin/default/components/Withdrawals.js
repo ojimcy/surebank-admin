@@ -131,7 +131,7 @@ export default function Withdrawals() {
       }
       try {
         const response = await axiosService.get(endpoint);
-        setWithdrawals(response.data);
+        setWithdrawals(response.data.withdrawals);
         setLoading(false);
       } catch (error) {
         // Handle error

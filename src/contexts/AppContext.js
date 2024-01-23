@@ -18,6 +18,8 @@ const AppProvider = ({ children }) => {
   const [packageId, setPackageId] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
+  const [cartItems, setCartItems] = useState([]);
+  const [selectedPackage, setSelectedPackage] = useState(null);
 
   useEffect(() => {
     const fetchBranches = async () => {
@@ -56,6 +58,10 @@ const AppProvider = ({ children }) => {
         setSearchTerm,
         searchResults,
         setSearchResults,
+        cartItems,
+        setCartItems,
+        selectedPackage,
+        setSelectedPackage,
       }}
     >
       {children}

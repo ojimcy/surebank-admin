@@ -22,6 +22,8 @@ import CreateAccountModal from 'components/modals/CreateAccountModal';
 import CreatePackageModal from 'components/modals/CreatePackageModal';
 import SbDepositModal from 'components/modals/SbDepositModal';
 import ChargeModal from 'components/modals/SbChargeModal';
+import BuyModal from 'components/modals/BuyModal';
+import ChangeProductModal from 'components/modals/ChangeProductModal';
 
 import axiosService from 'utils/axiosService';
 import { formatDate, formatNaira } from 'utils/helper';
@@ -32,7 +34,7 @@ import { ChevronDownIcon } from '@chakra-ui/icons';
 const SbPackage = () => {
   const { id } = useParams();
   const { currentUser } = useAuth();
-  const { customerData } = useAppContext();
+  const { customerData, selectedPackage, setSelectedPackage } = useAppContext();
   const { reset } = useForm();
 
   const textColor = useColorModeValue('secondaryGray.900', 'white');
@@ -42,9 +44,10 @@ const SbPackage = () => {
   const [showAccountModal, setShowAccountModal] = useState(false);
   const [createPackagesModal, setCreatePackagesModal] = useState(false);
   const [sbDepositModal, setSbDepositModal] = useState(false);
-  const [selectedPackage, setSelectedPackage] = useState(null);
   const [showMergeModal, setShowMergeModal] = useState(false);
   const [showChargeModal, setShowChargeModal] = useState(false);
+  const [buyModal, setBuyModal] = useState(false);
+  const [changeProductModal, setChangeProductModal] = useState(false);
 
   const fetchUserPackages = async () => {
     if (customerData) {
@@ -121,6 +124,21 @@ const SbPackage = () => {
     showSbDepositModal();
   };
 
+  const showBuyModal = () => {
+    setBuyModal(true);
+    reset();
+  };
+
+  const closeBuyModal = () => {
+    setBuyModal(false);
+    reset();
+  };
+
+  const handleBuyModalOpen = (packageData) => {
+    setSelectedPackage(packageData);
+    showBuyModal();
+  };
+
   const handleShowMergeModal = () => {
     setShowMergeModal(true);
     reset();
@@ -139,13 +157,29 @@ const SbPackage = () => {
   const closeChargeModal = () => {
     setShowChargeModal(false);
     reset();
-    fetchUserPackages()
+    fetchUserPackages();
   };
 
   const handleSuccess = () => {
     fetchUserPackages();
   };
 
+  const showChangeProductModal = () => {
+    setChangeProductModal(true);
+    reset();
+  };
+
+  const closeChangeProductModal = () => {
+    setChangeProductModal(false);
+    reset();
+  };
+
+  const handleChangeProductModalOpen = (packageData) => {
+    setSelectedPackage(packageData);
+    showChangeProductModal();
+  };
+
+  console.log(selectedPackage);
   return (
     <>
       <Flex alignItems="center">
@@ -239,8 +273,11 @@ const SbPackage = () => {
                   <Text fontSize="sm">Remaining Balance: </Text>
                   <Text fontSize="lg" fontWeight="bold">
                     {formatNaira(
-                      packageData.product?.sellingPrice -
-                        packageData.totalContribution
+                      Math.max(
+                        packageData.product?.sellingPrice -
+                          packageData.totalContribution,
+                        0
+                      )
                     )}
                   </Text>
                 </Flex>
@@ -272,6 +309,13 @@ const SbPackage = () => {
                 >
                   Merge
                 </Button>
+                <Button
+                  colorScheme="green"
+                  size="md"
+                  onClick={handleChangeProductModalOpen}
+                >
+                  Change Product
+                </Button>
 
                 {packageData.totalContribution >=
                 packageData.product?.sellingPrice ? (
@@ -282,7 +326,8 @@ const SbPackage = () => {
                       <Button
                         colorScheme="blue"
                         size="sm"
-                        onClick={() => handleDepositModalOpen(packageData)}
+                        as={NavLink}
+                        to={`/admin/products/catalogue/${packageData._id}`}
                       >
                         Sell
                       </Button>
@@ -290,7 +335,7 @@ const SbPackage = () => {
                       <Button
                         colorScheme="blue"
                         size="sm"
-                        onClick={() => handleDepositModalOpen(packageData)}
+                        onClick={() => handleBuyModalOpen(packageData)}
                       >
                         Buy
                       </Button>
@@ -346,6 +391,16 @@ const SbPackage = () => {
         isOpen={showChargeModal}
         onClose={closeChargeModal}
         packages={sbPackages}
+      />
+      <BuyModal
+        isOpen={buyModal}
+        onClose={closeBuyModal}
+        packageData={selectedPackage}
+      />
+      <ChangeProductModal
+        isOpen={changeProductModal}
+        onClose={closeChangeProductModal}
+        packageData={selectedPackage}
       />
     </>
   );

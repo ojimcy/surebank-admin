@@ -8,7 +8,12 @@ import {
   MdLock,
   MdOutlinePerson3,
 } from 'react-icons/md';
-import { FaProductHunt, FaSitemap, FaUsers, FaShoppingBag } from 'react-icons/fa';
+import {
+  FaProductHunt,
+  FaSitemap,
+  FaUsers,
+  FaShoppingBag,
+} from 'react-icons/fa';
 import { AiOutlineUsergroupAdd } from 'react-icons/ai';
 
 // Admin Imports
@@ -62,6 +67,7 @@ import StaffDetailsPage from 'views/admin/branches/StaffDetails';
 
 import Stores from 'views/admin/stores';
 import ResetPassword from 'views/admin/profile/ResetPassword';
+import PlaceOrder from 'views/admin/order/placeorder';
 
 const routes = [
   {
@@ -459,6 +465,14 @@ const routes = [
     path: '/stores/brands',
     roles: ['superAdmin', 'admin', 'manager', 'userReps'],
     component: Brands,
+  },
+
+  {
+    name: 'Order',
+    layout: '/admin',
+    path: '/order/placeorder',
+    roles: ['superAdmin', 'admin', 'manager', 'userReps'],
+    component: PlaceOrder,
   },
 ];
 

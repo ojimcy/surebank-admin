@@ -24,9 +24,11 @@ import { formatNaira, formatDate } from 'utils/helper';
 import BackButton from 'components/menu/BackButton';
 import { useForm, Controller } from 'react-hook-form';
 import LoadingSpinner from 'components/scroll/LoadingSpinner';
+import { useAuth } from 'contexts/AuthContext';
 
 const ExpenditureDetail = () => {
   const { id } = useParams();
+  const { currentUser } = useAuth();
   const [expenditure, setExpenditure] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
@@ -59,7 +61,6 @@ const ExpenditureDetail = () => {
     fetchExpenditure();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
-
   const handleApprove = async () => {
     try {
       setLoading(true);
@@ -167,32 +168,40 @@ const ExpenditureDetail = () => {
                           <Text>{formatNaira(expenditure?.amount)}</Text>
                         </Grid>
                         <Flex justifyContent="center" mt={10}>
-                          <Button
-                            colorScheme="green"
-                            variant="outline"
-                            onClick={handleApprove}
-                            mr={4}
-                            isLoading={isSubmitting}
-                          >
-                            Approve
-                          </Button>
-                          <Button
-                            colorScheme="red"
-                            variant="outline"
-                            onClick={() => setIsRejectModalOpen(true)}
-                          >
-                            Reject
-                          </Button>
-                          {/* Edit button */}
-                          <Button
-                            colorScheme="blue"
-                            variant="outline"
-                            onClick={() => setIsEditModalOpen(true)}
-                            ml={4}
-                            isLoading={isSubmitting}
-                          >
-                            Edit
-                          </Button>
+                          {currentUser.id !== expenditure.createdBy.id ||
+                          currentUser.role === 'superAdmin' ? (
+                            <>
+                              <Button
+                                colorScheme="green"
+                                variant="outline"
+                                onClick={handleApprove}
+                                mr={4}
+                                isLoading={isSubmitting}
+                              >
+                                Approve
+                              </Button>
+                              <Button
+                                colorScheme="red"
+                                variant="outline"
+                                onClick={() => setIsRejectModalOpen(true)}
+                              >
+                                Reject
+                              </Button>
+                            </>
+                          ) : (
+                            ''
+                          )}
+                          {currentUser.id === expenditure.createdBy.id && (
+                            <Button
+                              colorScheme="blue"
+                              variant="outline"
+                              onClick={() => setIsEditModalOpen(true)}
+                              ml={4}
+                              isLoading={isSubmitting}
+                            >
+                              Edit
+                            </Button>
+                          )}
                         </Flex>
                       </Box>
                     </Flex>
