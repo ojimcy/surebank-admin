@@ -74,6 +74,11 @@ export default function ProductDetails() {
       });
     }
   };
+
+  const toggleDescription = () => {
+    setShowFullDescription(!showFullDescription);
+  };
+
   return (
     <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
       {/* Main Fields */}
@@ -166,15 +171,13 @@ export default function ProductDetails() {
                             <Text>
                               {showFullDescription
                                 ? product.description
-                                : product.description.slice(0, 100) + '...'}
+                                : `${product.description.substring(0, 100)}...`}
                             </Text>
-                            {!showFullDescription && (
-                              <Button
-                                colorScheme="blue"
-                                size="sm"
-                                onClick={() => setShowFullDescription(true)}
-                              >
-                                View All
+                            {product.description.length > 100 && (
+                              <Button onClick={toggleDescription}>
+                                {showFullDescription
+                                  ? 'View Less'
+                                  : 'View More'}
                               </Button>
                             )}
                           </Box>
