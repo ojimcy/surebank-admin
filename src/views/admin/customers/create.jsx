@@ -80,7 +80,6 @@ export default function Customer() {
   }, []);
 
   const submitHandler = async (customerData) => {
-    console.log(customerData);
     // Remove email property if it's an empty string
     if (customerData.email === '') {
       delete customerData.email;

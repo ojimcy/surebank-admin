@@ -41,7 +41,6 @@ export default function Catalogue() {
         `/products/catalogue?&limit=${pageSize}&page=${pageIndex + 1}`
       );
       setProducts(response.data);
-      console.log(response);
     } catch (error) {
       console.error('Error fetching products:', error);
       setLoading(false);

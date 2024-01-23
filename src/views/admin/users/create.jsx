@@ -48,7 +48,6 @@ export default function CreateCustomer() {
   const handleClick = () => setShow(!show);
 
   const submitHandler = async (userData) => {
-    console.log(userData);
     // Remove email property if it's an empty string
     if (userData.email === '') {
       delete userData.email;

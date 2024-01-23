@@ -58,7 +58,6 @@ const WithdrawalDetails = () => {
 
     fetchWithdrawalDetails();
   }, [requestId]);
-  console.log(withdrawal);
   // Function to handle approval action
   const handleApprove = async () => {
     try {

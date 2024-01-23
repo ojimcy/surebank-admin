@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Button,
   Flex,
@@ -36,14 +36,14 @@ import LoadingSpinner from 'components/scroll/LoadingSpinner';
 const ViewCustomerSb = () => {
   const { id } = useParams();
   const { currentUser } = useAuth();
-  const { customerData, setCustomerData, selectedPackage, setSelectedPackage } =
-    useAppContext();
+  const { selectedPackage, setSelectedPackage } = useAppContext();
   const { reset } = useForm();
 
   const textColor = useColorModeValue('secondaryGray.900', 'white');
   const textColorSecondary = 'secondaryGray.600';
 
   const [sbPackages, setSbPackages] = useState([]);
+  const [customerData, setCustomerData] = useState({});
   const [showAccountModal, setShowAccountModal] = useState(false);
   const [createPackagesModal, setCreatePackagesModal] = useState(false);
   const [sbDepositModal, setSbDepositModal] = useState(false);
@@ -53,20 +53,23 @@ const ViewCustomerSb = () => {
   const [changeProductModal, setChangeProductModal] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const fetchUserData = useCallback(async () => {
-    try {
-      setLoading(true);
-      const accountResponse = await axiosService.get(
-        `/accounts/${id}?accountType=ds`
-      );
-      setCustomerData(accountResponse.data);
-    } catch (error) {
-      console.error(error);
-      setCustomerData(null);
-    } finally {
-      setLoading(false);
-    }
-  }, [id, setCustomerData]);
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        setLoading(true);
+        const accountResponse = await axiosService.get(
+          `/accounts/${id}?accountType=ds`
+        );
+        setCustomerData(accountResponse.data);
+      } catch (error) {
+        console.error(error);
+        setCustomerData(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUserData();
+  }, [id]);
 
   const fetchUserPackages = async () => {
     if (customerData) {
@@ -87,10 +90,9 @@ const ViewCustomerSb = () => {
   };
 
   useEffect(() => {
-    fetchUserData();
     fetchUserPackages();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [currentUser, customerData, id]);
 
   const handleMerge = async (fromPackage, toPackage) => {
     try {

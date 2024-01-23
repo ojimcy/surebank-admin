@@ -84,7 +84,6 @@ const ChangeProductModal = ({ isOpen, onClose, packageData }) => {
       }
     }
   };
-  console.log(packageData);
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />

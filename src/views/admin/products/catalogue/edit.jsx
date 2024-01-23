@@ -68,7 +68,6 @@ export default function EditProductCatalogue() {
   }, [id]);
 
   const submitHandler = async (productData) => {
-    console.log(productData);
     try {
       await axiosService.patch(`/products/catalogue/${id}`, productData);
       toast.success('Product catalogue updated successfully!');

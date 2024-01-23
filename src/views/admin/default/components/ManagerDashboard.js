@@ -79,7 +79,6 @@ export default function ManagerDashboard() {
             ),
             axiosService.get(`accounts?branchId=${staffInfo.branchId}`),
           ]);
-        console.log(staffInfo.branchId);
 
         if (isMounted.current) {
           setContributionDailyTotal(contributionResponse.data);
