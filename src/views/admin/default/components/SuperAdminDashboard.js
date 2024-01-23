@@ -55,12 +55,12 @@ export default function SuperAdminDashboard() {
           `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}`
         ),
         axiosService.get(
-          `/reports/total-savings-withdrawal?startDate=${startTimeStamp}&endDate=${endTimeStamp}`
+          `/transactions/withdraw/cash?startDate=${startTimeStamp}&endDate=${endTimeStamp}`
         ),
       ]);
       setTotalContributions(totalContributionResponse.data);
       setContributionDailyTotal(contributionResponse.data);
-      setDailySavingsWithdrawals(withdrawalResponse.data);
+      setDailySavingsWithdrawals(withdrawalResponse.data.totalAmount);
 
       // Fetch total open and closed packages
       const [openPackages, closedPackagesResponse] = await Promise.all([
@@ -159,7 +159,7 @@ export default function SuperAdminDashboard() {
                 />
               }
               name="Total Daily Withdrawal Requests"
-              value={formatNaira(dailySavingsWithdrawals[0]?.total || 0)}
+              value={formatNaira(dailySavingsWithdrawals || 0)}
             />
 
             <MiniStatistics

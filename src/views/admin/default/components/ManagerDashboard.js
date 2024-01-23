@@ -9,7 +9,7 @@ import { FaMoneyBillWave } from 'react-icons/fa';
 import MiniStatistics from 'components/card/MiniStatistics';
 import IconBox from 'components/icons/IconBox';
 import ActionButton from 'components/Button/CustomButton';
-import Withdrawals from './Withdrawals';
+import BranchWithdrawals from './BranchWithdrawals';
 import { useAuth } from 'contexts/AuthContext';
 import LoadingSpinner from 'components/scroll/LoadingSpinner';
 
@@ -75,14 +75,15 @@ export default function ManagerDashboard() {
               `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&branchId=${staffInfo.branchId}`
             ),
             axiosService.get(
-              `/reports/total-savings-withdrawal?startDate=${startTimeStamp}&endDate=${endTimeStamp}&branchId=${staffInfo.branchId}`
+              `/transactions/withdraw/cash?startDate=${startTimeStamp}&endDate=${endTimeStamp}&branchId=${staffInfo.branchId}`
             ),
             axiosService.get(`accounts?branchId=${staffInfo.branchId}`),
           ]);
+        console.log(staffInfo.branchId);
 
         if (isMounted.current) {
           setContributionDailyTotal(contributionResponse.data);
-          setDailySavingsWithdrawals(withdrawalResponse.data);
+          setDailySavingsWithdrawals(withdrawalResponse.data.totalAmount);
           setOpenPackageCount(accountResponse.data.totalResults);
           setLoading(false);
         }
@@ -164,7 +165,7 @@ export default function ManagerDashboard() {
                       />
                     }
                     name="Total Daily Withdrawal Requests"
-                    value={formatNaira(dailySavingsWithdrawals[0]?.total || 0)}
+                    value={formatNaira(dailySavingsWithdrawals || 0)}
                   />
 
                   <MiniStatistics
@@ -209,7 +210,7 @@ export default function ManagerDashboard() {
               Transactions
             </Text>
 
-            <Withdrawals />
+            <BranchWithdrawals staffInfo={staffInfo} />
           </>
         </Box>
       )}

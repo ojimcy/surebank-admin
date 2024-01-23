@@ -18,9 +18,11 @@ import {
 import axiosService from 'utils/axiosService';
 import BackButton from 'components/menu/BackButton';
 import LoadingSpinner from 'components/scroll/LoadingSpinner';
+import { useAuth } from 'contexts/AuthContext';
 
 export default function User() {
   const { id } = useParams();
+  const { currentUser } = useAuth();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [branchInfo, setBranchInfo] = useState('');
@@ -130,11 +132,13 @@ export default function User() {
                               View Customers
                             </Button>
                           </NavLink>
-                          <NavLink to={`/admin/user/edit-user/${id}`}>
-                            <Button colorScheme="blue" size="md" w="100%">
-                              Edit Profile
-                            </Button>
-                          </NavLink>
+                          {currentUser.id !== user.id && (
+                            <NavLink to={`/admin/user/edit-user/${id}`}>
+                              <Button colorScheme="blue" size="md" w="100%">
+                                Edit Profile
+                              </Button>
+                            </NavLink>
+                          )}
                         </Grid>
                       </Box>
                     </Flex>

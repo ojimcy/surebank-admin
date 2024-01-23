@@ -47,12 +47,12 @@ export default function UserRepsDashboard() {
             `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&createdBy=${staffId}`
           ),
           axiosService.get(
-            `/reports/total-savings-withdrawal?startDate=${startTimeStamp}&endDate=${endTimeStamp}`
+            `/transactions/withdraw/cash?startDate=${startTimeStamp}&endDate=${endTimeStamp}&createdBy=${staffId}`
           ),
           axiosService.get(`accounts?accountManagerId=${staffId}`),
         ]);
         setContributionsDailyTotal(totalContributionsResponse.data);
-        setDailySavingsWithdrawals(withdrawalResponse.data);
+        setDailySavingsWithdrawals(withdrawalResponse.data.totalAmount);
         setOpenPackageCount(accountsResponse.data.totalResults);
       } catch (error) {
         console.error(error);
@@ -125,7 +125,7 @@ export default function UserRepsDashboard() {
                     />
                   }
                   name="Total Daily Withdrawal Requests"
-                  value={formatNaira(dailySavingsWithdrawals[0]?.total || 0)}
+                  value={formatNaira(dailySavingsWithdrawals || 0)}
                 />
 
                 <MiniStatistics

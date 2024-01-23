@@ -323,7 +323,29 @@ export default function Users() {
                 </Button>
               </>
             ) : (
-              <NavLink to={`/admin/user/${row.staffId?.id}`}>Details</NavLink>
+              <>
+                {row.isActive ? (
+                  <Button
+                    mt={0}
+                    ml={2}
+                    colorScheme="red"
+                    size="md"
+                    onClick={() => handleDeactivateStaff(row.staffId?.id)}
+                  >
+                    Deactivate
+                  </Button>
+                ) : (
+                  <Button
+                    mt={0}
+                    ml={2}
+                    colorScheme="red"
+                    size="md"
+                    onClick={() => handleReactivateStaff(row.staffId?.id)}
+                  >
+                    Activate
+                  </Button>
+                )}
+              </>
             )}
           </>
         ),

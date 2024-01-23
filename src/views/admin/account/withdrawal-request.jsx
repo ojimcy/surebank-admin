@@ -44,7 +44,7 @@ const WithdrawalDetails = () => {
         const response = await axiosService.get(
           `/transactions/withdraw/cash/${requestId}`
         );
-        setWithdrawal(response.data);
+        setWithdrawal(response.data.withdrawal);
       } catch (error) {
         console.error(error);
         toast.error(
@@ -58,14 +58,14 @@ const WithdrawalDetails = () => {
 
     fetchWithdrawalDetails();
   }, [requestId]);
-
+  console.log(withdrawal);
   // Function to handle approval action
   const handleApprove = async () => {
     try {
       setLoading(true);
       await axiosService.post(`/transactions/withdraw?requestId=${requestId}`);
       toast.success('Withdrawal request approved successfully.');
-      
+
       history.push('/admin/');
     } catch (error) {
       console.error(error);
