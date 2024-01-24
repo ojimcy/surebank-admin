@@ -14,7 +14,7 @@ import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 
 // Custom components
-import ReactSelect from 'react-select';
+import CustomSelect from 'components/dataDispaly/CustomSelect';
 
 // Assets
 import Card from 'components/card/Card.js';
@@ -103,7 +103,7 @@ export default function CreateCatalogue() {
                   >
                     Product<Text>*</Text>
                   </FormLabel>
-                  <ReactSelect
+                  <CustomSelect
                     options={products.map((product) => ({
                       value: product.id,
                       label: `${product.name}`,

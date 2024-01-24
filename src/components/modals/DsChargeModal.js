@@ -17,7 +17,7 @@ import {
   InputGroup,
   Textarea,
 } from '@chakra-ui/react';
-import ReactSelect from 'react-select';
+import CustomSelect from 'components/dataDispaly/CustomSelect';
 import { useForm, Controller } from 'react-hook-form';
 import axiosService from 'utils/axiosService';
 import { toast } from 'react-toastify';
@@ -88,7 +88,7 @@ const DsChargesModal = ({ isOpen, onClose, packages }) => {
                   name="packageId"
                   control={control}
                   render={({ field }) => (
-                    <ReactSelect
+                    <CustomSelect
                       {...field}
                       options={packages.map((dsPackage) => ({
                         value: dsPackage.id,

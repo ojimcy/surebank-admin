@@ -17,8 +17,10 @@ export default function UserReports() {
           <UserRepsDashboard />
         ) : currentUser.role === 'admin' ? (
           <AdminDashboard />
+        ) : currentUser.role === 'manager' ? (
+          <ManagerDashboard />
         ) : (
-          currentUser.role === 'manager'(<ManagerDashboard />)
+          <Text>Unauthorized!!!</Text>
         )
       ) : (
         <Text>Unauthorized!!!</Text>

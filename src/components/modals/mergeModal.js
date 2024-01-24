@@ -13,6 +13,7 @@ import {
 } from '@chakra-ui/react';
 import ReactSelect from 'react-select';
 import { useForm, Controller } from 'react-hook-form';
+import CustomSelect from 'components/dataDispaly/CustomSelect';
 
 const MergePackageModal = ({ isOpen, onClose, packages, onMerge }) => {
   const textColor = useColorModeValue('navy.700', 'white');
@@ -51,23 +52,13 @@ const MergePackageModal = ({ isOpen, onClose, packages, onMerge }) => {
                 name="fromPackage"
                 control={control}
                 render={({ field }) => (
-                  <ReactSelect
+                  <CustomSelect
                     {...field}
                     options={packages.map((sbPackage) => ({
                       value: sbPackage._id,
                       label: sbPackage.product.name,
                     }))}
                     placeholder="Select a package"
-                    styles={{
-                      control: (provided) => ({
-                        ...provided,
-                        color: 'black',
-                      }),
-                      singleValue: (provided) => ({
-                        ...provided,
-                        color: 'black',
-                      }),
-                    }}
                   />
                 )}
               />
@@ -89,23 +80,13 @@ const MergePackageModal = ({ isOpen, onClose, packages, onMerge }) => {
                 name="toPackage"
                 control={control}
                 render={({ field }) => (
-                  <ReactSelect
+                  <CustomSelect
                     {...field}
                     options={packages.map((sbPackage) => ({
                       value: sbPackage._id,
                       label: sbPackage.product.name,
                     }))}
                     placeholder="Select a package"
-                    styles={{
-                      control: (provided) => ({
-                        ...provided,
-                        color: 'black',
-                      }),
-                      singleValue: (provided) => ({
-                        ...provided,
-                        color: 'black',
-                      }),
-                    }}
                   />
                 )}
               />

@@ -23,6 +23,7 @@ import axiosService from 'utils/axiosService';
 import { toast } from 'react-toastify';
 import { toSentenceCase } from 'utils/helper';
 import BackButton from 'components/menu/BackButton';
+import CustomSelect from 'components/dataDispaly/CustomSelect';
 
 export default function CreateAccount() {
   const history = useHistory();
@@ -132,23 +133,13 @@ export default function CreateAccount() {
                   >
                     Users<Text>*</Text>
                   </FormLabel>
-                  <ReactSelect
+                  <CustomSelect
                     options={users.map((user) => ({
                       value: user.email,
                       label: `${user.firstName} ${user.lastName} - ${user.email}`,
                     }))}
                     onChange={handleUserSelect}
                     placeholder="Select User"
-                    styles={{
-                      control: (provided) => ({
-                        ...provided,
-                        color: 'black',
-                      }),
-                      singleValue: (provided) => ({
-                        ...provided,
-                        color: 'black',
-                      }),
-                    }}
                   />
                 </FormControl>
               </Box>

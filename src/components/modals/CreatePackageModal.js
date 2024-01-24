@@ -19,7 +19,7 @@ import {
 } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
-import ReactSelect from 'react-select';
+import CustomSelect from 'components/dataDispaly/CustomSelect';
 
 import axiosService from 'utils/axiosService';
 import { useAppContext } from 'contexts/AppContext';
@@ -144,23 +144,13 @@ const CreatePackage = ({ isOpen, onClose }) => {
                 >
                   Select Product
                 </FormLabel>
-                <ReactSelect
+                <CustomSelect
                   options={products.map((product) => ({
                     value: product.id,
                     label: product.name,
                   }))}
                   onChange={handleProductSelection}
                   placeholder="Select a product"
-                  styles={{
-                    control: (provided) => ({
-                      ...provided,
-                      color: 'black',
-                    }),
-                    singleValue: (provided) => ({
-                      ...provided,
-                      color: 'black',
-                    }),
-                  }}
                 />
               </FormControl>
             </Grid>
