@@ -16,7 +16,6 @@ import { toast } from 'react-toastify';
 import { useForm } from 'react-hook-form';
 import { useParams, NavLink } from 'react-router-dom';
 
-import { useAppContext } from 'contexts/AppContext';
 import { useAuth } from 'contexts/AuthContext';
 import CreateAccountModal from 'components/modals/CreateAccountModal';
 import CreatePackageModal from 'components/modals/CreatePackageModal';
@@ -32,18 +31,18 @@ import MergePackageModal from 'components/modals/mergeModal';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import BackButton from 'components/menu/BackButton';
 import LoadingSpinner from 'components/scroll/LoadingSpinner';
+import { useAppContext } from 'contexts/AppContext';
 
 const ViewCustomerSb = () => {
   const { id } = useParams();
   const { currentUser } = useAuth();
-  const { selectedPackage, setSelectedPackage } = useAppContext();
+  const { customerData, setCustomerData } = useAppContext();
   const { reset } = useForm();
 
   const textColor = useColorModeValue('secondaryGray.900', 'white');
   const textColorSecondary = 'secondaryGray.600';
 
   const [sbPackages, setSbPackages] = useState([]);
-  const [customerData, setCustomerData] = useState({});
   const [showAccountModal, setShowAccountModal] = useState(false);
   const [createPackagesModal, setCreatePackagesModal] = useState(false);
   const [sbDepositModal, setSbDepositModal] = useState(false);
@@ -52,6 +51,7 @@ const ViewCustomerSb = () => {
   const [buyModal, setBuyModal] = useState(false);
   const [changeProductModal, setChangeProductModal] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [selectedPackage, setSelectedPackage] = useState(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -69,6 +69,7 @@ const ViewCustomerSb = () => {
       }
     };
     fetchUserData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const fetchUserPackages = async () => {
@@ -348,7 +349,9 @@ const ViewCustomerSb = () => {
                       <Button
                         colorScheme="green"
                         size="md"
-                        onClick={() => handleChangeProductModalOpen(packageData)}
+                        onClick={() =>
+                          handleChangeProductModalOpen(packageData)
+                        }
                       >
                         Change Product
                       </Button>

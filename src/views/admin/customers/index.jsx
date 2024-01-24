@@ -219,7 +219,13 @@ export default function Customers() {
                 />
               </>
             ) : (
-              <NavLink to={`/admin/customer/${row.userId}`}>Details</NavLink>
+              <NavLink
+                to={`/admin/customer/${row.accountType.toLowerCase()}/${
+                  row.userId
+                }`}
+              >
+                Details
+              </NavLink>
             )}
           </>
         ),

@@ -1,102 +1,120 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
-  Grid,
   Box,
   Heading,
-  Button,
-  SimpleGrid,
   List,
   ListItem,
+  Button,
+  SimpleGrid,
+  Grid,
 } from '@chakra-ui/react';
 import BackButton from 'components/menu/BackButton';
 import { useAppContext } from 'contexts/AppContext';
+import { formatNaira } from 'utils/helper';
 
 function PlaceOrder() {
-  const { customerData, packageData } = useAppContext();
+  const { customerData, selectedPackage } = useAppContext();
 
-  const shippingPrice = 50;
-
-  const placeOrderHandler = async () => {};
-
+  const placeOrderHandler = async () => {
+    // Your order placement logic
+  };
+  console.log(selectedPackage);
   return (
     <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
       <BackButton />
       <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} mt={8}>
         <Box>
-          <List spacing={3}>
-            <ListItem>
-              <Heading as="h2" size="lg">
-                Shipping Address
-              </Heading>
-            </ListItem>
-            <ListItem>
-              {customerData?.fullName}, {customerData?.address},{' '}
-              {customerData?.city}, {customerData?.phoneNumber},{' '}
-              {customerData?.country}
-            </ListItem>
-          </List>
-        </Box>
+          {/* Left Section: Shipping Address */}
+          <Box>
+            <List spacing={3}>
+              <ListItem>
+                <Heading as="h2" size="lg">
+                  Shipping Information
+                </Heading>
+              </ListItem>
+              {customerData && (
+                <ListItem>
+                  {customerData.firstName} {customerData.lastName},{' '}
+                  {customerData.phoneNumber}
+                </ListItem>
+              )}
+            </List>
+          </Box>
 
-        <Box>
-          <List spacing={3}>
-            <ListItem>
-              <Heading as="h2" size="lg">
-                Payment Method
-              </Heading>
-            </ListItem>
-            <ListItem>Sb Balance</ListItem>
-          </List>
+          {/* Left Section: Payment Method */}
+          <Box>
+            <List spacing={3}>
+              <ListItem>
+                <Heading as="h2" size="lg">
+                  Payment Method
+                </Heading>
+              </ListItem>
+              <ListItem>Sb Balance</ListItem>
+            </List>
+          </Box>
+        </Box>
+        {/* Right Section: Order Summary */}
+        <Box mt={8}>
+          {selectedPackage && (
+            <List spacing={3}>
+              <ListItem>
+                <Heading as="h2" size="lg">
+                  Order Summary
+                </Heading>
+              </ListItem>
+              <ListItem>
+                <Grid templateColumns="repeat(2, 1fr)" gap={4}>
+                  <Box>Item:</Box>
+                  <Box align="right">{selectedPackage?.product.name}</Box>
+                </Grid>
+              </ListItem>
+              <ListItem>
+                <Grid templateColumns="repeat(2, 1fr)" gap={4}>
+                  <Box>Price:</Box>
+                  <Box align="right">
+                    {selectedPackage?.product.sellingPrice}
+                  </Box>
+                </Grid>
+              </ListItem>
+              <ListItem>
+                <Grid templateColumns="repeat(2, 1fr)" gap={4}>
+                  <Box>Quantity:</Box>
+                  <Box align="right">{selectedPackage.quantity}</Box>
+                </Grid>
+              </ListItem>
+              <ListItem>
+                <Grid templateColumns="repeat(2, 1fr)" gap={4}>
+                  <Box>Delivery:</Box>
+                  <Box align="right">
+                    {selectedPackage.delivery ? selectedPackage.delivery : 0}
+                  </Box>
+                </Grid>
+              </ListItem>
+              <ListItem>
+                <Grid templateColumns="repeat(2, 1fr)" gap={4}>
+                  <Box>
+                    <strong>Total:</strong>
+                  </Box>
+                  <Box align="right">
+                    <strong>{selectedPackage?.salesPrice}</strong>
+                  </Box>
+                </Grid>
+              </ListItem>
+              <ListItem>
+                <Button
+                  onClick={placeOrderHandler}
+                  colorScheme="teal"
+                  variant="solid"
+                  isFullWidth
+                  mt={4}
+                >
+                  Place Order
+                </Button>
+              </ListItem>
+            </List>
+          )}
         </Box>
       </SimpleGrid>
-
-      <Box mt={8}>
-        <List spacing={3}>
-          <ListItem>
-            <Heading as="h2" size="lg">
-              Order Summary
-            </Heading>
-          </ListItem>
-          <ListItem>
-            <Grid templateColumns="repeat(2, 1fr)" gap={4}>
-              <Box>Items:</Box>
-              <Box align="right">${packageData?.priduct.salesPrice}</Box>
-            </Grid>
-          </ListItem>
-          <ListItem>
-            <Grid templateColumns="repeat(2, 1fr)" gap={4}>
-              <Box>Tax:</Box>
-              <Box align="right">${packageData?.charge}</Box>
-            </Grid>
-          </ListItem>
-          <ListItem>
-            <Grid templateColumns="repeat(2, 1fr)" gap={4}>
-              <Box>Shipping:</Box>
-              <Box align="right">${shippingPrice}</Box>
-            </Grid>
-          </ListItem>
-          <ListItem>
-            <Grid templateColumns="repeat(2, 1fr)" gap={4}>
-              <Box>
-                <strong>Total:</strong>
-              </Box>
-              <Box align="right">
-                <strong>${packageData?.salesPrice}</strong>
-              </Box>
-            </Grid>
-          </ListItem>
-          <ListItem>
-            <Button
-              onClick={placeOrderHandler}
-              colorScheme="teal"
-              variant="solid"
-              isFullWidth
-              mt={4}
-            >
-              Place Order
-            </Button>
-          </ListItem>
-        </List>
-      </Box>
     </Box>
   );
 }
