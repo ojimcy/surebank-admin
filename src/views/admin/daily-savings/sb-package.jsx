@@ -348,7 +348,7 @@ const ViewCustomerSb = () => {
                       <Button
                         colorScheme="green"
                         size="md"
-                        onClick={handleChangeProductModalOpen}
+                        onClick={() => handleChangeProductModalOpen(packageData)}
                       >
                         Change Product
                       </Button>
@@ -437,6 +437,7 @@ const ViewCustomerSb = () => {
               isOpen={changeProductModal}
               onClose={closeChangeProductModal}
               packageData={selectedPackage}
+              onSuccess={handleSuccess}
             />
           </>
         )}

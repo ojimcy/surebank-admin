@@ -16,12 +16,12 @@ import {
 } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
-import ReactSelect from 'react-select';
 
 import axiosService from 'utils/axiosService';
 import { formatNaira } from 'utils/helper';
+import CustomSelect from 'components/dataDispaly/CustomSelect';
 
-const ChangeProductModal = ({ isOpen, onClose, packageData }) => {
+const ChangeProductModal = ({ isOpen, onClose, onSuccess, packageData }) => {
   const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [productDetails, setProductDetails] = useState({});
@@ -61,13 +61,15 @@ const ChangeProductModal = ({ isOpen, onClose, packageData }) => {
   const onSubmit = async (formData) => {
     try {
       if (selectedProduct) {
-        formData.product = selectedProduct.value;
+        formData.newProductId = selectedProduct.value;
       }
       await axiosService.patch(
         `/daily-savings/sb/package/${packageData._id}`,
         formData
       );
+      console.log(formData);
       toast.success('Product changed successfully!');
+      onSuccess();
       onClose();
     } catch (error) {
       if (
@@ -94,7 +96,7 @@ const ChangeProductModal = ({ isOpen, onClose, packageData }) => {
           {packageData && (
             <>
               <Text>Product: {packageData.product.name}</Text>
-              <Text>
+              <Text mb="8px">
                 Price: {formatNaira(packageData.product.sellingPrice)}
               </Text>
               <form onSubmit={handleSubmit(onSubmit)}>
@@ -107,26 +109,17 @@ const ChangeProductModal = ({ isOpen, onClose, packageData }) => {
                       fontSize="sm"
                       fontWeight="500"
                       mb="8px"
+                      mt="4px"
                     >
                       Select new Product
                     </FormLabel>
-                    <ReactSelect
+                    <CustomSelect
                       options={products.map((product) => ({
                         value: product.id,
                         label: product.name,
                       }))}
                       onChange={handleProductSelection}
                       placeholder="Select new product"
-                      styles={{
-                        control: (provided) => ({
-                          ...provided,
-                          color: 'black',
-                        }),
-                        singleValue: (provided) => ({
-                          ...provided,
-                          color: 'black',
-                        }),
-                      }}
                     />
                   </FormControl>
                 </Grid>
