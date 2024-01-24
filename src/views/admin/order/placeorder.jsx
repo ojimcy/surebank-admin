@@ -18,7 +18,6 @@ function PlaceOrder() {
   const placeOrderHandler = async () => {
     // Your order placement logic
   };
-  console.log(selectedPackage);
   return (
     <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
       <BackButton />
@@ -72,7 +71,7 @@ function PlaceOrder() {
                 <Grid templateColumns="repeat(2, 1fr)" gap={4}>
                   <Box>Price:</Box>
                   <Box align="right">
-                    {selectedPackage?.product.sellingPrice}
+                    {formatNaira(selectedPackage?.product.sellingPrice)}
                   </Box>
                 </Grid>
               </ListItem>

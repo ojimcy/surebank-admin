@@ -14,8 +14,10 @@ import {
 } from '@chakra-ui/react';
 
 import { useForm, Controller } from 'react-hook-form';
+import { useAuth } from 'contexts/AuthContext';
 
 const ProductDetailsModal = ({ isOpen, onClose, product }) => {
+  const { currentUser } = useAuth();
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
 
@@ -36,10 +38,13 @@ const ProductDetailsModal = ({ isOpen, onClose, product }) => {
           <ModalHeader>{product.name}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Box mb="1rem">
-              <Text fontWeight="bold">Cost Price:</Text>
-              <Text>{product.costPrice}</Text>
-            </Box>
+            {currentUser.role === 'superAdmin' ||
+              (currentUser.role === 'admin' && (
+                <Box mb="1rem">
+                  <Text fontWeight="bold">Cost Price:</Text>
+                  <Text>{product.costPrice}</Text>
+                </Box>
+              ))}
             <Box mb="1rem">
               <Text fontWeight="bold">Selling Price:</Text>
               <Text>{product.sellingPrice}</Text>

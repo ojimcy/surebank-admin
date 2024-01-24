@@ -128,9 +128,17 @@ export default function ProductDetails() {
                         <Grid templateColumns="repeat(2, 1fr)" gap={4}>
                           <Text>Name</Text>
                           <Text fontWeight="bold">{product.name}</Text>
-                          <Text>Cost Price</Text>
-                          <Text fontWeight="bold">{product.costPrice}</Text>
-                          <Text>Seling Price:</Text>
+
+                          {currentUser.role === 'superAdmin' ||
+                          currentUser.role === 'admin' ? (
+                            <>
+                              <Text>Cost Price</Text>
+                              <Text fontWeight="bold">{product.costPrice}</Text>
+                            </>
+                          ) : (
+                            ''
+                          )}
+                          <Text>Selling Price:</Text>
                           <Text fontWeight="bold">{product.sellingPrice}</Text>
                           <Text>Discount Price:</Text>
                           <Text fontWeight="bold">
@@ -139,9 +147,31 @@ export default function ProductDetails() {
                           <Text>Quantity:</Text>
                           <Text fontWeight="bold">{product.quantity}</Text>
                           <Text>Brand:</Text>
-                          <Text fontWeight="bold">{product.brand}</Text>
+                          <Text fontWeight="bold">{product.brand?.name}</Text>
                           <Text>Category:</Text>
-                          <Text fontWeight="bold">{product.category}</Text>
+                          <Text fontWeight="bold">
+                            {product.categoryId?.title}
+                          </Text>
+                          {product.description && (
+                            <Box>
+                              <Text color={textColor} fontSize="lg" mb="10px">
+                                Description:{' '}
+                                {showFullDescription
+                                  ? product.description
+                                  : `${product.description.substring(
+                                      0,
+                                      100
+                                    )}...`}
+                                {product.description.length > 100 && (
+                                  <Button onClick={toggleDescription}>
+                                    {showFullDescription
+                                      ? 'View Less'
+                                      : 'View More'}
+                                  </Button>
+                                )}
+                              </Text>
+                            </Box>
+                          )}
                         </Grid>
 
                         {/* Specifications Section */}
@@ -163,25 +193,7 @@ export default function ProductDetails() {
                               </List>
                             </Box>
                           )}
-                        {product.description && (
-                          <Box mt={2}>
-                            <Text color={textColor} fontSize="lg" mb="10px">
-                              Description:
-                            </Text>
-                            <Text>
-                              {showFullDescription
-                                ? product.description
-                                : `${product.description.substring(0, 100)}...`}
-                            </Text>
-                            {product.description.length > 100 && (
-                              <Button onClick={toggleDescription}>
-                                {showFullDescription
-                                  ? 'View Less'
-                                  : 'View More'}
-                              </Button>
-                            )}
-                          </Box>
-                        )}
+
                         <Stack
                           spacing={4}
                           direction="row"
