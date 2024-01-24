@@ -58,7 +58,7 @@ const ViewCustomerSb = () => {
       try {
         setLoading(true);
         const accountResponse = await axiosService.get(
-          `/accounts/${id}?accountType=ds`
+          `/accounts/${id}?accountType=sb`
         );
         setCustomerData(accountResponse.data);
       } catch (error) {

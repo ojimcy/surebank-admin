@@ -26,12 +26,14 @@ import axiosService from 'utils/axiosService';
 import Card from 'components/card/Card.js';
 import BackButton from 'components/menu/BackButton';
 import { useAuth } from 'contexts/AuthContext';
+import LoadingSpinner from 'components/scroll/LoadingSpinner';
 
 export default function ProductDetails() {
   const { id } = useParams();
   const { currentUser } = useAuth();
   const [product, setProduct] = useState({});
   const [showFullDescription, setShowFullDescription] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const textColor = useColorModeValue('navy.700', 'white');
   const history = useHistory();
@@ -42,11 +44,14 @@ export default function ProductDetails() {
 
   useEffect(() => {
     const fetchProductCatalogue = async () => {
+      setLoading(true);
       try {
         const response = await axiosService.get(`/products/catalogue/${id}`);
         setProduct(response.data);
       } catch (error) {
         console.error(error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -94,139 +99,165 @@ export default function ProductDetails() {
         gap={{ base: '20px', xl: '20px' }}
       >
         <Card p={{ base: '30px', md: '30px', sm: '10px' }}>
-          <BackButton />
-          <Grid
-            mb="20px"
-            gridTemplateColumns={{ xl: 'repeat(3, 1fr)', '2xl': '1fr 0.46fr' }}
-            gap={{ base: '20px', xl: '20px' }}
-            display={{ base: 'block', xl: 'grid' }}
-          >
-            <Flex
-              flexDirection="column"
-              gridArea={{ xl: '1 / 1 / 2 / 3', '2xl': '1 / 1 / 2 / 2' }}
-            >
-              <Center py={6}>
-                <Box
-                  w={{ base: '90%', md: '80%' }}
-                  borderWidth="1px"
-                  borderRadius="lg"
-                  overflow="hidden"
-                  boxShadow="base"
+          {loading ? (
+            <LoadingSpinner />
+          ) : (
+            <>
+              <BackButton />
+              <Grid
+                mb="20px"
+                gridTemplateColumns={{
+                  xl: 'repeat(3, 1fr)',
+                  '2xl': '1fr 0.46fr',
+                }}
+                gap={{ base: '20px', xl: '20px' }}
+                display={{ base: 'block', xl: 'grid' }}
+              >
+                <Flex
+                  flexDirection="column"
+                  gridArea={{ xl: '1 / 1 / 2 / 3', '2xl': '1 / 1 / 2 / 2' }}
                 >
-                  {product && (
-                    <Flex
-                      alignItems="center"
-                      flexDirection={{ base: 'column', md: 'row' }}
+                  <Center py={6}>
+                    <Box
+                      w={{ base: '90%', md: '80%' }}
+                      borderWidth="1px"
+                      borderRadius="lg"
+                      overflow="hidden"
+                      boxShadow="base"
                     >
-                      <Avatar
-                        size="xl"
-                        name={product.name || ''}
-                        src={product.avatarUrl || ''}
-                        m={4}
-                      />
-                      <Box px={6} py={4}>
-                        <Grid templateColumns="repeat(2, 1fr)" gap={4}>
-                          <Text>Name</Text>
-                          <Text fontWeight="bold">{product.name}</Text>
-
-                          {currentUser.role === 'superAdmin' ||
-                          currentUser.role === 'admin' ? (
-                            <>
-                              <Text>Cost Price</Text>
-                              <Text fontWeight="bold">{product.costPrice}</Text>
-                            </>
-                          ) : (
-                            ''
-                          )}
-                          <Text>Selling Price:</Text>
-                          <Text fontWeight="bold">{product.sellingPrice}</Text>
-                          <Text>Discount Price:</Text>
-                          <Text fontWeight="bold">
-                            {product.discount ? product.discount : 'None'}
-                          </Text>
-                          <Text>Quantity:</Text>
-                          <Text fontWeight="bold">{product.quantity}</Text>
-                          <Text>Brand:</Text>
-                          <Text fontWeight="bold">{product.brand?.name}</Text>
-                          <Text>Category:</Text>
-                          <Text fontWeight="bold">
-                            {product.categoryId?.title}
-                          </Text>
-                          {product.description && (
-                            <Box>
-                              <Text color={textColor} fontSize="lg" mb="10px">
-                                Description:{' '}
-                                {showFullDescription
-                                  ? product.description
-                                  : `${product.description.substring(
-                                      0,
-                                      100
-                                    )}...`}
-                                {product.description.length > 100 && (
-                                  <Button onClick={toggleDescription}>
-                                    {showFullDescription
-                                      ? 'View Less'
-                                      : 'View More'}
-                                  </Button>
-                                )}
-                              </Text>
-                            </Box>
-                          )}
-                        </Grid>
-
-                        {/* Specifications Section */}
-                        {product.specifications &&
-                          product.specifications.length > 0 && (
-                            <Box>
-                              <Text color={textColor} fontSize="lg" mb="10px">
-                                Specifications:
-                              </Text>
-                              <List>
-                                {product.specifications.map(
-                                  (variation, index) => (
-                                    <ListItem key={index}>
-                                      <strong>{variation.name}:</strong>{' '}
-                                      {variation.values.join(', ')}
-                                    </ListItem>
-                                  )
-                                )}
-                              </List>
-                            </Box>
-                          )}
-
-                        <Stack
-                          spacing={4}
-                          direction="row"
+                      {product && (
+                        <Flex
                           alignItems="center"
-                          justifyContent="space-between"
-                          mt={4}
+                          flexDirection={{ base: 'column', md: 'row' }}
                         >
-                          {currentUser.role === 'superAdmin' ||
-                          currentUser.role === 'admin' ? (
-                            <>
-                              <Button
-                                as={Link}
-                                to={`/admin/products/catalogue/edit/${id}`}
-                                colorScheme="teal"
-                                mr="10px"
-                              >
-                                Update
-                              </Button>
-                              <Button colorScheme="red" onClick={onOpen}>
-                                Delete
-                              </Button>
-                            </>
-                          ) : (
-                            ''
-                          )}
-                        </Stack>
-                      </Box>
-                    </Flex>
-                  )}
-                </Box>
-              </Center>
-            </Flex>
-          </Grid>
+                          <Avatar
+                            size="xl"
+                            name={product.name || ''}
+                            src={product.avatarUrl || ''}
+                            m={4}
+                          />
+                          <Box px={6} py={4}>
+                            <Grid templateColumns="repeat(2, 1fr)" gap={4}>
+                              <Text>Name</Text>
+                              <Text fontWeight="bold">{product.name}</Text>
+
+                              {currentUser.role === 'superAdmin' ||
+                              currentUser.role === 'admin' ? (
+                                <>
+                                  <Text>Cost Price</Text>
+                                  <Text fontWeight="bold">
+                                    {product.costPrice}
+                                  </Text>
+                                </>
+                              ) : (
+                                ''
+                              )}
+                              <Text>Selling Price:</Text>
+                              <Text fontWeight="bold">
+                                {product.sellingPrice}
+                              </Text>
+                              <Text>Discount Price:</Text>
+                              <Text fontWeight="bold">
+                                {product.discount ? product.discount : 'None'}
+                              </Text>
+                              <Text>Quantity:</Text>
+                              <Text fontWeight="bold">{product.quantity}</Text>
+                              <Text>Brand:</Text>
+                              <Text fontWeight="bold">
+                                {product.brand?.name}
+                              </Text>
+                              <Text>Category:</Text>
+                              <Text fontWeight="bold">
+                                {product.categoryId?.title}
+                              </Text>
+                              {product.description && (
+                                <Box>
+                                  <Text
+                                    color={textColor}
+                                    fontSize="lg"
+                                    mb="10px"
+                                  >
+                                    <Flex gap={4}>Description: </Flex>
+
+                                    <Flex>
+                                      {showFullDescription
+                                        ? product.description
+                                        : `${product.description.substring(
+                                            0,
+                                            100
+                                          )}...`}
+                                      {product.description.length > 100 && (
+                                        <Button onClick={toggleDescription}>
+                                          {showFullDescription
+                                            ? 'View Less'
+                                            : 'View More'}
+                                        </Button>
+                                      )}
+                                    </Flex>
+                                  </Text>
+                                </Box>
+                              )}
+                            </Grid>
+
+                            {/* Specifications Section */}
+                            {product.specifications &&
+                              product.specifications.length > 0 && (
+                                <Box>
+                                  <Text
+                                    color={textColor}
+                                    fontSize="lg"
+                                    mb="10px"
+                                  >
+                                    Specifications:
+                                  </Text>
+                                  <List>
+                                    {product.specifications.map(
+                                      (variation, index) => (
+                                        <ListItem key={index}>
+                                          <strong>{variation.name}:</strong>{' '}
+                                          {variation.values.join(', ')}
+                                        </ListItem>
+                                      )
+                                    )}
+                                  </List>
+                                </Box>
+                              )}
+
+                            <Stack
+                              spacing={4}
+                              direction="row"
+                              alignItems="center"
+                              justifyContent="space-between"
+                              mt={4}
+                            >
+                              {currentUser.role === 'superAdmin' ||
+                              currentUser.role === 'admin' ? (
+                                <>
+                                  <Button
+                                    as={Link}
+                                    to={`/admin/products/catalogue/edit/${id}`}
+                                    colorScheme="teal"
+                                    mr="10px"
+                                  >
+                                    Update
+                                  </Button>
+                                  <Button colorScheme="red" onClick={onOpen}>
+                                    Delete
+                                  </Button>
+                                </>
+                              ) : (
+                                ''
+                              )}
+                            </Stack>
+                          </Box>
+                        </Flex>
+                      )}
+                    </Box>
+                  </Center>
+                </Flex>
+              </Grid>
+            </>
+          )}
         </Card>
       </Grid>
       {/* Delete Confirmation Dialog */}

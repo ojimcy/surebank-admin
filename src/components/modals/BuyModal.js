@@ -13,6 +13,7 @@ import {
 import { useAppContext } from 'contexts/AppContext';
 import { formatNaira } from 'utils/helper';
 import { useHistory } from 'react-router-dom';
+import axiosService from 'utils/axiosService';
 const BuyModal = ({ isOpen, onClose, packageData }) => {
   const history = useHistory();
   const [loading, setLoading] = useState(false);
@@ -22,10 +23,27 @@ const BuyModal = ({ isOpen, onClose, packageData }) => {
   // Access the app context
   const { setSelectedPackage } = useAppContext();
 
-  const handleCheckout = async () => {
+  // Function to add the product to the cart
+  const addToCart = async (packageData) => {
+    try {
+      const { product } = packageData;
+      const { productCatalogueId, sellingPrice } = product;
+
+      await axiosService.post('/cart', {
+        productCatalogueId,
+        sellingPrice,
+        quantity: 1,
+      });
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+    }
+  };
+
+  const handleAddToCart = async () => {
     try {
       setLoading(true);
 
+      await addToCart(packageData);
       setSelectedPackage(packageData);
 
       history.push('/admin/order/placeorder');
@@ -49,6 +67,7 @@ const BuyModal = ({ isOpen, onClose, packageData }) => {
               <Text>
                 Price: {formatNaira(packageData.product.sellingPrice)}
               </Text>
+              <Text>Quantity: 1</Text>
 
               {packageData.product.description && (
                 <>
@@ -88,9 +107,9 @@ const BuyModal = ({ isOpen, onClose, packageData }) => {
             h="50"
             mb="24px"
             isLoading={loading}
-            onClick={handleCheckout} // Call the handleCheckout function on button click
+            onClick={handleAddToCart}
           >
-            Checkout
+            Proceed
           </Button>
         </ModalBody>
       </ModalContent>
