@@ -86,10 +86,7 @@ function PlaceOrder() {
         },
         createdBy: customerData.id,
         paymentMethod,
-        itemsPrice:
-          selectedPackage.product.sellingPrice * selectedPackage.quantity,
-        deliveryPrice: selectedPackage.delivery || 0,
-        totalPrice: selectedPackage.salesPrice,
+        packageId: selectedPackage.id,
       };
 
       // Submit order
@@ -106,131 +103,132 @@ function PlaceOrder() {
   return (
     <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
       <BackButton />
-      <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} mt={8}>
+      <SimpleGrid columns={{ base: 1 }} spacing={4} mt={8}>
+        {/* Left Section: Shipping Address */}
         <Box>
-          {/* Left Section: Shipping Address */}
-          <Box>
-            <List spacing={3}>
-              <ListItem>
-                <Heading as="h2" size="lg">
-                  Shipping Information
-                </Heading>
-              </ListItem>
-              <FormControl id="deliveryMethod" mt={2}>
-                <FormLabel>Delivery Method</FormLabel>
-                <RadioGroup
-                  defaultValue={shippingInfo.deliveryMethod}
-                  onChange={(value) =>
-                    setShippingInfo((prev) => ({
-                      ...prev,
-                      deliveryMethod: value,
-                    }))
-                  }
-                >
-                  <Stack direction="row">
-                    <Radio value="pickup">Pickup Station</Radio>
-                    <Radio value="homeDelivery">Home Delivery</Radio>
-                  </Stack>
-                </RadioGroup>
-              </FormControl>
-              {shippingInfo.deliveryMethod === 'homeDelivery' && (
-                <>
-                  <FormControl id="fullName" mt={2}>
-                    <FormLabel>Full Name</FormLabel>
-                    <Input
-                      type="text"
-                      value={shippingInfo.fullName}
-                      onChange={(e) =>
-                        setShippingInfo((prev) => ({
-                          ...prev,
-                          fullName: e.target.value,
-                        }))
-                      }
-                    />
-                  </FormControl>
-                  <FormControl id="phoneNumber" mt={2}>
-                    <FormLabel>Phone Number</FormLabel>
-                    <Input
-                      type="tel"
-                      value={shippingInfo.phoneNumber}
-                      onChange={(e) =>
-                        setShippingInfo((prev) => ({
-                          ...prev,
-                          phoneNumber: e.target.value,
-                        }))
-                      }
-                    />
-                  </FormControl>
-                  <FormControl id="address" mt={2}>
-                    <FormLabel>Address</FormLabel>
-                    <Input
-                      type="text"
-                      value={shippingInfo.address}
-                      onChange={(e) =>
-                        setShippingInfo((prev) => ({
-                          ...prev,
-                          address: e.target.value,
-                        }))
-                      }
-                    />
-                  </FormControl>
-                  <FormControl id="city" mt={2}>
-                    <FormLabel>City</FormLabel>
-                    <Input
-                      type="text"
-                      value={shippingInfo.city}
-                      onChange={(e) =>
-                        setShippingInfo((prev) => ({
-                          ...prev,
-                          city: e.target.value,
-                        }))
-                      }
-                    />
-                  </FormControl>
-                  <FormControl id="state" mt={2}>
-                    <FormLabel>State</FormLabel>
-                    <Input
-                      type="text"
-                      value={shippingInfo.state}
-                      onChange={(e) =>
-                        setShippingInfo((prev) => ({
-                          ...prev,
-                          state: e.target.value,
-                        }))
-                      }
-                    />
-                  </FormControl>
-                </>
-              )}
-            </List>
-          </Box>
-
-          {/* Left Section: Payment Method */}
-          <Box mt={6}>
-            <List spacing={3}>
-              <ListItem>
-                <Heading as="h2" size="lg">
-                  Payment Method
-                </Heading>
-              </ListItem>
-              <FormControl id="paymentMethod" mt={2}>
-                <FormLabel>Select Payment Method</FormLabel>
-                <RadioGroup
-                  defaultValue={paymentMethod}
-                  onChange={(value) => setPaymentMethod(value)}
-                >
-                  <Stack direction="row">
-                    <Radio value="sbBalance">SB Balance</Radio>
-                    <Radio value="card">Card</Radio>
-                    <Radio value="transfer">Transfer</Radio>
-                  </Stack>
-                </RadioGroup>
-              </FormControl>
-            </List>
-          </Box>
+          <List spacing={3}>
+            <ListItem>
+              <Heading as="h2" size="lg">
+                Shipping Information
+              </Heading>
+            </ListItem>
+            <FormControl id="deliveryMethod" mt={2}>
+              <FormLabel>Delivery Method</FormLabel>
+              <RadioGroup
+                defaultValue={shippingInfo?.deliveryMethod}
+                onChange={(value) =>
+                  setShippingInfo((prev) => ({
+                    ...prev,
+                    deliveryMethod: value,
+                  }))
+                }
+              >
+                <Stack direction="column">
+                  <Radio value="pickup">Pickup Station</Radio>
+                  <Radio value="homeDelivery">Home Delivery</Radio>
+                </Stack>
+              </RadioGroup>
+            </FormControl>
+            {shippingInfo.deliveryMethod === 'homeDelivery' && (
+              <>
+                <FormControl id="fullName" mt={2}>
+                  <FormLabel>Full Name</FormLabel>
+                  <Input
+                    type="text"
+                    value={shippingInfo.fullName}
+                    defaultValue={`${customerData.firstName} ${customerData.lastName}`}
+                    onChange={(e) =>
+                      setShippingInfo((prev) => ({
+                        ...prev,
+                        fullName: e.target.value,
+                      }))
+                    }
+                  />
+                </FormControl>
+                <FormControl id="phoneNumber" mt={2}>
+                  <FormLabel>Phone Number</FormLabel>
+                  <Input
+                    type="text"
+                    value={shippingInfo.phoneNumber}
+                    defaultValue={shippingInfo?.phoneNumber}
+                    onChange={(e) =>
+                      setShippingInfo((prev) => ({
+                        ...prev,
+                        phoneNumber: e.target.value,
+                      }))
+                    }
+                  />
+                </FormControl>
+                <FormControl id="address" mt={2}>
+                  <FormLabel>Address</FormLabel>
+                  <Input
+                    type="text"
+                    value={shippingInfo.address}
+                    defaultValue={shippingInfo?.address}
+                    onChange={(e) =>
+                      setShippingInfo((prev) => ({
+                        ...prev,
+                        address: e.target.value,
+                      }))
+                    }
+                  />
+                </FormControl>
+                <FormControl id="city" mt={2}>
+                  <FormLabel>City</FormLabel>
+                  <Input
+                    type="text"
+                    value={shippingInfo.city}
+                    onChange={(e) =>
+                      setShippingInfo((prev) => ({
+                        ...prev,
+                        city: e.target.value,
+                      }))
+                    }
+                  />
+                </FormControl>
+                <FormControl id="state" mt={2}>
+                  <FormLabel>State</FormLabel>
+                  <Input
+                    type="text"
+                    value={shippingInfo.state}
+                    onChange={(e) =>
+                      setShippingInfo((prev) => ({
+                        ...prev,
+                        state: e.target.value,
+                      }))
+                    }
+                  />
+                </FormControl>
+              </>
+            )}
+          </List>
         </Box>
-        {/* Right Section: Order Summary */}
-        <Box mt={8}>
+
+        {/* Left Section: Payment Method */}
+        <Box mt={6}>
+          <List spacing={3}>
+            <ListItem>
+              <Heading as="h2" size="lg">
+                Payment Method
+              </Heading>
+            </ListItem>
+            <FormControl id="paymentMethod" mt={2}>
+              <FormLabel>Select Payment Method</FormLabel>
+              <RadioGroup
+                defaultValue={paymentMethod}
+                onChange={(value) => setPaymentMethod(value)}
+              >
+                <Stack direction="column">
+                  <Radio value="sbBalance">SB Balance</Radio>
+                  <Radio value="card">Card</Radio>
+                  <Radio value="transfer">Transfer</Radio>
+                </Stack>
+              </RadioGroup>
+            </FormControl>
+          </List>
+        </Box>
+        {/*  Order Summary */}
+        <Box mt={6}>
           {selectedPackage && (
             <List spacing={3}>
               <ListItem>

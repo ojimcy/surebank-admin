@@ -14,14 +14,13 @@ import {
 } from '@chakra-ui/react';
 import { toast } from 'react-toastify';
 import { useForm } from 'react-hook-form';
-import { useParams, NavLink } from 'react-router-dom';
+import { useParams, NavLink, useHistory } from 'react-router-dom';
 
 import { useAuth } from 'contexts/AuthContext';
 import CreateAccountModal from 'components/modals/CreateAccountModal';
 import CreatePackageModal from 'components/modals/CreatePackageModal';
 import SbDepositModal from 'components/modals/SbDepositModal';
 import ChargeModal from 'components/modals/SbChargeModal';
-import BuyModal from 'components/modals/BuyModal';
 import ChangeProductModal from 'components/modals/ChangeProductModal';
 
 import axiosService from 'utils/axiosService';
@@ -35,6 +34,7 @@ import { useAppContext } from 'contexts/AppContext';
 
 const ViewCustomerSb = () => {
   const { id } = useParams();
+  const history = useHistory();
   const { currentUser } = useAuth();
   const { customerData, setCustomerData } = useAppContext();
   const { reset } = useForm();
@@ -48,7 +48,6 @@ const ViewCustomerSb = () => {
   const [sbDepositModal, setSbDepositModal] = useState(false);
   const [showMergeModal, setShowMergeModal] = useState(false);
   const [showChargeModal, setShowChargeModal] = useState(false);
-  const [buyModal, setBuyModal] = useState(false);
   const [changeProductModal, setChangeProductModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState(null);
@@ -69,7 +68,7 @@ const ViewCustomerSb = () => {
       }
     };
     fetchUserData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const fetchUserPackages = async () => {
@@ -147,21 +146,6 @@ const ViewCustomerSb = () => {
     showSbDepositModal();
   };
 
-  const showBuyModal = () => {
-    setBuyModal(true);
-    reset();
-  };
-
-  const closeBuyModal = () => {
-    setBuyModal(false);
-    reset();
-  };
-
-  const handleBuyModalOpen = (packageData) => {
-    setSelectedPackage(packageData);
-    showBuyModal();
-  };
-
   const handleShowMergeModal = () => {
     setShowMergeModal(true);
     reset();
@@ -200,6 +184,35 @@ const ViewCustomerSb = () => {
   const handleChangeProductModalOpen = (packageData) => {
     setSelectedPackage(packageData);
     showChangeProductModal();
+  };
+
+  // Function to add the product to the cart
+  const addToCart = async (packageData) => {
+    try {
+      const { product } = packageData;
+      const { productCatalogueId } = product;
+
+      await axiosService.post('/cart', {
+        productCatalogueId: productCatalogueId,
+        quantity: 1,
+      });
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+    }
+  };
+
+  const handleAddToCart = async (packageData) => {
+    try {
+      setLoading(true);
+      setSelectedPackage(packageData);
+      await addToCart(packageData);
+
+      history.push('/admin/order/placeorder');
+    } catch (error) {
+      console.error('Error during checkout:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -374,7 +387,7 @@ const ViewCustomerSb = () => {
                             <Button
                               colorScheme="blue"
                               size="sm"
-                              onClick={() => handleBuyModalOpen(packageData)}
+                              onClick={() => handleAddToCart(packageData)}
                             >
                               Buy
                             </Button>
@@ -430,11 +443,6 @@ const ViewCustomerSb = () => {
               isOpen={showChargeModal}
               onClose={closeChargeModal}
               packages={sbPackages}
-            />
-            <BuyModal
-              isOpen={buyModal}
-              onClose={closeBuyModal}
-              packageData={selectedPackage}
             />
             <ChangeProductModal
               isOpen={changeProductModal}
