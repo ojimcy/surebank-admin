@@ -11,7 +11,6 @@ import {
   FormLabel,
   useColorModeValue,
 } from '@chakra-ui/react';
-import ReactSelect from 'react-select';
 import { useForm, Controller } from 'react-hook-form';
 import CustomSelect from 'components/dataDispaly/CustomSelect';
 

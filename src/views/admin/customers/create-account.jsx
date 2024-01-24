@@ -13,8 +13,6 @@ import {
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 
-// Custom components
-import ReactSelect from 'react-select';
 
 // Assets
 import Card from 'components/card/Card.js';
