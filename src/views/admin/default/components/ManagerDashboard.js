@@ -23,6 +23,8 @@ export default function ManagerDashboard() {
 
   const [contributionsDailyTotal, setContributionDailyTotal] = useState([]);
   const [dailySavingsWithdrawals, setDailySavingsWithdrawals] = useState([]);
+  const [sbDailyTotal, setSbDailyTotal] = useState([]);
+  const [dsDailyTotal, setDsDailyTotal] = useState([]);
   const [openPackageCount, setOpenPackageCount] = useState(0);
   const [staffInfo, setStaffInfo] = useState({});
   const [loading, setLoading] = useState(true);
@@ -69,19 +71,32 @@ export default function ManagerDashboard() {
         const endDate = new Date();
         endDate.setHours(23, 59, 59, 999);
         const endTimeStamp = endDate.getTime();
-        const [contributionResponse, withdrawalResponse, accountResponse] =
-          await Promise.all([
-            axiosService.get(
-              `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&branchId=${staffInfo.branchId}`
-            ),
-            axiosService.get(
-              `/transactions/withdraw/cash?startDate=${startTimeStamp}&endDate=${endTimeStamp}&branchId=${staffInfo.branchId}`
-            ),
-            axiosService.get(`accounts?branchId=${staffInfo.branchId}`),
-          ]);
+        const [
+          contributionResponse,
+          dsResponse,
+          sbResponse,
+          withdrawalResponse,
+          accountResponse,
+        ] = await Promise.all([
+          axiosService.get(
+            `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&branchId=${staffInfo.branchId}`
+          ),
+          axiosService.get(
+            `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&branchId=${staffInfo.branchId}&narration=Daily contribution`
+          ),
+          axiosService.get(
+            `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&branchId=${staffInfo.branchId}&narration=SB contribution`
+          ),
+          axiosService.get(
+            `/transactions/withdraw/cash?startDate=${startTimeStamp}&endDate=${endTimeStamp}&branchId=${staffInfo.branchId}`
+          ),
+          axiosService.get(`accounts?branchId=${staffInfo.branchId}`),
+        ]);
 
         if (isMounted.current) {
           setContributionDailyTotal(contributionResponse.data);
+          setDsDailyTotal(dsResponse.data);
+          setSbDailyTotal(sbResponse.data);
           setDailySavingsWithdrawals(withdrawalResponse.data.totalAmount);
           setOpenPackageCount(accountResponse.data.totalResults);
           setLoading(false);
@@ -185,6 +200,52 @@ export default function ManagerDashboard() {
                     }
                     name="Active customers"
                     value={openPackageCount && openPackageCount}
+                  />
+                </Flex>
+                
+                <Flex
+                  direction={{ base: 'column', md: 'row' }}
+                  justifyContent="space-between"
+                  mt="40px"
+                >
+                  <MiniStatistics
+                    startContent={
+                      <IconBox
+                        w="56px"
+                        h="56px"
+                        bg={boxBg}
+                        icon={
+                          <Icon
+                            w="32px"
+                            h="32px"
+                            as={MdAttachMoney}
+                            color={brandColor}
+                          />
+                        }
+                      />
+                    }
+                    name="Total SB Contributions"
+                    value={formatNaira(sbDailyTotal)}
+                  />
+
+                  <MiniStatistics
+                    startContent={
+                      <IconBox
+                        w="56px"
+                        h="56px"
+                        bg={boxBg}
+                        icon={
+                          <Icon
+                            w="32px"
+                            h="32px"
+                            as={MdAttachMoney}
+                            color={brandColor}
+                          />
+                        }
+                      />
+                    }
+                    name="Total DS Contributions"
+                    value={formatNaira(dsDailyTotal || 0)}
                   />
                 </Flex>
               </Card>

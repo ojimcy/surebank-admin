@@ -30,6 +30,8 @@ export default function UserRepsDashboard() {
 
   const [loading, setLoading] = useState(false);
   const [contributionsDailyTotal, setContributionDailyTotal] = useState([]);
+  const [sbDailyTotal, setSbDailyTotal] = useState([]);
+  const [dsDailyTotal, setDsDailyTotal] = useState([]);
   const [dailySavingsWithdrawals, setDailySavingsWithdrawals] = useState([]);
   const [openPackageCount, setOpenPackageCount] = useState(0);
 
@@ -55,6 +57,16 @@ export default function UserRepsDashboard() {
           `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}`
         );
         setContributionDailyTotal(contributionResponse.data);
+
+        const dsResponse = await axiosService.get(
+          `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&narration='Daily contribution`
+        );
+        setDsDailyTotal(dsResponse.data);
+
+        const sbResponse = await axiosService.get(
+          `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&narration='SB contribution`
+        );
+        setSbDailyTotal(sbResponse.data);
 
         // API call to get total daily withdrawals for today
         const withdrawalResponse = await axiosService.get(
@@ -171,6 +183,52 @@ export default function UserRepsDashboard() {
                     }
                     name="Active customers"
                     value={openPackageCount && openPackageCount}
+                  />
+                </Flex>
+                <Flex
+                  direction={{ base: 'column', md: 'row' }}
+                  justifyContent="space-between"
+                  mt="30px"
+                >
+                  <MiniStatistics
+                    startContent={
+                      <IconBox
+                        w="56px"
+                        h="56px"
+                        bg={boxBg}
+                        icon={
+                          <Icon
+                            w="32px"
+                            h="32px"
+                            as={MdAttachMoney}
+                            color={brandColor}
+                          />
+                        }
+                      />
+                    }
+                    // growth="+23%"
+                    name="Total DS contributions"
+                    value={formatNaira(dsDailyTotal)}
+                  />
+
+                  <MiniStatistics
+                    startContent={
+                      <IconBox
+                        w="56px"
+                        h="56px"
+                        bg={boxBg}
+                        icon={
+                          <Icon
+                            w="32px"
+                            h="32px"
+                            as={MdAttachMoney}
+                            color={brandColor}
+                          />
+                        }
+                      />
+                    }
+                    name="Total SB Contributions"
+                    value={formatNaira(sbDailyTotal)}
                   />
                 </Flex>
               </Card>

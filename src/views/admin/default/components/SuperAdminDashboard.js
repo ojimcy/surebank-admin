@@ -27,10 +27,11 @@ export default function SuperAdminDashboard() {
   const boxBg = useColorModeValue('secondaryGray.300', 'whiteAlpha.100');
 
   const [contributionsDailyTotal, setContributionDailyTotal] = useState([]);
+  const [sbDailyTotal, setSbDailyTotal] = useState([]);
+  const [dsDailyTotal, setDsDailyTotal] = useState([]);
   const [totalContributions, setTotalContributions] = useState(0);
   const [dailySavingsWithdrawals, setDailySavingsWithdrawals] = useState([]);
   const [openPackageCount, setOpenPackageCount] = useState(0);
-  const [closedPackages, setClosedPackages] = useState(0);
   const [loading, setLoading] = useState(true);
 
   const fetchDashboardData = useCallback(async () => {
@@ -48,6 +49,8 @@ export default function SuperAdminDashboard() {
       const [
         totalContributionResponse,
         contributionResponse,
+        sbResponse,
+        dsResponse,
         withdrawalResponse,
       ] = await Promise.all([
         axiosService.get(`/reports/total-contributions`),
@@ -55,21 +58,27 @@ export default function SuperAdminDashboard() {
           `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}`
         ),
         axiosService.get(
+          `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&narration=SB contribution`
+        ),
+        axiosService.get(
+          `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&narration=Daily contribution`
+        ),
+        axiosService.get(
           `/transactions/withdraw/cash?startDate=${startTimeStamp}&endDate=${endTimeStamp}`
         ),
       ]);
       setTotalContributions(totalContributionResponse.data);
       setContributionDailyTotal(contributionResponse.data);
+      setSbDailyTotal(sbResponse.data);
+      setDsDailyTotal(dsResponse.data);
       setDailySavingsWithdrawals(withdrawalResponse.data.totalAmount);
 
       // Fetch total open and closed packages
-      const [openPackages, closedPackagesResponse] = await Promise.all([
+      const [openPackages] = await Promise.all([
         axiosService.get('/reports/packages?status=open'),
-        axiosService.get('/reports/packages?status=closed'),
       ]);
 
       setOpenPackageCount(openPackages.data.totalResults);
-      setClosedPackages(closedPackagesResponse.data.totalResults);
     } catch (error) {
       console.error(error);
       toast.error(error.response?.data?.message || 'An error occurred');
@@ -141,6 +150,47 @@ export default function SuperAdminDashboard() {
               name="Total Daily contributions"
               value={formatNaira(contributionsDailyTotal)}
             />
+            <MiniStatistics
+              startContent={
+                <IconBox
+                  w="56px"
+                  h="56px"
+                  bg={boxBg}
+                  icon={
+                    <Icon
+                      w="32px"
+                      h="32px"
+                      as={MdAttachMoney}
+                      color={brandColor}
+                    />
+                  }
+                />
+              }
+              // growth="+23%"
+              name="Total DS contributions"
+              value={formatNaira(dsDailyTotal)}
+            />
+
+            <MiniStatistics
+              startContent={
+                <IconBox
+                  w="56px"
+                  h="56px"
+                  bg={boxBg}
+                  icon={
+                    <Icon
+                      w="32px"
+                      h="32px"
+                      as={MdAttachMoney}
+                      color={brandColor}
+                    />
+                  }
+                />
+              }
+              // growth="+23%"
+              name="Total SB contributions"
+              value={formatNaira(sbDailyTotal)}
+            />
 
             <MiniStatistics
               startContent={
@@ -175,21 +225,6 @@ export default function SuperAdminDashboard() {
               }
               name="Active Packages"
               value={openPackageCount && openPackageCount}
-            />
-
-            <MiniStatistics
-              startContent={
-                <IconBox
-                  w="56px"
-                  h="56px"
-                  bg={boxBg}
-                  icon={
-                    <Icon w="32px" h="32px" as={MdPerson} color={brandColor} />
-                  }
-                />
-              }
-              name="Closed Packages"
-              value={closedPackages && closedPackages}
             />
           </SimpleGrid>
 
