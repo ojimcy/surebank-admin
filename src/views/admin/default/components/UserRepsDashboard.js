@@ -165,7 +165,7 @@ export default function UserRepsDashboard() {
               <Flex
                 direction={{ base: 'column', md: 'row' }}
                 justifyContent="space-between"
-                mt="40px"
+                mt="10px"
               >
                 <MiniStatistics
                   startContent={

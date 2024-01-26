@@ -177,20 +177,20 @@ export default function Withdrawals() {
   const columns = React.useMemo(
     () => [
       {
-        Header: 'Narration',
-        accessor: 'narration',
-      },
-      {
-        Header: 'Amount',
-        accessor: 'amount',
-      },
-      {
         Header: 'Sales Rep',
         accessor: (row) => (
           <NavLink to={`/admin/user/${row.createdBy?._id}`}>
             {row.createdBy?.firstName} {row.createdBy?.lastName}
           </NavLink>
         ),
+      },
+      {
+        Header: 'Amount',
+        accessor: 'amount',
+      },
+      {
+        Header: 'Narration',
+        accessor: 'narration',
       },
       {
         Header: 'Status',
