@@ -31,9 +31,8 @@ import { useHistory, NavLink, Link } from 'react-router-dom';
 // Assets
 import axiosService from 'utils/axiosService';
 import Card from 'components/card/Card.js';
-import { DeleteIcon, EditIcon, SearchIcon } from '@chakra-ui/icons';
+import { EditIcon, SearchIcon } from '@chakra-ui/icons';
 import BackButton from 'components/menu/BackButton';
-import { toast } from 'react-toastify';
 import { useForm } from 'react-hook-form';
 import { useAuth } from 'contexts/AuthContext';
 import CustomTable from 'components/table/CustomTable';
@@ -47,10 +46,8 @@ export default function Customers() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredCustomers, setFilteredCustomers] = useState([]);
 
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showBranchModal, setShowBranchModal] = useState(false);
   const [allBranch, setAllBranch] = useState([]);
-  const [customerToDelete, setCustomerToDelete] = useState(null);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 20,
@@ -114,34 +111,6 @@ export default function Customers() {
     });
     setFilteredCustomers(filtered);
   }, [searchTerm, customers]);
-
-  const handleDeleteIconClick = (userId) => {
-    setCustomerToDelete(userId);
-    setShowDeleteModal(true);
-  };
-
-  const handleDeleteConfirm = () => {
-    if (customerToDelete) {
-      handleDeleteCustomer(customerToDelete);
-      setShowDeleteModal(false);
-    }
-  };
-
-  const handleDeleteCancel = () => {
-    setShowDeleteModal(false);
-  };
-
-  // Function to handle customer deletion
-  const handleDeleteCustomer = async (userId) => {
-    try {
-      await axiosService.delete(`/accounts/${userId}`);
-      toast.success('Customer deleted successfully!');
-      fetchAccounts();
-    } catch (error) {
-      console.error(error);
-      toast.error(error.response?.data?.message || 'An error occurred');
-    }
-  };
 
   const openbranchcustomermodal = () => {
     setShowBranchModal(true);
@@ -210,13 +179,6 @@ export default function Customers() {
                     aria-label="Edit user"
                   />
                 </NavLink>
-                {/* Delete user icon */}
-                <IconButton
-                  icon={<DeleteIcon />}
-                  colorScheme="red"
-                  aria-label="Delete user"
-                  onClick={() => handleDeleteIconClick(row.id)}
-                />
               </>
             ) : (
               <NavLink
@@ -337,24 +299,6 @@ export default function Customers() {
           </Box>
         </Card>
       </Grid>
-
-      {/* Delete confirmation modal */}
-      <Modal isOpen={showDeleteModal} onClose={handleDeleteCancel}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Delete Customer</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>Are you sure you want to delete this customer?</ModalBody>
-          <ModalFooter>
-            <Button colorScheme="red" mr={3} onClick={handleDeleteConfirm}>
-              Delete
-            </Button>
-            <Button variant="ghost" onClick={handleDeleteCancel}>
-              Cancel
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
 
       {/* Select branch modal */}
       <Modal isOpen={showBranchModal} onClose={closebranchcustomermodal}>

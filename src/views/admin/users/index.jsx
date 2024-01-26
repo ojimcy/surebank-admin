@@ -10,13 +10,6 @@ import {
   FormControl,
   Input,
   IconButton,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
@@ -26,8 +19,7 @@ import { NavLink } from 'react-router-dom';
 // Assets
 import axiosService from 'utils/axiosService';
 import Card from 'components/card/Card.js';
-import { DeleteIcon, EditIcon, SearchIcon } from '@chakra-ui/icons';
-import { toast } from 'react-toastify';
+import {  EditIcon, SearchIcon } from '@chakra-ui/icons';
 import BackButton from 'components/menu/BackButton';
 import axios from 'axios';
 import CustomTable from 'components/table/CustomTable';
@@ -43,8 +35,6 @@ export default function Users() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredUsers, setFilteredUsers] = useState([]);
 
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [userToDelete, setUserToDelete] = useState(null);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 20,
@@ -87,35 +77,6 @@ export default function Users() {
     setFilteredUsers(filtered);
   }, [searchTerm, users]);
 
-  const handleDeleteIconClick = (userId) => {
-    setUserToDelete(userId);
-    setShowDeleteModal(true);
-  };
-
-  const handleDeleteConfirm = () => {
-    if (userToDelete) {
-      handleDeleteUser(userToDelete);
-      setShowDeleteModal(false);
-    }
-  };
-
-  const handleDeleteCancel = () => {
-    setShowDeleteModal(false);
-  };
-
-  // Function to handle user deletion
-  const handleDeleteUser = async (userId) => {
-    try {
-      await axiosService.delete(`/users/${userId}`);
-      toast.success('User deleted successfully!');
-      // After successful deletion, refetch the users to update the list
-      fetchUsers();
-    } catch (error) {
-      console.error(error);
-      toast.error(error.response?.data?.message || 'An error occurred');
-    }
-  };
-
   // Columns for the user table
   const columns = React.useMemo(
     () => [
@@ -153,13 +114,6 @@ export default function Users() {
                     aria-label="Edit user"
                   />
                 </NavLink>
-                {/* Delete user icon */}
-                <IconButton
-                  icon={<DeleteIcon />}
-                  colorScheme="red"
-                  aria-label="Delete user"
-                  onClick={() => handleDeleteIconClick(row.id)}
-                />
               </>
             ) : (
               <NavLink to={`/admin/customer/${row.id}`}>Details</NavLink>
@@ -235,23 +189,6 @@ export default function Users() {
           </Box>
         </Card>
       </Grid>
-      {/* Delete confirmation modal */}
-      <Modal isOpen={showDeleteModal} onClose={handleDeleteCancel}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Delete User</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>Are you sure you want to delete this user?</ModalBody>
-          <ModalFooter>
-            <Button colorScheme="red" mr={3} onClick={handleDeleteConfirm}>
-              Delete
-            </Button>
-            <Button variant="ghost" onClick={handleDeleteCancel}>
-              Cancel
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
     </Box>
   );
 }
