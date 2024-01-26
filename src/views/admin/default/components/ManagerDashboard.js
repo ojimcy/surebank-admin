@@ -63,6 +63,7 @@ export default function ManagerDashboard() {
 
   const fetchData = async () => {
     try {
+      setLoading(true);
       if (staffInfo.branchId) {
         const startDate = new Date();
         startDate.setHours(0, 0, 0, 0);
@@ -206,7 +207,7 @@ export default function ManagerDashboard() {
                 <Flex
                   direction={{ base: 'column', md: 'row' }}
                   justifyContent="space-between"
-                  mt="40px"
+                  mt="20px"
                 >
                   <MiniStatistics
                     startContent={

@@ -36,6 +36,7 @@ export default function SuperAdminDashboard() {
 
   const fetchDashboardData = useCallback(async () => {
     try {
+      setLoading(true)
       // Get today's date at 00:00 and convert to timestamp
       const startDate = new Date();
       startDate.setHours(0, 0, 0, 0);

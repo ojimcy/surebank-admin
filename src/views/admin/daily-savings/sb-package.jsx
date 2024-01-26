@@ -31,6 +31,7 @@ import { ChevronDownIcon } from '@chakra-ui/icons';
 import BackButton from 'components/menu/BackButton';
 import LoadingSpinner from 'components/scroll/LoadingSpinner';
 import { useAppContext } from 'contexts/AppContext';
+import RecentTransactions from 'components/transactions/RecentTransactions';
 
 const ViewCustomerSb = () => {
   const { id } = useParams();
@@ -52,47 +53,42 @@ const ViewCustomerSb = () => {
   const [loading, setLoading] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState(null);
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        setLoading(true);
-        const accountResponse = await axiosService.get(
-          `/accounts/${id}?accountType=sb`
-        );
-        setCustomerData(accountResponse.data);
-      } catch (error) {
-        console.error(error);
-        setCustomerData(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchUserData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
+  const fetchUserData = async () => {
+    try {
+      setLoading(true);
+      const accountResponse = await axiosService.get(
+        `/accounts/${id}?accountType=sb`
+      );
+      setCustomerData(accountResponse.data);
+    } catch (error) {
+      console.error(error);
+      setCustomerData(null);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchUserPackages = async () => {
-    if (customerData) {
-      try {
-        let userIdToFetch = id;
-        if (currentUser && currentUser.role === 'user') {
-          userIdToFetch = currentUser.id;
-        }
-
-        const response = await axiosService.get(
-          `daily-savings/sb/package?userId=${userIdToFetch}`
-        );
-        setSbPackages(response.data);
-      } catch (error) {
-        console.error(error);
+    try {
+      let userIdToFetch = id;
+      if (currentUser && currentUser.role === 'user') {
+        userIdToFetch = currentUser.id;
       }
+
+      const response = await axiosService.get(
+        `daily-savings/sb/package?userId=${userIdToFetch}`
+      );
+      setSbPackages(response.data);
+    } catch (error) {
+      console.error(error);
     }
   };
 
   useEffect(() => {
+    fetchUserData();
     fetchUserPackages();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentUser, customerData, id]);
+  }, [id, currentUser]);
 
   const handleMerge = async (fromPackage, toPackage) => {
     try {
@@ -189,24 +185,28 @@ const ViewCustomerSb = () => {
   // Function to add the product to the cart
   const addToCart = async (packageData) => {
     try {
-      const { product } = packageData;
-      const { productCatalogueId } = product;
-
+      const productCatalogueId = packageData.product.id;
       await axiosService.post('/cart', {
         productCatalogueId: productCatalogueId,
         quantity: 1,
       });
+
+      toast.success('Item added to cart successfully!');
     } catch (error) {
       console.error('Error adding to cart:', error);
+      toast.error('Failed to add item to cart. Please try again later.');
     }
   };
 
   const handleAddToCart = async (packageData) => {
     try {
       setLoading(true);
-      setSelectedPackage(packageData);
-      await addToCart(packageData);
+      if (packageData) {
+        setSelectedPackage(packageData);
+        await addToCart(packageData);
+      }
 
+      // Redirect to the cart page
       history.push('/admin/order/placeorder');
     } catch (error) {
       console.error('Error during checkout:', error);
@@ -361,7 +361,7 @@ const ViewCustomerSb = () => {
                       </Button>
                       <Button
                         colorScheme="green"
-                        size="md"
+                        size={{ md: 'md', sm: 'sm' }}
                         onClick={() =>
                           handleChangeProductModalOpen(packageData)
                         }
@@ -419,6 +419,9 @@ const ViewCustomerSb = () => {
                 )}
               </Flex>
             )}
+
+            <RecentTransactions />
+
             <CreateAccountModal
               isOpen={showAccountModal}
               onClose={closeAccountModal}

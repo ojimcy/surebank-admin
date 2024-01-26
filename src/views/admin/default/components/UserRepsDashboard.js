@@ -30,6 +30,7 @@ export default function UserRepsDashboard() {
   const staffId = currentUser.id;
 
   useEffect(() => {
+    setLoading(true)
     const fetchData = async () => {
       try {
         const startDate = new Date();

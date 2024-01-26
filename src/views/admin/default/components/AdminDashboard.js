@@ -41,6 +41,7 @@ export default function UserRepsDashboard() {
 
   useEffect(() => {
     try {
+      setLoading(true)
       const fetchTotalContributions = async () => {
         // Get today's date at 00:00 and convert to timestamp
         const startDate = new Date();

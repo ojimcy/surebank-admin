@@ -5,7 +5,7 @@ import {
   List,
   ListItem,
   Button,
-  SimpleGrid,
+  GridItem,
   Grid,
   Input,
   FormControl,
@@ -13,17 +13,24 @@ import {
   RadioGroup,
   Stack,
   Radio,
-  Alert,
-  AlertIcon,
-  AlertTitle,
+  Table,
+  Thead,
+  Tbody,
+  Td,
+  Th,
+  Tr,
 } from '@chakra-ui/react';
 import BackButton from 'components/menu/BackButton';
 import { useAppContext } from 'contexts/AppContext';
 import { formatNaira } from 'utils/helper';
 import axiosService from 'utils/axiosService';
+import { useAuth } from 'contexts/AuthContext';
+import { toast } from 'react-toastify';
+import Card from 'components/card/Card';
 
 function PlaceOrder() {
-  const { customerData, selectedPackage } = useAppContext();
+  const { currentUser } = useAuth();
+  const { customerData } = useAppContext();
   const [cartItems, setCartItems] = useState([]);
   const [shippingInfo, setShippingInfo] = useState({
     fullName: '',
@@ -34,7 +41,6 @@ function PlaceOrder() {
     deliveryMethod: 'pickup',
   });
   const [paymentMethod, setPaymentMethod] = useState('sbBalance');
-  const [orderError, setOrderError] = useState(null);
 
   useEffect(() => {
     // Fetch cart items
@@ -61,242 +67,276 @@ function PlaceOrder() {
           !shippingInfo.city ||
           !shippingInfo.state)
       ) {
-        setOrderError('Please fill in all fields for home delivery.');
+        toast.error('Please fill in all required fields for home delivery.');
+        return;
+      }
+
+      // Ensure that the cart items are available
+      if (!cartItems || cartItems.length === 0) {
+        toast.error('Your cart is empty. Add items before placing an order.');
         return;
       }
 
       // Construct order data
       const orderData = {
         orderItems: cartItems.map((item) => ({
-          productCatalogueId: item.product.id,
-          name: item.product.name,
+          productCatalogueId: item.productCatalogueId.id,
+          packageId: item.packageId,
+          name: item.productCatalogueId.name,
           quantity: item.quantity,
-          sellingPrice: item.product.sellingPrice,
-          image: item.product.image,
+          sellingPrice: item.sellingPrice,
+          image: item.productCatalogueId?.images[0],
         })),
         deliveryAddress: {
-          userId: customerData.id,
+          userId: customerData._id,
           fullName:
             shippingInfo.fullName ||
             `${customerData.firstName} ${customerData.lastName}`,
           phoneNumber: shippingInfo.phoneNumber || customerData.phoneNumber,
           address: shippingInfo.address || customerData.address,
-          city: shippingInfo.city,
-          state: shippingInfo.state,
+          city: shippingInfo.city || customerData.city,
+          state: shippingInfo.state || customerData.state,
         },
-        createdBy: customerData.id,
+        createdBy: currentUser.id,
         paymentMethod,
-        packageId: selectedPackage.id,
       };
+      console.log(orderData);
 
       // Submit order
-      const response = await axiosService.post('/orders', orderData);
+      await axiosService.post('/orders', orderData);
 
-      // Handle successful order placement (you can redirect or show a success message)
-      console.log('Order placed successfully:', response.data);
+      toast.success('Order placed successfully:');
     } catch (error) {
       console.error('Error during order placement:', error);
-      setOrderError('Error placing the order. Please try again.');
+      toast.error('Error placing the order. Please try again.');
     }
   };
-
   return (
     <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
       <BackButton />
-      <SimpleGrid columns={{ base: 1 }} spacing={4} mt={8}>
-        {/* Left Section: Shipping Address */}
-        <Box>
-          <List spacing={3}>
-            <ListItem>
-              <Heading as="h2" size="lg">
-                Shipping Information
-              </Heading>
-            </ListItem>
-            <FormControl id="deliveryMethod" mt={2}>
-              <FormLabel>Delivery Method</FormLabel>
-              <RadioGroup
-                defaultValue={shippingInfo?.deliveryMethod}
-                onChange={(value) =>
-                  setShippingInfo((prev) => ({
-                    ...prev,
-                    deliveryMethod: value,
-                  }))
-                }
-              >
-                <Stack direction="column">
-                  <Radio value="pickup">Pickup Station</Radio>
-                  <Radio value="homeDelivery">Home Delivery</Radio>
-                </Stack>
-              </RadioGroup>
-            </FormControl>
-            {shippingInfo.deliveryMethod === 'homeDelivery' && (
-              <>
-                <FormControl id="fullName" mt={2}>
-                  <FormLabel>Full Name</FormLabel>
-                  <Input
-                    type="text"
-                    value={shippingInfo.fullName}
-                    defaultValue={`${customerData.firstName} ${customerData.lastName}`}
-                    onChange={(e) =>
-                      setShippingInfo((prev) => ({
-                        ...prev,
-                        fullName: e.target.value,
-                      }))
-                    }
-                  />
-                </FormControl>
-                <FormControl id="phoneNumber" mt={2}>
-                  <FormLabel>Phone Number</FormLabel>
-                  <Input
-                    type="text"
-                    value={shippingInfo.phoneNumber}
-                    defaultValue={shippingInfo?.phoneNumber}
-                    onChange={(e) =>
-                      setShippingInfo((prev) => ({
-                        ...prev,
-                        phoneNumber: e.target.value,
-                      }))
-                    }
-                  />
-                </FormControl>
-                <FormControl id="address" mt={2}>
-                  <FormLabel>Address</FormLabel>
-                  <Input
-                    type="text"
-                    value={shippingInfo.address}
-                    defaultValue={shippingInfo?.address}
-                    onChange={(e) =>
-                      setShippingInfo((prev) => ({
-                        ...prev,
-                        address: e.target.value,
-                      }))
-                    }
-                  />
-                </FormControl>
-                <FormControl id="city" mt={2}>
-                  <FormLabel>City</FormLabel>
-                  <Input
-                    type="text"
-                    value={shippingInfo.city}
-                    onChange={(e) =>
-                      setShippingInfo((prev) => ({
-                        ...prev,
-                        city: e.target.value,
-                      }))
-                    }
-                  />
-                </FormControl>
-                <FormControl id="state" mt={2}>
-                  <FormLabel>State</FormLabel>
-                  <Input
-                    type="text"
-                    value={shippingInfo.state}
-                    onChange={(e) =>
-                      setShippingInfo((prev) => ({
-                        ...prev,
-                        state: e.target.value,
-                      }))
-                    }
-                  />
-                </FormControl>
-              </>
-            )}
-          </List>
-        </Box>
+      <Grid templateColumns={{ base: '1fr', md: '2fr 1fr' }} gap={4} mt={8}>
+        <GridItem>
+          <Box>
+            {/* Left Section: Shipping Address */}
+            <Card>
+              <Box>
+                <List spacing={3}>
+                  <ListItem>
+                    <Heading as="h2" size="lg">
+                      Shipping Information
+                    </Heading>
+                  </ListItem>
+                  <FormControl id="deliveryMethod" mt={2}>
+                    <FormLabel>Delivery Method</FormLabel>
+                    <RadioGroup
+                      defaultValue={shippingInfo?.deliveryMethod}
+                      onChange={(value) =>
+                        setShippingInfo((prev) => ({
+                          ...prev,
+                          deliveryMethod: value,
+                        }))
+                      }
+                    >
+                      <Stack direction="column">
+                        <Radio value="pickup">Pickup Station</Radio>
+                        <Radio value="homeDelivery">Home Delivery</Radio>
+                      </Stack>
+                    </RadioGroup>
+                  </FormControl>
+                  {shippingInfo.deliveryMethod === 'homeDelivery' && (
+                    <>
+                      <FormControl id="fullName" mt={2}>
+                        <FormLabel>Full Name</FormLabel>
+                        <Input
+                          type="text"
+                          value={shippingInfo.fullName}
+                          onChange={(e) =>
+                            setShippingInfo((prev) => ({
+                              ...prev,
+                              fullName: e.target.value,
+                            }))
+                          }
+                        />
+                      </FormControl>
+                      <FormControl id="phoneNumber" mt={2}>
+                        <FormLabel>Phone Number</FormLabel>
+                        <Input
+                          type="text"
+                          value={shippingInfo.phoneNumber}
+                          onChange={(e) =>
+                            setShippingInfo((prev) => ({
+                              ...prev,
+                              phoneNumber: e.target.value,
+                            }))
+                          }
+                        />
+                      </FormControl>
+                      <FormControl id="address" mt={2}>
+                        <FormLabel>Address</FormLabel>
+                        <Input
+                          type="text"
+                          value={shippingInfo.address}
+                          onChange={(e) =>
+                            setShippingInfo((prev) => ({
+                              ...prev,
+                              address: e.target.value,
+                            }))
+                          }
+                        />
+                      </FormControl>
+                      <FormControl id="city" mt={2}>
+                        <FormLabel>City</FormLabel>
+                        <Input
+                          type="text"
+                          value={shippingInfo.city}
+                          onChange={(e) =>
+                            setShippingInfo((prev) => ({
+                              ...prev,
+                              city: e.target.value,
+                            }))
+                          }
+                        />
+                      </FormControl>
+                      <FormControl id="state" mt={2}>
+                        <FormLabel>State</FormLabel>
+                        <Input
+                          type="text"
+                          value={shippingInfo.state}
+                          onChange={(e) =>
+                            setShippingInfo((prev) => ({
+                              ...prev,
+                              state: e.target.value,
+                            }))
+                          }
+                        />
+                      </FormControl>
+                    </>
+                  )}
+                </List>
+              </Box>
+            </Card>
 
-        {/* Left Section: Payment Method */}
-        <Box mt={6}>
-          <List spacing={3}>
-            <ListItem>
-              <Heading as="h2" size="lg">
-                Payment Method
-              </Heading>
-            </ListItem>
-            <FormControl id="paymentMethod" mt={2}>
-              <FormLabel>Select Payment Method</FormLabel>
-              <RadioGroup
-                defaultValue={paymentMethod}
-                onChange={(value) => setPaymentMethod(value)}
-              >
-                <Stack direction="column">
-                  <Radio value="sbBalance">SB Balance</Radio>
-                  <Radio value="card">Card</Radio>
-                  <Radio value="transfer">Transfer</Radio>
-                </Stack>
-              </RadioGroup>
-            </FormControl>
-          </List>
-        </Box>
-        {/*  Order Summary */}
-        <Box mt={6}>
-          {selectedPackage && (
-            <List spacing={3}>
-              <ListItem>
-                <Heading as="h2" size="lg">
-                  Order Summary
-                </Heading>
-              </ListItem>
-              <ListItem>
-                <Grid templateColumns="repeat(2, 1fr)" gap={4}>
-                  <Box>Item:</Box>
-                  <Box align="right">{selectedPackage?.product.name}</Box>
-                </Grid>
-              </ListItem>
-              <ListItem>
-                <Grid templateColumns="repeat(2, 1fr)" gap={4}>
-                  <Box>Price:</Box>
-                  <Box align="right">
-                    {formatNaira(selectedPackage?.product.sellingPrice)}
-                  </Box>
-                </Grid>
-              </ListItem>
-              <ListItem>
-                <Grid templateColumns="repeat(2, 1fr)" gap={4}>
-                  <Box>Quantity:</Box>
-                  <Box align="right">{selectedPackage.quantity}</Box>
-                </Grid>
-              </ListItem>
-              <ListItem>
-                <Grid templateColumns="repeat(2, 1fr)" gap={4}>
-                  <Box>Delivery:</Box>
-                  <Box align="right">
-                    {selectedPackage.delivery ? selectedPackage.delivery : 0}
-                  </Box>
-                </Grid>
-              </ListItem>
-              <ListItem>
-                <Grid templateColumns="repeat(2, 1fr)" gap={4}>
-                  <Box>
-                    <strong>Total:</strong>
-                  </Box>
-                  <Box align="right">
-                    <strong>{selectedPackage?.salesPrice}</strong>
-                  </Box>
-                </Grid>
-              </ListItem>
-              {orderError && (
-                <ListItem>
-                  <Alert status="error" variant="subtle">
-                    <AlertIcon />
-                    <AlertTitle mr={2}>{orderError}</AlertTitle>
-                  </Alert>
-                </ListItem>
-              )}
-              <ListItem>
-                <Button
-                  onClick={placeOrderHandler}
-                  colorScheme="teal"
-                  variant="solid"
-                  isFullWidth
-                  mt={4}
-                >
-                  Place Order
-                </Button>
-              </ListItem>
-            </List>
-          )}
-        </Box>
-      </SimpleGrid>
+            {/* Left Section: Payment Method */}
+            <Box mt={1} pb={5}>
+              <Card>
+                <List spacing={3}>
+                  <ListItem>
+                    <Heading as="h2" size="lg">
+                      Payment Method
+                    </Heading>
+                  </ListItem>
+                  <FormControl id="paymentMethod" mt={2}>
+                    <FormLabel>Select Payment Method</FormLabel>
+                    <RadioGroup
+                      defaultValue={paymentMethod}
+                      onChange={(value) => setPaymentMethod(value)}
+                    >
+                      <Stack direction="column">
+                        <Radio value="sbBalance">SB Balance</Radio>
+                        <Radio value="card">Card</Radio>
+                        <Radio value="transfer">Transfer</Radio>
+                      </Stack>
+                    </RadioGroup>
+                  </FormControl>
+                </List>
+              </Card>
+            </Box>
+
+            {/* Left Section: Order Items List */}
+            <Box mt={1} pb={5}>
+              <Card>
+                {cartItems && cartItems.length > 0 && (
+                  <>
+                    <Heading as="h2" size="lg">
+                      Order Items
+                    </Heading>
+                    <Table variant="simple">
+                      <Thead>
+                        <Tr>
+                          <Th>Image</Th>
+                          <Th>Name</Th>
+                          <Th>Quantity</Th>
+                          <Th>Price</Th>
+                        </Tr>
+                      </Thead>
+                      <Tbody>
+                        {cartItems.map((cartItem, index) => (
+                          <Tr key={index}>
+                            <Td>
+                              <img
+                                src={cartItem.productCatalogueId?.images[0]}
+                                alt={cartItem.productCatalogueId?.name}
+                                style={{ width: '50px', height: '50px' }}
+                              />
+                            </Td>
+                            <Td>{cartItem.productCatalogueId?.name}</Td>
+                            <Td>{cartItem?.quantity}</Td>
+                            <Td>{formatNaira(cartItem?.sellingPrice)}</Td>
+                          </Tr>
+                        ))}
+                      </Tbody>
+                    </Table>
+                  </>
+                )}
+              </Card>
+            </Box>
+          </Box>
+        </GridItem>
+
+        <GridItem>
+          {/*  Order Summary */}
+          <Card>
+            <Box mt={1}>
+              {cartItems &&
+                cartItems.map((cartItem, index) => (
+                  <List spacing={3} key={index}>
+                    <ListItem>
+                      <Heading as="h2" size="lg">
+                        Order Summary
+                      </Heading>
+                    </ListItem>
+                    <ListItem>
+                      <Grid templateColumns="repeat(2, 1fr)" gap={4}>
+                        <Box>Item:</Box>
+                        <Box align="right">
+                          {cartItem.productCatalogueId?.name}
+                        </Box>
+                      </Grid>
+                    </ListItem>
+                    <ListItem>
+                      <Grid templateColumns="repeat(2, 1fr)" gap={4}>
+                        <Box>Quantity:</Box>
+                        <Box align="right">{cartItem?.quantity}</Box>
+                      </Grid>
+                    </ListItem>
+                    <ListItem>
+                      <Grid templateColumns="repeat(2, 1fr)" gap={4}>
+                        <Box>
+                          <strong>Total:</strong>
+                        </Box>
+                        <Box align="right">
+                          <strong>{cartItem?.subTotal}</strong>
+                        </Box>
+                      </Grid>
+                    </ListItem>
+
+                    <ListItem>
+                      <Button
+                        onClick={placeOrderHandler}
+                        colorScheme="teal"
+                        variant="solid"
+                        isFullWidth
+                        mt={4}
+                      >
+                        Place Order
+                      </Button>
+                    </ListItem>
+                  </List>
+                ))}
+            </Box>
+          </Card>
+        </GridItem>
+      </Grid>
     </Box>
   );
 }
