@@ -170,32 +170,28 @@ export default function ProductDetails() {
                                 {product.productId?.categoryId?.title}
                               </Text>
                             </Grid>
-                              {product.description && (
-                                <Box mt={3}>
-                                  <Text
-                                    color={textColor}
-                                    fontSize="lg"
-                                    mb="10px"
-                                  >
-                                    <Flex gap={4}>
-                                      Description:{' '}
+                            {product.description && (
+                              <Box mt={3}>
+                                <Text color={textColor} fontSize="lg" mb="10px">
+                                  <Flex gap={4}>
+                                    Description:{' '}
+                                    {showFullDescription
+                                      ? product.description
+                                      : `${product.description.substring(
+                                          0,
+                                          100
+                                        )}...`}
+                                  </Flex>
+                                  {product.description.length > 100 && (
+                                    <Button onClick={toggleDescription}>
                                       {showFullDescription
-                                        ? product.description
-                                        : `${product.description.substring(
-                                            0,
-                                            100
-                                          )}...`}
-                                    </Flex>
-                                    {product.description.length > 100 && (
-                                      <Button onClick={toggleDescription}>
-                                        {showFullDescription
-                                          ? 'View Less'
-                                          : 'View More'}
-                                      </Button>
-                                    )}
-                                  </Text>
-                                </Box>
-                              )}
+                                        ? 'View Less'
+                                        : 'View More'}
+                                    </Button>
+                                  )}
+                                </Text>
+                              </Box>
+                            )}
 
                             {/* Specifications Section */}
                             {product.variations &&

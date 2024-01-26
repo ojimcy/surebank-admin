@@ -11,6 +11,7 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
+  ButtonGroup,
 } from '@chakra-ui/react';
 import { toast } from 'react-toastify';
 import { useForm } from 'react-hook-form';
@@ -351,56 +352,71 @@ const ViewCustomerSb = () => {
                         </Flex>
                       </Box>
                     )}
-                    <Flex mt="4" justify="space-between">
-                      <Button
-                        colorScheme="red"
-                        size="sm"
-                        onClick={handleShowMergeModal}
-                      >
-                        Merge
-                      </Button>
-                      <Button
-                        colorScheme="green"
-                        size={{ md: 'md', sm: 'sm' }}
-                        onClick={() =>
-                          handleChangeProductModalOpen(packageData)
-                        }
-                      >
-                        Change Product
-                      </Button>
 
-                      {packageData.totalContribution >=
-                      packageData.product?.sellingPrice ? (
+                    <Flex mt="4" direction="column" align="center">
+                      {currentUser &&
+                      (currentUser.role === 'admin' ||
+                        currentUser.role === 'superAdmin') ? (
                         <>
-                          {currentUser &&
-                          (currentUser.role === 'admin' ||
-                            currentUser.role === 'superAdmin') ? (
+                          <ButtonGroup spacing={4} mb={4}>
                             <Button
-                              colorScheme="blue"
+                              colorScheme="red"
                               size="sm"
-                              as={NavLink}
-                              to={`/admin/products/catalogue/${packageData._id}`}
+                              onClick={handleShowMergeModal}
                             >
-                              Sell
+                              Merge
                             </Button>
-                          ) : (
                             <Button
-                              colorScheme="blue"
-                              size="sm"
-                              onClick={() => handleAddToCart(packageData)}
+                              colorScheme="green"
+                              size={{ md: 'md', sm: 'sm' }}
+                              onClick={() =>
+                                handleChangeProductModalOpen(packageData)
+                              }
                             >
-                              Buy
+                              Change Product
                             </Button>
-                          )}
+                            <Button
+                              colorScheme="green"
+                              size="sm"
+                              onClick={() =>
+                                handleDepositModalOpen(packageData)
+                              }
+                            >
+                              Deposit
+                            </Button>
+                          </ButtonGroup>
+                          <Button
+                            colorScheme="blue"
+                            size="md"
+                            w="100%"
+                            h="50"
+                            as={NavLink}
+                            to={`/admin/products/catalogue/${packageData._id}`}
+                            isDisabled={packageData.totalContribution <
+                              packageData.product?.sellingPrice}
+                          >
+                            Sell
+                          </Button>
                         </>
                       ) : (
-                        <Button
-                          colorScheme="green"
-                          size="sm"
-                          onClick={() => handleDepositModalOpen(packageData)}
-                        >
-                          Deposit
-                        </Button>
+                        <ButtonGroup spacing={4} mb={4}>
+                          <Button
+                            colorScheme="blue"
+                            size="md"
+                            onClick={() => handleAddToCart(packageData)}
+                            isDisabled={packageData.totalContribution <
+                              packageData.product?.sellingPrice}
+                          >
+                            Buy
+                          </Button>
+                          <Button
+                            colorScheme="green"
+                            size="md"
+                            onClick={() => handleDepositModalOpen(packageData)}
+                          >
+                            Deposit
+                          </Button>
+                        </ButtonGroup>
                       )}
                     </Flex>
                   </Box>

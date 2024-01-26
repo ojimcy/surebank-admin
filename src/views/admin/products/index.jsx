@@ -12,6 +12,9 @@ import {
   Menu,
   MenuList,
   MenuItem,
+  FormControl,
+  Stack,
+  Input,
 } from '@chakra-ui/react';
 
 import { NavLink } from 'react-router-dom';
@@ -21,6 +24,7 @@ import { formatMdbDate } from 'utils/helper';
 
 // Assets
 import Card from 'components/card/Card.js';
+import { SearchIcon } from '@chakra-ui/icons';
 import BackButton from 'components/menu/BackButton';
 import CustomTable from 'components/table/CustomTable';
 import axiosService from 'utils/axiosService';
@@ -34,13 +38,15 @@ export default function Catalogue() {
   const [loading, setLoading] = useState(true);
   const [productDetailsModal, setProductDetailsModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10000000,
   });
 
   const fetchProducts = async () => {
-    const { pageIndex, } = pagination;
+    const { pageIndex } = pagination;
     try {
       const response = await axiosService.get(
         `/products/catalogue?&page=${pageIndex + 1}`
@@ -124,6 +130,19 @@ export default function Catalogue() {
     [currentUser.role]
   );
 
+  // Filter products based on search term
+  useEffect(() => {
+    if (!products) {
+      return;
+    }
+
+    const filtered = products?.filter((product) => {
+      const productName = `${product.name} `.toLowerCase();
+      return productName.includes(searchTerm.toLowerCase());
+    });
+    setFilteredProducts(filtered);
+  }, [searchTerm, products]);
+
   return (
     <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
       {/* Main Fields */}
@@ -140,36 +159,70 @@ export default function Catalogue() {
       >
         <Card p={{ base: '30px', md: '30px', sm: '10px' }}>
           <BackButton />
-          <Flex justifyContent="space-between" mb="20px">
-            <Text fontSize="2xl">Products</Text>
+          <Flex
+            direction={{ base: 'column', md: 'row' }}
+            justifyContent="space-between"
+            mb="20px"
+          >
+            <Text fontSize="2xl" mb={{ base: '4', md: '0' }}>
+              Products
+            </Text>
             <Spacer />
-            {currentUser.role === 'superAdmin' ||
-            currentUser.role === 'admin' ? (
-              <Menu>
-                <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-                  Manage Products
-                </MenuButton>
-                <MenuList>
-                  <MenuItem>
-                    <NavLink to="/admin/products/catalogue/create">
-                      Add Product
-                    </NavLink>
-                  </MenuItem>
-                  <MenuItem>
-                    <NavLink to="/admin/products/requests">
-                      Product Requests
-                    </NavLink>
-                  </MenuItem>
-                </MenuList>
-              </Menu>
-            ) : (
-              ''
-            )}
+
+            <Flex
+              direction={{ base: 'column', md: 'row' }}
+              justifyContent="space-between"
+              alignItems={{ base: 'flex-start', md: 'center' }}
+              width={{ base: '100%', md: 'auto' }}
+            >
+              {currentUser.role === 'superAdmin' ||
+              currentUser.role === 'admin' ? (
+                <Menu>
+                  <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+                    Manage Products
+                  </MenuButton>
+                  <MenuList>
+                    <MenuItem>
+                      <NavLink to="/admin/products/catalogue/create">
+                        Add Product
+                      </NavLink>
+                    </MenuItem>
+                    <MenuItem>
+                      <NavLink to="/admin/products/requests">
+                        Product Requests
+                      </NavLink>
+                    </MenuItem>
+                  </MenuList>
+                </Menu>
+              ) : (
+                ''
+              )}
+
+              <Box mt={{ base: '4', md: '0' }}>
+                <Stack
+                  direction={{ base: 'column', md: 'row' }}
+                  spacing={{ base: '2', md: '4' }}
+                >
+                  <FormControl>
+                    <Input
+                      type="search"
+                      placeholder="Search"
+                      borderColor="black"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                  </FormControl>
+                  <Button bgColor="blue.700" color="white">
+                    <SearchIcon />
+                  </Button>
+                </Stack>
+              </Box>
+            </Flex>
           </Flex>
           <Box marginTop="30">
             {loading ? (
               <Spinner />
-            ) : products.length === 0 ? (
+            ) : filteredProducts.length === 0 ? (
               <Text fontSize="lg" textAlign="center" mt="20">
                 No records found!
               </Text>
@@ -177,7 +230,7 @@ export default function Catalogue() {
               <>
                 <CustomTable
                   columns={columns}
-                  data={products}
+                  data={filteredProducts}
                   onPageChange={onPageChange}
                 />
               </>

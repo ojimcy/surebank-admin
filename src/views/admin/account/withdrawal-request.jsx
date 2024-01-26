@@ -44,7 +44,8 @@ const WithdrawalDetails = () => {
         const response = await axiosService.get(
           `/transactions/withdraw/cash/${requestId}`
         );
-        setWithdrawal(response.data.withdrawal);
+        console.log(response.data);
+        setWithdrawal(response.data);
       } catch (error) {
         console.error(error);
         toast.error(
@@ -58,6 +59,7 @@ const WithdrawalDetails = () => {
 
     fetchWithdrawalDetails();
   }, [requestId]);
+
   // Function to handle approval action
   const handleApprove = async () => {
     try {
@@ -129,6 +131,11 @@ const WithdrawalDetails = () => {
                           <Text>
                             {withdrawal.userReps?.firstName}{' '}
                             {withdrawal.userReps?.lastName}
+                          </Text>
+                          <Text fontWeight="bold">Customer</Text>
+                          <Text>
+                            {withdrawal.userId?.firstName}{' '}
+                            {withdrawal.userId?.lastName}
                           </Text>
                           <Text fontWeight="bold">Date:</Text>
                           <Text>{formatDate(withdrawal?.date)}</Text>
