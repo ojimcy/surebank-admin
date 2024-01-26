@@ -79,7 +79,6 @@ export default function ProductDetails() {
       });
     }
   };
-
   const toggleDescription = () => {
     setShowFullDescription(!showFullDescription);
   };
@@ -164,54 +163,53 @@ export default function ProductDetails() {
                               <Text fontWeight="bold">{product.quantity}</Text>
                               <Text>Brand:</Text>
                               <Text fontWeight="bold">
-                                {product.brand?.name}
+                                {product.productId?.brand?.name}
                               </Text>
                               <Text>Category:</Text>
                               <Text fontWeight="bold">
-                                {product.categoryId?.title}
+                                {product.productId?.categoryId?.title}
                               </Text>
+                            </Grid>
                               {product.description && (
-                                <Box>
+                                <Box mt={3}>
                                   <Text
                                     color={textColor}
                                     fontSize="lg"
                                     mb="10px"
                                   >
-                                    <Flex gap={4}>Description: </Flex>
-
-                                    <Flex>
+                                    <Flex gap={4}>
+                                      Description:{' '}
                                       {showFullDescription
                                         ? product.description
                                         : `${product.description.substring(
                                             0,
                                             100
                                           )}...`}
-                                      {product.description.length > 100 && (
-                                        <Button onClick={toggleDescription}>
-                                          {showFullDescription
-                                            ? 'View Less'
-                                            : 'View More'}
-                                        </Button>
-                                      )}
                                     </Flex>
+                                    {product.description.length > 100 && (
+                                      <Button onClick={toggleDescription}>
+                                        {showFullDescription
+                                          ? 'View Less'
+                                          : 'View More'}
+                                      </Button>
+                                    )}
                                   </Text>
                                 </Box>
                               )}
-                            </Grid>
 
                             {/* Specifications Section */}
-                            {product.specifications &&
-                              product.specifications.length > 0 && (
+                            {product.variations &&
+                              product.variations.length > 0 && (
                                 <Box>
                                   <Text
                                     color={textColor}
                                     fontSize="lg"
                                     mb="10px"
                                   >
-                                    Specifications:
+                                    Variations:
                                   </Text>
                                   <List>
-                                    {product.specifications.map(
+                                    {product.variations.map(
                                       (variation, index) => (
                                         <ListItem key={index}>
                                           <strong>{variation.name}:</strong>{' '}

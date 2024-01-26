@@ -27,9 +27,10 @@ export default function EditProductCatalogue() {
   const [product, setProduct] = useState([]);
   const textColor = useColorModeValue('navy.700', 'white');
 
+  const [initialProduct, setInitialProduct] = useState({});
+
   const {
     handleSubmit,
-    register,
     control,
     formState: { isSubmitting },
   } = useForm();
@@ -54,11 +55,16 @@ export default function EditProductCatalogue() {
     fetchProductsBrands();
   }, []);
 
+  const updateField = (field, value) => {
+    setProduct((prev) => ({ ...prev, [field]: value }));
+  };
+
   useEffect(() => {
     try {
       const fetchProductCatalogue = async () => {
         const response = await axiosService.get(`/products/catalogue/${id}`);
         setProduct(response.data);
+        setInitialProduct(response.data);
       };
 
       fetchProductCatalogue();
@@ -69,7 +75,14 @@ export default function EditProductCatalogue() {
 
   const submitHandler = async (productData) => {
     try {
-      await axiosService.patch(`/products/catalogue/${id}`, productData);
+      const changedValues = Object.entries(product)
+        .filter(([key, value]) => value !== initialProduct[key])
+        .reduce((obj, [key, value]) => {
+          obj[key] = value;
+          return obj;
+        }, {});
+
+      await axiosService.patch(`/products/catalogue/${id}`, changedValues);
       toast.success('Product catalogue updated successfully!');
       history.push(`/admin/products/catalogue-details/${id}`);
     } catch (error) {
@@ -115,8 +128,8 @@ export default function EditProductCatalogue() {
                 <Input
                   type="text"
                   placeholder="Enter Product Name"
-                  defaultValue={product.name}
-                  {...register('name')}
+                  value={product.name}
+                  onChange={(e) => updateField('name', e.target.value)}
                 />
               </InputGroup>
             </FormControl>
@@ -137,8 +150,8 @@ export default function EditProductCatalogue() {
                 <Textarea
                   type="text"
                   placeholder="Enter Product Description"
-                  defaultValue={product.description}
-                  {...register('description')}
+                  value={product.description}
+                  onChange={(e) => updateField('description', e.target.value)}
                 />
               </InputGroup>
             </FormControl>
@@ -166,13 +179,17 @@ export default function EditProductCatalogue() {
                       type="text"
                       placeholder="Variation Name"
                       defaultValue={variation.name}
-                      {...register(`variations.${index}.name`)}
+                      onChange={(e) =>
+                        updateField(`variations.${index}.name`, e.target.value)
+                      }
                     />
                     <Input
                       type="text"
                       placeholder="Variation Values (comma-separated)"
-                      defaultValue={variation.values}
-                      {...register(`variations.${index}.values`)}
+                      value={variation.value}
+                      onChange={(e) =>
+                        updateField(`variations.${index}.value`, e.target.value)
+                      }
                     />
                     <Button type="button" onClick={() => remove(index)}>
                       Remove
@@ -180,6 +197,7 @@ export default function EditProductCatalogue() {
                   </Flex>
                 </InputGroup>
               ))}
+
               <Button
                 type="button"
                 onClick={() => append({ name: '', values: '' })}
@@ -202,9 +220,9 @@ export default function EditProductCatalogue() {
                 Brand
               </FormLabel>
               <Select
-                {...register('brand')}
                 name="brand"
-                defaultValue={product.brand}
+                value={product.brand}
+                onChange={(e) => updateField('brand', e.target.value)}
               >
                 <option value="" disabled>
                   Select Product Brand
@@ -233,9 +251,9 @@ export default function EditProductCatalogue() {
               </FormLabel>
 
               <Select
-                {...register('categoryId')}
                 name="categoryId"
-                defaultValue={product.category}
+                value={product.category}
+                onChange={(e) => updateField('categoryId', e.target.value)}
               >
                 <option value="" disabled>
                   Select Product Category
@@ -271,8 +289,8 @@ export default function EditProductCatalogue() {
                     <Input
                       type="number"
                       placeholder="Enter Product Cost Price"
-                      defaultValue={product.costPrice}
-                      {...register('costPrice')}
+                      value={product.costPrice}
+                      onChange={(e) => updateField('costPrice', e.target.value)}
                     />
                   </InputGroup>
                 </FormControl>
@@ -294,8 +312,10 @@ export default function EditProductCatalogue() {
                     <Input
                       type="number"
                       placeholder="Enter Product Sales Price"
-                      defaultValue={product.sellingPrice}
-                      {...register('sellingPrice')}
+                      value={product.sellingPrice}
+                      onChange={(e) =>
+                        updateField('sellingPrice', e.target.value)
+                      }
                     />
                   </InputGroup>
                 </FormControl>
@@ -324,8 +344,8 @@ export default function EditProductCatalogue() {
                     <Input
                       type="number"
                       placeholder="Enter Product Discount Price"
-                      defaultValue={product.discount}
-                      {...register('discount')}
+                      value={product.discount}
+                      onChange={(e) => updateField('discount', e.target.value)}
                     />
                   </InputGroup>
                 </FormControl>
@@ -347,8 +367,8 @@ export default function EditProductCatalogue() {
                     <Input
                       type="number"
                       placeholder="Enter Product Quantity"
-                      defaultValue={product.quantity}
-                      {...register('quantity')}
+                      value={product.quantity}
+                      onChange={(e) => updateField('quantity', e.target.value)}
                     />
                   </InputGroup>
                 </FormControl>

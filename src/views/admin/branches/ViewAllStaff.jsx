@@ -94,7 +94,7 @@ export default function Users() {
         );
       }
       const UserResponse = await axiosService.get(
-        `/users?role=user&limit=10000000`
+        `/users?role=user&limit=${pageSize}`
       );
 
       setUsers(UserResponse.data.results);
@@ -241,13 +241,20 @@ export default function Users() {
       return;
     }
 
-    const filtered = staffs?.filter((staff) => {
+    // Filter out the current user from the staff list
+    const filtered = staffs?.filter(
+      (staff) => staff.staffId.id !== currentUser.id
+    );
+
+    // Filter by name
+    const filteredByName = filtered?.filter((staff) => {
       const fullName =
         `${staff.staffId.firstName} ${staff.staffId.lastName}`.toLowerCase();
       return fullName.includes(searchTerm.toLowerCase());
     });
-    setFilteredStaffs(filtered);
-  }, [searchTerm, staffs]);
+
+    setFilteredStaffs(filteredByName);
+  }, [currentUser.id, searchTerm, staffs]);
 
   const roleLabels = {
     userReps: 'Sales Rep',

@@ -102,7 +102,7 @@ export default function EditCustomer() {
                 <Input
                   {...register('firstName')}
                   placeholder="First Name"
-                  defaultValue={account?.firstName || ''}
+                  defaultValue={account?.firstName}
                 />
               </FormControl>
 
@@ -111,7 +111,7 @@ export default function EditCustomer() {
                 <Input
                   {...register('lastName')}
                   placeholder="Last Name"
-                  defaultValue={account?.lastName || ''}
+                  defaultValue={account?.lastName}
                 />
               </FormControl>
 
