@@ -41,7 +41,7 @@ export default function Users() {
   const [userToDelete, setUserToDelete] = useState(null);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
-    pageSize: 20,
+    pageSize: 10000000,
   });
 
   const fetchBranches = async () => {

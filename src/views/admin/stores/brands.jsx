@@ -55,7 +55,7 @@ export default function Brand() {
   const [createBrandModal, setCreateBrandModal] = useState(false);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
-    pageSize: 20,
+    pageSize: 10000000,
   });
 
   const fetchCollections = async () => {

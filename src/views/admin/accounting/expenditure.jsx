@@ -45,7 +45,7 @@ export default function Expenditures() {
   const [showExpenditureModal, setShowExpenditureModal] = useState(false);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
-    pageSize: 20,
+    pageSize: 10000000,
   });
 
   const {

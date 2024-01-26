@@ -36,14 +36,14 @@ export default function Catalogue() {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
-    pageSize: 20,
+    pageSize: 10000000,
   });
 
   const fetchProducts = async () => {
-    const { pageIndex, pageSize } = pagination;
+    const { pageIndex, } = pagination;
     try {
       const response = await axiosService.get(
-        `/products/catalogue?&limit=${pageSize}&page=${pageIndex + 1}`
+        `/products/catalogue?&page=${pageIndex + 1}`
       );
       setProducts(response.data);
     } catch (error) {

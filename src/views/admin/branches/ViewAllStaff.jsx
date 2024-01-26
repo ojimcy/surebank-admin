@@ -49,7 +49,7 @@ export default function Users() {
   const [filteredStaffs, setFilteredStaffs] = useState([]);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
-    pageSize: 20,
+    pageSize: 10000000,
   });
 
   const { currentUser } = useAuth();

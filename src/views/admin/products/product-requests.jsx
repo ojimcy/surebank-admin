@@ -40,7 +40,7 @@ export default function ProductsRequests() {
   const [selectedStatus, setSelectedStatus] = useState('All');
   const [pagination, setPagination] = useState({
     pageIndex: 0,
-    pageSize: 60,
+    pageSize: 10000000,
   });
 
   const statusOptions = ['All', 'Pending', 'Approved', 'Rejected'];

@@ -21,7 +21,6 @@ import {
   ModalHeader,
   ModalCloseButton,
   ModalBody,
-  ModalFooter,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { useHistory, NavLink, Link } from 'react-router-dom';
@@ -50,7 +49,7 @@ export default function Customers() {
   const [allBranch, setAllBranch] = useState([]);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
-    pageSize: 20,
+    pageSize: 10000000,
   });
 
   const fetchAccounts = async () => {
