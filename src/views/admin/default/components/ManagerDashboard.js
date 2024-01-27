@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Flex, Icon, Text, useColorModeValue, Box } from '@chakra-ui/react';
 import { useHistory } from 'react-router-dom';
-import { MdAttachMoney, MdPerson } from 'react-icons/md';
+import { MdAttachMoney } from 'react-icons/md';
 import axiosService from 'utils/axiosService';
 import { formatNaira } from 'utils/helper';
 import Card from 'components/card/Card';
@@ -25,11 +25,15 @@ export default function ManagerDashboard() {
   const [dailySavingsWithdrawals, setDailySavingsWithdrawals] = useState([]);
   const [sbDailyTotal, setSbDailyTotal] = useState([]);
   const [dsDailyTotal, setDsDailyTotal] = useState([]);
-  const [openPackageCount, setOpenPackageCount] = useState(0);
+  const [managerTotal, setManagerTotal] = useState([]);
+  const [managerWithdrawals, setManagerWithdrawals] = useState([]);
+  const [managerSbTotal, setManagerSbTotal] = useState([]);
+  const [managerDsTotal, setManagerDsTotal] = useState([]);
   const [staffInfo, setStaffInfo] = useState({});
   const [loading, setLoading] = useState(true);
   // useRef to track the mounted state
   const isMounted = useRef(true);
+  const staffId = currentUser.id;
 
   useEffect(() => {
     if (!currentUser) {
@@ -77,7 +81,10 @@ export default function ManagerDashboard() {
           dsResponse,
           sbResponse,
           withdrawalResponse,
-          accountResponse,
+          managerTotalContributionResponse,
+          managerDsResponse,
+          managerSbResponse,
+          managerWithdrawalResponse,
         ] = await Promise.all([
           axiosService.get(
             `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&branchId=${staffInfo.branchId}`
@@ -91,7 +98,18 @@ export default function ManagerDashboard() {
           axiosService.get(
             `/transactions/withdraw/cash?startDate=${startTimeStamp}&endDate=${endTimeStamp}&branchId=${staffInfo.branchId}`
           ),
-          axiosService.get(`accounts?branchId=${staffInfo.branchId}`),
+          axiosService.get(
+            `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&createdBy=${staffId}`
+          ),
+          axiosService.get(
+            `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&createdBy=${staffId}&narration=Daily contribution`
+          ),
+          axiosService.get(
+            `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&createdBy=${staffId}&narration=SB contribution`
+          ),
+          axiosService.get(
+            `/transactions/withdraw/cash?startDate=${startTimeStamp}&endDate=${endTimeStamp}&createdBy=${staffId}`
+          )
         ]);
 
         if (isMounted.current) {
@@ -99,7 +117,10 @@ export default function ManagerDashboard() {
           setDsDailyTotal(dsResponse.data);
           setSbDailyTotal(sbResponse.data);
           setDailySavingsWithdrawals(withdrawalResponse.data.totalAmount);
-          setOpenPackageCount(accountResponse.data.totalResults);
+          setManagerTotal(managerTotalContributionResponse.data)
+          setManagerDsTotal(managerDsResponse.data)
+          setManagerSbTotal(managerSbResponse.data)
+          setManagerWithdrawals(managerWithdrawalResponse.data.totalAmount)
           setLoading(false);
         }
       }
@@ -159,7 +180,7 @@ export default function ManagerDashboard() {
                         }
                       />
                     }
-                    name="Total Daily contributions"
+                    name="Branch Total Contributions"
                     value={formatNaira(contributionsDailyTotal)}
                   />
 
@@ -179,36 +200,9 @@ export default function ManagerDashboard() {
                         }
                       />
                     }
-                    name="Total Daily Withdrawal Requests"
+                    name="Branch Total Withdrawal Requests"
                     value={formatNaira(dailySavingsWithdrawals || 0)}
                   />
-
-                  <MiniStatistics
-                    startContent={
-                      <IconBox
-                        w="56px"
-                        h="56px"
-                        bg={boxBg}
-                        icon={
-                          <Icon
-                            w="32px"
-                            h="32px"
-                            as={MdPerson}
-                            color={brandColor}
-                          />
-                        }
-                      />
-                    }
-                    name="Active customers"
-                    value={openPackageCount && openPackageCount}
-                  />
-                </Flex>
-                
-                <Flex
-                  direction={{ base: 'column', md: 'row' }}
-                  justifyContent="space-between"
-                  mt="10px"
-                >
                   <MiniStatistics
                     startContent={
                       <IconBox
@@ -225,7 +219,7 @@ export default function ManagerDashboard() {
                         }
                       />
                     }
-                    name="Total SB Contributions"
+                    name="Branch Total SB Contributions"
                     value={formatNaira(sbDailyTotal)}
                   />
 
@@ -245,8 +239,93 @@ export default function ManagerDashboard() {
                         }
                       />
                     }
-                    name="Total DS Contributions"
+                    name="Branch Total DS Contributions"
                     value={formatNaira(dsDailyTotal || 0)}
+                  />
+                </Flex>
+
+                <Flex
+                  direction={{ base: 'column', md: 'row' }}
+                  justifyContent="space-between"
+                  mt="20px"
+                >
+                  <MiniStatistics
+                    startContent={
+                      <IconBox
+                        w="56px"
+                        h="56px"
+                        bg={boxBg}
+                        icon={
+                          <Icon
+                            w="32px"
+                            h="32px"
+                            as={MdAttachMoney}
+                            color={brandColor}
+                          />
+                        }
+                      />
+                    }
+                    name="My Total Contributions"
+                    value={formatNaira(managerTotal)}
+                  />
+
+                  <MiniStatistics
+                    startContent={
+                      <IconBox
+                        w="56px"
+                        h="56px"
+                        bg={boxBg}
+                        icon={
+                          <Icon
+                            w="32px"
+                            h="32px"
+                            as={MdAttachMoney}
+                            color={brandColor}
+                          />
+                        }
+                      />
+                    }
+                    name="My Total Withdrawal Requests"
+                    value={formatNaira(managerWithdrawals || 0)}
+                  />
+                  <MiniStatistics
+                    startContent={
+                      <IconBox
+                        w="56px"
+                        h="56px"
+                        bg={boxBg}
+                        icon={
+                          <Icon
+                            w="32px"
+                            h="32px"
+                            as={MdAttachMoney}
+                            color={brandColor}
+                          />
+                        }
+                      />
+                    }
+                    name="My Total SB Contributions"
+                    value={formatNaira(managerSbTotal)}
+                  />
+
+                  <MiniStatistics
+                    startContent={
+                      <IconBox
+                        w="56px"
+                        h="56px"
+                        bg={boxBg}
+                        icon={
+                          <Icon
+                            w="32px"
+                            h="32px"
+                            as={MdAttachMoney}
+                            color={brandColor}
+                          />
+                        }
+                      />
+                    }
+                    name="My Total DS Contributions"
+                    value={formatNaira(managerDsTotal || 0)}
                   />
                 </Flex>
               </Card>

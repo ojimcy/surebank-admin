@@ -30,7 +30,7 @@ export default function UserRepsDashboard() {
   const staffId = currentUser.id;
 
   useEffect(() => {
-    setLoading(true)
+    setLoading(true);
     const fetchData = async () => {
       try {
         const startDate = new Date();
@@ -161,7 +161,7 @@ export default function UserRepsDashboard() {
                   value={openPackageCount && openPackageCount}
                 />
               </Flex>
-              
+
               <Flex
                 direction={{ base: 'column', md: 'row' }}
                 justifyContent="space-between"

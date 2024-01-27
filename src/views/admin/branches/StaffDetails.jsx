@@ -23,6 +23,8 @@ export default function StaffDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [contributionsDailyTotal, setContributionsDailyTotal] = useState([]);
   const [dailySavingsWithdrawals, setDailySavingsWithdrawals] = useState([]);
+  const [sbDailyTotal, setSbDailyTotal] = useState([]);
+  const [dsDailyTotal, setDsDailyTotal] = useState([]);
   const [openPackageCount, setOpenPackageCount] = useState(0);
 
   const { id } = useParams();
@@ -41,6 +43,8 @@ export default function StaffDetailsPage() {
 
         const [
           totalContributionsResponse,
+          dsResponse,
+          sbResponse,
           withdrawalResponse,
           accountsResponse,
         ] = await Promise.all([
@@ -48,11 +52,19 @@ export default function StaffDetailsPage() {
             `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&createdBy=${staffId}`
           ),
           axiosService.get(
+            `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&createdBy=${staffId}&narration=Daily contribution`
+          ),
+          axiosService.get(
+            `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&createdBy=${staffId}&narration=SB contribution`
+          ),
+          axiosService.get(
             `/reports/total-savings-withdrawal?startDate=${startTimeStamp}&endDate=${endTimeStamp}`
           ),
           axiosService.get(`accounts?accountManagerId=${staffId}`),
         ]);
         setContributionsDailyTotal(totalContributionsResponse.data);
+        setDsDailyTotal(dsResponse.data);
+        setSbDailyTotal(sbResponse.data);
         setDailySavingsWithdrawals(withdrawalResponse.data);
         setOpenPackageCount(accountsResponse.data.totalResults);
       } catch (error) {
@@ -154,6 +166,51 @@ export default function StaffDetailsPage() {
                     }
                     name="Active customers"
                     value={openPackageCount && openPackageCount}
+                  />
+                </Flex>
+                <Flex
+                  direction={{ base: 'column', md: 'row' }}
+                  justifyContent="space-between"
+                  mt="10px"
+                >
+                  <MiniStatistics
+                    startContent={
+                      <IconBox
+                        w="56px"
+                        h="56px"
+                        bg={boxBg}
+                        icon={
+                          <Icon
+                            w="32px"
+                            h="32px"
+                            as={MdAttachMoney}
+                            color={brandColor}
+                          />
+                        }
+                      />
+                    }
+                    name="Total DS Contributions"
+                    value={formatNaira(dsDailyTotal)}
+                  />
+
+                  <MiniStatistics
+                    startContent={
+                      <IconBox
+                        w="56px"
+                        h="56px"
+                        bg={boxBg}
+                        icon={
+                          <Icon
+                            w="32px"
+                            h="32px"
+                            as={MdAttachMoney}
+                            color={brandColor}
+                          />
+                        }
+                      />
+                    }
+                    name="Total SB Contributions"
+                    value={formatNaira(sbDailyTotal || 0)}
                   />
                 </Flex>
               </Card>

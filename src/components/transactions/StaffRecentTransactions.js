@@ -72,11 +72,11 @@ function RecentTransactions({ staffId }) {
     setFilteredTransaction(filtered);
   }, [searchTerm, transactions]);
 
-  console.log(selectedFilter);
-
   const visibleTransactions = showAllTransactions
     ? filteredTransaction
     : filteredTransaction.slice(0, 20);
+
+  const shouldShowViewAllButton = filteredTransaction.length > 20;
 
   return (
     <Box mt="80px">
@@ -121,7 +121,7 @@ function RecentTransactions({ staffId }) {
           {visibleTransactions.map((transaction, index) => (
             <TransactionItem key={index} transaction={transaction} />
           ))}
-          {!showAllTransactions && (
+          {!showAllTransactions && shouldShowViewAllButton && (
             <Button
               mt="4"
               bgColor="blue.700"
