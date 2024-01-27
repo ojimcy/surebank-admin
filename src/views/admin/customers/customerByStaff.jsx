@@ -128,7 +128,7 @@ export default function Customers() {
       },
       {
         Header: 'Account Type',
-        accessor: 'accountType',
+        accessor: (row) => row.accountType.toUpperCase(), 
       },
       {
         Header: 'Account Number',

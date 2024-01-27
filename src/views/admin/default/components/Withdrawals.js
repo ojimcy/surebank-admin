@@ -160,6 +160,7 @@ export default function Withdrawals() {
         (item) => new Date(item.date) >= last30Days
       );
     }
+    
     if (selectedStatus !== 'all') {
       filteredData = filteredData.filter(
         (item) => item.status === selectedStatus

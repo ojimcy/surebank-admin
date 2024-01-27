@@ -46,7 +46,6 @@ import Deposit from 'views/admin/account/deposit';
 import Withdraw from 'views/admin/account/withdrawal';
 import WithdrawalRequest from 'views/admin/account/withdrawal-request';
 import { FaBox, FaMoneyBill } from 'react-icons/fa';
-import DailySavingsDashboard from 'views/admin/daily-savings';
 import MakeContribution from 'views/admin/daily-savings/deposit';
 import CreatePackage from 'views/admin/daily-savings/package';
 import Withdrawal from 'views/admin/daily-savings/withdrawal';
@@ -353,14 +352,6 @@ const routes = [
     icon: <Icon as={FaBox} width="20px" height="20px" color="inherit" />,
     roles: ['superAdmin', 'admin', 'manager', 'userReps'],
     component: Withdrawal,
-  },
-  {
-    name: 'Customer',
-    layout: '/admin',
-    path: '/daily-savings',
-    icon: <Icon as={FaBox} width="20px" height="20px" color="inherit" />,
-    roles: ['superAdmin', 'admin', 'manager', 'userReps'],
-    component: DailySavingsDashboard,
   },
   {
     name: 'Packages',

@@ -42,14 +42,37 @@ function RecentTransactions({ staffId }) {
       if (selectedFilter === 'all') {
         return true;
       } else if (selectedFilter === 'deposit') {
-        return transaction.narration === 'Daily contribution';
+        return (
+          transaction.narration === 'Daily contribution' ||
+          transaction.narration === 'SB Daily contribution'
+        );
       } else if (selectedFilter === 'withdrawal') {
-        return transaction.narration !== 'Daily contribution';
+        return (
+          transaction.narration !== 'Daily contribution' &&
+          !transaction.narration !== 'SB Daily contribution'
+        );
       }
       return false;
     });
     setFilteredTransaction(filtered);
   }, [selectedFilter, transactions]);
+
+  useEffect(() => {
+    const filtered = transactions?.filter((transaction) => {
+      const fullNameRep =
+        `${transaction.createdBy.firstName} ${transaction.createdBy.lastName}`.toLowerCase();
+      const fullNameUser =
+        `${transaction.userId.firstName} ${transaction.userId.lastName}`.toLowerCase();
+
+      const repNameMatch = fullNameRep.includes(searchTerm.toLowerCase());
+      const userMameMatch = fullNameUser.includes(searchTerm.toLowerCase());
+
+      return repNameMatch || userMameMatch;
+    });
+    setFilteredTransaction(filtered);
+  }, [searchTerm, transactions]);
+
+  console.log(selectedFilter);
 
   const visibleTransactions = showAllTransactions
     ? filteredTransaction
