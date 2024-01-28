@@ -9,10 +9,12 @@ export default function TransactionItem({ transaction }) {
     const narration = transaction.narration.toLowerCase();
     if (narration.includes('daily contribution')) {
       return <FaMoneyCheckAlt />;
+    } else if (narration.includes('sb daily contribution')) {
+      return <FaMoneyCheckAlt />;
     } else if (narration.includes('daily contribution withdrawal')) {
       return <RiArrowDownSLine />;
-    } else if (narration.includes('request rash')) {
-      return <RiArrowDownSLine />;
+    } else if (narration.includes('request cash')) {
+      return <FaMoneyBillWave />;
     } else {
       return <FaMoneyBillWave />;
     }
@@ -20,9 +22,20 @@ export default function TransactionItem({ transaction }) {
 
   const getAmountColor = () => {
     const narration = transaction.narration.toLowerCase();
-    return narration.includes('daily contribution') ? 'green.500' : 'red.500';
-  };
 
+    if (narration.includes('daily contribution withdrawal')) {
+      return 'blue.500';
+    } else if (narration.includes('request cash')) {
+      return 'red.500';
+    } else if (narration.includes('daily contribution')) {
+      return 'green.500';
+    } else if (narration.includes('sb daily contribution')) {
+      return 'green.500';
+    } else {
+      return 'gray.500';
+    }
+  };
+  console.log(transaction.narration);
   return (
     <Flex
       alignItems="center"

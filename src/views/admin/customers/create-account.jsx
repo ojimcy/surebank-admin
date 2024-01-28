@@ -13,7 +13,6 @@ import {
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 
-
 // Assets
 import Card from 'components/card/Card.js';
 import { useForm } from 'react-hook-form';
@@ -32,6 +31,7 @@ export default function CreateAccount() {
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [branches, setBranches] = useState(null);
+  const [customerData, setCustmerData] = useState(null);
 
   const {
     handleSubmit,
@@ -39,41 +39,53 @@ export default function CreateAccount() {
     formState: { errors, isSubmitting },
   } = useForm();
 
-  const fetchUsers = async () => {
-    try {
-      const UserResponse = await axiosService.get(
-        `/users?role=user&limit=10000000`
-      );
-      setUsers(UserResponse.data.results);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const fetchBranches = async () => {
-    try {
-      const response = await axiosService.get('/branch/');
-      setBranches(response.data.results);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   useEffect(() => {
-    fetchUsers();
-    fetchBranches();
+    const fetchData = async () => {
+      try {
+        const [usersResponse, branchesResponse] = await Promise.all([
+          axiosService.get('/users?role=user&limit=10000000'),
+          axiosService.get('/branch/'),
+        ]);
+
+        setUsers(usersResponse.data.results);
+        setBranches(branchesResponse.data.results);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchData();
   }, []);
 
   const handleUserSelect = (selectedOption) => {
     setSelectedUser(selectedOption);
   };
 
+  useEffect(() => {
+    if (selectedUser) {
+      const fetchAccount = async () => {
+        try {
+          const response = await axiosService.get(
+            `/accounts/${selectedUser.value.id}/all`
+          );
+          setCustmerData(response.data[0]);
+        } catch (error) {
+          console.error(error);
+        }
+      };
+
+      fetchAccount();
+    }
+  }, [selectedUser]);
+
+  console.log(selectedUser.value);
+
   const submitHandler = async (accountData) => {
     try {
       // If a user is selected
       if (selectedUser) {
-        accountData.email = selectedUser.value;
-        accountData.phoneNumber = selectedUser.phoneNumber;
+        accountData.email = selectedUser.value.email;
+        accountData.phoneNumber = selectedUser.value.phoneNumber;
       }
       await axiosService.post(`/accounts`, accountData);
       toast.success('Account created successfully!');
@@ -133,7 +145,7 @@ export default function CreateAccount() {
                   </FormLabel>
                   <CustomSelect
                     options={users.map((user) => ({
-                      value: user.email,
+                      value: user,
                       label: `${user.firstName} ${user.lastName} - ${user.email}`,
                     }))}
                     onChange={handleUserSelect}
@@ -185,10 +197,13 @@ export default function CreateAccount() {
                   <Select
                     {...register('branchId')}
                     name="branchId"
-                    defaultValue=""
+                    defaultValue={customerData ? customerData.branch : ''}
+                    isDisabled={customerData ? true : false}
                   >
-                    <option value="" disabled>
-                      Select a branch
+                    <option value="" disabled={!customerData}>
+                      {customerData
+                        ? toSentenceCase(customerData?.branchId.name)
+                        : 'Select a branch'}
                     </option>
                     {branches &&
                       branches.map((branch) => (
