@@ -46,7 +46,7 @@ const BuyModal = ({ isOpen, onClose, packageData }) => {
       await addToCart(packageData);
       setSelectedPackage(packageData);
 
-      history.push('/admin/order/placeorder');
+      history.push('/admin/orders/placeorder');
     } catch (error) {
       console.error('Error during checkout:', error);
     } finally {

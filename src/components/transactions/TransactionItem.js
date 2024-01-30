@@ -35,7 +35,7 @@ export default function TransactionItem({ transaction }) {
       return 'gray.500';
     }
   };
-  console.log(transaction.narration);
+
   return (
     <Flex
       alignItems="center"

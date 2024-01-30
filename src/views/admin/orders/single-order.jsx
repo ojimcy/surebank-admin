@@ -1,0 +1,235 @@
+import React, { useState, useEffect } from 'react';
+import {
+  Box,
+  Button,
+  Grid,
+  Heading,
+  Image,
+  List,
+  ListItem,
+  Table,
+  Tbody,
+  Td,
+  Text,
+  Th,
+  Thead,
+  Tr,
+} from '@chakra-ui/react';
+import { NavLink, useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import BackButton from 'components/menu/BackButton';
+import axiosService from 'utils/axiosService'; // Adjust the import path
+import { useAuth } from 'contexts/AuthContext';
+import Card from 'components/card/Card';
+
+import { formatDate, formatNaira } from 'utils/helper';
+import LoadingSpinner from 'components/scroll/LoadingSpinner';
+
+function SingleOrder() {
+  const { id } = useParams();
+  const { currentUser } = useAuth();
+  const orderId = id;
+
+  const [order, setOrder] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchOrderDetails = async () => {
+      try {
+        const response = await axiosService.get(`/orders/${orderId}`);
+        setOrder(response.data);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching order details:', error);
+        setLoading(false);
+      }
+    };
+
+    fetchOrderDetails();
+  }, [orderId]);
+
+  const handleDeliverOrder = async () => {
+    const fetchOrderDetails = async () => {
+      setLoading(true);
+      try {
+        await axiosService.post(`/orders/${orderId}/deliver`);
+        toast.success('Product marked as delivered');
+        setLoading(false);
+      } catch (error) {
+        console.error('An error occured:', error);
+        toast.error('An error occured');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrderDetails();
+  };
+  const paymentMethodLabels = {
+    sb_balance: 'SB Balance',
+    transfer: 'Bank Transfer',
+    cash: 'Cash',
+  };
+
+  return (
+    <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
+      <BackButton />
+      <Heading as="h1" size="xl" mb={4}>
+        Order {orderId.substring(0, 6)}
+      </Heading>
+      {loading ? (
+        <LoadingSpinner />
+      ) : (
+        <Grid templateColumns={{ base: '1fr', md: '2fr 1fr' }} gap={4}>
+          <Box>
+            {/* Left Section: Shipping Address */}
+            <Card>
+              <List spacing={3} mb={4}>
+                <ListItem>
+                  <Heading as="h2" size="lg">
+                    Customer Details
+                  </Heading>
+                </ListItem>
+                <ListItem>
+                  {order.deliveryAddress.fullName},{' '}
+                  {order.deliveryAddress.address}, {order.deliveryAddress.city},{' '}
+                  {order.deliveryAddress.phoneNumber}, &nbsp;
+                </ListItem>
+                <ListItem>
+                  Status:{' '}
+                  {order.isDelivered
+                    ? `Delivered at ${order.deliveredAt}`
+                    : 'Not Delivered'}
+                </ListItem>
+              </List>
+            </Card>
+
+            {/* Middle Section: Payment Method */}
+            <Box mt={1} pb={5}>
+              <Card>
+                <List spacing={3} mb={4}>
+                  <ListItem>
+                    <Heading as="h2" size="lg">
+                      Payment Method
+                    </Heading>
+                  </ListItem>
+                  <ListItem>
+                    {paymentMethodLabels[order.paymentMethod]}
+                  </ListItem>
+                  <ListItem>
+                    Status:{' '}
+                    {order.isPaid
+                      ? `Paid at ${formatDate(order.paidAt)}`
+                      : 'Not paid'}
+                  </ListItem>
+                  <ListItem>
+                    Rep: {order.createdBy?.firstName}{' '}
+                    {order.createdBy?.lastName}
+                  </ListItem>
+                </List>
+              </Card>
+            </Box>
+            {/* Right Section: Order Items List */}
+            <Box mt={1} pb={5}>
+              <Card>
+                <List spacing={3}>
+                  <ListItem>
+                    <>
+                      <Heading as="h2" size="lg">
+                        Order Items
+                      </Heading>
+                      <Table variant="simple">
+                        <Thead>
+                          <Tr>
+                            <Th>Image</Th>
+                            <Th>Name</Th>
+                            <Th>Quantity</Th>
+                            <Th>Unit Price</Th>
+                          </Tr>
+                        </Thead>
+                        <Tbody>
+                          {order.products.map((item) => (
+                            <Tr key={item._id}>
+                              <Td>
+                                <NavLink
+                                  to={`/product/${item.productCatalogueId.id}`}
+                                >
+                                  <Image
+                                    src={item.productCatalogueId?.images[0]}
+                                    alt={item.productCatalogueId.name}
+                                    boxSize="50px"
+                                  />
+                                </NavLink>
+                              </Td>
+                              <Td>
+                                <NavLink
+                                  to={`/product/${item.productCatalogueId.id}`}
+                                >
+                                  <Text>{item.productCatalogueId.name}</Text>
+                                </NavLink>
+                              </Td>
+                              <Td>{item.quantity}</Td>
+                              <Td>
+                                {item.sellingPrice &&
+                                  formatNaira(item.sellingPrice)}
+                              </Td>
+                            </Tr>
+                          ))}
+                        </Tbody>
+                      </Table>
+                    </>
+                  </ListItem>
+                </List>
+              </Card>
+            </Box>
+          </Box>
+          <Box>
+            {/* Right Section: Order Summary */}
+
+            <Card>
+              <Box mt={1}>
+                <List spacing={3} mb={4}>
+                  <ListItem>
+                    <Heading as="h2" size="lg">
+                      Order Summary
+                    </Heading>
+                  </ListItem>
+                  <ListItem>
+                    <Grid templateColumns="repeat(2, 1fr)" gap={4}>
+                      <Box>
+                        <strong>Sum Total:</strong>
+                      </Box>
+                      <Box align="right">
+                        <strong>
+                          {order.totalAmount && formatNaira(order?.totalAmount)}
+                        </strong>
+                      </Box>
+                    </Grid>
+                  </ListItem>
+                  {currentUser.role === 'superAdmin' ||
+                  (currentUser.role === 'superAdmin' &&
+                    order.isPaid &&
+                    !order.isDelivered) ? (
+                    <ListItem>
+                      <Button
+                        width="full"
+                        colorScheme="teal"
+                        onClick={handleDeliverOrder}
+                      >
+                        Deliver Order
+                      </Button>
+                    </ListItem>
+                  ) : (
+                    ''
+                  )}
+                </List>
+              </Box>
+            </Card>
+          </Box>
+        </Grid>
+      )}
+    </Box>
+  );
+}
+
+export default SingleOrder;

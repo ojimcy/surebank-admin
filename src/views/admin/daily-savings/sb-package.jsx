@@ -185,11 +185,13 @@ const ViewCustomerSb = () => {
 
   // Function to add the product to the cart
   const addToCart = async (packageData) => {
+    console.log(packageData);
     try {
       const productCatalogueId = packageData.product.id;
       await axiosService.post('/cart', {
         productCatalogueId: productCatalogueId,
         quantity: 1,
+        packageId: packageData._id,
       });
 
       toast.success('Item added to cart successfully!');
@@ -208,7 +210,7 @@ const ViewCustomerSb = () => {
       }
 
       // Redirect to the cart page
-      history.push('/admin/order/placeorder');
+      history.push('/admin/orders/placeorder');
     } catch (error) {
       console.error('Error during checkout:', error);
     } finally {
@@ -388,14 +390,13 @@ const ViewCustomerSb = () => {
                           <Button
                             colorScheme="blue"
                             size="md"
-                            w="100%"
-                            h="50"
-                            as={NavLink}
-                            to={`/admin/products/catalogue/${packageData._id}`}
-                            isDisabled={packageData.totalContribution <
-                              packageData.product?.sellingPrice}
+                            onClick={() => handleAddToCart(packageData)}
+                            isDisabled={
+                              packageData.totalContribution <
+                              packageData.product?.sellingPrice
+                            }
                           >
-                            Sell
+                            Buy
                           </Button>
                         </>
                       ) : (
@@ -404,8 +405,10 @@ const ViewCustomerSb = () => {
                             colorScheme="blue"
                             size="md"
                             onClick={() => handleAddToCart(packageData)}
-                            isDisabled={packageData.totalContribution <
-                              packageData.product?.sellingPrice}
+                            isDisabled={
+                              packageData.totalContribution <
+                              packageData.product?.sellingPrice
+                            }
                           >
                             Buy
                           </Button>

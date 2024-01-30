@@ -13,6 +13,7 @@ import {
   FaSitemap,
   FaUsers,
   FaShoppingBag,
+  FaShoppingCart,
 } from 'react-icons/fa';
 import { AiOutlineUsergroupAdd } from 'react-icons/ai';
 
@@ -67,7 +68,10 @@ import StaffDetailsPage from 'views/admin/branches/StaffDetails';
 
 import Stores from 'views/admin/stores';
 import ResetPassword from 'views/admin/profile/ResetPassword';
-import PlaceOrder from 'views/admin/order/placeorder';
+
+import PlaceOrder from 'views/admin/orders/placeorder';
+import Orders from 'views/admin/orders';
+import SingleOder from 'views/admin/orders/single-order';
 
 const routes = [
   {
@@ -471,11 +475,30 @@ const routes = [
   },
 
   {
-    name: 'Order',
+    name: 'Orders',
     layout: '/admin',
-    path: '/order/placeorder',
+    path: '/orders/placeorder',
     roles: ['superAdmin', 'admin', 'manager', 'userReps'],
     component: PlaceOrder,
+  },
+
+  {
+    name: 'Orders',
+    layout: '/admin',
+    path: '/orders/:id',
+    roles: ['superAdmin', 'admin', 'manager', 'userReps'],
+    component: SingleOder,
+  },
+
+  {
+    name: 'Orders',
+    layout: '/admin',
+    path: '/orders',
+    icon: (
+      <Icon as={FaShoppingCart} width="20px" height="20px" color="inherit" />
+    ),
+    roles: ['superAdmin', 'admin'],
+    component: Orders,
   },
 ];
 

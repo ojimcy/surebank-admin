@@ -78,8 +78,6 @@ export default function CreateAccount() {
     }
   }, [selectedUser]);
 
-  console.log(selectedUser.value);
-
   const submitHandler = async (accountData) => {
     try {
       // If a user is selected
