@@ -30,7 +30,7 @@ const SbDepositModal = ({ isOpen, onClose, packageData, onSuccess }) => {
       accountNumber: packageData.accountNumber,
       amount: parseFloat(depositAmount),
     };
-
+    console.log(depositData);
     try {
       setLoading(true);
       await axiosService.post(
@@ -63,7 +63,9 @@ const SbDepositModal = ({ isOpen, onClose, packageData, onSuccess }) => {
           {packageData && (
             <VStack spacing={4}>
               <Text>Product: {packageData.product.name}</Text>
-              <Text>Price: {formatNaira(packageData.product.sellingPrice)}</Text>
+              <Text>
+                Price: {formatNaira(packageData.product.sellingPrice)}
+              </Text>
               <Text>Account Number: {packageData.accountNumber}</Text>
               <InputGroup>
                 <Input

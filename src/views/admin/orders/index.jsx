@@ -5,10 +5,12 @@ import { NavLink } from 'react-router-dom';
 import CustomTable from 'components/table/CustomTable';
 import LoadingSpinner from 'components/scroll/LoadingSpinner';
 import axiosService from 'utils/axiosService';
+import { useAuth } from 'contexts/AuthContext';
 
 // Define the OrdersPage component
 const OrdersPage = () => {
   // State variables
+  const { currentUser } = useAuth();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedStatus, setSelectedStatus] = useState('All');
@@ -16,28 +18,54 @@ const OrdersPage = () => {
     pageIndex: 0,
     pageSize: 10, // Set your desired page size
   });
+  const [staffInfo, setStaffInfo] = useState({});
 
-  // Fetch orders from the server
-  const fetchOrders = async () => {
-    const { pageIndex, pageSize } = pagination;
-    try {
-      const response = await axiosService.get(
-        `/orders?&limit=${pageSize}&page=${pageIndex + 1}`
-      );
-      console.log(response.data);
-      setOrders(response.data);
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching orders:', error);
-      setLoading(false);
-    }
-  };
-
-  // Effect to fetch orders on component mount and when pagination changes
   useEffect(() => {
+    const fetchStaff = async () => {
+      try {
+        if (currentUser) {
+          const getStaff = await axiosService.get(
+            `/staff/user/${currentUser.id}`
+          );
+          setStaffInfo(getStaff.data);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchStaff();
+  }, [currentUser]);
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      if (currentUser && staffInfo && staffInfo.branchId !== undefined) {
+        const { pageIndex, pageSize } = pagination;
+        try {
+          setLoading(true);
+          let query = `/orders?&limit=${pageSize}&page=${pageIndex + 1}`;
+          // Add query parameters based on user role
+          if (currentUser.role === 'manager') {
+            query += `&branchId=${staffInfo.branchId}`;
+          } else if (currentUser.role === 'userReps') {
+            query += `&createdBy=${currentUser.id}`;
+          }
+          const response = await axiosService.get(query);
+          setOrders(response.data);
+        } catch (error) {
+          console.error(
+            error.response?.data?.message || 'Error fetching orders:',
+            error
+          );
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
     fetchOrders();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pagination]);
+  }, [currentUser, staffInfo, pagination]);
 
   // Function to handle page change
   const onPageChange = ({ pageIndex, pageSize }) => {
@@ -55,7 +83,6 @@ const OrdersPage = () => {
   };
   const filteredOrders = filterOrdersByStatus(orders, selectedStatus);
 
-  console.log(filteredOrders)
   // Columns for the order table
   const columns = React.useMemo(
     () => [
@@ -67,8 +94,12 @@ const OrdersPage = () => {
       {
         Header: 'Image',
         accessor: 'products[0].productCatalogueId.images',
-        Cell: ({ value }) => (
-          <img src={value} alt="Product" style={{ width: '50px' }} />
+        Cell: ({ value, row }) => (
+          <NavLink
+            to={`/product/catalogue-details/${row.original.products[0].productCatalogueId.id}`}
+          >
+            <img src={value} alt="Product" style={{ width: '50px' }} />
+          </NavLink>
         ),
       },
       {
@@ -76,11 +107,10 @@ const OrdersPage = () => {
         accessor: 'products[0].productCatalogueId.name',
       },
       {
-        Header: 'User Reps',
-        accessor: 'createdBy',
-        Cell: (value) => (
-          <NavLink to={`/admin/user/${value.createdby}`}>
-            {value.firstName} {value.lastName}
+        Header: 'Reps',
+        accessor: (row) => (
+          <NavLink to={`/admin/user/${row.createdBy.id}`}>
+            {row.createdBy.firstName} {row.createdBy.lastName}
           </NavLink>
         ),
       },

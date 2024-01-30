@@ -113,7 +113,10 @@ function PlaceOrder() {
       history.push(`/orders/${orderId}`);
     } catch (error) {
       console.error('Error during order placement:', error);
-      toast.error('Error placing the order. Please try again.');
+      toast.error(
+        error.response?.data?.message ||
+          'Error placing the order. Please try again.'
+      );
     } finally {
       setSubmittingOrder(false);
     }

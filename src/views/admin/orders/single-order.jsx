@@ -22,7 +22,7 @@ import axiosService from 'utils/axiosService'; // Adjust the import path
 import { useAuth } from 'contexts/AuthContext';
 import Card from 'components/card/Card';
 
-import { formatDate, formatNaira } from 'utils/helper';
+import { formatNaira, formatMdbDate } from 'utils/helper';
 import LoadingSpinner from 'components/scroll/LoadingSpinner';
 
 function SingleOrder() {
@@ -33,42 +33,48 @@ function SingleOrder() {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchOrderDetails = async () => {
-      try {
-        const response = await axiosService.get(`/orders/${orderId}`);
-        setOrder(response.data);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching order details:', error);
-        setLoading(false);
-      }
-    };
+  const fetchOrderDetails = async () => {
+    try {
+      const response = await axiosService.get(`/orders/${orderId}`);
+      setOrder(response.data);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching order details:', error);
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchOrderDetails();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orderId]);
 
   const handleDeliverOrder = async () => {
-    const fetchOrderDetails = async () => {
+    const deliverOrder = async () => {
       setLoading(true);
       try {
         await axiosService.post(`/orders/${orderId}/deliver`);
         toast.success('Product marked as delivered');
+        fetchOrderDetails();
         setLoading(false);
       } catch (error) {
         console.error('An error occured:', error);
-        toast.error('An error occured');
+        toast.error(error.response?.data?.message || 'An error occured');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchOrderDetails();
+    deliverOrder();
   };
   const paymentMethodLabels = {
     sb_balance: 'SB Balance',
     transfer: 'Bank Transfer',
     cash: 'Cash',
+  };
+
+  const handleMakePayment = async () => {
+    toast.error('Not available');
   };
 
   return (
@@ -92,13 +98,14 @@ function SingleOrder() {
                 </ListItem>
                 <ListItem>
                   {order.deliveryAddress.fullName},{' '}
+                  {order.deliveryAddress.phoneNumber},{' '}
                   {order.deliveryAddress.address}, {order.deliveryAddress.city},{' '}
-                  {order.deliveryAddress.phoneNumber}, &nbsp;
+                  &nbsp;
                 </ListItem>
                 <ListItem>
                   Status:{' '}
                   {order.isDelivered
-                    ? `Delivered at ${order.deliveredAt}`
+                    ? `Delivered at ${formatMdbDate(order.deliveredAt)}`
                     : 'Not Delivered'}
                 </ListItem>
               </List>
@@ -119,7 +126,7 @@ function SingleOrder() {
                   <ListItem>
                     Status:{' '}
                     {order.isPaid
-                      ? `Paid at ${formatDate(order.paidAt)}`
+                      ? `Paid at ${formatMdbDate(order.paidAt)}`
                       : 'Not paid'}
                   </ListItem>
                   <ListItem>
@@ -206,6 +213,17 @@ function SingleOrder() {
                       </Box>
                     </Grid>
                   </ListItem>
+                  {!order.isPaid && (
+                    <ListItem>
+                      <Button
+                        width="full"
+                        colorScheme="teal"
+                        onClick={handleMakePayment}
+                      >
+                        Make Payment
+                      </Button>
+                    </ListItem>
+                  )}
                   {currentUser.role === 'superAdmin' ||
                   (currentUser.role === 'superAdmin' &&
                     order.isPaid &&

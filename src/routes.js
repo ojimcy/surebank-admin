@@ -497,7 +497,7 @@ const routes = [
     icon: (
       <Icon as={FaShoppingCart} width="20px" height="20px" color="inherit" />
     ),
-    roles: ['superAdmin', 'admin'],
+    roles: ['superAdmin', 'admin', 'manager', 'userReps'],
     component: Orders,
   },
 ];

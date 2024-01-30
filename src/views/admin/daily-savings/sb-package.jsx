@@ -106,7 +106,10 @@ const ViewCustomerSb = () => {
       // Close the modal
       setShowMergeModal(false);
 
-      toast.error('Failed to merge packages. Please try again later.');
+      toast.error(
+        error.response?.data?.message ||
+          'Failed to merge packages. Please try again later.'
+      );
     }
   };
 
@@ -185,7 +188,6 @@ const ViewCustomerSb = () => {
 
   // Function to add the product to the cart
   const addToCart = async (packageData) => {
-    console.log(packageData);
     try {
       const productCatalogueId = packageData.product.id;
       await axiosService.post('/cart', {
