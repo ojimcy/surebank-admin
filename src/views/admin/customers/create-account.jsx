@@ -84,6 +84,7 @@ export default function CreateAccount() {
       if (selectedUser) {
         accountData.email = selectedUser.value.email;
         accountData.phoneNumber = selectedUser.value.phoneNumber;
+        accountData.branchId = customerData.branchId._id;
       }
       await axiosService.post(`/accounts`, accountData);
       toast.success('Account created successfully!');
@@ -103,7 +104,7 @@ export default function CreateAccount() {
       }
     }
   };
-
+  console.log(customerData);
   return (
     <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
       {/* Main Fields */}
@@ -144,7 +145,7 @@ export default function CreateAccount() {
                   <CustomSelect
                     options={users.map((user) => ({
                       value: user,
-                      label: `${user.firstName} ${user.lastName} - ${user.email}`,
+                      label: `${user.firstName} ${user.lastName} - ${user.phoneNumber}`,
                     }))}
                     onChange={handleUserSelect}
                     placeholder="Select User"

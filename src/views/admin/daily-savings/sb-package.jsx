@@ -414,6 +414,16 @@ const ViewCustomerSb = () => {
                           >
                             Buy
                           </Button>
+
+                          <Button
+                            colorScheme="green"
+                            size={{ md: 'md', sm: 'sm' }}
+                            onClick={() =>
+                              handleChangeProductModalOpen(packageData)
+                            }
+                          >
+                            Change Product
+                          </Button>
                           <Button
                             colorScheme="green"
                             size="md"

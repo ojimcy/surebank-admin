@@ -91,6 +91,7 @@ export default function Charges() {
       if (branch) {
         endpoint += `&branchId=${branch}`;
       }
+
       try {
         const response = await axiosService.get(endpoint);
         const chargeResponse = await axiosService.get(

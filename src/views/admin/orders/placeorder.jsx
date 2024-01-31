@@ -253,12 +253,15 @@ function PlaceOrder() {
                         >
                           <Stack direction="column">
                             <Radio value="sb_balance">SB Balance</Radio>
-                            <Radio value="card" disabled>
-                              Card
+                            {/* <Radio value="paypal">
+                              Paypal
                             </Radio>
-                            <Radio value="bank_transfer" disabled>
+                            <Radio value="bank_transfer">
                               Transfer
                             </Radio>
+                            <Radio value="cash_on_delivery">
+                              Cash on Delivery
+                            </Radio> */}
                           </Stack>
                         </RadioGroup>
                       </FormControl>
