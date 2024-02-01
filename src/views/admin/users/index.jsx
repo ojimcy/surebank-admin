@@ -19,7 +19,7 @@ import { NavLink } from 'react-router-dom';
 // Assets
 import axiosService from 'utils/axiosService';
 import Card from 'components/card/Card.js';
-import {  EditIcon, SearchIcon } from '@chakra-ui/icons';
+import { EditIcon, SearchIcon } from '@chakra-ui/icons';
 import BackButton from 'components/menu/BackButton';
 import axios from 'axios';
 import CustomTable from 'components/table/CustomTable';
@@ -69,10 +69,7 @@ export default function Users() {
   useEffect(() => {
     const filtered = users?.filter((user) => {
       const fullName = `${user.firstName} ${user.lastName}`.toLowerCase();
-      return (
-        fullName.includes(searchTerm.toLowerCase()) ||
-        user.email.includes(searchTerm)
-      );
+      return fullName.includes(searchTerm.toLowerCase());
     });
     setFilteredUsers(filtered);
   }, [searchTerm, users]);
@@ -83,7 +80,7 @@ export default function Users() {
       {
         Header: 'Name',
         accessor: (row) => (
-          <NavLink to={`/admin/customer/${row.id}`}>
+          <NavLink to={`/admin/user/${row.id}`}>
             {row.firstName} {row.lastName}
           </NavLink>
         ),

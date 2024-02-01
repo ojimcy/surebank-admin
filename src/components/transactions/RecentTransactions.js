@@ -29,15 +29,9 @@ function RecentTransactions() {
     const fetchActivities = async () => {
       let response;
 
-      if (currentUser.role === 'userReps') {
-        response = await axiosService.get(
-          `/transactions?createdBy=${currentUser.id}`
-        );
-      } else {
-        response = await axiosService.get(
-          `/transactions?accountNumber=${customerData?.accountNumber}`
-        );
-      }
+      response = await axiosService.get(
+        `/transactions?accountNumber=${customerData?.accountNumber}`
+      );
 
       setTransactions(response.data);
     };
