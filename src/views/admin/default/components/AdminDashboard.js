@@ -60,12 +60,12 @@ export default function UserRepsDashboard() {
         setContributionDailyTotal(contributionResponse.data);
 
         const dsResponse = await axiosService.get(
-          `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&narration='Daily contribution`
+          `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&narration=Daily contribution`
         );
         setDsDailyTotal(dsResponse.data);
 
         const sbResponse = await axiosService.get(
-          `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&narration='SB contribution`
+          `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&narration=SB contribution`
         );
         setSbDailyTotal(sbResponse.data);
 

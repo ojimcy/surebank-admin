@@ -51,7 +51,7 @@ const OrdersPage = () => {
             query += `&createdBy=${currentUser.id}`;
           }
           const response = await axiosService.get(query);
-          setOrders(response.data);
+          setOrders(response.data.orders);
         } catch (error) {
           console.error(
             error.response?.data?.message || 'Error fetching orders:',

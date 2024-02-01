@@ -29,14 +29,22 @@ export default function SuperAdminDashboard() {
   const [contributionsDailyTotal, setContributionDailyTotal] = useState([]);
   const [sbDailyTotal, setSbDailyTotal] = useState([]);
   const [dsDailyTotal, setDsDailyTotal] = useState([]);
-  const [totalContributions, setTotalContributions] = useState(0);
+  const [totalSbContributions, setTotalSbContributions] = useState(0);
+  const [totalDsContributions, setTotalDsContributions] = useState(0);
   const [dailySavingsWithdrawals, setDailySavingsWithdrawals] = useState([]);
   const [openPackageCount, setOpenPackageCount] = useState(0);
+  const [totalDsWithdrawals, setTotalDsWithdrawals] = useState(0);
+  const [totalSbSales, setTotalSbSales] = useState(0);
   const [loading, setLoading] = useState(true);
+
+  const sbNetBalance = totalSbContributions - totalSbSales;
+  const dsNetBalance = totalDsContributions - totalDsWithdrawals;
+
+  const totalContributions = sbNetBalance + dsNetBalance;
 
   const fetchDashboardData = useCallback(async () => {
     try {
-      setLoading(true)
+      setLoading(true);
       // Get today's date at 00:00 and convert to timestamp
       const startDate = new Date();
       startDate.setHours(0, 0, 0, 0);
@@ -48,13 +56,21 @@ export default function SuperAdminDashboard() {
 
       // Fetch total contributions and total daily withdrawals
       const [
-        totalContributionResponse,
+        totalSbContributionResponse,
+        totalDsContributionResponse,
         contributionResponse,
         sbResponse,
         dsResponse,
         withdrawalResponse,
+        dsWithdrawalResponse,
+        sbSalesResponse,
       ] = await Promise.all([
-        axiosService.get(`/reports/total-contributions`),
+        axiosService.get(
+          `/reports/total-contributions?narration=SB contribution`
+        ),
+        axiosService.get(
+          `/reports/total-contributions?narration=Daily contribution`
+        ),
         axiosService.get(
           `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}`
         ),
@@ -65,14 +81,20 @@ export default function SuperAdminDashboard() {
           `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&narration=Daily contribution`
         ),
         axiosService.get(
-          `/transactions/withdraw/cash?startDate=${startTimeStamp}&endDate=${endTimeStamp}`
+          `/transactions/withdraw/cash?status=pending&startDate=${startTimeStamp}&endDate=${endTimeStamp}`
         ),
+        axiosService.get(`/transactions/withdraw/cash?status=approved`),
+        axiosService.get(`/orders?status=paid`),
       ]);
-      setTotalContributions(totalContributionResponse.data);
+      
+      setTotalSbContributions(totalSbContributionResponse.data);
+      setTotalDsContributions(totalDsContributionResponse.data);
       setContributionDailyTotal(contributionResponse.data);
       setSbDailyTotal(sbResponse.data);
       setDsDailyTotal(dsResponse.data);
       setDailySavingsWithdrawals(withdrawalResponse.data.totalAmount);
+      setTotalDsWithdrawals(dsWithdrawalResponse.data.totalAmount);
+      setTotalSbSales(sbSalesResponse.data.totalAmount);
 
       // Fetch total open and closed packages
       const [openPackages] = await Promise.all([
@@ -105,7 +127,7 @@ export default function SuperAdminDashboard() {
       ) : (
         <>
           <SimpleGrid
-            columns={{ base: 1, md: 3, lg: 3, '2xl': 3 }}
+            columns={{ base: 1, md: 4, lg: 4, '2xl': 4 }}
             gap="20px"
             mb="20px"
             mt="40px"
@@ -147,10 +169,10 @@ export default function SuperAdminDashboard() {
                   }
                 />
               }
-              // growth="+23%"
-              name="Total Daily contributions"
-              value={formatNaira(contributionsDailyTotal)}
+              name="Total SB Contributions"
+              value={formatNaira(sbNetBalance)}
             />
+
             <MiniStatistics
               startContent={
                 <IconBox
@@ -167,9 +189,8 @@ export default function SuperAdminDashboard() {
                   }
                 />
               }
-              // growth="+23%"
-              name="Total DS contributions"
-              value={formatNaira(dsDailyTotal)}
+              name="Total DS Contributions"
+              value={formatNaira(dsNetBalance)}
             />
 
             <MiniStatistics
@@ -189,8 +210,8 @@ export default function SuperAdminDashboard() {
                 />
               }
               // growth="+23%"
-              name="Total SB contributions"
-              value={formatNaira(sbDailyTotal)}
+              name="Total Daily contributions"
+              value={formatNaira(contributionsDailyTotal)}
             />
 
             <MiniStatistics
@@ -211,6 +232,48 @@ export default function SuperAdminDashboard() {
               }
               name="Total Daily Withdrawal Requests"
               value={formatNaira(dailySavingsWithdrawals || 0)}
+            />
+
+            <MiniStatistics
+              startContent={
+                <IconBox
+                  w="56px"
+                  h="56px"
+                  bg={boxBg}
+                  icon={
+                    <Icon
+                      w="32px"
+                      h="32px"
+                      as={MdAttachMoney}
+                      color={brandColor}
+                    />
+                  }
+                />
+              }
+              // growth="+23%"
+              name="DS Daily Total"
+              value={formatNaira(dsDailyTotal)}
+            />
+
+            <MiniStatistics
+              startContent={
+                <IconBox
+                  w="56px"
+                  h="56px"
+                  bg={boxBg}
+                  icon={
+                    <Icon
+                      w="32px"
+                      h="32px"
+                      as={MdAttachMoney}
+                      color={brandColor}
+                    />
+                  }
+                />
+              }
+              // growth="+23%"
+              name="SB Daily Total"
+              value={formatNaira(sbDailyTotal)}
             />
 
             <MiniStatistics

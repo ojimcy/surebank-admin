@@ -68,7 +68,7 @@ const PackageCard = ({
       </Box>
       <Flex mt="4" justify="space-between">
         <Button colorScheme="red" size="sm" onClick={handleTransferClick}>
-          Transfer
+          Move to central account
         </Button>
         <Button colorScheme="green" size="sm" onClick={handleDepositClick}>
           Deposit

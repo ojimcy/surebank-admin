@@ -39,7 +39,8 @@ export default function Default(props) {
           <StatNumber
             color={textColor}
             fontSize={{
-              base: "2xl",
+              base: "md",
+              md: "2xl"
             }}>
             {value}
           </StatNumber>
