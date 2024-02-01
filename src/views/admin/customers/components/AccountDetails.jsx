@@ -24,7 +24,7 @@ const AccountDetails = ({ customerData }) => {
 
     setIsCopied(true);
     setTimeout(() => setIsCopied(false), 1500);
-  });
+  }, [customerData.accountNumber]);
 
   const handleShowUserDetails = () => {
     setShowUserDetails((prevShowUserDetails) => !prevShowUserDetails);

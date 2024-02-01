@@ -64,37 +64,35 @@ export default function SbReports() {
     async function fetchCharges() {
       setLoading(true);
 
-      let endpoint = `/reports/charges?reasons='Profit from SB`;
+      let endpoint = `/reports/charges?reasons=Profit from SB`;
       if (timeRange === 'last7days') {
         const endDate = new Date();
         endDate.setHours(23, 59, 59, 999);
         const startDate = new Date();
         startDate.setDate(endDate.getDate() - 7);
         startDate.setHours(0, 0, 0, 0);
-        endpoint += `?startDate=${startDate.getTime()}&endDate=${endDate.getTime()}`;
+        endpoint += `&startDate=${startDate.getTime()}&endDate=${endDate.getTime()}`;
       } else if (timeRange === 'last30days') {
         const endDate = new Date();
         endDate.setHours(23, 59, 59, 999);
         const startDate = new Date();
         startDate.setDate(endDate.getDate() - 30);
         startDate.setHours(0, 0, 0, 0);
-        endpoint += `?startDate=${startDate.getTime()}&endDate=${endDate.getTime()}`;
+        endpoint += `&startDate=${startDate.getTime()}&endDate=${endDate.getTime()}`;
       } else if (timeRange === 'custom') {
         if (startDate && endDate) {
           const customStartDate = new Date(startDate);
           customStartDate.setHours(0, 0, 0, 0);
           const customEndDate = new Date(endDate);
           customEndDate.setHours(23, 59, 59, 999);
-          endpoint += `?startDate=${customStartDate.getTime()}&endDate=${customEndDate.getTime()}`;
+          endpoint += `&startDate=${customStartDate.getTime()}&endDate=${customEndDate.getTime()}`;
         }
       }
       if (branch) {
         endpoint += `&branchId=${branch}`;
       }
-
       try {
         const response = await axiosService.get(endpoint);
-
         const chargeResponse = await axiosService.get(
           '/reports/contribution-incomes/sb/supperadmin'
         );
@@ -136,7 +134,7 @@ export default function SbReports() {
       {
         Header: 'Name',
         accessor: (row) => (
-          <NavLink to={`/admin/user/${row.id}`}>
+          <NavLink to={`/admin/user/${row.userId.id}`}>
             {row.userId.firstName} {row.userId.lastName}
           </NavLink>
         ),

@@ -25,7 +25,6 @@ export default function User() {
   const { currentUser } = useAuth();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [branchInfo, setBranchInfo] = useState('');
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -33,15 +32,6 @@ export default function User() {
       try {
         const response = await axiosService.get(`users/${id}`);
         setUser(response.data);
-
-        // Fetch branch information using the branchId
-        if (response.data.branchId) {
-          const branchResponse = await axiosService.get(
-            `branch/${response.data.branchId}`
-          );
-
-          setBranchInfo(branchResponse.data);
-        }
 
         setLoading(false);
       } catch (error) {
@@ -51,13 +41,6 @@ export default function User() {
     };
     fetchUsers();
   }, [id]);
-
-  const roleLabels = {
-    userReps: 'Sales Rep',
-    manager: 'Manager',
-    admin: 'Admin',
-    superAdmin: 'Super Admin',
-  };
 
   return (
     <Box>
@@ -110,9 +93,9 @@ export default function User() {
                           <Text fontWeight="bold">Status:</Text>
                           <Text>{user.status}</Text>
                           <Text fontWeight="bold">Roles:</Text>
-                          <Text>{roleLabels[user.role]}</Text>
-                          <Text fontWeight="bold">Branch:</Text>
-                          <Text>{branchInfo.name}</Text>
+                          <Text>{user.role}</Text>
+                          <Text fontWeight="bold">Address:</Text>
+                          <Text>{user.address}</Text>
                         </Grid>
                         <Grid
                           templateColumns={{
@@ -122,16 +105,22 @@ export default function User() {
                           gap={4}
                           mt={4}
                         >
-                          <NavLink to={`/admin/branch/staff/${id}`}>
-                            <Button colorScheme="blue" size="md" w="100%">
-                              Details
-                            </Button>
-                          </NavLink>
-                          <NavLink to={`/admin/customer/staffaccounts/${id}`}>
-                            <Button colorScheme="blue" size="md" w="100%">
-                              View Customers
-                            </Button>
-                          </NavLink>
+                          {user.role !== 'user' && (
+                            <>
+                              <NavLink to={`/admin/branch/staff/${id}`}>
+                                <Button colorScheme="blue" size="md" w="100%">
+                                  Details
+                                </Button>
+                              </NavLink>
+                              <NavLink
+                                to={`/admin/customer/staffaccounts/${id}`}
+                              >
+                                <Button colorScheme="blue" size="md" w="100%">
+                                  View Customers
+                                </Button>
+                              </NavLink>
+                            </>
+                          )}
                           {currentUser.id !== user.id && (
                             <NavLink to={`/admin/user/edit-user/${id}`}>
                               <Button colorScheme="blue" size="md" w="100%">

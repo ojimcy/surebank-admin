@@ -136,7 +136,7 @@ export default function Charges() {
       {
         Header: 'Name',
         accessor: (row) => (
-          <NavLink to={`/admin/user/${row.id}`}>
+          <NavLink to={`/admin/user/${row.userId.id}`}>
             {row.userId.firstName} {row.userId.lastName}
           </NavLink>
         ),

@@ -37,6 +37,7 @@ export default function OtherCharges() {
   const [isCustomDateModalOpen, setCustomDateModalOpen] = useState(false);
   const [customRangeLabel, setCustomRangeLabel] = useState('Custom Range');
   const [totalCharge, setTotalCharge] = useState(0);
+  const [selectedReason, setSelectedReason] = useState('');
 
   const handleTimeRangeChange = (e) => {
     setTimeRange(e.target.value);
@@ -92,6 +93,10 @@ export default function OtherCharges() {
         endpoint += `branchId=${branch}`;
       }
 
+      if (selectedReason) {
+        endpoint += `reasons=${selectedReason}`;
+      }
+
       try {
         const response = await axiosService.get(endpoint);
         setCharges(response.data.charges);
@@ -104,7 +109,7 @@ export default function OtherCharges() {
     }
 
     fetchCharges();
-  }, [timeRange, branch, startDate, endDate]);
+  }, [timeRange, branch, startDate, endDate, selectedReason]);
 
   useEffect(() => {
     let filteredData = charges;
@@ -126,13 +131,17 @@ export default function OtherCharges() {
     setFilterdCharges(filteredData);
   }, [charges, timeRange]);
 
+  const handleReasonChange = (e) => {
+    setSelectedReason(e.target.value);
+  };
+
   // Columns for the user table
   const columns = React.useMemo(
     () => [
       {
         Header: 'Name',
         accessor: (row) => (
-          <NavLink to={`/admin/user/${row.id}`}>
+          <NavLink to={`/admin/user/${row.userId.id}`}>
             {row.userId.firstName} {row.userId.lastName}
           </NavLink>
         ),
@@ -188,6 +197,19 @@ export default function OtherCharges() {
                 >
                   {customRangeLabel}
                 </option>
+              </Select>
+
+              <Select
+                value={selectedReason}
+                onChange={handleReasonChange}
+                minWidth="150px"
+                mr="4"
+              >
+                <option>Select Reasons</option>
+                <option value="">All</option>
+                <option value="SMS charge">SMS charge</option>
+                <option value="Profit from SB">Profit from SB</option>
+                <option value="DS charge">DS Charge</option>
               </Select>
 
               <Select value={branch} onChange={handleBranchChange}>
