@@ -52,6 +52,7 @@ const hiddenRoutes = [
   '/admin/products/catalogue-details/:id',
   '/admin/products/catalogue/create',
   '/admin/products/requests',
+  '/admin/products/sb-products',
   '/admin/products/catalogue/edit/:id',
   '/admin/branch/staff/:id',
   '/admin/stores/collections',

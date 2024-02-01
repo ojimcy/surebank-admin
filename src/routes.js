@@ -57,6 +57,7 @@ import ExpenditureDetail from 'views/admin/accounting/expenditure-detail';
 
 import Products from 'views/admin/products';
 import ProductsRequest from 'views/admin/products/product-requests';
+import SelectedProducts from 'views/admin/products/selected-products';
 import CreateCatalogue from 'views/admin/products/create-catalogue';
 import CatalogueDetails from 'views/admin/products/single-product-catalogue';
 import EditProductCatalogue from 'views/admin/products/catalogue/edit';
@@ -431,6 +432,16 @@ const routes = [
     ),
     roles: ['superAdmin', 'admin', 'manager', 'userReps'],
     component: ProductsRequest,
+  },
+  {
+    name: 'Products',
+    layout: '/admin',
+    path: '/products/sb-products',
+    icon: (
+      <Icon as={FaProductHunt} width="20px" height="20px" color="inherit" />
+    ),
+    roles: ['superAdmin', 'admin', 'manager'],
+    component: SelectedProducts,
   },
   {
     name: 'Products',

@@ -8,19 +8,15 @@ import {
   Button,
   Spacer,
   Text,
-  MenuButton,
-  Menu,
-  MenuList,
-  MenuItem,
   FormControl,
   Stack,
   Input,
+  Select,
 } from '@chakra-ui/react';
 
 import { NavLink } from 'react-router-dom';
 
 // Custom components
-import { formatMdbDate } from 'utils/helper';
 
 // Assets
 import Card from 'components/card/Card.js';
@@ -28,99 +24,103 @@ import { SearchIcon } from '@chakra-ui/icons';
 import BackButton from 'components/menu/BackButton';
 import CustomTable from 'components/table/CustomTable';
 import axiosService from 'utils/axiosService';
-import CatalogueDetailsModal from 'components/modals/CatalogueDetailsModal';
 import { useAuth } from 'contexts/AuthContext';
-import { ChevronDownIcon } from '@chakra-ui/icons';
+import { useAppContext } from 'contexts/AppContext';
 
-export default function Catalogue() {
+export default function SelectedProducts() {
   const { currentUser } = useAuth();
-  const [products, setProducts] = useState([]);
+  const { branches } = useAppContext();
+  const [selectedProducts, setSelectedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [productDetailsModal, setProductDetailsModal] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState(null);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10000000,
   });
+  const [branch, setBranch] = useState('');
+  const [staffInfo, setStaffInfo] = useState({});
 
-  const fetchProducts = async () => {
-    const { pageIndex } = pagination;
-    try {
-      const response = await axiosService.get(
-        `/products/catalogue?&page=${pageIndex + 1}`
-      );
-      setProducts(response.data);
-    } catch (error) {
-      console.error('Error fetching products:', error);
-      setLoading(false);
-    } finally {
-      setLoading(false);
+  const handleBranchChange = (e) => {
+    setBranch(e.target.value);
+  };
+
+  useEffect(() => {
+    const fetchStaff = async () => {
+      try {
+        if (currentUser) {
+          const getStaff = await axiosService.get(
+            `/staff/user/${currentUser.id}`
+          );
+          setStaffInfo(getStaff.data);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchStaff();
+  }, [currentUser]);
+
+  const fetchSelectedProducts = async () => {
+    if (staffInfo) {
+      let endpoint = `/daily-savings/sb?`;
+
+      if (staffInfo.role === 'manager') {
+        endpoint += `branchId=${staffInfo.branchId}`;
+      }
+
+      if (branch) {
+        endpoint += `branchId=${branch}`;
+      }
+      try {
+        const response = await axiosService.get(endpoint);
+        setSelectedProducts(response.data);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+        setLoading(false);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
   useEffect(() => {
-    fetchProducts();
+    if (staffInfo) {
+      fetchSelectedProducts();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pagination]);
+  }, [pagination, branch, staffInfo]);
 
   const onPageChange = ({ pageIndex, pageSize }) => {
     setPagination({ pageIndex, pageSize });
   };
 
-  const closeModalAndResetProduct = () => {
-    setSelectedProduct(null);
-    setProductDetailsModal(false);
-  };
-
-  const costPriceColumn = {
-    Header: 'Cost Price',
-    accessor: 'costPrice',
-  };
-
-  // Columns for the catalogue table
+  // Columns for the selected products table
   const baseColumns = [
     {
       Header: 'Name',
       accessor: (row) => (
         <>
-          <NavLink to={`/admin/products/catalogue-details/${row.id}`}>
-            {row.name}
+          <NavLink to={`/admin/products/catalogue-details/${row.product._id}`}>
+            {row.product.name}
           </NavLink>
         </>
       ),
-    },
-    // Include "Cost Price" column before "Selling Price"
-    currentUser.role === 'admin' || currentUser.role === 'superAdmin'
-      ? costPriceColumn
-      : null,
-    {
-      Header: 'Selling Price',
-      accessor: 'sellingPrice',
-    },
-    {
-      Header: 'Discount Price',
-      accessor: 'discount',
-    },
-    {
-      Header: 'Quantity',
-      accessor: 'quantity',
     },
 
     {
-      Header: 'Created At',
-      accessor: (row) => formatMdbDate(row.createdAt),
+      Header: 'User',
+      accessor: (row) => `${row.userId.firstName} ${row.userId.firstName}`,
     },
     {
-      Header: 'Action',
-      accessor: (row) => (
-        <>
-          <NavLink to={`/admin/products/catalogue-details/${row.id}`}>
-            <Button className="view-details-btn">View Details</Button>
-          </NavLink>
-        </>
-      ),
+      Header: 'Sales Reps',
+      accessor: (row) =>
+        `${row.accountManager?.firstName} ${row.accountManager?.firstName}`,
+    },
+    {
+      Header: 'Branch',
+      accessor: (row) => `${row.branchId?.name} `,
     },
   ];
 
@@ -132,16 +132,16 @@ export default function Catalogue() {
 
   // Filter products based on search term
   useEffect(() => {
-    if (!products) {
+    if (!selectedProducts) {
       return;
     }
 
-    const filtered = products?.filter((product) => {
-      const productName = `${product.name} `.toLowerCase();
+    const filtered = selectedProducts?.filter((product) => {
+      const productName = `${product.product.name} `.toLowerCase();
       return productName.includes(searchTerm.toLowerCase());
     });
     setFilteredProducts(filtered);
-  }, [searchTerm, products]);
+  }, [searchTerm, selectedProducts]);
 
   return (
     <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
@@ -165,7 +165,7 @@ export default function Catalogue() {
             mb="20px"
           >
             <Text fontSize="2xl" mb={{ base: '4', md: '0' }}>
-              Products
+              Selected SB Products
             </Text>
             <Spacer />
 
@@ -175,39 +175,27 @@ export default function Catalogue() {
               alignItems={{ base: 'flex-start', md: 'center' }}
               width={{ base: '100%', md: 'auto' }}
             >
-              {currentUser.role !== 'user' ||
-              currentUser.role !== 'userReps' ? (
-                <Menu>
-                  <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-                    Manage Products
-                  </MenuButton>
-                  <MenuList>
-                    <MenuItem>
-                      <NavLink to="/admin/products/catalogue/create">
-                        Add Product
-                      </NavLink>
-                    </MenuItem>
-                    <MenuItem>
-                      <NavLink to="/admin/products/requests">
-                        Product Requests
-                      </NavLink>
-                    </MenuItem>
-                    <MenuItem>
-                      <NavLink to="/admin/products/sb-products">
-                        Selected SB Products
-                      </NavLink>
-                    </MenuItem>
-                  </MenuList>
-                </Menu>
-              ) : (
-                ''
-              )}
-
               <Box mt={{ base: '4', md: '0' }}>
                 <Stack
                   direction={{ base: 'column', md: 'row' }}
                   spacing={{ base: '2', md: '4' }}
                 >
+                  {currentUser.role === 'superAdmin' ||
+                  currentUser.role === 'admin' ? (
+                    <Select value={branch} onChange={handleBranchChange}>
+                      <option>Select Branch</option>
+                      <option value="">All</option>
+                      {branches &&
+                        branches.map((branch) => (
+                          <option key={branch.id} value={branch.id}>
+                            {branch?.name}
+                          </option>
+                        ))}
+                    </Select>
+                  ) : (
+                    ''
+                  )}
+
                   <FormControl>
                     <Input
                       type="search"
@@ -243,14 +231,6 @@ export default function Catalogue() {
           </Box>
         </Card>
       </Grid>
-
-      {selectedProduct && (
-        <CatalogueDetailsModal
-          isOpen={productDetailsModal}
-          onClose={closeModalAndResetProduct}
-          product={selectedProduct}
-        />
-      )}
     </Box>
   );
 }

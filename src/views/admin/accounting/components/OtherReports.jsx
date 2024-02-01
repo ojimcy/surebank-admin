@@ -46,6 +46,7 @@ export default function OtherCharges() {
   const handleBranchChange = (e) => {
     setBranch(e.target.value);
   };
+  
   const handleStartDateChange = (e) => {
     setStartDate(e.target.value);
   };
