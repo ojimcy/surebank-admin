@@ -24,6 +24,8 @@ import { formatNaira, formatDate } from 'utils/helper';
 import BackButton from 'components/menu/BackButton';
 import { useForm } from 'react-hook-form';
 import LoadingSpinner from 'components/scroll/LoadingSpinner';
+import { FaClipboard } from 'react-icons/fa';
+import copy from 'clipboard-copy';
 
 const WithdrawalDetails = () => {
   const history = useHistory();
@@ -44,7 +46,6 @@ const WithdrawalDetails = () => {
         const response = await axiosService.get(
           `/transactions/withdraw/cash/${requestId}`
         );
-        console.log(response.data);
         setWithdrawal(response.data);
       } catch (error) {
         console.error(error);
@@ -96,6 +97,11 @@ const WithdrawalDetails = () => {
     }
   };
 
+  const handleCopy = (textToCopy) => {
+    copy(textToCopy);
+    toast.success('Copied to clipboard!');
+  };
+
   return (
     <Box p={4}>
       {loading ? (
@@ -143,6 +149,30 @@ const WithdrawalDetails = () => {
                           <Text>{formatNaira(withdrawal?.amount)}</Text>
                           <Text fontWeight="bold">Status:</Text>
                           <Text>{formatNaira(withdrawal?.status)}</Text>
+                          <Text fontWeight="bold">Bank Name:</Text>
+                          <Text>{withdrawal.bankName}</Text>
+                          <Text fontWeight="bold">Bank Account Number:</Text>
+                          <Text>
+                            {withdrawal.bankAccountNumber}
+                            {withdrawal.bankAccountNumber && (
+                              <FaClipboard
+                                style={{ cursor: 'pointer' }}
+                                onClick={() =>
+                                  handleCopy(withdrawal.bankAccountNumber)
+                                }
+                              />
+                            )}
+                          </Text>
+                          <Text fontWeight="bold">Bank Account Name:</Text>
+                          <Text>
+                            {withdrawal.accountName}
+                            {withdrawal.accountName && (
+                              <FaClipboard
+                                style={{ cursor: 'pointer' }}
+                                onClick={() => handleCopy(withdrawal.bankName)}
+                              />
+                            )}
+                          </Text>
                         </Grid>
 
                         <Flex justifyContent="center" mt={10}>

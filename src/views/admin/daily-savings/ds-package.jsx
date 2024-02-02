@@ -8,6 +8,10 @@ import {
   Icon,
   Text,
   useBreakpointValue,
+  MenuButton,
+  Menu,
+  MenuList,
+  MenuItem,
 } from '@chakra-ui/react';
 
 import { NavLink, useParams } from 'react-router-dom';
@@ -22,6 +26,7 @@ import RecentTransactions from 'components/transactions/RecentTransactions';
 import UsersPackages from 'components/package/UsersPackages';
 import LoadingSpinner from 'components/scroll/LoadingSpinner';
 import AccountDetails from '../customers/components/AccountDetails';
+import { ChevronDownIcon } from '@chakra-ui/icons';
 
 const ViewCustomerDs = () => {
   const { id } = useParams();
@@ -109,9 +114,23 @@ const ViewCustomerDs = () => {
               </Flex>
             </Flex>
             <Box>
-              <NavLink to="/admin/transaction/withdraw">
-                <Button colorScheme="green">Withdraw Cash</Button>
-              </NavLink>
+              <Menu>
+                <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+                  Withdraw
+                </MenuButton>
+                <MenuList>
+                  <MenuItem>
+                    <NavLink to="/admin/transaction/withdraw">
+                      Withdraw Cash
+                    </NavLink>
+                  </MenuItem>
+                  <MenuItem>
+                    <NavLink to="/admin/transaction/bank-transfer">
+                      Bank Transfer
+                    </NavLink>
+                  </MenuItem>
+                </MenuList>
+              </Menu>
             </Box>
           </Flex>
           <AccountDetails customerData={customerData} />

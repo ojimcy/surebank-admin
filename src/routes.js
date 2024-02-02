@@ -44,12 +44,13 @@ import ViewCustomerDs from 'views/admin/daily-savings/ds-package';
 import ViewCustomerSb from 'views/admin/daily-savings/sb-package';
 import EditCustomer from 'views/admin/customers/edit-customer';
 import Deposit from 'views/admin/account/deposit';
-import Withdraw from 'views/admin/account/withdrawal';
+import Withdraw from 'views/admin/account/withdraw';
+import BankTransfer from 'views/admin/account/bank-transfer';
 import WithdrawalRequest from 'views/admin/account/withdrawal-request';
 import { FaBox, FaMoneyBill } from 'react-icons/fa';
 import MakeContribution from 'views/admin/daily-savings/deposit';
 import CreatePackage from 'views/admin/daily-savings/package';
-import Withdrawal from 'views/admin/daily-savings/withdrawal';
+import Transfer from 'views/admin/daily-savings/withdrawal';
 import CreateAccount from 'views/admin/customers/create-account';
 import Accounting from 'views/admin/accounting';
 import Expenditures from 'views/admin/accounting/expenditure';
@@ -270,6 +271,14 @@ const routes = [
   {
     name: 'Account',
     layout: '/admin',
+    path: '/transaction/bank-transfer',
+    icon: <Icon as={FaMoneyBill} width="20px" height="20px" color="inherit" />,
+    roles: ['superAdmin', 'admin', 'manager', 'userReps'],
+    component: BankTransfer,
+  },
+  {
+    name: 'Account',
+    layout: '/admin',
     path: '/transaction/withdraw',
     icon: <Icon as={FaMoneyBill} width="20px" height="20px" color="inherit" />,
     roles: ['superAdmin', 'admin', 'manager', 'userReps'],
@@ -356,7 +365,7 @@ const routes = [
     path: '/daily-savings/withdraw/:packageId',
     icon: <Icon as={FaBox} width="20px" height="20px" color="inherit" />,
     roles: ['superAdmin', 'admin', 'manager', 'userReps'],
-    component: Withdrawal,
+    component: Transfer,
   },
   {
     name: 'Packages',

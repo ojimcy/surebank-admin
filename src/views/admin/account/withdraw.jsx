@@ -71,7 +71,6 @@ export default function Withdraw() {
 
   const onSubmit = async (data) => {
     try {
-      // Provide feedback to the user that the request is in progress (e.g., show a loading spinner)
       await axiosService.post('/transactions/withdraw/cash', data);
       toast.success('Withdrawal request sent successfully!');
     } catch (error) {
@@ -89,7 +88,6 @@ export default function Withdraw() {
       }
     }
   };
-
   return (
     <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
       <BackButton />
