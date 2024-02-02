@@ -91,17 +91,17 @@ const OrdersPage = () => {
         accessor: 'id',
         Cell: ({ value }) => <Text>{value.substring(0, 6)}</Text>,
       },
-      {
-        Header: 'Image',
-        accessor: 'products[0].productCatalogueId.images',
-        Cell: ({ value, row }) => (
-          <NavLink
-            to={`/product/catalogue-details/${row.original.products[0].productCatalogueId.id}`}
-          >
-            <img src={value} alt="Product" style={{ width: '50px' }} />
-          </NavLink>
-        ),
-      },
+      // {
+      //   Header: 'Image',
+      //   accessor: 'products[0].productCatalogueId.images',
+      //   Cell: ({ value, row }) => (
+      //     <NavLink
+      //       to={`/product/catalogue-details/${row.original.products[0].productCatalogueId.id}`}
+      //     >
+      //       <img src={value} alt="Product" style={{ width: '50px' }} />
+      //     </NavLink>
+      //   ),
+      // },
       {
         Header: 'Name',
         accessor: 'products[0].productCatalogueId.name',
@@ -141,25 +141,21 @@ const OrdersPage = () => {
       <Flex justifyContent="space-between" mb="20px">
         <Text fontSize="2xl">Orders</Text>
         <Spacer />
-        {/* Additional menu or filters can be added here if needed */}
+
+        {/* Select for selecting status */}
+        <Select
+          value={selectedStatus}
+          onChange={(e) => setSelectedStatus(e.target.value)}
+          width={250}
+        >
+          {['All', 'Pending', 'Paid', 'Delivered', 'Canceled'].map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </Select>
       </Flex>
       <Box marginTop="30">
-        {/* Select for selecting status */}
-        <Box marginTop="20px" w="150px" justifyContent="space-between">
-          <Spacer />
-          <Select
-            value={selectedStatus}
-            onChange={(e) => setSelectedStatus(e.target.value)}
-          >
-            {['All', 'Pending', 'Paid', 'Delivered', 'Canceled'].map(
-              (option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              )
-            )}
-          </Select>
-        </Box>
         {loading ? (
           <LoadingSpinner />
         ) : filteredOrders && filteredOrders.length !== 0 ? (

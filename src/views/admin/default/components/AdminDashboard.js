@@ -3,7 +3,7 @@ import { Flex, Icon, Text, useColorModeValue, Box } from '@chakra-ui/react';
 
 import { useHistory } from 'react-router-dom';
 
-import { MdAttachMoney, MdPerson } from 'react-icons/md';
+import { MdAttachMoney } from 'react-icons/md';
 import axiosService from 'utils/axiosService';
 import { formatNaira } from 'utils/helper';
 import Card from 'components/card/Card';
@@ -33,7 +33,6 @@ export default function UserRepsDashboard() {
   const [sbDailyTotal, setSbDailyTotal] = useState([]);
   const [dsDailyTotal, setDsDailyTotal] = useState([]);
   const [dailySavingsWithdrawals, setDailySavingsWithdrawals] = useState([]);
-  const [openPackageCount, setOpenPackageCount] = useState(0);
 
   if (!currentUser) {
     history.push('/auth/login');
@@ -41,7 +40,7 @@ export default function UserRepsDashboard() {
 
   useEffect(() => {
     try {
-      setLoading(true)
+      setLoading(true);
       const fetchTotalContributions = async () => {
         // Get today's date at 00:00 and convert to timestamp
         const startDate = new Date();
@@ -71,7 +70,7 @@ export default function UserRepsDashboard() {
 
         // API call to get total daily withdrawals for today
         const withdrawalResponse = await axiosService.get(
-          `/transactions/withdraw/cash?startDate=${startTimeStamp}&endDate=${endTimeStamp}`
+          `/transactions/withdraw/cash?startDate=${startTimeStamp}&endDate=${endTimeStamp}&status=pending`
         );
         setDailySavingsWithdrawals(withdrawalResponse.data.totalAmount);
       };
@@ -84,21 +83,6 @@ export default function UserRepsDashboard() {
     }
   }, []);
 
-  useEffect(() => {
-    try {
-      const fetchPackageReport = async () => {
-        const response = await axiosService.get(
-          `/reports/packages?status=open`
-        );
-        setOpenPackageCount(response.data.totalResults);
-      };
-
-      fetchPackageReport();
-    } catch (error) {
-      console.error(error);
-    }
-  }, []);
-
   return (
     <Box>
       {loading ? (
@@ -106,7 +90,7 @@ export default function UserRepsDashboard() {
       ) : (
         <Box pt={{ base: '40px', md: '80px', xl: '80px' }}>
           <>
-            <Flex direction={{ base: 'column', md: 'row' }} mb="20px" >
+            <Flex direction={{ base: 'column', md: 'row' }} mb="20px">
               <Card>
                 <Text
                   fontWeight="bold"
@@ -165,32 +149,6 @@ export default function UserRepsDashboard() {
                     name="Total Daily Withdrawal Requests"
                     value={formatNaira(dailySavingsWithdrawals)}
                   />
-
-                  <MiniStatistics
-                    startContent={
-                      <IconBox
-                        w="56px"
-                        h="56px"
-                        bg={boxBg}
-                        icon={
-                          <Icon
-                            w="32px"
-                            h="32px"
-                            as={MdPerson}
-                            color={brandColor}
-                          />
-                        }
-                      />
-                    }
-                    name="Active customers"
-                    value={openPackageCount && openPackageCount}
-                  />
-                </Flex>
-                <Flex
-                  direction={{ base: 'column', md: 'row' }}
-                  justifyContent="space-between"
-                  mt="10px"
-                >
                   <MiniStatistics
                     startContent={
                       <IconBox
@@ -249,10 +207,6 @@ export default function UserRepsDashboard() {
                 />
               </Flex>
             </Box>
-
-            <Text fontSize="2xl" mt="5rem">
-              Transactions
-            </Text>
 
             <Withdrawals />
           </>

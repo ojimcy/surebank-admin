@@ -74,6 +74,8 @@ import ResetPassword from 'views/admin/profile/ResetPassword';
 import PlaceOrder from 'views/admin/orders/placeorder';
 import Orders from 'views/admin/orders';
 import SingleOder from 'views/admin/orders/single-order';
+import Transactions from 'views/admin/account/transanctions';
+import { IoIosAnalytics } from 'react-icons/io';
 
 const routes = [
   {
@@ -260,6 +262,16 @@ const routes = [
   },
 
   // account routes
+
+  {
+    name: 'Transactions',
+    layout: '/admin',
+    path: '/transactions',
+    icon: <Icon as={IoIosAnalytics} width="20px" height="20px" color="inherit" />,
+    roles: ['superAdmin', 'admin', 'manager', 'userReps'],
+    component: Transactions,
+  },
+
   {
     name: 'Account',
     layout: '/admin',

@@ -123,6 +123,9 @@ export default function Withdrawals() {
       if (currentUser.role === 'manager') {
         endpoint += `&branchId=${branch}`;
       }
+      if (currentUser.role === 'userReps') {
+        endpoint += `&createdBy=${currentUser.id}`;
+      }
       if (branch) {
         endpoint += `&branchId=${branch}`;
       }
@@ -160,7 +163,7 @@ export default function Withdrawals() {
         (item) => new Date(item.date) >= last30Days
       );
     }
-    
+
     if (selectedStatus !== 'all') {
       filteredData = filteredData.filter(
         (item) => item.status === selectedStatus

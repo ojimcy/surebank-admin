@@ -16,7 +16,7 @@ import { useAppContext } from 'contexts/AppContext';
 import TransactionItem from 'components/transactions/TransactionItem';
 import { useAuth } from 'contexts/AuthContext';
 
-function RecentTransactions({ staffId }) {
+function StaffRecentTransactions({ staffId }) {
   const { customerData } = useAppContext();
   const { currentUser } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
@@ -139,4 +139,4 @@ function RecentTransactions({ staffId }) {
   );
 }
 
-export default RecentTransactions;
+export default StaffRecentTransactions;

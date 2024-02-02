@@ -96,7 +96,7 @@ export default function ManagerDashboard() {
             `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&branchId=${staffInfo.branchId}&narration=SB contribution`
           ),
           axiosService.get(
-            `/transactions/withdraw/cash?startDate=${startTimeStamp}&endDate=${endTimeStamp}&branchId=${staffInfo.branchId}`
+            `/transactions/withdraw/cash?startDate=${startTimeStamp}&endDate=${endTimeStamp}&branchId=${staffInfo.branchId}&status=pending`
           ),
           axiosService.get(
             `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&createdBy=${staffId}`
@@ -108,7 +108,7 @@ export default function ManagerDashboard() {
             `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&createdBy=${staffId}&narration=SB contribution`
           ),
           axiosService.get(
-            `/transactions/withdraw/cash?startDate=${startTimeStamp}&endDate=${endTimeStamp}&createdBy=${staffId}`
+            `/transactions/withdraw/cash?startDate=${startTimeStamp}&endDate=${endTimeStamp}&createdBy=${staffId}&status=pending`
           )
         ]);
 
@@ -345,10 +345,6 @@ export default function ManagerDashboard() {
                 />
               </Flex>
             </Box>
-
-            <Text fontSize="2xl" mt="5rem">
-              Transactions
-            </Text>
 
             <BranchWithdrawals staffInfo={staffInfo} />
           </>

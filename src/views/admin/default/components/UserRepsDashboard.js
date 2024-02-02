@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Flex, Icon, Text, useColorModeValue, Box } from '@chakra-ui/react';
-import { MdAttachMoney, MdPerson } from 'react-icons/md';
+import { MdAttachMoney } from 'react-icons/md';
 import { FaMoneyBillWave } from 'react-icons/fa';
 import axiosService from 'utils/axiosService';
 import { toast } from 'react-toastify';
@@ -11,7 +11,7 @@ import IconBox from 'components/icons/IconBox';
 import ActionButton from 'components/Button/CustomButton';
 import { useAuth } from 'contexts/AuthContext';
 import LoadingSpinner from 'components/scroll/LoadingSpinner';
-import RecentTransactions from 'components/transactions/RecentTransactions';
+import Withdrawals from './Withdrawals';
 
 export default function UserRepsDashboard() {
   const brandColor = useColorModeValue('brand.500', 'white');
@@ -24,7 +24,6 @@ export default function UserRepsDashboard() {
   const [dailySavingsWithdrawals, setDailySavingsWithdrawals] = useState([]);
   const [sbDailyTotal, setSbDailyTotal] = useState([]);
   const [dsDailyTotal, setDsDailyTotal] = useState([]);
-  const [openPackageCount, setOpenPackageCount] = useState(0);
 
   const { currentUser } = useAuth();
   const staffId = currentUser.id;
@@ -46,7 +45,6 @@ export default function UserRepsDashboard() {
           dsResponse,
           sbResponse,
           withdrawalResponse,
-          accountsResponse,
         ] = await Promise.all([
           axiosService.get(
             `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&createdBy=${staffId}`
@@ -66,7 +64,6 @@ export default function UserRepsDashboard() {
         setDsDailyTotal(dsResponse.data);
         setSbDailyTotal(sbResponse.data);
         setDailySavingsWithdrawals(withdrawalResponse.data.totalAmount);
-        setOpenPackageCount(accountsResponse.data.totalResults);
       } catch (error) {
         console.error(error);
         toast.error(
@@ -137,52 +134,6 @@ export default function UserRepsDashboard() {
                       }
                     />
                   }
-                  name="Total Daily Withdrawal Requests"
-                  value={formatNaira(dailySavingsWithdrawals || 0)}
-                />
-
-                <MiniStatistics
-                  startContent={
-                    <IconBox
-                      w="56px"
-                      h="56px"
-                      bg={boxBg}
-                      icon={
-                        <Icon
-                          w="32px"
-                          h="32px"
-                          as={MdPerson}
-                          color={brandColor}
-                        />
-                      }
-                    />
-                  }
-                  name="Active customers"
-                  value={openPackageCount && openPackageCount}
-                />
-              </Flex>
-
-              <Flex
-                direction={{ base: 'column', md: 'row' }}
-                justifyContent="space-between"
-                mt="10px"
-              >
-                <MiniStatistics
-                  startContent={
-                    <IconBox
-                      w="56px"
-                      h="56px"
-                      bg={boxBg}
-                      icon={
-                        <Icon
-                          w="32px"
-                          h="32px"
-                          as={MdAttachMoney}
-                          color={brandColor}
-                        />
-                      }
-                    />
-                  }
                   name="Total DS Contributions"
                   value={formatNaira(dsDailyTotal)}
                 />
@@ -206,6 +157,26 @@ export default function UserRepsDashboard() {
                   name="Total SB Contributions"
                   value={formatNaira(sbDailyTotal || 0)}
                 />
+
+                <MiniStatistics
+                  startContent={
+                    <IconBox
+                      w="56px"
+                      h="56px"
+                      bg={boxBg}
+                      icon={
+                        <Icon
+                          w="32px"
+                          h="32px"
+                          as={MdAttachMoney}
+                          color={brandColor}
+                        />
+                      }
+                    />
+                  }
+                  name="Total Daily Withdrawal Requests"
+                  value={formatNaira(dailySavingsWithdrawals || 0)}
+                />
               </Flex>
             </Card>
           </Flex>
@@ -225,7 +196,7 @@ export default function UserRepsDashboard() {
             </Flex>
           </Box>
 
-          <RecentTransactions />
+          <Withdrawals />
         </>
       )}
     </Box>
