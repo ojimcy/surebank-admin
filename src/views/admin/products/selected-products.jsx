@@ -91,11 +91,10 @@ export default function SelectedProducts() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pagination, branch, staffInfo]);
-
+  console.log(selectedProducts);
   const onPageChange = ({ pageIndex, pageSize }) => {
     setPagination({ pageIndex, pageSize });
   };
-
   // Columns for the selected products table
   const baseColumns = [
     {
@@ -111,12 +110,27 @@ export default function SelectedProducts() {
 
     {
       Header: 'User',
-      accessor: (row) => `${row.userId.firstName} ${row.userId.firstName}`,
+      accessor: (row) => (
+        <>
+          <NavLink to={`/admin/customer/sb/${row.userId._id}`}>
+            {row.userId.firstName} {row.userId.lastName}
+          </NavLink>
+        </>
+      ),
+    },
+    {
+      Header: 'Total Contribution',
+      accessor: 'totalContribution',
     },
     {
       Header: 'Sales Reps',
-      accessor: (row) =>
-        `${row.accountManager?.firstName} ${row.accountManager?.firstName}`,
+      accessor: (row) => (
+        <>
+          <NavLink to={`/admin/user/${row.accountManager._id}`}>
+            {row.accountManager.firstName} {row.accountManager.lastName}
+          </NavLink>
+        </>
+      ),
     },
     {
       Header: 'Branch',

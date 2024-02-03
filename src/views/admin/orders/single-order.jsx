@@ -4,7 +4,6 @@ import {
   Button,
   Grid,
   Heading,
-  Image,
   List,
   ListItem,
   Table,
@@ -14,6 +13,7 @@ import {
   Th,
   Thead,
   Tr,
+  TableContainer,
 } from '@chakra-ui/react';
 import { NavLink, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -56,10 +56,9 @@ function SingleOrder() {
         await axiosService.post(`/orders/${orderId}/deliver`);
         toast.success('Product marked as delivered');
         fetchOrderDetails();
-        setLoading(false);
       } catch (error) {
-        console.error('An error occured:', error);
-        toast.error(error.response?.data?.message || 'An error occured');
+        console.error('An error occurred:', error);
+        toast.error(error.response?.data?.message || 'An error occurred');
       } finally {
         setLoading(false);
       }
@@ -67,6 +66,7 @@ function SingleOrder() {
 
     deliverOrder();
   };
+
   const paymentMethodLabels = {
     sb_balance: 'SB Balance',
     transfer: 'Bank Transfer',
@@ -80,19 +80,22 @@ function SingleOrder() {
   return (
     <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
       <BackButton />
-      <Heading as="h1" size="xl" mb={4}>
+      <Heading as="h1" size={{ base: 'l', md: 'xl' }} mb={4}>
         Order {orderId.substring(0, 6)}
       </Heading>
       {loading ? (
         <LoadingSpinner />
       ) : (
-        <Grid templateColumns={{ base: '1fr', md: '2fr 1fr' }} gap={4}>
+        <Grid
+          templateColumns={{ base: '1fr', md: '1fr', lg: '2fr 1fr' }}
+          gap={4}
+        >
           <Box>
             {/* Left Section: Shipping Address */}
             <Card>
               <List spacing={3} mb={4}>
                 <ListItem>
-                  <Heading as="h2" size="lg">
+                  <Heading as="h2" size={{ base: 'md', md: 'lg' }}>
                     Customer Details
                   </Heading>
                 </ListItem>
@@ -110,13 +113,12 @@ function SingleOrder() {
                 </ListItem>
               </List>
             </Card>
-
             {/* Middle Section: Payment Method */}
-            <Box mt={1} pb={5}>
+            <Box mt={4}>
               <Card>
                 <List spacing={3} mb={4}>
                   <ListItem>
-                    <Heading as="h2" size="lg">
+                    <Heading as="h2" size={{ base: 'md', md: 'lg' }}>
                       Payment Method
                     </Heading>
                   </ListItem>
@@ -137,53 +139,56 @@ function SingleOrder() {
               </Card>
             </Box>
             {/* Right Section: Order Items List */}
-            <Box mt={1} pb={5}>
+            <Box mt={4}>
               <Card>
                 <List spacing={3}>
                   <ListItem>
                     <>
-                      <Heading as="h2" size="lg">
+                      <Heading as="h2" size={{ base: 'md', md: 'lg' }}>
                         Order Items
                       </Heading>
-                      <Table variant="simple">
-                        <Thead>
-                          <Tr>
-                            <Th>Image</Th>
-                            <Th>Name</Th>
-                            <Th>Quantity</Th>
-                            <Th>Unit Price</Th>
-                          </Tr>
-                        </Thead>
-                        <Tbody>
-                          {order.products.map((item) => (
-                            <Tr key={item._id}>
-                              <Td>
-                                <NavLink
-                                  to={`/product/${item.productCatalogueId.id}`}
-                                >
-                                  <Image
-                                    src={item.productCatalogueId?.images[0]}
-                                    alt={item.productCatalogueId.name}
-                                    boxSize="50px"
-                                  />
-                                </NavLink>
-                              </Td>
-                              <Td>
-                                <NavLink
-                                  to={`/product/${item.productCatalogueId.id}`}
-                                >
-                                  <Text>{item.productCatalogueId.name}</Text>
-                                </NavLink>
-                              </Td>
-                              <Td>{item.quantity}</Td>
-                              <Td>
-                                {item.sellingPrice &&
-                                  formatNaira(item.sellingPrice)}
-                              </Td>
+
+                      <TableContainer overflowX="auto">
+                        <Table variant="simple">
+                          <Thead>
+                            <Tr>
+                              {/* <Th>Image</Th> */}
+                              <Th>Name</Th>
+                              <Th>Quantity</Th>
+                              <Th>Unit Price</Th>
                             </Tr>
-                          ))}
-                        </Tbody>
-                      </Table>
+                          </Thead>
+                          <Tbody>
+                            {order.products.map((item) => (
+                              <Tr key={item._id}>
+                                {/* <Td>
+                                  <NavLink
+                                    to={`/product/${item.productCatalogueId.id}`}
+                                  >
+                                    <Image
+                                      src={item.productCatalogueId?.images[0]}
+                                      alt={item.productCatalogueId.name}
+                                      boxSize="50px"
+                                    />
+                                  </NavLink>
+                                </Td> */}
+                                <Td>
+                                  <NavLink
+                                    to={`/product/${item.productCatalogueId.id}`}
+                                  >
+                                    <Text>{item.productCatalogueId.name}</Text>
+                                  </NavLink>
+                                </Td>
+                                <Td>{item.quantity}</Td>
+                                <Td>
+                                  {item.sellingPrice &&
+                                    formatNaira(item.sellingPrice)}
+                                </Td>
+                              </Tr>
+                            ))}
+                          </Tbody>
+                        </Table>
+                      </TableContainer>
                     </>
                   </ListItem>
                 </List>
@@ -192,12 +197,11 @@ function SingleOrder() {
           </Box>
           <Box>
             {/* Right Section: Order Summary */}
-
             <Card>
               <Box mt={1}>
                 <List spacing={3} mb={4}>
                   <ListItem>
-                    <Heading as="h2" size="lg">
+                    <Heading as="h2" size={{ base: 'md', md: 'lg' }}>
                       Order Summary
                     </Heading>
                   </ListItem>

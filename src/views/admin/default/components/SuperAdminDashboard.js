@@ -26,12 +26,12 @@ export default function SuperAdminDashboard() {
   const brandColor = useColorModeValue('brand.500', 'white');
   const boxBg = useColorModeValue('secondaryGray.300', 'whiteAlpha.100');
 
-  const [contributionsDailyTotal, setContributionDailyTotal] = useState([]);
-  const [sbDailyTotal, setSbDailyTotal] = useState([]);
-  const [dsDailyTotal, setDsDailyTotal] = useState([]);
+  const [contributionsDailyTotal, setContributionDailyTotal] = useState(0);
+  const [sbDailyTotal, setSbDailyTotal] = useState(0);
+  const [dsDailyTotal, setDsDailyTotal] = useState(0);
   const [totalSbContributions, setTotalSbContributions] = useState(0);
   const [totalDsContributions, setTotalDsContributions] = useState(0);
-  const [dailySavingsWithdrawals, setDailySavingsWithdrawals] = useState([]);
+  const [dailySavingsWithdrawals, setDailySavingsWithdrawals] = useState(0);
   const [openPackageCount, setOpenPackageCount] = useState(0);
   const [totalDsWithdrawals, setTotalDsWithdrawals] = useState(0);
   const [totalSbSales, setTotalSbSales] = useState(0);
