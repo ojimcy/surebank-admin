@@ -93,13 +93,19 @@ export default function Users() {
           `/staff?limit=${pageSize}&page=${pageIndex + 1}`
         );
       }
+
+      // Filter out staff with role "superAdmin"
+      const filteredStaffs = staffResponse.data.filter(
+        (staff) => staff.staffId.role !== 'superAdmin'
+      );
+
       const UserResponse = await axiosService.get(
         `/users?role=user&limit=${pageSize}`
       );
 
       setUsers(UserResponse.data.results);
       setAllBranch(branches.data.results);
-      setStaffs(staffResponse.data);
+      setStaffs(filteredStaffs);
       setLoading(false);
     } catch (error) {
       console.error(error);
