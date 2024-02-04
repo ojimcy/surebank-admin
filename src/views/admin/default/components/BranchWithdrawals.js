@@ -1,19 +1,5 @@
 // Chakra imports
-import {
-  Box,
-  Flex,
-  Stack,
-  Select,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  Button,
-  Text,
-} from '@chakra-ui/react';
+import { Box, Flex, Stack, Select, Text } from '@chakra-ui/react';
 import React, { useCallback, useEffect, useState } from 'react';
 
 // Assets
@@ -24,6 +10,7 @@ import { NavLink } from 'react-router-dom/';
 import { useAppContext } from 'contexts/AppContext';
 import { formatDate } from 'utils/helper';
 import { useAuth } from 'contexts/AuthContext';
+import CustomDateModal from 'components/modals/CustomDateModal';
 
 export default function BranchWithdrawals({ staffInfo }) {
   const { currentUser } = useAuth();
@@ -43,12 +30,15 @@ export default function BranchWithdrawals({ staffInfo }) {
     pageSize: 10000000,
   });
 
-  const handleTimeRangeChange = useCallback(
-    (e) => {
-      setTimeRange(e.target.value);
-    },
-    [setTimeRange]
-  );
+  const handleSelectChange = (e) => {
+    const selectedValue = e.target.value;
+
+    if (selectedValue === 'custom') {
+      setCustomDateModalOpen(true);
+    } else {
+      setTimeRange(selectedValue);
+    }
+  };
 
   const handleBranchChange = useCallback(
     (e) => {
@@ -78,16 +68,21 @@ export default function BranchWithdrawals({ staffInfo }) {
     [setSelectedStatus]
   );
 
-  const handleCustomDateApply = useCallback(() => {
-    if (startDate && endDate) {
-      setCustomRangeLabel(`${startDate} to ${endDate}`);
-    }
-    setCustomDateModalOpen(false);
-  }, [endDate, startDate]);
+  const handleCustomDateApply = useCallback(
+    (selectedStartDate, selectedEndDate) => {
+      if (selectedStartDate && selectedEndDate) {
+        const formattedStartDate = formatDate(selectedStartDate);
+        const formattedEndDate = formatDate(selectedEndDate);
 
-  const handleCustomRangeClick = useCallback(() => {
-    setCustomDateModalOpen(true);
-  }, [setCustomDateModalOpen]);
+        setCustomRangeLabel(`${formattedStartDate} to ${formattedEndDate}`);
+        setStartDate(selectedStartDate);
+        setEndDate(selectedEndDate);
+        setTimeRange('custom');
+      }
+      setCustomDateModalOpen(false);
+    },
+    []
+  );
 
   useEffect(() => {
     async function fetchWithdrawals() {
@@ -140,7 +135,16 @@ export default function BranchWithdrawals({ staffInfo }) {
 
     fetchWithdrawals();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [timeRange, branch, startDate, endDate, pagination]);
+  }, [
+    timeRange,
+    branch,
+    startDate,
+    endDate,
+    pagination,
+    currentUser,
+    currentUser,
+    selectedStatus,
+  ]);
 
   useEffect(() => {
     let filteredData = withdrawals;
@@ -158,7 +162,20 @@ export default function BranchWithdrawals({ staffInfo }) {
       filteredData = filteredData.filter(
         (item) => new Date(item.date) >= last30Days
       );
+    } else if (timeRange === 'custom') {
+      if (startDate && endDate) {
+        const customStartDate = new Date(startDate);
+        customStartDate.setHours(0, 0, 0, 0);
+        const customEndDate = new Date(endDate);
+        customEndDate.setHours(23, 59, 59, 999);
+        filteredData = filteredData.filter(
+          (item) =>
+            new Date(item.date) >= customStartDate &&
+            new Date(item.date) <= customEndDate
+        );
+      }
     }
+
     if (selectedStatus !== 'all') {
       filteredData = filteredData.filter(
         (item) => item.status === selectedStatus
@@ -166,7 +183,7 @@ export default function BranchWithdrawals({ staffInfo }) {
     }
 
     setFilteredWithdrawals(filteredData);
-  }, [withdrawals, timeRange, selectedStatus]);
+  }, [withdrawals, timeRange, selectedStatus, startDate, endDate]);
 
   const onPageChange = ({ pageIndex, pageSize }) => {
     setPagination({ pageIndex, pageSize });
@@ -220,13 +237,11 @@ export default function BranchWithdrawals({ staffInfo }) {
           <Flex>
             <Box>
               <Stack direction="row">
-                <Select value={timeRange} onChange={handleTimeRangeChange}>
+                <Select value={timeRange} onChange={handleSelectChange}>
                   <option value="all">All Time</option>
                   <option value="last7days">Last 7 Days</option>
                   <option value="last30days">Last 30 Days</option>
-                  <option value="custom" onClick={handleCustomRangeClick}>
-                    {customRangeLabel}
-                  </option>
+                  <option value="custom">{customRangeLabel}</option>
                 </Select>
                 {currentUser.role === 'superAdmin' ||
                 currentUser.role === 'admin' ? (
@@ -268,50 +283,15 @@ export default function BranchWithdrawals({ staffInfo }) {
         </Box>
       </Box>
 
-      <Modal
+      <CustomDateModal
         isOpen={isCustomDateModalOpen}
         onClose={() => setCustomDateModalOpen(false)}
-      >
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Custom Date Selection</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Stack spacing="4">
-              <Flex align="center">
-                <label htmlFor="startDate">Start Date:</label>
-                <input
-                  id="startDate"
-                  type="date"
-                  value={startDate}
-                  onChange={handleStartDateChange}
-                />
-              </Flex>
-              <Flex align="center">
-                <label htmlFor="endDate">End Date:</label>
-                <input
-                  id="endDate"
-                  type="date"
-                  value={endDate}
-                  onChange={handleEndDateChange}
-                  max={new Date().toISOString().split('T')[0]}
-                />
-              </Flex>
-            </Stack>
-          </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={handleCustomDateApply}>
-              Apply
-            </Button>
-            <Button
-              variant="ghost"
-              onClick={() => setCustomDateModalOpen(false)}
-            >
-              Cancel
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+        startDate={new Date(startDate)}
+        endDate={new Date(endDate)}
+        handleStartDateChange={handleStartDateChange}
+        handleEndDateChange={handleEndDateChange}
+        handleCustomDateApply={handleCustomDateApply}
+      />
     </>
   );
 }

@@ -1,20 +1,6 @@
 // Chakra imports
-import {
-  Box,
-  Flex,
-  Stack,
-  Select,
-  Text,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  Button,
-} from '@chakra-ui/react';
-import React, { useEffect, useState } from 'react';
+import { Box, Flex, Stack, Select, Text } from '@chakra-ui/react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 // Assets
 import axiosService from 'utils/axiosService';
@@ -24,6 +10,7 @@ import { NavLink } from 'react-router-dom/';
 import { useAppContext } from 'contexts/AppContext';
 import { formatNaira, formatDate } from 'utils/helper';
 import LoadingSpinner from 'components/scroll/LoadingSpinner';
+import CustomDateModal from 'components/modals/CustomDateModal';
 
 export default function SbReports() {
   const { branches } = useAppContext();
@@ -38,8 +25,14 @@ export default function SbReports() {
   const [customRangeLabel, setCustomRangeLabel] = useState('Custom Range');
   const [totalCharge, setTotalCharge] = useState(0);
 
-  const handleTimeRangeChange = (e) => {
-    setTimeRange(e.target.value);
+  const handleSelectChange = (e) => {
+    const selectedValue = e.target.value;
+
+    if (selectedValue === 'custom') {
+      setCustomDateModalOpen(true);
+    } else {
+      setTimeRange(selectedValue);
+    }
   };
 
   const handleBranchChange = (e) => {
@@ -53,12 +46,21 @@ export default function SbReports() {
     setEndDate(e.target.value);
   };
 
-  const handleCustomDateApply = () => {
-    if (startDate && endDate) {
-      setCustomRangeLabel(`${startDate} to ${endDate}`);
-    }
-    setCustomDateModalOpen(false);
-  };
+  const handleCustomDateApply = useCallback(
+    (selectedStartDate, selectedEndDate) => {
+      if (selectedStartDate && selectedEndDate) {
+        const formattedStartDate = formatDate(selectedStartDate);
+        const formattedEndDate = formatDate(selectedEndDate);
+
+        setCustomRangeLabel(`${formattedStartDate} to ${formattedEndDate}`);
+        setStartDate(selectedStartDate);
+        setEndDate(selectedEndDate);
+        setTimeRange('custom');
+      }
+      setCustomDateModalOpen(false);
+    },
+    []
+  );
 
   useEffect(() => {
     async function fetchCharges() {
@@ -124,9 +126,21 @@ export default function SbReports() {
       filteredData = filteredData.filter(
         (item) => new Date(item.date) >= last30Days
       );
+    } else if (timeRange === 'custom') {
+      if (startDate && endDate) {
+        const customStartDate = new Date(startDate);
+        customStartDate.setHours(0, 0, 0, 0);
+        const customEndDate = new Date(endDate);
+        customEndDate.setHours(23, 59, 59, 999);
+        filteredData = filteredData.filter(
+          (item) =>
+            new Date(item.date) >= customStartDate &&
+            new Date(item.date) <= customEndDate
+        );
+      }
     }
     setFilterdCharges(filteredData);
-  }, [charges, timeRange]);
+  }, [charges, endDate, startDate, timeRange]);
 
   // Columns for the user table
   const columns = React.useMemo(
@@ -173,18 +187,13 @@ export default function SbReports() {
             <Stack direction="row">
               <Select
                 value={timeRange}
-                onChange={handleTimeRangeChange}
+                onChange={handleSelectChange}
                 minWidth="150px"
               >
                 <option value="all">All Time</option>
                 <option value="last7days">Last 7 Days</option>
                 <option value="last30days">Last 30 Days</option>
-                <option
-                  value="custom"
-                  onClick={() => setCustomDateModalOpen(true)}
-                >
-                  {customRangeLabel}
-                </option>
+                <option value="custom">{customRangeLabel}</option>
               </Select>
 
               <Select value={branch} onChange={handleBranchChange}>
@@ -210,50 +219,15 @@ export default function SbReports() {
         </Box>
       )}
 
-      <Modal
+      <CustomDateModal
         isOpen={isCustomDateModalOpen}
         onClose={() => setCustomDateModalOpen(false)}
-      >
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Custom Date Selection</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Stack spacing="4">
-              <Flex align="center">
-                <label htmlFor="startDate">Start Date:</label>
-                <input
-                  id="startDate"
-                  type="date"
-                  value={startDate}
-                  onChange={handleStartDateChange}
-                />
-              </Flex>
-              <Flex align="center">
-                <label htmlFor="endDate">End Date:</label>
-                <input
-                  id="endDate"
-                  type="date"
-                  value={endDate}
-                  onChange={handleEndDateChange}
-                  max={new Date().toISOString().split('T')[0]}
-                />
-              </Flex>
-            </Stack>
-          </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={handleCustomDateApply}>
-              Apply
-            </Button>
-            <Button
-              variant="ghost"
-              onClick={() => setCustomDateModalOpen(false)}
-            >
-              Cancel
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+        startDate={new Date(startDate)}
+        endDate={new Date(endDate)}
+        handleStartDateChange={handleStartDateChange}
+        handleEndDateChange={handleEndDateChange}
+        handleCustomDateApply={handleCustomDateApply}
+      />
     </>
   );
 }

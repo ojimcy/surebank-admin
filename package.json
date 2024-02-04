@@ -22,6 +22,7 @@
     "babel-preset-react": "^6.24.1",
     "babel-register": "^6.26.0",
     "clipboard-copy": "^4.0.1",
+    "date-fns": "^3.3.1",
     "framer-motion": "^4.1.17",
     "react": "17.0.2",
     "react-apexcharts": "1.4.0",
