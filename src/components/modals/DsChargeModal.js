@@ -124,6 +124,8 @@ const DsChargesModal = ({ isOpen, onClose, packages }) => {
                   mb="24px"
                   fontWeight="500"
                   size="lg"
+                  bg="transparent"
+                  color="secondaryGray.600"
                   {...register('amount', {
                     required: 'Charge amount is required',
                     min: {

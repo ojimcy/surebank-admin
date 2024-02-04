@@ -52,7 +52,7 @@ const DepositModal = ({ isOpen, onClose, packageData, onSuccess }) => {
           'An error occurred while making contribution.'
       );
     } finally {
-    setLoading(false);
+      setLoading(false);
     }
   };
 
@@ -73,6 +73,8 @@ const DepositModal = ({ isOpen, onClose, packageData, onSuccess }) => {
                 placeholder="Enter deposit amount"
                 value={depositAmount}
                 onChange={(e) => setDepositAmount(e.target.value)}
+                bg="transparent"
+                color="secondaryGray.600"
               />
               <InputRightElement width="4.5rem">
                 <IconButton

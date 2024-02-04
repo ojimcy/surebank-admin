@@ -108,6 +108,8 @@ const TransferModal = ({ isOpen, onClose, packageData, onSuccess }) => {
               <InputGroup>
                 <Input
                   type="number"
+                  bg="transparent"
+                  color="secondaryGray.600"
                   placeholder="Enter transfer amount"
                   value={transferAmount}
                   onChange={(e) => setTransferAmount(e.target.value)}

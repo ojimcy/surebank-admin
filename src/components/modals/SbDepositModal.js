@@ -69,6 +69,8 @@ const SbDepositModal = ({ isOpen, onClose, packageData, onSuccess }) => {
               <InputGroup>
                 <Input
                   type="number"
+                  bg="transparent"
+                  color="secondaryGray.600"
                   placeholder="Enter deposit amount"
                   value={depositAmount}
                   onChange={(e) => setDepositAmount(e.target.value)}
