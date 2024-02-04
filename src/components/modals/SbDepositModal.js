@@ -30,7 +30,6 @@ const SbDepositModal = ({ isOpen, onClose, packageData, onSuccess }) => {
       accountNumber: packageData.accountNumber,
       amount: parseFloat(depositAmount),
     };
-    console.log(depositData);
     try {
       setLoading(true);
       await axiosService.post(

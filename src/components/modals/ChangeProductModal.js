@@ -67,7 +67,6 @@ const ChangeProductModal = ({ isOpen, onClose, onSuccess, packageData }) => {
         `/daily-savings/sb/package/${packageData._id}`,
         formData
       );
-      console.log(formData);
       toast.success('Product changed successfully!');
       onSuccess();
       onClose();

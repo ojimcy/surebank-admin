@@ -66,8 +66,12 @@ export default function SelectedProducts() {
     if (staffInfo) {
       let endpoint = `/daily-savings/sb?`;
 
-      if (staffInfo.role === 'manager') {
+      if (currentUser.role === 'manager') {
         endpoint += `branchId=${staffInfo.branchId}`;
+      }
+
+      if (currentUser.role === 'userReps') {
+        endpoint += `createdBy=${staffInfo.createdBy}`;
       }
 
       if (branch) {
@@ -91,10 +95,13 @@ export default function SelectedProducts() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pagination, branch, staffInfo]);
-  console.log(selectedProducts);
+
   const onPageChange = ({ pageIndex, pageSize }) => {
     setPagination({ pageIndex, pageSize });
   };
+
+  console.log(selectedProducts)
+
   // Columns for the selected products table
   const baseColumns = [
     {
@@ -126,9 +133,7 @@ export default function SelectedProducts() {
       Header: 'Sales Reps',
       accessor: (row) => (
         <>
-          <NavLink to={`/admin/user/${row.accountManager._id}`}>
-            {row.accountManager.firstName} {row.accountManager.lastName}
-          </NavLink>
+          {row.accountManager?.firstName} {row.accountManager?.lastName}
         </>
       ),
     },

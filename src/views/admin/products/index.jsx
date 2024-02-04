@@ -142,7 +142,7 @@ export default function Catalogue() {
     });
     setFilteredProducts(filtered);
   }, [searchTerm, products]);
-
+  console.log(currentUser.role);
   return (
     <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
       {/* Main Fields */}
@@ -175,33 +175,39 @@ export default function Catalogue() {
               alignItems={{ base: 'flex-start', md: 'center' }}
               width={{ base: '100%', md: 'auto' }}
             >
-              {currentUser.role !== 'user' ||
-              currentUser.role !== 'userReps' ? (
-                <Menu>
-                  <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-                    Manage Products
-                  </MenuButton>
-                  <MenuList>
-                    <MenuItem>
-                      <NavLink to="/admin/products/catalogue/create">
-                        Add Product
-                      </NavLink>
-                    </MenuItem>
-                    <MenuItem>
-                      <NavLink to="/admin/products/requests">
-                        Product Requests
-                      </NavLink>
-                    </MenuItem>
+              <Menu>
+                <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+                  Manage Products
+                </MenuButton>
+                <MenuList>
+                  {currentUser.role === 'superAdmin' ||
+                  currentUser.role === 'admin' ? (
+                    <>
+                      <MenuItem>
+                        <NavLink to="/admin/products/catalogue/create">
+                          Add Product
+                        </NavLink>
+                      </MenuItem>
+                      <MenuItem>
+                        <NavLink to="/admin/products/requests">
+                          Product Requests
+                        </NavLink>
+                      </MenuItem>
+                      <MenuItem>
+                        <NavLink to="/admin/products/sb-products">
+                          Selected SB Products
+                        </NavLink>
+                      </MenuItem>
+                    </>
+                  ) : (
                     <MenuItem>
                       <NavLink to="/admin/products/sb-products">
                         Selected SB Products
                       </NavLink>
                     </MenuItem>
-                  </MenuList>
-                </Menu>
-              ) : (
-                ''
-              )}
+                  )}
+                </MenuList>
+              </Menu>
 
               <Box mt={{ base: '4', md: '0' }}>
                 <Stack
