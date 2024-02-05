@@ -33,11 +33,12 @@ import { MdOutlineRemoveRedEye } from 'react-icons/md';
 import { RiEyeCloseLine } from 'react-icons/ri';
 import axiosService from 'utils/axiosService';
 import { toast } from 'react-toastify';
-import { toSentenceCase } from 'utils/helper';
 import BackButton from 'components/menu/BackButton';
+import { useAuth } from 'contexts/AuthContext';
 
 export default function Customer() {
   const history = useHistory();
+  const { currentUser } = useAuth();
   const brandStars = useColorModeValue('brand.500', 'brand.400');
   const textColor = useColorModeValue('navy.700', 'white');
   const textColorSecondary = 'gray.400';
@@ -50,7 +51,25 @@ export default function Customer() {
 
   const [show, setShow] = useState(false);
   const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
-  const [branches, setBranches] = useState(null);
+
+  const [staffInfo, setStaffInfo] = useState({});
+
+  useEffect(() => {
+    const fetchStaff = async () => {
+      try {
+        if (currentUser) {
+          const getStaff = await axiosService.get(
+            `/staff/user/${currentUser.id}`
+          );
+          setStaffInfo(getStaff.data);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchStaff();
+  }, [currentUser]);
 
   const onCancel = () => {
     setIsCancelDialogOpen(true);
@@ -67,23 +86,13 @@ export default function Customer() {
 
   const handleClick = () => setShow(!show);
 
-  useEffect(() => {
-    const fetchBranches = async () => {
-      try {
-        const response = await axiosService.get('/branch/');
-        setBranches(response.data.results);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchBranches();
-  }, []);
-
   const submitHandler = async (customerData) => {
     // Remove email property if it's an empty string
     if (customerData.email === '') {
       delete customerData.email;
     }
+    customerData.branchId = staffInfo.branchId;
+    console.log(customerData);
     try {
       await axiosService.post(`/customer`, customerData);
       toast.success('Customer created successfully!');
@@ -381,36 +390,6 @@ export default function Customer() {
                     <option value="">Select account rype</option>
                     <option value="ds">DS</option>
                     <option value="sb">SB</option>
-                  </Select>
-                </FormControl>
-              </Box>
-              <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
-                <FormControl isInvalid={errors.branch}>
-                  <FormLabel
-                    htmlFor="branch"
-                    display="flex"
-                    ms="4px"
-                    fontSize="sm"
-                    fontWeight="500"
-                    color={textColor}
-                    mb="8px"
-                  >
-                    Branch<Text color={brandStars}>*</Text>
-                  </FormLabel>
-                  <Select
-                    {...register('branchId')}
-                    name="branchId"
-                    defaultValue=""
-                  >
-                    <option value="" disabled>
-                      Select a branch
-                    </option>
-                    {branches &&
-                      branches.map((branch) => (
-                        <option key={branch.id} value={branch.id}>
-                          {toSentenceCase(branch?.name)}
-                        </option>
-                      ))}
                   </Select>
                 </FormControl>
               </Box>
