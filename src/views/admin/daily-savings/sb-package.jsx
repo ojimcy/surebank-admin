@@ -365,14 +365,14 @@ const ViewCustomerSb = () => {
                           <ButtonGroup spacing={4} mb={4}>
                             <Button
                               colorScheme="red"
-                              size="sm"
+                              size="md"
                               onClick={handleShowMergeModal}
                             >
                               Merge
                             </Button>
                             <Button
                               colorScheme="green"
-                              size="sm"
+                              size="md"
                               onClick={() =>
                                 handleChangeProductModalOpen(packageData)
                               }
@@ -381,7 +381,7 @@ const ViewCustomerSb = () => {
                             </Button>
                             <Button
                               colorScheme="green"
-                              size="sm"
+                              size="md"
                               onClick={() =>
                                 handleDepositModalOpen(packageData)
                               }
