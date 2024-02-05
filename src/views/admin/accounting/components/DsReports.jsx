@@ -66,7 +66,7 @@ export default function Charges() {
     async function fetchCharges() {
       setLoading(true);
 
-      let endpoint = `/reports/charges?reasons='DS charge`;
+      let endpoint = `/reports/charges?reasons=DS charge`;
       if (timeRange === 'last7days') {
         const endDate = new Date();
         endDate.setHours(23, 59, 59, 999);
@@ -98,7 +98,8 @@ export default function Charges() {
         const response = await axiosService.get(endpoint);
         const chargeResponse = await axiosService.get(
           '/reports/contribution-incomes/ds/supperadmin'
-        );
+          );
+          console.log(chargeResponse);
 
         setCharges(response.data);
         setTotalCharge(chargeResponse.data.totalCharge);

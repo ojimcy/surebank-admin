@@ -30,6 +30,7 @@ import { useAppContext } from 'contexts/AppContext';
 export default function SelectedProducts() {
   const { currentUser } = useAuth();
   const { branches } = useAppContext();
+  const [staffInfo, setStaffInfo] = useState({});
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filteredProducts, setFilteredProducts] = useState([]);
@@ -39,7 +40,6 @@ export default function SelectedProducts() {
     pageSize: 10000000,
   });
   const [branch, setBranch] = useState('');
-  const [staffInfo, setStaffInfo] = useState({});
 
   const handleBranchChange = (e) => {
     setBranch(e.target.value);
@@ -70,8 +70,8 @@ export default function SelectedProducts() {
         endpoint += `branchId=${staffInfo.branchId}`;
       }
 
-      if (currentUser.role === 'userReps') {
-        endpoint += `createdBy=${staffInfo.createdBy}`;
+      if (currentUser.role === 'userReps' && staffInfo?.id) {
+        endpoint += `accountManagerId=${currentUser.id}`;
       }
 
       if (branch) {
@@ -99,8 +99,6 @@ export default function SelectedProducts() {
   const onPageChange = ({ pageIndex, pageSize }) => {
     setPagination({ pageIndex, pageSize });
   };
-
-  console.log(selectedProducts)
 
   // Columns for the selected products table
   const baseColumns = [
@@ -133,7 +131,7 @@ export default function SelectedProducts() {
       Header: 'Sales Reps',
       accessor: (row) => (
         <>
-          {row.accountManager?.firstName} {row.accountManager?.lastName}
+          {row.accountManagerId?.firstName} {row.accountManagerId?.lastName}
         </>
       ),
     },
