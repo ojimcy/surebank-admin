@@ -74,7 +74,8 @@ function StaffRecentTransactions({ staffId }) {
       } else if (selectedFilter === 'deposit') {
         return (
           transaction.narration === 'Daily contribution' ||
-          transaction.narration === 'SB Daily contribution'
+          transaction.narration === 'SB Daily contribution - trasfer' ||
+          transaction.narration === 'SB Daily contribution - cash'
         );
       } else if (selectedFilter === 'withdrawal') {
         return (

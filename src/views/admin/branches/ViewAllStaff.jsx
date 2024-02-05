@@ -32,6 +32,7 @@ import { toast } from 'react-toastify';
 import { useAuth } from 'contexts/AuthContext';
 import LoadingSpinner from 'components/scroll/LoadingSpinner';
 import BackButton from 'components/menu/BackButton';
+import { toSentenceCase } from 'utils/helper';
 
 export default function Users() {
   const [staffs, setStaffs] = useState([]);
@@ -282,7 +283,7 @@ export default function Users() {
       },
       {
         Header: 'Branch',
-        accessor: (row) => row.branchId.name,
+        accessor: (row) => toSentenceCase(row.branchId.name),
       },
       {
         Header: 'Role',

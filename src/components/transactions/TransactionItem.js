@@ -9,7 +9,10 @@ export default function TransactionItem({ transaction }) {
     const narration = transaction.narration.toLowerCase();
     if (narration.includes('daily contribution')) {
       return <FaMoneyCheckAlt />;
-    } else if (narration.includes('sb daily contribution')) {
+    } else if (
+      narration.includes('sb daily contribution - cash') ||
+      narration.includes('sb daily contribution - transfer')
+    ) {
       return <FaMoneyCheckAlt />;
     } else if (narration.includes('daily contribution withdrawal')) {
       return <RiArrowDownSLine />;
@@ -29,7 +32,10 @@ export default function TransactionItem({ transaction }) {
       return 'red.500';
     } else if (narration.includes('daily contribution')) {
       return 'green.500';
-    } else if (narration.includes('sb daily contribution')) {
+    } else if (
+      narration.includes('sb daily contribution - cash') ||
+      narration.includes('sb daily contribution - transfer')
+    ) {
       return 'green.500';
     } else {
       return 'gray.500';

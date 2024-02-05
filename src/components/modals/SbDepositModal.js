@@ -12,6 +12,7 @@ import {
   InputGroup,
   VStack,
   Button,
+  Select,
 } from '@chakra-ui/react';
 
 import { toast } from 'react-toastify';
@@ -23,12 +24,14 @@ import axiosService from 'utils/axiosService';
 const SbDepositModal = ({ isOpen, onClose, packageData, onSuccess }) => {
   const [depositAmount, setDepositAmount] = useState('');
   const [loading, setLoading] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState('cash');
 
   const handleDeposit = async () => {
     const depositData = {
       product: packageData.product.id,
       accountNumber: packageData.accountNumber,
       amount: parseFloat(depositAmount),
+      paymentMethod: paymentMethod,
     };
     try {
       setLoading(true);
@@ -65,7 +68,15 @@ const SbDepositModal = ({ isOpen, onClose, packageData, onSuccess }) => {
               <Text>
                 Price: {formatNaira(packageData.product.sellingPrice)}
               </Text>
-              <Text>Account Number: {packageData.accountNumber}</Text>
+              <Text>Account Number: {packageData.accountNumber}</Text>{' '}
+              <Select
+                placeholder="Select payment method"
+                value={paymentMethod}
+                onChange={(e) => setPaymentMethod(e.target.value)}
+              >
+                <option value="cash">Cash</option>
+                <option value="transfer">Transfer</option>
+              </Select>
               <InputGroup>
                 <Input
                   type="number"

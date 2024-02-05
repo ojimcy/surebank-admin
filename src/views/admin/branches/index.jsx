@@ -31,6 +31,8 @@ import CustomTable from 'components/table/CustomTable';
 import { useAppContext } from 'contexts/AppContext';
 import LoadingSpinner from 'components/scroll/LoadingSpinner';
 
+import { toSentenceCase } from 'utils/helper';
+
 export default function Users() {
   const { branches, setBranches } = useAppContext();
   const [loading, setLoading] = useState(true);
@@ -112,7 +114,7 @@ export default function Users() {
         Header: 'Branch Name',
         accessor: (row) => (
           <NavLink to={`/admin/branch/viewbranch/${row.id}`}>
-            {row.name}
+            {toSentenceCase(row.name)}
           </NavLink>
         ),
       },
