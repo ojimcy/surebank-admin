@@ -57,12 +57,19 @@ export default function CreateCatalogue() {
       if (selectedProduct) {
         catalogueData.productId = selectedProduct.value;
       }
+      // Remove discount property if it's an empty string
+      if (catalogueData.discount === '') {
+        delete catalogueData.discount;
+      }
       await axiosService.post(`/products/catalogue`, catalogueData);
       toast.success('Product catalogue created successfully!');
       history.push('/admin/products/catalogue');
     } catch (error) {
       console.error('Error creating product catalogue:', error);
-      toast.error('Something went wrong. Please try again later.');
+      toast.error(
+        error.response?.data?.message ||
+          'Something went wrong. Please try again later.'
+      );
     }
   };
 
@@ -195,7 +202,7 @@ export default function CreateCatalogue() {
                     variant="auth"
                     fontSize="sm"
                     ms={{ base: '0px', md: '0px' }}
-                    type="text"
+                    type="number"
                     id="costPrice"
                     mb="24px"
                     fontWeight="500"
@@ -234,6 +241,7 @@ export default function CreateCatalogue() {
                     placeholder="Sales Price"
                   />
                 </FormControl>
+
                 <FormControl>
                   <FormLabel
                     htmlFor="discount"
@@ -250,7 +258,7 @@ export default function CreateCatalogue() {
                     variant="auth"
                     fontSize="sm"
                     ms={{ base: '0px', md: '0px' }}
-                    type="text"
+                    type="number"
                     id="discount"
                     mb="24px"
                     fontWeight="500"
@@ -276,7 +284,7 @@ export default function CreateCatalogue() {
                     variant="auth"
                     fontSize="sm"
                     ms={{ base: '0px', md: '0px' }}
-                    type="text"
+                    type="number"
                     id="quantity"
                     mb="24px"
                     fontWeight="500"

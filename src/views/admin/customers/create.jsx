@@ -92,7 +92,6 @@ export default function Customer() {
       delete customerData.email;
     }
     customerData.branchId = staffInfo.branchId;
-    console.log(customerData);
     try {
       await axiosService.post(`/customer`, customerData);
       toast.success('Customer created successfully!');

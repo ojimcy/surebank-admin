@@ -109,7 +109,6 @@ const ExpenditureDetail = () => {
       fetchExpenditure();
     } catch (error) {
       console.error(error);
-      console.log(error);
       toast.error('An error occurred while updating the expenditure.');
     } finally {
       setLoading(false);

@@ -99,7 +99,6 @@ export default function Charges() {
         const chargeResponse = await axiosService.get(
           '/reports/contribution-incomes/ds/supperadmin'
           );
-          console.log(chargeResponse);
 
         setCharges(response.data);
         setTotalCharge(chargeResponse.data.totalCharge);

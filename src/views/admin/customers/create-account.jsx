@@ -104,7 +104,7 @@ export default function CreateAccount() {
       }
     }
   };
-  console.log(customerData);
+  
   return (
     <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
       {/* Main Fields */}

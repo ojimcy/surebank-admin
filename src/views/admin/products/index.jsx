@@ -142,7 +142,7 @@ export default function Catalogue() {
     });
     setFilteredProducts(filtered);
   }, [searchTerm, products]);
-  console.log(currentUser.role);
+
   return (
     <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
       {/* Main Fields */}
