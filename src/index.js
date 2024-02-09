@@ -12,6 +12,7 @@ import { ThemeEditorProvider } from '@hypertheme-editor/chakra-ui';
 import { AuthProvider } from 'contexts/AuthContext';
 import { AppProvider } from 'contexts/AppContext'; 
 import WithAuth from 'utils/withAuth';
+import LogoutInactiveUser from 'views/auth/logout-inactive-user';
 
 ReactDOM.render(
   <ChakraProvider theme={theme}>
@@ -19,6 +20,7 @@ ReactDOM.render(
       <ThemeEditorProvider>
         <AuthProvider>
           <AppProvider>
+              <LogoutInactiveUser timeout={15 * 60 * 1000} />
             <HashRouter>
               <Switch>
                 <Route path={`/auth`} component={AuthLayout} />
