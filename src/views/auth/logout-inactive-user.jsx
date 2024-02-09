@@ -1,16 +1,17 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useAuth } from 'contexts/AuthContext';
 
 function LogoutInactiveUser({ timeout }) {
   const { logout } = useAuth();
-  const [timer, setTimer] = useState(null);
 
   useEffect(() => {
+    let timer;
+
     const resetTimer = () => {
       if (timer) {
         clearTimeout(timer);
       }
-      setTimer(setTimeout(logoutUser, timeout));
+      timer = setTimeout(logoutUser, timeout);
     };
 
     const logoutUser = () => {
@@ -33,11 +34,11 @@ function LogoutInactiveUser({ timeout }) {
     return () => {
       window.removeEventListener('mousemove', handleUserActivity);
       window.removeEventListener('keydown', handleUserActivity);
-      clearTimeout(timer);
+      clearTimeout(timer); // Clear the timer
     };
-  }, [logout, timer, timeout]);
+  }, [logout, timeout]); 
 
-  return null;
+  return null; // No UI rendering needed for this component
 }
 
 export default LogoutInactiveUser;
