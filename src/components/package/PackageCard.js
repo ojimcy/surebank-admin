@@ -1,15 +1,22 @@
 import React, { useState } from 'react';
-import { Box, Flex, Text, Button, } from '@chakra-ui/react';
+import { Box, Flex, Text, Button } from '@chakra-ui/react';
 
 import { formatDate, formatNaira } from 'utils/helper';
 import TransferModal from 'components/modals/TransferModal';
 import DepositModal from 'components/modals/DepositModal';
+import EditPackageModal from 'components/modals/EditPackageModal';
 import closed from 'assets/img/closed.png';
+import { useAuth } from 'contexts/AuthContext';
+
 const PackageCard = ({
   packageData,
   handleTransferSuccess,
   handleDepositSuccess,
+  handleEditSuccess,
+  onClick,
 }) => {
+  const { currentUser } = useAuth();
+
   const {
     target,
     amountPerDay,
@@ -21,6 +28,7 @@ const PackageCard = ({
 
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
   const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
 
   const handleTransferClick = () => {
     setIsTransferModalOpen(true);
@@ -36,6 +44,10 @@ const PackageCard = ({
 
   const handleCloseDepositModal = () => {
     setIsDepositModalOpen(false);
+  };
+
+  const handleEditClick = () => {
+    setEditModalOpen(true);
   };
 
   const isPackageClosed = status === 'closed';
@@ -113,6 +125,13 @@ const PackageCard = ({
         >
           Move to central account
         </Button>
+        {currentUser.role === 'superAdmin' ? (
+          <Button colorScheme="green" size="sm" onClick={handleEditClick}>
+            Edit
+          </Button>
+        ) : (
+          ''
+        )}
         <Button
           colorScheme="green"
           size="sm"
@@ -135,6 +154,14 @@ const PackageCard = ({
         onClose={handleCloseDepositModal}
         packageData={packageData}
         onSuccess={handleDepositSuccess}
+      />
+
+      <EditPackageModal
+        isOpen={editModalOpen}
+        onClose={() => setEditModalOpen(false)}
+        packageData={packageData}
+        onSuccess={handleEditSuccess}
+
       />
     </Box>
   );

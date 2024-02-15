@@ -138,6 +138,7 @@ const ViewCustomerDs = () => {
             userPackages={userPackages}
             handleTransferSuccess={handleTransferSuccess}
             handleDepositSuccess={handleDepositSuccess}
+            handleEditSuccess={handleDepositSuccess}
           />
           <RecentTransactions />
         </>

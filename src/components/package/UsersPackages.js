@@ -21,7 +21,7 @@ import { NavLink, useParams } from 'react-router-dom';
 import axiosService from 'utils/axiosService';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 
-const UsersPackages = ({ handleTransferSuccess, handleDepositSuccess }) => {
+const UsersPackages = ({ handleTransferSuccess, handleDepositSuccess, handleEditSuccess }) => {
   const { id } = useParams();
   const { customerData } = useAppContext();
 
@@ -129,6 +129,7 @@ const UsersPackages = ({ handleTransferSuccess, handleDepositSuccess }) => {
               packageData={packageData}
               handleTransferSuccess={handleTransferSuccess}
               handleDepositSuccess={handleDepositSuccess}
+              handleEditSuccess={handleEditSuccess}
             />
           ))}
         </Grid>
