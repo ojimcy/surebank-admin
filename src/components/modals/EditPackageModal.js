@@ -52,6 +52,8 @@ const EditPackageModal = ({ isOpen, onClose, packageData, onSuccess }) => {
               type="text"
               defaultValue={target}
               onChange={(e) => setTarget(e.target.value)}
+              bg="transparent"
+              color="secondaryGray.600"
             />
           </FormControl>
           <FormControl mt={4}>
@@ -60,6 +62,8 @@ const EditPackageModal = ({ isOpen, onClose, packageData, onSuccess }) => {
               type="number"
               defaultValue={amountPerDay}
               onChange={(e) => setAmountPerDay(e.target.value)}
+              bg="transparent"
+              color="secondaryGray.600"
             />
           </FormControl>
         </ModalBody>
