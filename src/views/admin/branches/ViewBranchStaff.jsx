@@ -130,7 +130,7 @@ export default function ViewBranchStaff() {
         Header: 'Staff Name',
         accessor: (row) => (
           <NavLink to={`/admin/user/${row.staffId?.id}`}>
-            {row.staffId.firstName} {row.staffId.lastName}
+            {row.staffId?.firstName} {row.staffId?.lastName}
           </NavLink>
         ),
       },
@@ -140,7 +140,7 @@ export default function ViewBranchStaff() {
       },
       {
         Header: 'Role',
-        accessor: (row) => roleLabels[row.staffId.role],
+        accessor: (row) => roleLabels[row.staffId?.role],
       },
       {
         Header: 'Status',
@@ -230,13 +230,13 @@ export default function ViewBranchStaff() {
 
     // Filter out the current user from the staff list
     const filtered = staffs?.filter(
-      (staff) => staff.staffId.id !== currentUser.id
+      (staff) => staff.staffId?.id !== currentUser.id
     );
 
     // Filter by name
     const filteredByName = filtered?.filter((staff) => {
       const fullName =
-        `${staff.staffId.firstName} ${staff.staffId.lastName}`.toLowerCase();
+        `${staff.staffId?.firstName} ${staff.staffId?.lastName}`.toLowerCase();
       return fullName.includes(searchTerm.toLowerCase());
     });
 

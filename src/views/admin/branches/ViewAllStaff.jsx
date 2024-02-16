@@ -95,15 +95,22 @@ export default function Users() {
         );
       }
 
+      let filteredStaffs;
+
       // Filter out staff with role "superAdmin"
-      const filteredStaffs = staffResponse.data.filter(
-        (staff) => staff.staffId?.role !== 'superAdmin'
-      );
+      if (currentUser.role === 'manager') {
+        filteredStaffs = staffResponse.data.filter(
+          (staff) => staff.staffId?.role !== 'admin'
+        );
+      } else {
+        filteredStaffs = staffResponse.data.filter(
+          (staff) => staff.staffId?.role !== 'superAdmin'
+        );
+      }
 
       const UserResponse = await axiosService.get(
         `/users?role=user&limit=${pageSize}`
       );
-      console.log(branches);
       setUsers(UserResponse.data.results);
       setAllBranch(branches.data.results);
       setStaffs(filteredStaffs);
