@@ -97,19 +97,20 @@ export default function Users() {
 
       // Filter out staff with role "superAdmin"
       const filteredStaffs = staffResponse.data.filter(
-        (staff) => staff.staffId.role !== 'superAdmin'
+        (staff) => staff.staffId?.role !== 'superAdmin'
       );
 
       const UserResponse = await axiosService.get(
         `/users?role=user&limit=${pageSize}`
       );
-
+      console.log(branches);
       setUsers(UserResponse.data.results);
       setAllBranch(branches.data.results);
       setStaffs(filteredStaffs);
-      setLoading(false);
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -128,7 +129,7 @@ export default function Users() {
 
     const filtered = staffs?.filter((staff) => {
       const fullName =
-        `${staff.staffId.firstName} ${staff.staffId.lastName}`.toLowerCase();
+        `${staff.staffId?.firstName} ${staff.staffId?.lastName}`.toLowerCase();
       return fullName.includes(searchTerm.toLowerCase());
     });
     setFilteredStaffs(filtered);
@@ -250,13 +251,13 @@ export default function Users() {
 
     // Filter out the current user from the staff list
     const filtered = staffs?.filter(
-      (staff) => staff.staffId.id !== currentUser.id
+      (staff) => staff.staffId?.id !== currentUser.id
     );
 
     // Filter by name
     const filteredByName = filtered?.filter((staff) => {
       const fullName =
-        `${staff.staffId.firstName} ${staff.staffId.lastName}`.toLowerCase();
+        `${staff.staffId?.firstName} ${staff.staffId?.lastName}`.toLowerCase();
       return fullName.includes(searchTerm.toLowerCase());
     });
 
@@ -277,7 +278,7 @@ export default function Users() {
         Header: 'Staff Name',
         accessor: (row) => (
           <NavLink to={`/admin/user/${row.staffId?.id}`}>
-            {row.staffId.firstName} {row.staffId.lastName}
+            {row.staffId?.firstName} {row.staffId?.lastName}
           </NavLink>
         ),
       },
@@ -287,7 +288,7 @@ export default function Users() {
       },
       {
         Header: 'Role',
-        accessor: (row) => roleLabels[row.staffId.role],
+        accessor: (row) => roleLabels[row.staffId?.role],
       },
       {
         Header: 'Status',

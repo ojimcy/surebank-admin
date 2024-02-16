@@ -59,10 +59,10 @@ export default function TransactionItem({ transaction }) {
           {transaction.narration}
         </Text>
         <Text fontSize="sm" color="gray.500">
-          Rep: {transaction.createdBy.firstName}
+          Rep: {transaction.createdBy?.firstName}
         </Text>
         <Text fontSize="sm" color="gray.500">
-          Acc: {transaction.userId.lastName} {transaction.userId.firstName}
+          Acc: {transaction.userId?.lastName} {transaction.userId?.firstName}
         </Text>
       </Box>
       <Box>

@@ -150,8 +150,8 @@ export default function Charges() {
       {
         Header: 'Name',
         accessor: (row) => (
-          <NavLink to={`/admin/user/${row.userId.id}`}>
-            {row.userId.firstName} {row.userId.lastName}
+          <NavLink to={`/admin/user/${row.userId?.id}`}>
+            {row.userId?.firstName} {row.userId?.lastName}
           </NavLink>
         ),
       },
@@ -203,7 +203,7 @@ export default function Charges() {
                 <option>Select Branch</option>
                 {branches &&
                   branches.map((branch) => (
-                    <option key={branch.id} value={branch.id}>
+                    <option key={branch?.id} value={branch?.id}>
                       {branch?.name}
                     </option>
                   ))}

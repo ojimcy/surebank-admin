@@ -46,7 +46,7 @@ const AccountDetails = ({ customerData }) => {
             <Box px={6} py={2}>
               <Grid templateColumns="repeat(1fr)" gap={1}>
                 <Text fontSize={{ base: 'md', md: 'lg' }}>
-                  Account Name: {customerData.firstName} {customerData.lastName}
+                  Account Name: {customerData?.firstName} {customerData?.lastName}
                 </Text>
                 <Text fontSize={{ base: 'md', md: 'lg' }}>
                   Account Number: {customerData.accountNumber}

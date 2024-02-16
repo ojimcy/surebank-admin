@@ -91,9 +91,9 @@ function StaffRecentTransactions({ staffId }) {
   useEffect(() => {
     const filtered = transactions?.filter((transaction) => {
       const fullNameRep =
-        `${transaction.createdBy.firstName} ${transaction.createdBy.lastName}`.toLowerCase();
+        `${transaction.createdBy?.firstName} ${transaction.createdBy?.lastName}`.toLowerCase();
       const fullNameUser =
-        `${transaction.userId.firstName} ${transaction.userId.lastName}`.toLowerCase();
+        `${transaction.userId?.firstName} ${transaction.userId?.lastName}`.toLowerCase();
 
       const repNameMatch = fullNameRep.includes(searchTerm.toLowerCase());
       const userMameMatch = fullNameUser.includes(searchTerm.toLowerCase());
