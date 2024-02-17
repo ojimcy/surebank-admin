@@ -76,6 +76,7 @@ import Orders from 'views/admin/orders';
 import SingleOder from 'views/admin/orders/single-order';
 import Transactions from 'views/admin/account/transanctions';
 import { IoIosAnalytics } from 'react-icons/io';
+import BranchDashboard from 'views/admin/branches/BranchDashboard';
 
 const routes = [
   {
@@ -91,7 +92,7 @@ const routes = [
     layout: '/admin',
     icon: <Icon as={FaSitemap} width="20px" height="20px" color="inherit" />,
     path: '/branches',
-    roles: ['superAdmin', 'admin'],
+    roles: ['superAdmin'],
     component: Branches,
   },
   {
@@ -133,6 +134,14 @@ const routes = [
     roles: ['superAdmin', 'admin', 'manager'],
     path: '/branch/viewstaff/:id',
     component: ViewStaff,
+  },
+  {
+    name: 'Branches',
+    layout: '/admin',
+    icon: <Icon as={MdBarChart} width="20px" height="20px" color="inherit" />,
+    roles: ['superAdmin', 'admin', 'manager'],
+    path: '/branch/dashboard/:id',
+    component: BranchDashboard,
   },
   {
     name: 'Branches',
@@ -267,7 +276,9 @@ const routes = [
     name: 'Transactions',
     layout: '/admin',
     path: '/transactions',
-    icon: <Icon as={IoIosAnalytics} width="20px" height="20px" color="inherit" />,
+    icon: (
+      <Icon as={IoIosAnalytics} width="20px" height="20px" color="inherit" />
+    ),
     roles: ['superAdmin', 'admin', 'manager', 'userReps'],
     component: Transactions,
   },

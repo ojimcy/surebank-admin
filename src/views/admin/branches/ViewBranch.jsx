@@ -43,9 +43,6 @@ export default function User() {
   const [loading, setLoading] = useState(true);
   const [showCreateStaffModal, setShowCreateStaffModal] = useState(false);
 
-  const handleAddStaffToBranch = () => {
-    setShowCreateStaffModal(true);
-  };
 
   const onCloseModal = () => {
     setShowCreateStaffModal(false);
@@ -180,14 +177,15 @@ export default function User() {
                               View Staff
                             </Button>
                           </NavLink>
-                          <Button
-                            size="sm"
-                            color="#ffffff"
-                            background="blue.800"
-                            onClick={() => handleAddStaffToBranch(staffs?.id)}
-                          >
-                            Add Staff
-                          </Button>
+                          <NavLink to={`/admin/branch/dashboard/${id}`}>
+                            <Button
+                              size="sm"
+                              color="#ffffff"
+                              background="blue.800"
+                            >
+                              Dashboard
+                            </Button>
+                          </NavLink>
                         </Stack>
                       </Box>
                     </Flex>

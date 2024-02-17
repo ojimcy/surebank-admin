@@ -156,8 +156,8 @@ export default function OtherCharges() {
       {
         Header: 'Name',
         accessor: (row) => (
-          <NavLink to={`/admin/user/${row.userId.id}`}>
-            {row.userId.firstName} {row.userId.lastName}
+          <NavLink to={`/admin/user/${row.userId?.id}`}>
+            {row.userId?.firstName} {row.userId?.lastName}
           </NavLink>
         ),
       },

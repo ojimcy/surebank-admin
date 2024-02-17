@@ -1,239 +1,40 @@
-import React, { useState, useEffect } from 'react';
-import { Flex, Icon, Text, useColorModeValue, Box } from '@chakra-ui/react';
-import { MdAttachMoney, MdPerson } from 'react-icons/md';
-import { FaMoneyBillWave } from 'react-icons/fa';
-import axiosService from 'utils/axiosService';
-import { toast } from 'react-toastify';
-import { formatNaira } from 'utils/helper';
-import Card from 'components/card/Card';
-import MiniStatistics from 'components/card/MiniStatistics';
-import IconBox from 'components/icons/IconBox';
-import ActionButton from 'components/Button/CustomButton';
+import React, { useEffect, useState } from 'react';
+import { Box, Text } from '@chakra-ui/react';
 import { useParams } from 'react-router-dom';
-import LoadingSpinner from 'components/scroll/LoadingSpinner';
-import BackButton from 'components/menu/BackButton';
-import StaffRecentTransactions from 'components/transactions/StaffRecentTransactions';
+import axiosService from 'utils/axiosService';
+import AdminDetails from './components/AdminDetails';
+import UserRepsDetails from './components/UserRepsDetails';
+import ManagerDetails from './components/ManagerDetails';
 
-export default function StaffDetailsPage() {
-  const brandColor = useColorModeValue('brand.500', 'white');
-  const boxBg = useColorModeValue('secondaryGray.300', 'whiteAlpha.100');
-  const textColor = useColorModeValue('secondaryGray.900', 'white');
-  const textColorSecondary = 'secondaryGray.600';
-
-  const [loading, setLoading] = useState(true);
-  const [contributionsDailyTotal, setContributionsDailyTotal] = useState([]);
-  const [dailySavingsWithdrawals, setDailySavingsWithdrawals] = useState([]);
-  const [sbDailyTotal, setSbDailyTotal] = useState([]);
-  const [dsDailyTotal, setDsDailyTotal] = useState([]);
-  const [openPackageCount, setOpenPackageCount] = useState(0);
-
+export default function ViewStaffDetails() {
   const { id } = useParams();
   const staffId = id;
 
+  const [user, setUser] = useState({});
+
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchUser = async () => {
       try {
-        const startDate = new Date();
-        startDate.setHours(0, 0, 0, 0);
-        const startTimeStamp = startDate.getTime();
-
-        const endDate = new Date();
-        endDate.setHours(23, 59, 59, 999);
-        const endTimeStamp = endDate.getTime();
-
-        const [
-          totalContributionsResponse,
-          dsResponse,
-          sbResponse,
-          withdrawalResponse,
-          accountsResponse,
-        ] = await Promise.all([
-          axiosService.get(
-            `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&createdBy=${staffId}`
-          ),
-          axiosService.get(
-            `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&createdBy=${staffId}&narration=Daily contribution`
-          ),
-          axiosService.get(
-            `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&createdBy=${staffId}&narration=SB contribution`
-          ),
-          axiosService.get(
-            `/reports/total-savings-withdrawal?startDate=${startTimeStamp}&endDate=${endTimeStamp}`
-          ),
-          axiosService.get(`accounts?accountManagerId=${staffId}`),
-        ]);
-        setContributionsDailyTotal(totalContributionsResponse.data);
-        setDsDailyTotal(dsResponse.data);
-        setSbDailyTotal(sbResponse.data);
-        setDailySavingsWithdrawals(withdrawalResponse.data);
-        setOpenPackageCount(accountsResponse.data.totalResults);
+        const getUser = await axiosService.get(`/users/${staffId}`);
+        setUser(getUser.data);
       } catch (error) {
         console.error(error);
-        toast.error(
-          error.response?.data?.message ||
-            'An error occurred while fetching data.'
-        );
-      } finally {
-        setLoading(false);
       }
     };
 
-    fetchData();
+    fetchUser();
   }, [staffId]);
 
   return (
-    <Box>
-      {loading ? (
-        <LoadingSpinner />
+    <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
+      {user.role === 'userReps' ? (
+        <UserRepsDetails staffId={staffId} />
+      ) : user.role === 'admin' ? (
+        <AdminDetails />
+      ) : user.role === 'manager' ? (
+        <ManagerDetails staffId={staffId} />
       ) : (
-        <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
-          <BackButton />
-          <>
-            <Flex direction={{ base: 'column', md: 'row' }} mb="20px" mt="40px">
-              <Card>
-                <Text
-                  fontWeight="bold"
-                  fontSize="xl"
-                  mt="10px"
-                  color={textColor}
-                >
-                  Overview
-                </Text>
-                <Text fontSize="sm" color={textColorSecondary} pb="20px">
-                  Overview of your activities
-                </Text>
-                <hr color={textColor} />
-                <Flex
-                  direction={{ base: 'column', md: 'row' }}
-                  justifyContent="space-between"
-                  mt="20px"
-                >
-                  <MiniStatistics
-                    startContent={
-                      <IconBox
-                        w="56px"
-                        h="56px"
-                        bg={boxBg}
-                        icon={
-                          <Icon
-                            w="32px"
-                            h="32px"
-                            as={MdAttachMoney}
-                            color={brandColor}
-                          />
-                        }
-                      />
-                    }
-                    name="Total Daily contributions"
-                    value={formatNaira(contributionsDailyTotal)}
-                  />
-
-                  <MiniStatistics
-                    startContent={
-                      <IconBox
-                        w="56px"
-                        h="56px"
-                        bg={boxBg}
-                        icon={
-                          <Icon
-                            w="32px"
-                            h="32px"
-                            as={MdAttachMoney}
-                            color={brandColor}
-                          />
-                        }
-                      />
-                    }
-                    name="Total Daily Withdrawal Requests"
-                    value={formatNaira(dailySavingsWithdrawals[0]?.total || 0)}
-                  />
-
-                  <MiniStatistics
-                    startContent={
-                      <IconBox
-                        w="56px"
-                        h="56px"
-                        bg={boxBg}
-                        icon={
-                          <Icon
-                            w="32px"
-                            h="32px"
-                            as={MdPerson}
-                            color={brandColor}
-                          />
-                        }
-                      />
-                    }
-                    name="Active customers"
-                    value={openPackageCount && openPackageCount}
-                  />
-                </Flex>
-                <Flex
-                  direction={{ base: 'column', md: 'row' }}
-                  justifyContent="space-between"
-                  mt="10px"
-                >
-                  <MiniStatistics
-                    startContent={
-                      <IconBox
-                        w="56px"
-                        h="56px"
-                        bg={boxBg}
-                        icon={
-                          <Icon
-                            w="32px"
-                            h="32px"
-                            as={MdAttachMoney}
-                            color={brandColor}
-                          />
-                        }
-                      />
-                    }
-                    name="Total DS Contributions"
-                    value={formatNaira(dsDailyTotal)}
-                  />
-
-                  <MiniStatistics
-                    startContent={
-                      <IconBox
-                        w="56px"
-                        h="56px"
-                        bg={boxBg}
-                        icon={
-                          <Icon
-                            w="32px"
-                            h="32px"
-                            as={MdAttachMoney}
-                            color={brandColor}
-                          />
-                        }
-                      />
-                    }
-                    name="Total SB Contributions"
-                    value={formatNaira(sbDailyTotal || 0)}
-                  />
-                </Flex>
-              </Card>
-            </Flex>
-
-            <Box>
-              <Flex
-                justify="end"
-                alignItems="center"
-                mb="20px"
-                flexDirection={{ base: 'column', md: 'row' }}
-              >
-                <ActionButton
-                  to="/admin/accounting/expenditure"
-                  icon={FaMoneyBillWave}
-                  label="Expenditure"
-                />
-              </Flex>
-            </Box>
-
-            <StaffRecentTransactions staffId={staffId} />
-          </>
-        </Box>
+        <Text>Not found!!!</Text>
       )}
     </Box>
   );
