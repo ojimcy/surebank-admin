@@ -11,6 +11,7 @@ import ActionButton from 'components/Button/CustomButton';
 import LoadingSpinner from 'components/scroll/LoadingSpinner';
 import BackButton from 'components/menu/BackButton';
 import { useParams } from 'react-router-dom';
+import { toSentenceCase } from 'utils/helper';
 
 export default function BranchDashboard() {
   const brandColor = useColorModeValue('brand.500', 'white');
@@ -28,6 +29,7 @@ export default function BranchDashboard() {
   const [totalSbSales, setTotalSbSales] = useState(0);
   const [openPackageCount, setOpenPackageCount] = useState(0);
   const [openSbPackageCount, setOpenSbPackageCount] = useState(0);
+  const [branchInfo, setBranchInfo] = useState({});
   const [loading, setLoading] = useState(true);
   // useRef to track the mounted state
   const isMounted = useRef(true);
@@ -107,8 +109,14 @@ export default function BranchDashboard() {
     }
   };
 
+  const getBranch = async () => {
+    const response = await axiosService.get(`/branch/${id}`);
+    setBranchInfo(response.data);
+  };
+
   useEffect(() => {
     fetchData();
+    getBranch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]); // Update the dependency here
 
@@ -128,10 +136,10 @@ export default function BranchDashboard() {
                   mt="10px"
                   color={textColor}
                 >
-                  Overview
+                  {toSentenceCase(branchInfo?.name)} Dashbaord
                 </Text>
                 <Text fontSize="sm" color={textColorSecondary} pb="20px">
-                  Overview of your activities
+                  Overview of {toSentenceCase(branchInfo?.name)} activities
                 </Text>
                 <hr color={textColor} />
 

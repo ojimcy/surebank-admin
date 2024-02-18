@@ -8,8 +8,8 @@ export function useAuth() {
   return useContext(AuthContext);
 }
 
-const baseURL = 'http://localhost:3000/v1';
-// const baseURL = 'https://7jvk31k960.execute-api.us-east-1.amazonaws.com/v1';
+// const baseURL = 'http://localhost:3000/v1';
+const baseURL = 'https://7jvk31k960.execute-api.us-east-1.amazonaws.com/v1';
 
 export function AuthProvider({ children }) {
   const initialToken = localStorage.getItem('ACCESS_TOKEN_KEY');
