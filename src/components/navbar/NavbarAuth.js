@@ -31,7 +31,7 @@ import { SidebarContext } from "contexts/SidebarContext";
 import { GoChevronDown, GoChevronRight } from "react-icons/go";
 import routes from "routes.js";
 
-import sbLogo from 'assets/img/sbLogo.png'
+import sbLogo from 'assets/img/logo.png'
 
 export default function AuthNavbar(props) {
   const { logo, logoText, secondary, sidebarWidth, ...rest } = props;
