@@ -35,6 +35,7 @@ export default function SuperAdminDashboard() {
   const [openPackageCount, setOpenPackageCount] = useState(0);
   const [totalDsWithdrawals, setTotalDsWithdrawals] = useState(0);
   const [totalSbSales, setTotalSbSales] = useState(0);
+  const [openSbPackageCount, setOpenSbPackageCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
   const sbNetBalance = totalSbContributions - totalSbSales;
@@ -64,6 +65,8 @@ export default function SuperAdminDashboard() {
         withdrawalResponse,
         dsWithdrawalResponse,
         sbSalesResponse,
+        openPackages,
+        openSbPackages,
       ] = await Promise.all([
         axiosService.get(
           `/reports/total-contributions?narration=SB contribution`
@@ -85,8 +88,10 @@ export default function SuperAdminDashboard() {
         ),
         axiosService.get(`/transactions/withdraw/cash?status=approved`),
         axiosService.get(`/orders?status=paid`),
+        axiosService.get('/reports/packages?status=open'),
+        axiosService.get(`/reports/packages/sb?status=open`),
       ]);
-      
+
       setTotalSbContributions(totalSbContributionResponse.data);
       setTotalDsContributions(totalDsContributionResponse.data);
       setContributionDailyTotal(contributionResponse.data);
@@ -95,13 +100,8 @@ export default function SuperAdminDashboard() {
       setDailySavingsWithdrawals(withdrawalResponse.data.totalAmount);
       setTotalDsWithdrawals(dsWithdrawalResponse.data.totalAmount);
       setTotalSbSales(sbSalesResponse.data.totalAmount);
-
-      // Fetch total open and closed packages
-      const [openPackages] = await Promise.all([
-        axiosService.get('/reports/packages?status=open'),
-      ]);
-
       setOpenPackageCount(openPackages.data.totalResults);
+      setOpenSbPackageCount(openSbPackages.data.totalResults);
     } catch (error) {
       console.error(error);
       toast.error(error.response?.data?.message || 'An error occurred');
@@ -287,8 +287,22 @@ export default function SuperAdminDashboard() {
                   }
                 />
               }
-              name="Active Packages"
+              name="Ds Packages"
               value={openPackageCount && openPackageCount}
+            />
+            <MiniStatistics
+              startContent={
+                <IconBox
+                  w="56px"
+                  h="56px"
+                  bg={boxBg}
+                  icon={
+                    <Icon w="32px" h="32px" as={MdPerson} color={brandColor} />
+                  }
+                />
+              }
+              name="Sb Packages"
+              value={openSbPackageCount && openSbPackageCount}
             />
           </SimpleGrid>
 
