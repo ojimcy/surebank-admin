@@ -44,6 +44,7 @@ export default function Customers() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredCustomers, setFilteredCustomers] = useState([]);
+  const [staffInfo, setStaffInfo] = useState({});
 
   const [showBranchModal, setShowBranchModal] = useState(false);
   const [allBranch, setAllBranch] = useState([]);
@@ -94,6 +95,32 @@ export default function Customers() {
     setPagination({ pageIndex, pageSize });
   };
 
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchStaff = async () => {
+      try {
+        if (currentUser) {
+          const getStaff = await axiosService.get(
+            `/staff/user/${currentUser.id}`
+          );
+          if (isMounted) {
+            setStaffInfo(getStaff.data);
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchStaff();
+
+    return () => {
+      // Cleanup function to set the isMounted flag to false when the component unmounts
+      isMounted = false;
+    };
+  }, [currentUser]);
+
   // Filter customers based on search term
   useEffect(() => {
     if (!customers) {
@@ -125,7 +152,16 @@ export default function Customers() {
   } = useForm();
 
   const viewbranchstaff = (data) => {
-    const branchId = data.branchId;
+    if (!staffInfo) {
+      return;
+    }
+
+    let branchId;
+    if (currentUser.role === 'userReps') {
+      branchId = staffInfo.branchId;
+    } else {
+      branchId = data.branchId;
+    }
     history.push(`/admin/branch/viewbranchcustomers/${branchId}`);
   };
 
@@ -150,7 +186,7 @@ export default function Customers() {
       },
       {
         Header: 'Account Type',
-        accessor: (row) => row.accountType.toUpperCase(), 
+        accessor: (row) => row.accountType.toUpperCase(),
       },
       {
         Header: 'Account Number',
@@ -214,19 +250,35 @@ export default function Customers() {
             <BackButton />
           </Flex>
           <Flex justifyContent="flex-end">
-            {currentUser.role === 'superAdmin' ||
-              (currentUser.role === 'admin' && (
+            <Menu isLazy>
+              {currentUser.role === 'superAdmin' ||
+              currentUser.role === 'admin' ? (
                 <Button
                   bgColor="blue.700"
                   color="white"
+                  px="28px"
+                  py="28px"
                   borderRadius="5px"
                   mr={4}
                   onClick={openbranchcustomermodal}
                 >
                   View Branch Customer
                 </Button>
-              ))}
-            <Menu isLazy>
+              ) : currentUser.role === 'userReps' ? (
+                <Button
+                  bgColor="blue.700"
+                  color="white"
+                  px="28px"
+                  py="28px"
+                  borderRadius="5px"
+                  mr={4}
+                  onClick={viewbranchstaff}
+                >
+                  View Branch Customer
+                </Button>
+              ) : (
+                ''
+              )}
               <MenuButton
                 bgColor="blue.700"
                 color="white"
