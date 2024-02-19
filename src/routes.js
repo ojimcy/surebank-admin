@@ -14,6 +14,7 @@ import {
   FaUsers,
   FaShoppingBag,
   FaShoppingCart,
+  FaSms,
 } from 'react-icons/fa';
 import { AiOutlineUsergroupAdd } from 'react-icons/ai';
 
@@ -77,6 +78,7 @@ import SingleOder from 'views/admin/orders/single-order';
 import Transactions from 'views/admin/account/transanctions';
 import { IoIosAnalytics } from 'react-icons/io';
 import BranchDashboard from 'views/admin/branches/BranchDashboard';
+import BulkSms from 'views/admin/sms/bulk';
 
 const routes = [
   {
@@ -542,6 +544,17 @@ const routes = [
     ),
     roles: ['superAdmin', 'admin', 'manager', 'userReps'],
     component: Orders,
+  },
+
+  {
+    name: 'SMS',
+    layout: '/admin',
+    path: '/sms',
+    icon: (
+      <Icon as={FaSms} width="20px" height="20px" color="inherit" />
+    ),
+    roles: ['superAdmin'],
+    component: BulkSms,
   },
 ];
 
