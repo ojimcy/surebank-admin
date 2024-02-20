@@ -109,8 +109,8 @@ export default function Expenditures() {
   };
 
   const constructApiEndpoint = (staffData) => {
-    let endpoint = `/expenditure`;
     const { pageIndex, pageSize } = pagination;
+    let endpoint = `/expenditure`;
 
     // Default parameters
     const params = {
