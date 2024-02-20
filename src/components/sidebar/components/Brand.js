@@ -1,12 +1,12 @@
-import React from "react";
+import React from 'react';
 
 // Chakra imports
 import { Flex, Image } from '@chakra-ui/react';
 
 // Custom components
-import { HSeparator } from "components/separator/Separator";
+import { HSeparator } from 'components/separator/Separator';
 
-import sbLogo from 'assets/img/logo.png';
+import sbLogo from 'assets/img/logo.webp';
 
 export function SidebarBrand() {
   //   Chakra color mode

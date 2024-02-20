@@ -20,7 +20,7 @@ import {
 // Custom components
 import DefaultAuth from 'layouts/auth/Default';
 // Assets
-import illustration from 'assets/img/auth/auth-bg.png';
+import illustration from 'assets/img/auth/auth-bg.webp';
 import { MdOutlineRemoveRedEye } from 'react-icons/md';
 import { RiEyeCloseLine } from 'react-icons/ri';
 import { useForm } from 'react-hook-form';
