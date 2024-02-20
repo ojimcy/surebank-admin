@@ -319,26 +319,25 @@ export default function ManagerDetails({ staffId }) {
                 </Flex>
               </Card>
             </Flex>
-
-            <Box>
-              <Flex
-                justify="end"
-                alignItems="center"
-                mb="20px"
-                flexDirection={{ base: 'column', md: 'row' }}
-              >
-                <ActionButton
-                  to="/admin/accounting/expenditure"
-                  icon={FaMoneyBillWave}
-                  label="Expenditure"
-                />
-              </Flex>
-            </Box>
-
-            <BranchWithdrawals staffInfo={staffInfo} />
           </>
         </Box>
       )}
+      <Box>
+        <Flex
+          justify="end"
+          alignItems="center"
+          mb="20px"
+          flexDirection={{ base: 'column', md: 'row' }}
+        >
+          <ActionButton
+            to="/admin/accounting/expenditure"
+            icon={FaMoneyBillWave}
+            label="Expenditure"
+          />
+        </Flex>
+      </Box>
+
+      <BranchWithdrawals staffInfo={staffInfo} />
     </Box>
   );
 }

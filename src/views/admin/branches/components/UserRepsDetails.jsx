@@ -179,27 +179,26 @@ export default function UserRepsDetails({ staffId }) {
               </Flex>
             </Card>
           </Flex>
-
-          <Box>
-            <Flex
-              justify="end"
-              alignItems="center"
-              mb="20px"
-              flexDirection={{ base: 'column', md: 'row' }}
-            >
-              <ActionButton
-                to="/admin/accounting/expenditure"
-                icon={FaMoneyBillWave}
-                label="Expenditure"
-              />
-            </Flex>
-          </Box>
-
-          <Withdrawals />
-
-          <StaffRecentTransactions staffId={staffId} />
         </>
       )}
+      <Box>
+        <Flex
+          justify="end"
+          alignItems="center"
+          mb="20px"
+          flexDirection={{ base: 'column', md: 'row' }}
+        >
+          <ActionButton
+            to="/admin/accounting/expenditure"
+            icon={FaMoneyBillWave}
+            label="Expenditure"
+          />
+        </Flex>
+      </Box>
+
+      <Withdrawals />
+
+      <StaffRecentTransactions staffId={staffId} />
     </Box>
   );
 }

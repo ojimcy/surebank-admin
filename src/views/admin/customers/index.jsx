@@ -260,6 +260,7 @@ export default function Customers() {
                   py="28px"
                   borderRadius="5px"
                   mr={4}
+                  fontSize="sm"
                   onClick={openbranchcustomermodal}
                 >
                   View Branch Customer

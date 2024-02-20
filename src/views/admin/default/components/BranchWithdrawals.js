@@ -1,5 +1,5 @@
 // Chakra imports
-import { Box, Flex, Stack, Select, Text } from '@chakra-ui/react';
+import { Box, Flex, Stack, Select, Text, Spinner } from '@chakra-ui/react';
 import React, { useCallback, useEffect, useState } from 'react';
 
 // Assets
@@ -14,7 +14,7 @@ import CustomDateModal from 'components/modals/CustomDateModal';
 
 export default function BranchWithdrawals({ staffInfo }) {
   const { currentUser } = useAuth();
-  const { branches, setLoading } = useAppContext();
+  const { branches, loading, setLoading } = useAppContext();
   const [withdrawals, setWithdrawals] = useState([]);
   const [filteredWithdrawals, setFilteredWithdrawals] = useState([]);
   const [timeRange, setTimeRange] = useState('all');
@@ -269,7 +269,9 @@ export default function BranchWithdrawals({ staffInfo }) {
           </Flex>
         </Box>
         <Box marginTop="30">
-          {filteredWithdrawals && filteredWithdrawals.length !== 0 ? (
+          {loading ? (
+            <Spinner />
+          ) : filteredWithdrawals && filteredWithdrawals.length !== 0 ? (
             <CustomTable
               columns={columns}
               data={filteredWithdrawals}

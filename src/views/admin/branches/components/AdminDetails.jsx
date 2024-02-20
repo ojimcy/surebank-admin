@@ -182,26 +182,25 @@ export default function AdminDetails() {
                 </Flex>
               </Card>
             </Flex>
-
-            <Box>
-              <Flex
-                justify="end"
-                alignItems="center"
-                mb="20px"
-                flexDirection={{ base: 'column', md: 'row' }}
-              >
-                <ActionButton
-                  to="/admin/accounting/expenditure"
-                  icon={FaMoneyBillWave}
-                  label="Expenditure"
-                />
-              </Flex>
-            </Box>
-
-            <Withdrawals />
           </>
         </Box>
       )}
+      <Box>
+        <Flex
+          justify="end"
+          alignItems="center"
+          mb="20px"
+          flexDirection={{ base: 'column', md: 'row' }}
+        >
+          <ActionButton
+            to="/admin/accounting/expenditure"
+            icon={FaMoneyBillWave}
+            label="Expenditure"
+          />
+        </Flex>
+      </Box>
+
+      <Withdrawals />
     </Box>
   );
 }

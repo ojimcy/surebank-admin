@@ -125,210 +125,206 @@ export default function SuperAdminDashboard() {
       {loading ? (
         <LoadingSpinner />
       ) : (
-        <>
-          <SimpleGrid
-            columns={{ base: 1, md: 4, lg: 4, '2xl': 4 }}
-            gap="20px"
-            mb="20px"
-            mt="40px"
-          >
-            {/* Use the fetched total contributions data */}
-            <MiniStatistics
-              startContent={
-                <IconBox
-                  w="56px"
-                  h="56px"
-                  bg={boxBg}
-                  icon={
-                    <Icon
-                      w="32px"
-                      h="32px"
-                      as={MdAttachMoney}
-                      color={brandColor}
-                    />
-                  }
-                />
-              }
-              name="Total Contributions"
-              value={formatNaira(totalContributions)}
-            />
-
-            <MiniStatistics
-              startContent={
-                <IconBox
-                  w="56px"
-                  h="56px"
-                  bg={boxBg}
-                  icon={
-                    <Icon
-                      w="32px"
-                      h="32px"
-                      as={MdAttachMoney}
-                      color={brandColor}
-                    />
-                  }
-                />
-              }
-              name="Total SB Contributions"
-              value={formatNaira(sbNetBalance)}
-            />
-
-            <MiniStatistics
-              startContent={
-                <IconBox
-                  w="56px"
-                  h="56px"
-                  bg={boxBg}
-                  icon={
-                    <Icon
-                      w="32px"
-                      h="32px"
-                      as={MdAttachMoney}
-                      color={brandColor}
-                    />
-                  }
-                />
-              }
-              name="Total DS Contributions"
-              value={formatNaira(dsNetBalance)}
-            />
-
-            <MiniStatistics
-              startContent={
-                <IconBox
-                  w="56px"
-                  h="56px"
-                  bg={boxBg}
-                  icon={
-                    <Icon
-                      w="32px"
-                      h="32px"
-                      as={MdAttachMoney}
-                      color={brandColor}
-                    />
-                  }
-                />
-              }
-              // growth="+23%"
-              name="Total Daily contributions"
-              value={formatNaira(contributionsDailyTotal)}
-            />
-
-            <MiniStatistics
-              startContent={
-                <IconBox
-                  w="56px"
-                  h="56px"
-                  bg={boxBg}
-                  icon={
-                    <Icon
-                      w="32px"
-                      h="32px"
-                      as={MdAttachMoney}
-                      color={brandColor}
-                    />
-                  }
-                />
-              }
-              name="Total Daily Withdrawal Requests"
-              value={formatNaira(dailySavingsWithdrawals || 0)}
-            />
-
-            <MiniStatistics
-              startContent={
-                <IconBox
-                  w="56px"
-                  h="56px"
-                  bg={boxBg}
-                  icon={
-                    <Icon
-                      w="32px"
-                      h="32px"
-                      as={MdAttachMoney}
-                      color={brandColor}
-                    />
-                  }
-                />
-              }
-              // growth="+23%"
-              name="DS Daily Total"
-              value={formatNaira(dsDailyTotal)}
-            />
-
-            <MiniStatistics
-              startContent={
-                <IconBox
-                  w="56px"
-                  h="56px"
-                  bg={boxBg}
-                  icon={
-                    <Icon
-                      w="32px"
-                      h="32px"
-                      as={MdAttachMoney}
-                      color={brandColor}
-                    />
-                  }
-                />
-              }
-              // growth="+23%"
-              name="SB Daily Total"
-              value={formatNaira(sbDailyTotal)}
-            />
-
-            <MiniStatistics
-              startContent={
-                <IconBox
-                  w="56px"
-                  h="56px"
-                  bg={boxBg}
-                  icon={
-                    <Icon w="32px" h="32px" as={MdPerson} color={brandColor} />
-                  }
-                />
-              }
-              name="Ds Packages"
-              value={openPackageCount && openPackageCount}
-            />
-            <MiniStatistics
-              startContent={
-                <IconBox
-                  w="56px"
-                  h="56px"
-                  bg={boxBg}
-                  icon={
-                    <Icon w="32px" h="32px" as={MdPerson} color={brandColor} />
-                  }
-                />
-              }
-              name="Sb Packages"
-              value={openSbPackageCount && openSbPackageCount}
-            />
-          </SimpleGrid>
-
-          <Box>
-            <Flex
-              justify="space-between"
-              alignItems="center"
-              mb="20px"
-              flexDirection={{ base: 'column', md: 'row' }}
-            >
-              <ActionButton
-                to="/admin/accounting/dashboard"
-                icon={FaChartBar}
-                label="Report"
+        <SimpleGrid
+          columns={{ base: 1, md: 4, lg: 4, '2xl': 4 }}
+          gap="20px"
+          mb="20px"
+          mt="40px"
+        >
+          {/* Use the fetched total contributions data */}
+          <MiniStatistics
+            startContent={
+              <IconBox
+                w="56px"
+                h="56px"
+                bg={boxBg}
+                icon={
+                  <Icon
+                    w="32px"
+                    h="32px"
+                    as={MdAttachMoney}
+                    color={brandColor}
+                  />
+                }
               />
-              <ActionButton
-                to="/admin/accounting/expenditure"
-                icon={FaMoneyBillWave}
-                label="Expenditure"
-              />
-            </Flex>
-          </Box>
+            }
+            name="Total Contributions"
+            value={formatNaira(totalContributions)}
+          />
 
-          <Withdrawals />
-        </>
+          <MiniStatistics
+            startContent={
+              <IconBox
+                w="56px"
+                h="56px"
+                bg={boxBg}
+                icon={
+                  <Icon
+                    w="32px"
+                    h="32px"
+                    as={MdAttachMoney}
+                    color={brandColor}
+                  />
+                }
+              />
+            }
+            name="Total SB Contributions"
+            value={formatNaira(sbNetBalance)}
+          />
+
+          <MiniStatistics
+            startContent={
+              <IconBox
+                w="56px"
+                h="56px"
+                bg={boxBg}
+                icon={
+                  <Icon
+                    w="32px"
+                    h="32px"
+                    as={MdAttachMoney}
+                    color={brandColor}
+                  />
+                }
+              />
+            }
+            name="Total DS Contributions"
+            value={formatNaira(dsNetBalance)}
+          />
+
+          <MiniStatistics
+            startContent={
+              <IconBox
+                w="56px"
+                h="56px"
+                bg={boxBg}
+                icon={
+                  <Icon
+                    w="32px"
+                    h="32px"
+                    as={MdAttachMoney}
+                    color={brandColor}
+                  />
+                }
+              />
+            }
+            // growth="+23%"
+            name="Total Daily contributions"
+            value={formatNaira(contributionsDailyTotal)}
+          />
+
+          <MiniStatistics
+            startContent={
+              <IconBox
+                w="56px"
+                h="56px"
+                bg={boxBg}
+                icon={
+                  <Icon
+                    w="32px"
+                    h="32px"
+                    as={MdAttachMoney}
+                    color={brandColor}
+                  />
+                }
+              />
+            }
+            name="Total Daily Withdrawal Requests"
+            value={formatNaira(dailySavingsWithdrawals || 0)}
+          />
+
+          <MiniStatistics
+            startContent={
+              <IconBox
+                w="56px"
+                h="56px"
+                bg={boxBg}
+                icon={
+                  <Icon
+                    w="32px"
+                    h="32px"
+                    as={MdAttachMoney}
+                    color={brandColor}
+                  />
+                }
+              />
+            }
+            // growth="+23%"
+            name="DS Daily Total"
+            value={formatNaira(dsDailyTotal)}
+          />
+
+          <MiniStatistics
+            startContent={
+              <IconBox
+                w="56px"
+                h="56px"
+                bg={boxBg}
+                icon={
+                  <Icon
+                    w="32px"
+                    h="32px"
+                    as={MdAttachMoney}
+                    color={brandColor}
+                  />
+                }
+              />
+            }
+            // growth="+23%"
+            name="SB Daily Total"
+            value={formatNaira(sbDailyTotal)}
+          />
+
+          <MiniStatistics
+            startContent={
+              <IconBox
+                w="56px"
+                h="56px"
+                bg={boxBg}
+                icon={
+                  <Icon w="32px" h="32px" as={MdPerson} color={brandColor} />
+                }
+              />
+            }
+            name="Ds Packages"
+            value={openPackageCount && openPackageCount}
+          />
+          <MiniStatistics
+            startContent={
+              <IconBox
+                w="56px"
+                h="56px"
+                bg={boxBg}
+                icon={
+                  <Icon w="32px" h="32px" as={MdPerson} color={brandColor} />
+                }
+              />
+            }
+            name="Sb Packages"
+            value={openSbPackageCount && openSbPackageCount}
+          />
+        </SimpleGrid>
       )}
+      <Box>
+        <Flex
+          justify="space-between"
+          alignItems="center"
+          mb="20px"
+          flexDirection={{ base: 'column', md: 'row' }}
+        >
+          <ActionButton
+            to="/admin/accounting/dashboard"
+            icon={FaChartBar}
+            label="Report"
+          />
+          <ActionButton
+            to="/admin/accounting/expenditure"
+            icon={FaMoneyBillWave}
+            label="Expenditure"
+          />
+        </Flex>
+      </Box>
+      <Withdrawals />
     </Box>
   );
 }

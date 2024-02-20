@@ -109,7 +109,7 @@ export default function ManagerDashboard() {
           ),
           axiosService.get(
             `/transactions/withdraw/cash?startDate=${startTimeStamp}&endDate=${endTimeStamp}&createdBy=${staffId}&status=pending`
-          )
+          ),
         ]);
 
         if (isMounted.current) {
@@ -117,10 +117,10 @@ export default function ManagerDashboard() {
           setDsDailyTotal(dsResponse.data);
           setSbDailyTotal(sbResponse.data);
           setDailySavingsWithdrawals(withdrawalResponse.data.totalAmount);
-          setManagerTotal(managerTotalContributionResponse.data)
-          setManagerDsTotal(managerDsResponse.data)
-          setManagerSbTotal(managerSbResponse.data)
-          setManagerWithdrawals(managerWithdrawalResponse.data.totalAmount)
+          setManagerTotal(managerTotalContributionResponse.data);
+          setManagerDsTotal(managerDsResponse.data);
+          setManagerSbTotal(managerSbResponse.data);
+          setManagerWithdrawals(managerWithdrawalResponse.data.totalAmount);
           setLoading(false);
         }
       }
@@ -330,26 +330,25 @@ export default function ManagerDashboard() {
                 </Flex>
               </Card>
             </Flex>
-
-            <Box>
-              <Flex
-                justify="end"
-                alignItems="center"
-                mb="20px"
-                flexDirection={{ base: 'column', md: 'row' }}
-              >
-                <ActionButton
-                  to="/admin/accounting/expenditure"
-                  icon={FaMoneyBillWave}
-                  label="Expenditure"
-                />
-              </Flex>
-            </Box>
-
-            <BranchWithdrawals staffInfo={staffInfo} />
           </>
         </Box>
       )}
+      <Box>
+        <Flex
+          justify="end"
+          alignItems="center"
+          mb="20px"
+          flexDirection={{ base: 'column', md: 'row' }}
+        >
+          <ActionButton
+            to="/admin/accounting/expenditure"
+            icon={FaMoneyBillWave}
+            label="Expenditure"
+          />
+        </Flex>
+      </Box>
+
+      <BranchWithdrawals staffInfo={staffInfo} />
     </Box>
   );
 }

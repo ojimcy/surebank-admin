@@ -1,5 +1,5 @@
 // Withdrawals.js
-import { Box, Flex, Stack, Select, Text } from '@chakra-ui/react';
+import { Box, Flex, Stack, Select, Text, Spinner } from '@chakra-ui/react';
 import React, { useCallback, useEffect, useState } from 'react';
 import axiosService from 'utils/axiosService';
 import CustomTable from 'components/table/CustomTable';
@@ -12,7 +12,7 @@ import { toSentenceCase } from 'utils/helper';
 
 export default function Withdrawals() {
   const { currentUser } = useAuth();
-  const { branches, setLoading } = useAppContext();
+  const { branches, loading, setLoading } = useAppContext();
   const [withdrawals, setWithdrawals] = useState([]);
   const [filteredWithdrawals, setFilteredWithdrawals] = useState([]);
   const [timeRange, setTimeRange] = useState('all');
@@ -268,7 +268,9 @@ export default function Withdrawals() {
           </Flex>
         </Box>
         <Box marginTop="30">
-          {filteredWithdrawals && filteredWithdrawals.length !== 0 ? (
+          {loading ? (
+            <Spinner />
+          ) : filteredWithdrawals && filteredWithdrawals.length !== 0 ? (
             <CustomTable
               columns={columns}
               data={filteredWithdrawals}
