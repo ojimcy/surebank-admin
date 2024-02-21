@@ -120,7 +120,17 @@ export default function HeaderLinks(props) {
               borderRadius="8px"
               px="14px"
             >
-              <NavLink to="/admin/profile/reset-password">Change password</NavLink>
+              <NavLink to="/admin/profile">Profile</NavLink>
+            </MenuItem>
+            <MenuItem
+              _hover={{ bg: 'none' }}
+              _focus={{ bg: 'none' }}
+              borderRadius="8px"
+              px="14px"
+            >
+              <NavLink to="/admin/profile/reset-password">
+                Change password
+              </NavLink>
             </MenuItem>
             <HSeparator />
             <MenuItem

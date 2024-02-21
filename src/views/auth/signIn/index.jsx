@@ -58,7 +58,7 @@ function SignIn() {
     try {
       await login(data.identifier, data.password);
       toast.success('Signin successful!');
-      history.push('/admin');
+      history.push('/admin/profile');
     } catch (error) {
       if (error) {
         const errorMessage = error.message;
@@ -128,7 +128,7 @@ function SignIn() {
                 variant="auth"
                 fontSize="sm"
                 ms={{ base: '0px', md: '0px' }}
-                placeholder="mail@simmmple.com or +1234567890"
+                placeholder="email or phone number"
                 mb="24px"
                 fontWeight="500"
                 size="lg"
