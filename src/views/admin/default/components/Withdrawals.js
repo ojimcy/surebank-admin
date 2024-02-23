@@ -82,6 +82,8 @@ export default function Withdrawals() {
   );
 
   useEffect(() => {
+    let isMounted = true;
+
     async function fetchWithdrawals() {
       setLoading(true);
       const { pageIndex, pageSize } = pagination;
@@ -127,15 +129,22 @@ export default function Withdrawals() {
       }
       try {
         const response = await axiosService.get(endpoint);
-        setWithdrawals(response.data.withdrawals);
-        setLoading(false);
+        if (isMounted) {
+          setWithdrawals(response.data.withdrawals);
+          setLoading(false);
+        }
       } catch (error) {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     }
 
     fetchWithdrawals();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
+    return () => {
+      isMounted = false;
+    };
   }, [
     timeRange,
     branch,
@@ -143,8 +152,8 @@ export default function Withdrawals() {
     endDate,
     pagination,
     currentUser,
-    currentUser,
     selectedStatus,
+    setLoading,
   ]);
 
   useEffect(() => {

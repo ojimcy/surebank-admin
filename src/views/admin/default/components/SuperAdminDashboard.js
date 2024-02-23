@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Icon,
@@ -43,71 +43,83 @@ export default function SuperAdminDashboard() {
 
   const totalContributions = sbNetBalance + dsNetBalance;
 
-  const fetchDashboardData = useCallback(async () => {
-    try {
-      setLoading(true);
-      // Get today's date at 00:00 and convert to timestamp
-      const startDate = new Date();
-      startDate.setHours(0, 0, 0, 0);
-      const startTimeStamp = startDate.getTime();
-      // Get today's date at 23:59 and convert to timestamp
-      const endDate = new Date();
-      endDate.setHours(23, 59, 59, 999);
-      const endTimeStamp = endDate.getTime();
+ 
+  useEffect(() => {
+    let isMounted = true;
 
-      // Fetch total contributions and total daily withdrawals
-      const [
-        totalSbContributionResponse,
-        totalDsContributionResponse,
-        contributionResponse,
-        sbResponse,
-        dsResponse,
-        withdrawalResponse,
-        dsWithdrawalResponse,
-        sbSalesResponse,
-        openPackages,
-        openSbPackages,
-      ] = await Promise.all([
-        axiosService.get(
-          `/reports/total-contributions?narration=SB contribution`
-        ),
-        axiosService.get(
-          `/reports/total-contributions?narration=Daily contribution`
-        ),
-        axiosService.get(
-          `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}`
-        ),
-        axiosService.get(
-          `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&narration=SB contribution`
-        ),
-        axiosService.get(
-          `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&narration=Daily contribution`
-        ),
-        axiosService.get(
-          `/transactions/withdraw/cash?status=pending&startDate=${startTimeStamp}&endDate=${endTimeStamp}`
-        ),
-        axiosService.get(`/transactions/withdraw/cash?status=approved`),
-        axiosService.get(`/orders?status=paid`),
-        axiosService.get('/reports/packages?status=open'),
-        axiosService.get(`/reports/packages/sb?status=open`),
-      ]);
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const startDate = new Date();
+        startDate.setHours(0, 0, 0, 0);
+        const startTimeStamp = startDate.getTime();
+        const endDate = new Date();
+        endDate.setHours(23, 59, 59, 999);
+        const endTimeStamp = endDate.getTime();
 
-      setTotalSbContributions(totalSbContributionResponse.data);
-      setTotalDsContributions(totalDsContributionResponse.data);
-      setContributionDailyTotal(contributionResponse.data);
-      setSbDailyTotal(sbResponse.data);
-      setDsDailyTotal(dsResponse.data);
-      setDailySavingsWithdrawals(withdrawalResponse.data.totalAmount);
-      setTotalDsWithdrawals(dsWithdrawalResponse.data.totalAmount);
-      setTotalSbSales(sbSalesResponse.data.totalAmount);
-      setOpenPackageCount(openPackages.data.totalResults);
-      setOpenSbPackageCount(openSbPackages.data.totalResults);
-    } catch (error) {
-      console.error(error);
-      toast.error(error.response?.data?.message || 'An error occurred');
-    } finally {
-      setLoading(false);
-    }
+        const [
+          totalSbContributionResponse,
+          totalDsContributionResponse,
+          contributionResponse,
+          sbResponse,
+          dsResponse,
+          withdrawalResponse,
+          dsWithdrawalResponse,
+          sbSalesResponse,
+          openPackages,
+          openSbPackages,
+        ] = await Promise.all([
+          axiosService.get(
+            `/reports/total-contributions?narration=SB contribution`
+          ),
+          axiosService.get(
+            `/reports/total-contributions?narration=Daily contribution`
+          ),
+          axiosService.get(
+            `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}`
+          ),
+          axiosService.get(
+            `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&narration=SB contribution`
+          ),
+          axiosService.get(
+            `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&narration=Daily contribution`
+          ),
+          axiosService.get(
+            `/transactions/withdraw/cash?status=pending&startDate=${startTimeStamp}&endDate=${endTimeStamp}`
+          ),
+          axiosService.get(`/transactions/withdraw/cash?status=approved`),
+          axiosService.get(`/orders?status=paid`),
+          axiosService.get('/reports/packages?status=open'),
+          axiosService.get(`/reports/packages/sb?status=open`),
+        ]);
+
+        if (isMounted) {
+          setTotalSbContributions(totalSbContributionResponse.data);
+          setTotalDsContributions(totalDsContributionResponse.data);
+          setContributionDailyTotal(contributionResponse.data);
+          setSbDailyTotal(sbResponse.data);
+          setDsDailyTotal(dsResponse.data);
+          setDailySavingsWithdrawals(withdrawalResponse.data.totalAmount);
+          setTotalDsWithdrawals(dsWithdrawalResponse.data.totalAmount);
+          setTotalSbSales(sbSalesResponse.data.totalAmount);
+          setOpenPackageCount(openPackages.data.totalResults);
+          setOpenSbPackageCount(openSbPackages.data.totalResults);
+        }
+      } catch (error) {
+        console.error(error);
+        toast.error(error.response?.data?.message || 'An error occurred');
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchData();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   useEffect(() => {
@@ -116,9 +128,6 @@ export default function SuperAdminDashboard() {
     }
   }, [currentUser, history]);
 
-  useEffect(() => {
-    fetchDashboardData();
-  }, [fetchDashboardData]);
 
   return (
     <Box>
