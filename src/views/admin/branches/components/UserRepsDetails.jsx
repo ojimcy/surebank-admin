@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Flex, Icon, Text, useColorModeValue, Box } from '@chakra-ui/react';
-import { MdAttachMoney } from 'react-icons/md';
+import { Flex, Icon, Text, useColorModeValue, Box, Grid } from '@chakra-ui/react';
+import { MdAttachMoney, MdPerson } from 'react-icons/md';
 import { FaMoneyBillWave } from 'react-icons/fa';
 import axiosService from 'utils/axiosService';
 import { toast } from 'react-toastify';
@@ -25,9 +25,17 @@ export default function UserRepsDetails({ staffId }) {
   const [dailySavingsWithdrawals, setDailySavingsWithdrawals] = useState([]);
   const [sbDailyTotal, setSbDailyTotal] = useState([]);
   const [dsDailyTotal, setDsDailyTotal] = useState([]);
+  const [dailyDsCustomers, setDailyDsCustomers] = useState([]);
+  const [dailySbCustomers, setDailySbCustomers] = useState([]);
+  const [openPackageCount, setOpenPackageCount] = useState(0);
+  const [openSbPackageCount, setOpenSbPackageCount] = useState(0);
+
+  const totalOpenPackages = dailyDsCustomers + dailySbCustomers;
+  const totalPackages = openPackageCount + openSbPackageCount;
 
   useEffect(() => {
     setLoading(true);
+    let isMounted = true;
     const fetchData = async () => {
       try {
         const startDate = new Date();
@@ -43,6 +51,10 @@ export default function UserRepsDetails({ staffId }) {
           dsResponse,
           sbResponse,
           withdrawalResponse,
+          openDailyDsPackages,
+          opendailySbCustomers,
+          openPackagesResponse,
+          openSbPackagesResponse,
         ] = await Promise.all([
           axiosService.get(
             `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&createdBy=${staffId}`
@@ -56,12 +68,30 @@ export default function UserRepsDetails({ staffId }) {
           axiosService.get(
             `/transactions/withdraw/cash?startDate=${startTimeStamp}&endDate=${endTimeStamp}&createdBy=${staffId}`
           ),
-          axiosService.get(`accounts?accountManagerId=${staffId}`),
+          // axiosService.get(`accounts?accountManagerId=${staffId}`),
+
+          axiosService.get(
+            `/reports/packages/contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&createdBy=${staffId}&narration=Daily contribution`
+          ),
+          axiosService.get(
+            `/reports/packages/contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&createdBy=${staffId}&narration=SB contribution`
+          ),
+          axiosService.get(
+            `/reports/packages?status=open&createdBy=${staffId}`
+          ),
+          axiosService.get(
+            `/reports/packages/sb?status=open&createdBy=${staffId}`
+          ),
         ]);
+
         setContributionsDailyTotal(totalContributionsResponse.data);
         setDsDailyTotal(dsResponse.data);
         setSbDailyTotal(sbResponse.data);
         setDailySavingsWithdrawals(withdrawalResponse.data.totalAmount);
+        setDailyDsCustomers(openDailyDsPackages.data.length);
+        setDailySbCustomers(opendailySbCustomers.data.length);
+        setOpenPackageCount(openPackagesResponse.data.totalResults);
+        setOpenSbPackageCount(openSbPackagesResponse.data.totalResults);
       } catch (error) {
         console.error(error);
         toast.error(
@@ -69,11 +99,17 @@ export default function UserRepsDetails({ staffId }) {
             'An error occurred while fetching data.'
         );
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
     fetchData();
+
+    return () => {
+      isMounted = false;
+    };
   }, [staffId]);
 
   return (
@@ -83,102 +119,236 @@ export default function UserRepsDetails({ staffId }) {
       ) : (
         <>
           <BackButton />
-          <Flex direction={{ base: 'column', md: 'row' }} mb="20px" mt="40px">
-            <Card>
-              <Text fontWeight="bold" fontSize="xl" mt="10px" color={textColor}>
-                Overview
-              </Text>
-              <Text fontSize="sm" color={textColorSecondary} pb="20px">
-                Overview of your activities
-              </Text>
-              <hr color={textColor} />
-              <Flex
-                direction={{ base: 'column', md: 'row' }}
-                justifyContent="space-between"
-                mt="20px"
-              >
-                <MiniStatistics
-                  startContent={
-                    <IconBox
-                      w="56px"
-                      h="56px"
-                      bg={boxBg}
-                      icon={
-                        <Icon
-                          w="32px"
-                          h="32px"
-                          as={MdAttachMoney}
-                          color={brandColor}
-                        />
-                      }
-                    />
-                  }
-                  name="Total Daily contributions"
-                  value={formatNaira(contributionsDailyTotal)}
-                />
+        <Grid
+          templateColumns={{ base: '1fr', md: '1fr 1fr' }}
+          gap={6}
+          mb="20px"
+          mt="40px"
+        >
+          <Card>
+            <Text fontWeight="bold" fontSize="xl" mt="10px" color={textColor}>
+              Overview
+            </Text>
+            <Text fontSize="sm" color={textColorSecondary} pb="20px">
+              Overview of your activities
+            </Text>
+            <hr color={textColor} />
+            <Grid
+              templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }}
+              gap={6}
+              mt="20px"
+            >
+              <MiniStatistics
+                startContent={
+                  <IconBox
+                    w="56px"
+                    h="56px"
+                    bg={boxBg}
+                    icon={
+                      <Icon
+                        w="32px"
+                        h="32px"
+                        as={MdAttachMoney}
+                        color={brandColor}
+                      />
+                    }
+                  />
+                }
+                name="Total Daily contributions"
+                value={formatNaira(contributionsDailyTotal)}
+              />
 
-                <MiniStatistics
-                  startContent={
-                    <IconBox
-                      w="56px"
-                      h="56px"
-                      bg={boxBg}
-                      icon={
-                        <Icon
-                          w="32px"
-                          h="32px"
-                          as={MdAttachMoney}
-                          color={brandColor}
-                        />
-                      }
-                    />
-                  }
-                  name="Total DS Contributions"
-                  value={formatNaira(dsDailyTotal)}
-                />
+              <MiniStatistics
+                startContent={
+                  <IconBox
+                    w="56px"
+                    h="56px"
+                    bg={boxBg}
+                    icon={
+                      <Icon
+                        w="32px"
+                        h="32px"
+                        as={MdAttachMoney}
+                        color={brandColor}
+                      />
+                    }
+                  />
+                }
+                name="Total DS Contributions"
+                value={formatNaira(dsDailyTotal)}
+              />
 
-                <MiniStatistics
-                  startContent={
-                    <IconBox
-                      w="56px"
-                      h="56px"
-                      bg={boxBg}
-                      icon={
-                        <Icon
-                          w="32px"
-                          h="32px"
-                          as={MdAttachMoney}
-                          color={brandColor}
-                        />
-                      }
-                    />
-                  }
-                  name="Total SB Contributions"
-                  value={formatNaira(sbDailyTotal || 0)}
-                />
+              <MiniStatistics
+                startContent={
+                  <IconBox
+                    w="56px"
+                    h="56px"
+                    bg={boxBg}
+                    icon={
+                      <Icon
+                        w="32px"
+                        h="32px"
+                        as={MdAttachMoney}
+                        color={brandColor}
+                      />
+                    }
+                  />
+                }
+                name="Total SB Contributions"
+                value={formatNaira(sbDailyTotal || 0)}
+              />
 
-                <MiniStatistics
-                  startContent={
-                    <IconBox
-                      w="56px"
-                      h="56px"
-                      bg={boxBg}
-                      icon={
-                        <Icon
-                          w="32px"
-                          h="32px"
-                          as={MdAttachMoney}
-                          color={brandColor}
-                        />
-                      }
-                    />
-                  }
-                  name="Total Daily Withdrawal Requests"
-                  value={formatNaira(dailySavingsWithdrawals || 0)}
-                />
-              </Flex>
-            </Card>
-          </Flex>
+              <MiniStatistics
+                startContent={
+                  <IconBox
+                    w="56px"
+                    h="56px"
+                    bg={boxBg}
+                    icon={
+                      <Icon
+                        w="32px"
+                        h="32px"
+                        as={MdAttachMoney}
+                        color={brandColor}
+                      />
+                    }
+                  />
+                }
+                name="Total Daily Withdrawal Requests"
+                value={formatNaira(dailySavingsWithdrawals || 0)}
+              />
+            </Grid>
+          </Card>
+          <Card>
+            <Text fontWeight="bold" fontSize="xl" mt="10px">
+              Package Reports
+            </Text>
+            <Text fontSize="sm" color="gray.500" pb="20px">
+              Details of package reports
+            </Text>
+            <hr />
+            <Grid
+              templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }}
+              gap={6}
+              mt="20px"
+            >
+              <MiniStatistics
+                startContent={
+                  <IconBox
+                    w="56px"
+                    h="56px"
+                    bg={boxBg}
+                    icon={
+                      <Icon
+                        w="32px"
+                        h="32px"
+                        as={MdPerson}
+                        color={brandColor}
+                      />
+                    }
+                  />
+                }
+                name="Total Packages"
+                value={totalPackages && totalPackages}
+              />
+              <MiniStatistics
+                startContent={
+                  <IconBox
+                    w="56px"
+                    h="56px"
+                    bg={boxBg}
+                    icon={
+                      <Icon
+                        w="32px"
+                        h="32px"
+                        as={MdPerson}
+                        color={brandColor}
+                      />
+                    }
+                  />
+                }
+                name="Total Contributed"
+                value={totalOpenPackages || 0}
+              />
+              <MiniStatistics
+                startContent={
+                  <IconBox
+                    w="56px"
+                    h="56px"
+                    bg={boxBg}
+                    icon={
+                      <Icon
+                        w="32px"
+                        h="32px"
+                        as={MdPerson}
+                        color={brandColor}
+                      />
+                    }
+                  />
+                }
+                name="Ds Packages"
+                value={openPackageCount && openPackageCount}
+              />
+              <MiniStatistics
+                startContent={
+                  <IconBox
+                    w="56px"
+                    h="56px"
+                    bg={boxBg}
+                    icon={
+                      <Icon
+                        w="32px"
+                        h="32px"
+                        as={MdPerson}
+                        color={brandColor}
+                      />
+                    }
+                  />
+                }
+                name="SB Contributed"
+                value={dailySbCustomers || 0}
+              />
+              <MiniStatistics
+                startContent={
+                  <IconBox
+                    w="56px"
+                    h="56px"
+                    bg={boxBg}
+                    icon={
+                      <Icon
+                        w="32px"
+                        h="32px"
+                        as={MdPerson}
+                        color={brandColor}
+                      />
+                    }
+                  />
+                }
+                name="Sb Packages"
+                value={openSbPackageCount && openSbPackageCount}
+              />
+              <MiniStatistics
+                startContent={
+                  <IconBox
+                    w="56px"
+                    h="56px"
+                    bg={boxBg}
+                    icon={
+                      <Icon
+                        w="32px"
+                        h="32px"
+                        as={MdPerson}
+                        color={brandColor}
+                      />
+                    }
+                  />
+                }
+                name="DS Contributed"
+                value={dailyDsCustomers || 0}
+              />
+            </Grid>
+          </Card>
+        </Grid>
         </>
       )}
       <Box>
