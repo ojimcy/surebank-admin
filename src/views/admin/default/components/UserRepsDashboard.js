@@ -255,7 +255,7 @@ export default function UserRepsDashboard() {
                     }
                   />
                 }
-                name="Total Packages"
+                name="Total Customers"
                 value={totalPackages && totalPackages}
               />
               <MiniStatistics
@@ -293,7 +293,7 @@ export default function UserRepsDashboard() {
                     }
                   />
                 }
-                name="Ds Packages"
+                name="Ds Customers"
                 value={openPackageCount && openPackageCount}
               />
               <MiniStatistics
@@ -350,7 +350,7 @@ export default function UserRepsDashboard() {
                     }
                   />
                 }
-                name="DS Contributed"
+                name="DS Customers"
                 value={dailyDsCustomers || 0}
               />
             </Grid>
