@@ -10,27 +10,32 @@ import { ChakraProvider } from '@chakra-ui/react';
 import theme from 'theme/theme';
 import { ThemeEditorProvider } from '@hypertheme-editor/chakra-ui';
 import { AuthProvider } from 'contexts/AuthContext';
-import { AppProvider } from 'contexts/AppContext'; 
+import { AppProvider } from 'contexts/AppContext';
 import WithAuth from 'utils/withAuth';
 import LogoutInactiveUser from 'views/auth/logout-inactive-user';
+import { QueryClient, QueryClientProvider } from 'react-query';
+
+const queryClient = new QueryClient();
 
 ReactDOM.render(
   <ChakraProvider theme={theme}>
     <React.StrictMode>
       <ThemeEditorProvider>
-        <AuthProvider>
-          <AppProvider>
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider>
+            <AppProvider>
               <LogoutInactiveUser timeout={15 * 60 * 1000} />
-            <HashRouter>
-              <Switch>
-                <Route path={`/auth`} component={AuthLayout} />
-                <Route path={`/admin`} component={WithAuth(AdminLayout)} />
-                <Redirect from="/" to="/admin" />
-              </Switch>
-              <ToastContainer />
-            </HashRouter>
-          </AppProvider>
-        </AuthProvider>
+              <HashRouter>
+                <Switch>
+                  <Route path={`/auth`} component={AuthLayout} />
+                  <Route path={`/admin`} component={WithAuth(AdminLayout)} />
+                  <Redirect from="/" to="/admin" />
+                </Switch>
+                <ToastContainer />
+              </HashRouter>
+            </AppProvider>
+          </AuthProvider>
+        </QueryClientProvider>
       </ThemeEditorProvider>
     </React.StrictMode>
   </ChakraProvider>,

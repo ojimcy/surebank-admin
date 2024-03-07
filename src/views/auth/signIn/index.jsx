@@ -58,7 +58,7 @@ function SignIn() {
     try {
       await login(data.identifier, data.password);
       toast.success('Signin successful!');
-      history.push('/admin');
+      history.push('/admin/profile');
     } catch (error) {
       if (error) {
         const errorMessage = error.message;
