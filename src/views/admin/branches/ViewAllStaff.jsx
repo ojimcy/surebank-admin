@@ -96,11 +96,12 @@ export default function Users() {
       }
 
       let filteredStaffs;
-
-      // Filter out staff with role "superAdmin"
+      // Filter out staff with roles "superAdmin" and "admin"
       if (currentUser.role === 'manager') {
         filteredStaffs = staffResponse.data.filter(
-          (staff) => staff.staffId?.role !== 'admin'
+          (staff) =>
+            staff.staffId?.role !== 'superAdmin' &&
+            staff.staffId?.role !== 'admin'
         );
       } else {
         filteredStaffs = staffResponse.data.filter(
