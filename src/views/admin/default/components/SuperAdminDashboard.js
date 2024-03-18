@@ -263,13 +263,16 @@ async function fetchData() {
     axiosService.get(`/reports/packages/sb?status=open`),
   ]);
 
+  const sbNetBalance =
+    totalSbContributionResponse.data - sbSalesResponse.data.totalAmount;
+  const dsNetBalance =
+    totalDsContributionResponse.data - dsWithdrawalResponse.data.totalAmount;
+  const totalContributions = sbNetBalance + dsNetBalance;
+
   return {
-    totalContributions:
-      totalSbContributionResponse.data + totalDsContributionResponse.data,
-    sbNetBalance:
-      totalSbContributionResponse.data - sbSalesResponse.data.totalAmount,
-    dsNetBalance:
-      totalDsContributionResponse.data - dsWithdrawalResponse.data.totalAmount,
+    totalContributions,
+    sbNetBalance,
+    dsNetBalance,
     contributionsDailyTotal: contributionResponse.data,
     dailySavingsWithdrawals: withdrawalResponse.data.totalAmount,
     sbDailyTotal: sbResponse.data,

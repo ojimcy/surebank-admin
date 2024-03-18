@@ -32,6 +32,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import LoadingSpinner from 'components/scroll/LoadingSpinner';
 import { formatDate, getStartDate, getEndDate } from 'utils/helper';
+import { Link } from 'react-router-dom';
 
 export default function Expenditures() {
   const { currentUser } = useAuth();
@@ -82,7 +83,7 @@ export default function Expenditures() {
       // Cleanup function to set the isMounted flag to false when the component unmounts
       isMounted.current = false;
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser]);
 
   const fetchExpenditures = async (staffData) => {
@@ -142,7 +143,8 @@ export default function Expenditures() {
 
   useEffect(() => {
     const filtered = expenditures?.filter((expenditure) => {
-      const fullName = `${expenditure.createdBy.firstName} ${expenditure.createdBy.lastName}`.toLowerCase();
+      const fullName =
+        `${expenditure.createdBy.firstName} ${expenditure.createdBy.lastName}`.toLowerCase();
       return (
         fullName.includes(searchTerm.toLowerCase()) ||
         expenditure.reason.includes(searchTerm)
@@ -224,15 +226,28 @@ export default function Expenditures() {
         <Card p={{ base: '30px', md: '30px', sm: '10px' }}>
           <Flex justifyContent="space-between" mb="20px">
             <BackButton />
-            <Button
-              bgColor="blue.700"
-              color="white"
-              borderRadius="5px"
-              mr={4}
-              onClick={handleOpenExpenditureModal}
-            >
-              Record Expenditure
-            </Button>
+            <div>
+              <Button
+                bgColor="blue.700"
+                color="white"
+                borderRadius="5px"
+                mr={4}
+                onClick={handleOpenExpenditureModal}
+              >
+                Record Expenditure
+              </Button>
+
+              <Button
+                bgColor="blue.700"
+                color="white"
+                borderRadius="5px"
+                mr={4}
+                as={Link}
+                to='/admin/accounting/note'
+              >
+                Note Keeping
+              </Button>
+            </div>
           </Flex>
           <Box marginTop="30">
             <Flex>

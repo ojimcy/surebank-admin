@@ -79,6 +79,7 @@ import Transactions from 'views/admin/account/transanctions';
 import { IoIosAnalytics } from 'react-icons/io';
 import BranchDashboard from 'views/admin/branches/BranchDashboard';
 import BulkSms from 'views/admin/sms/bulk';
+import Note from 'views/admin/accounting/note-keeping';
 
 const routes = [
   {
@@ -425,6 +426,23 @@ const routes = [
     icon: <Icon as={FaMoneyBill} width="20px" height="20px" color="inherit" />,
     roles: ['superAdmin', 'admin', 'manager', 'userReps'],
     component: Expenditures,
+  },
+
+  {
+    name: 'Note',
+    layout: '/admin',
+    path: '/accounting/note/:id',
+    icon: <Icon as={FaMoneyBill} width="20px" height="20px" color="inherit" />,
+    roles: ['superAdmin', 'admin', 'manager'],
+    component: Note,
+  },
+  {
+    name: 'Note',
+    layout: '/admin',
+    path: '/accounting/note',
+    icon: <Icon as={FaMoneyBill} width="20px" height="20px" color="inherit" />,
+    roles: ['superAdmin', 'admin', 'manager'],
+    component: Note,
   },
 
   {
