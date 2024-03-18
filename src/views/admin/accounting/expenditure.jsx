@@ -173,10 +173,7 @@ export default function Expenditures() {
       await fetchExpenditures(staffInfo);
     } catch (error) {
       console.error(error);
-      toast.error(
-        error.response?.data?.message ||
-          'An error occurred while creating expenditure.'
-      );
+      toast.error('An error occurred while creating expenditure.');
     }
   };
 
@@ -237,16 +234,22 @@ export default function Expenditures() {
                 Record Expenditure
               </Button>
 
-              <Button
-                bgColor="blue.700"
-                color="white"
-                borderRadius="5px"
-                mr={4}
-                as={Link}
-                to='/admin/accounting/note'
-              >
-                Note Keeping
-              </Button>
+              {currentUser.role === 'superAdmin' ||
+              currentUser.role === 'admin' ||
+              currentUser.role === 'manager' ? (
+                <Button
+                  bgColor="blue.700"
+                  color="white"
+                  borderRadius="5px"
+                  mr={4}
+                  as={Link}
+                  to="/admin/accounting/note"
+                >
+                  Note Keeping
+                </Button>
+              ) : (
+                ''
+              )}
             </div>
           </Flex>
           <Box marginTop="30">
