@@ -108,7 +108,6 @@ export default function BranchDashboard() {
       }
     }
   };
-
   const getBranch = async () => {
     const response = await axiosService.get(`/branch/${id}`);
     setBranchInfo(response.data);
@@ -185,7 +184,7 @@ export default function BranchDashboard() {
                       />
                     }
                     name="Total SB Contributions"
-                    value={formatNaira(totalSbContributions)}
+                    value={formatNaira(sbNetBalance)}
                   />
 
                   <MiniStatistics
@@ -205,7 +204,7 @@ export default function BranchDashboard() {
                       />
                     }
                     name="Total DS Contributions"
-                    value={formatNaira(totalDsContributions)}
+                    value={formatNaira(dsNetBalance)}
                   />
                   <MiniStatistics
                     startContent={
