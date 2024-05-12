@@ -182,6 +182,7 @@ const WithdrawalDetails = () => {
                             onClick={handleApprove}
                             mr={4}
                             isLoading={isSubmitting}
+                            disabled={withdrawal.status === 'approved'}
                           >
                             Approve
                           </Button>
