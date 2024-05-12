@@ -23,6 +23,8 @@ import CreatePackageModal from 'components/modals/CreatePackageModal';
 import SbDepositModal from 'components/modals/SbDepositModal';
 import ChargeModal from 'components/modals/SbChargeModal';
 import ChangeProductModal from 'components/modals/ChangeProductModal';
+import SbTransferModal from 'components/modals/SbTransferModal';
+import PackageBalance from 'components/others/PackageBalance';
 
 import axiosService from 'utils/axiosService';
 import { formatDate, formatNaira } from 'utils/helper';
@@ -42,12 +44,13 @@ const ViewCustomerSb = () => {
   const { reset } = useForm();
 
   const textColor = useColorModeValue('secondaryGray.900', 'white');
-  const textColorSecondary = 'secondaryGray.600';
+  const textColorSecondary = useColorModeValue('secondaryGray.600', 'white');
 
   const [sbPackages, setSbPackages] = useState([]);
   const [showAccountModal, setShowAccountModal] = useState(false);
   const [createPackagesModal, setCreatePackagesModal] = useState(false);
   const [sbDepositModal, setSbDepositModal] = useState(false);
+  const [sbTransferModal, setSbTransferModal] = useState(false);
   const [showMergeModal, setShowMergeModal] = useState(false);
   const [showChargeModal, setShowChargeModal] = useState(false);
   const [changeProductModal, setChangeProductModal] = useState(false);
@@ -141,9 +144,25 @@ const ViewCustomerSb = () => {
     reset();
   };
 
+  const showSbTransferModal = () => {
+    setSbTransferModal(true);
+    reset();
+  };
+
+  const closeSbTransferModal = () => {
+    setSbTransferModal(false);
+    reset();
+  };
+
+
   const handleDepositModalOpen = (packageData) => {
     setSelectedPackage(packageData);
     showSbDepositModal();
+  };
+
+  const handleTransferModalOpen = (packageData) => {
+    setSelectedPackage(packageData);
+    showSbTransferModal();
   };
 
   const handleShowMergeModal = () => {
@@ -220,6 +239,10 @@ const ViewCustomerSb = () => {
     }
   };
 
+  const handleWithdraw = async (packageData) => {
+    console.log(packageData);
+  };
+
   return (
     <>
       <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
@@ -228,6 +251,7 @@ const ViewCustomerSb = () => {
           <LoadingSpinner />
         ) : (
           <>
+            <PackageBalance customerData={customerData} />
             <Flex alignItems="center">
               <Flex flexDirection="column">
                 <Text
@@ -357,55 +381,69 @@ const ViewCustomerSb = () => {
                       </Box>
                     )}
 
-                    <Flex mt="4" direction="column" align="center">
+                    <Flex
+                      mt="4"
+                      direction="column"
+                      align="center"
+                      flexWrap={'wrap'}
+                    >
                       {currentUser &&
                       (currentUser.role === 'admin' ||
                         currentUser.role === 'superAdmin') ? (
-                        <>
-                          <ButtonGroup spacing={4} mb={4}>
-                            <Button
-                              colorScheme="red"
-                              size="md"
-                              onClick={handleShowMergeModal}
-                            >
+                        <Menu>
+                          <MenuButton
+                            as={Button}
+                            colorScheme="red"
+                            size="md"
+                            width="100%"
+                            padding="1.2rem 1rem"
+                            mb={4}
+                          >
+                            Actions
+                          </MenuButton>
+                          <MenuList>
+                            <MenuItem onClick={handleShowMergeModal}>
                               Merge
-                            </Button>
-                            <Button
-                              colorScheme="green"
-                              size="md"
+                            </MenuItem>
+                            <MenuItem
                               onClick={() =>
                                 handleChangeProductModalOpen(packageData)
                               }
                             >
                               Change Product
-                            </Button>
-                            <Button
-                              colorScheme="green"
-                              size="md"
+                            </MenuItem>
+                            <MenuItem
                               onClick={() =>
                                 handleDepositModalOpen(packageData)
                               }
                             >
                               Deposit
-                            </Button>
-                          </ButtonGroup>
-                          <Button
-                            colorScheme="blue"
-                            size="md"
-                            onClick={() => handleAddToCart(packageData)}
-                            isDisabled={
-                              packageData.totalContribution <
-                              packageData.product?.sellingPrice
-                            }
-                          >
-                            Buy
-                          </Button>
-                        </>
+                            </MenuItem>
+                            <MenuItem
+                              onClick={() => handleAddToCart(packageData)}
+                              isDisabled={
+                                packageData.totalContribution <
+                                packageData.product?.sellingPrice
+                              }
+                            >
+                              Buy
+                            </MenuItem>
+                            {currentUser &&
+                              currentUser.role === 'superAdmin' && (
+                                <MenuItem
+                                  onClick={() => handleTransferModalOpen(packageData)}
+                                >
+                                  Move to Central Account
+                                </MenuItem>
+                              )}
+                          </MenuList>
+                        </Menu>
                       ) : (
                         <ButtonGroup spacing={4} mb={4}>
                           <Button
                             colorScheme="blue"
                             size="md"
+                            padding="1.2rem 1rem"
                             onClick={() => handleAddToCart(packageData)}
                             isDisabled={
                               packageData.totalContribution <
@@ -418,6 +456,7 @@ const ViewCustomerSb = () => {
                           <Button
                             colorScheme="green"
                             size="sm"
+                            padding="1.2rem 1rem"
                             onClick={() =>
                               handleChangeProductModalOpen(packageData)
                             }
@@ -427,6 +466,7 @@ const ViewCustomerSb = () => {
                           <Button
                             colorScheme="green"
                             size="md"
+                            padding="1.2rem 1rem"
                             onClick={() => handleDepositModalOpen(packageData)}
                           >
                             Deposit
@@ -464,6 +504,12 @@ const ViewCustomerSb = () => {
             <SbDepositModal
               isOpen={sbDepositModal}
               onClose={closeSbDepositModal}
+              packageData={selectedPackage}
+              onSuccess={handleSuccess}
+            />
+            <SbTransferModal
+              isOpen={sbTransferModal}
+              onClose={closeSbTransferModal}
               packageData={selectedPackage}
               onSuccess={handleSuccess}
             />

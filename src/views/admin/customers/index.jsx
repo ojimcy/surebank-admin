@@ -21,6 +21,7 @@ import {
   ModalHeader,
   ModalCloseButton,
   ModalBody,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { useHistory, NavLink, Link } from 'react-router-dom';
@@ -52,6 +53,8 @@ export default function Customers() {
     pageIndex: 0,
     pageSize: 10000000,
   });
+
+  const textColor = useColorModeValue('secondaryGray.500', 'white');
 
   const fetchAccounts = async () => {
     setLoading(true);
@@ -324,6 +327,7 @@ export default function Customers() {
                       placeholder="Search"
                       borderColor="black"
                       value={searchTerm}
+                      color={textColor}
                       onChange={(e) => setSearchTerm(e.target.value)}
                     />
                   </FormControl>

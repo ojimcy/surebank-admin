@@ -115,6 +115,15 @@ export default function EditCustomer() {
                 />
               </FormControl>
 
+              <FormControl>
+                <FormLabel pt={3}>Phone Number</FormLabel>
+                <Input
+                  {...register('phoneNumber')}
+                  placeholder="Phone Number"
+                  defaultValue={account?.phoneNumber}
+                />
+              </FormControl>
+
               <FormControl mt={4}>
                 <FormLabel
                   htmlFor="accountManagerId"
@@ -154,6 +163,7 @@ export default function EditCustomer() {
                 >
                   Branch
                 </FormLabel>
+                
                 <Select
                   {...register('branchId')}
                   name="branchId"
