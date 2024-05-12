@@ -154,7 +154,6 @@ const ViewCustomerSb = () => {
     reset();
   };
 
-
   const handleDepositModalOpen = (packageData) => {
     setSelectedPackage(packageData);
     showSbDepositModal();
@@ -239,10 +238,6 @@ const ViewCustomerSb = () => {
     }
   };
 
-  const handleWithdraw = async (packageData) => {
-    console.log(packageData);
-  };
-
   return (
     <>
       <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
@@ -251,7 +246,9 @@ const ViewCustomerSb = () => {
           <LoadingSpinner />
         ) : (
           <>
-            <PackageBalance customerData={customerData} />
+            {currentUser.role === 'superAdmin' && (
+              <PackageBalance customerData={customerData} />
+            )}
             <Flex alignItems="center">
               <Flex flexDirection="column">
                 <Text
@@ -431,7 +428,9 @@ const ViewCustomerSb = () => {
                             {currentUser &&
                               currentUser.role === 'superAdmin' && (
                                 <MenuItem
-                                  onClick={() => handleTransferModalOpen(packageData)}
+                                  onClick={() =>
+                                    handleTransferModalOpen(packageData)
+                                  }
                                 >
                                   Move to Central Account
                                 </MenuItem>

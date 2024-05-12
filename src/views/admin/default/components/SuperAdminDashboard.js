@@ -237,6 +237,7 @@ async function fetchData() {
     dsResponse,
     withdrawalResponse,
     dsWithdrawalResponse,
+    sbWithdrawalResponse,
     sbSalesResponse,
     openPackages,
     openSbPackages,
@@ -257,18 +258,24 @@ async function fetchData() {
     axiosService.get(
       `/transactions/withdraw/cash?status=pending&startDate=${startTimeStamp}&endDate=${endTimeStamp}`
     ),
-    axiosService.get(`/transactions/withdraw/cash?status=approved`),
+    axiosService.get(
+      `/transactions/withdraw/cash?status=approved&narration=Request Cash`
+    ),
+    axiosService.get(
+      `/transactions/withdraw/cash?status=approved&narration=Request Cash SB`
+    ),
     axiosService.get(`/orders?status=paid`),
     axiosService.get('/reports/packages?status=open'),
     axiosService.get(`/reports/packages/sb?status=open`),
   ]);
 
   const sbNetBalance =
-    totalSbContributionResponse.data - sbSalesResponse.data.totalAmount;
+    totalSbContributionResponse.data -
+    sbWithdrawalResponse.data.totalAmount -
+    sbSalesResponse.data.totalAmount;
   const dsNetBalance =
     totalDsContributionResponse.data - dsWithdrawalResponse.data.totalAmount;
   const totalContributions = sbNetBalance + dsNetBalance;
-
   return {
     totalContributions,
     sbNetBalance,

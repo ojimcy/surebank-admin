@@ -8,6 +8,7 @@ import {
   Grid,
   Input,
   Select,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import Card from 'components/card/Card';
 import { useForm } from 'react-hook-form';
@@ -18,6 +19,7 @@ import BackButton from 'components/menu/BackButton';
 import { useAppContext } from 'contexts/AppContext';
 
 export default function EditCustomer() {
+  const textColor = useColorModeValue('navy.500', 'white');
   const { id } = useParams();
   const history = useHistory();
   const { branches } = useAppContext();
@@ -100,6 +102,7 @@ export default function EditCustomer() {
               <FormControl>
                 <FormLabel pt={3}>First Name</FormLabel>
                 <Input
+                  color={textColor}
                   {...register('firstName')}
                   placeholder="First Name"
                   defaultValue={account?.firstName}
@@ -109,6 +112,7 @@ export default function EditCustomer() {
               <FormControl>
                 <FormLabel pt={3}>Last Name</FormLabel>
                 <Input
+                  color={textColor}
                   {...register('lastName')}
                   placeholder="Last Name"
                   defaultValue={account?.lastName}
@@ -118,6 +122,7 @@ export default function EditCustomer() {
               <FormControl>
                 <FormLabel pt={3}>Phone Number</FormLabel>
                 <Input
+                  color={textColor}
                   {...register('phoneNumber')}
                   placeholder="Phone Number"
                   defaultValue={account?.phoneNumber}
@@ -136,6 +141,7 @@ export default function EditCustomer() {
                   Account Manager
                 </FormLabel>
                 <Select
+                  color={textColor}
                   {...register('accountManagerId')}
                   name="accountManagerId"
                   defaultValue={account?.accountManagerId?._id}
@@ -163,8 +169,9 @@ export default function EditCustomer() {
                 >
                   Branch
                 </FormLabel>
-                
+
                 <Select
+                  color={textColor}
                   {...register('branchId')}
                   name="branchId"
                   defaultValue={account?.branchId?.name}

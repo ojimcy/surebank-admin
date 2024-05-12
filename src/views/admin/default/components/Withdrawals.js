@@ -88,49 +88,59 @@ export default function Withdrawals() {
       setLoading(true);
       const { pageIndex, pageSize } = pagination;
 
-      let endpoint = `/transactions/withdraw/cash?limit=${pageSize}&page=${
-        pageIndex + 1
-      }`;
+      const endpoints = [
+        `/transactions/withdraw/cash?narration=Request Cash SB&limit=${pageSize}&page=${
+          pageIndex + 1
+        }`,
+        `/transactions/withdraw/cash?narration=Request Cash&limit=${pageSize}&page=${
+          pageIndex + 1
+        }`,
+      ];
 
-      if (timeRange === 'last7days') {
-        const endDate = new Date();
-        endDate.setHours(23, 59, 59, 999);
-        const startDate = new Date();
-        startDate.setDate(endDate.getDate() - 7);
-        startDate.setHours(0, 0, 0, 0);
-        endpoint += `&startDate=${startDate.getTime()}&endDate=${endDate.getTime()}`;
-      } else if (timeRange === 'last30days') {
-        const endDate = new Date();
-        endDate.setHours(23, 59, 59, 999);
-        const startDate = new Date();
-        startDate.setDate(endDate.getDate() - 30);
-        startDate.setHours(0, 0, 0, 0);
-        endpoint += `&startDate=${startDate.getTime()}&endDate=${endDate.getTime()}`;
-      } else if (timeRange === 'custom') {
-        if (startDate && endDate) {
-          const customStartDate = new Date(startDate);
-          customStartDate.setHours(0, 0, 0, 0);
-          const customEndDate = new Date(endDate);
-          customEndDate.setHours(23, 59, 59, 999);
-          endpoint += `&startDate=${customStartDate.getTime()}&endDate=${customEndDate.getTime()}`;
+      const withdrawalPromises = endpoints.map(async (endpoint) => {
+        if (timeRange === 'last7days') {
+          const endDate = new Date();
+          endDate.setHours(23, 59, 59, 999);
+          const startDate = new Date();
+          startDate.setDate(endDate.getDate() - 7);
+          startDate.setHours(0, 0, 0, 0);
+          endpoint += `&startDate=${startDate.getTime()}&endDate=${endDate.getTime()}`;
+        } else if (timeRange === 'last30days') {
+          const endDate = new Date();
+          endDate.setHours(23, 59, 59, 999);
+          const startDate = new Date();
+          startDate.setDate(endDate.getDate() - 30);
+          startDate.setHours(0, 0, 0, 0);
+          endpoint += `&startDate=${startDate.getTime()}&endDate=${endDate.getTime()}`;
+        } else if (timeRange === 'custom') {
+          if (startDate && endDate) {
+            const customStartDate = new Date(startDate);
+            customStartDate.setHours(0, 0, 0, 0);
+            const customEndDate = new Date(endDate);
+            customEndDate.setHours(23, 59, 59, 999);
+            endpoint += `&startDate=${customStartDate.getTime()}&endDate=${customEndDate.getTime()}`;
+          }
         }
-      }
-      if (currentUser.role === 'manager') {
-        endpoint += `&branchId=${branch}`;
-      }
-      if (currentUser.role === 'userReps') {
-        endpoint += `&createdBy=${currentUser.id}`;
-      }
-      if (branch) {
-        endpoint += `&branchId=${branch}`;
-      }
-      if (selectedStatus !== 'all') {
-        endpoint += `&status=${selectedStatus}`;
-      }
-      try {
+        if (currentUser.role === 'manager') {
+          endpoint += `&branchId=${branch}`;
+        }
+        if (currentUser.role === 'userReps') {
+          endpoint += `&createdBy=${currentUser.id}`;
+        }
+        if (branch) {
+          endpoint += `&branchId=${branch}`;
+        }
+        if (selectedStatus !== 'all') {
+          endpoint += `&status=${selectedStatus}`;
+        }
         const response = await axiosService.get(endpoint);
+        return response.data.withdrawals;
+      });
+
+      try {
+        const allWithdrawals = await Promise.all(withdrawalPromises);
         if (isMounted) {
-          setWithdrawals(response.data.withdrawals);
+          setWithdrawals(allWithdrawals.flat()); // Combine withdrawals from both requests
           setLoading(false);
         }
       } catch (error) {
