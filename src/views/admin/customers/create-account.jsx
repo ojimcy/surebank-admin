@@ -90,6 +90,7 @@ export default function CreateAccount() {
       toast.success('Account created successfully!');
       history.push('/admin/customers');
     } catch (error) {
+      console.error("Error creating account", error);
       if (
         error.response &&
         error.response.data &&

@@ -64,7 +64,7 @@ function RecentTransactions() {
         `/transactions?accountNumber=${customerData?.accountNumber}`
       );
 
-      setTransactions(response.data);
+      setTransactions(response.data.transactions);
     };
 
     fetchActivities();

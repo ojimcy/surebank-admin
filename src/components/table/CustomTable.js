@@ -97,10 +97,10 @@ const CustomTable = ({ columns, data, onPageChange }) => {
           justifyContent="center"
         >
           <Text
-            mb={{ base: 2, md: 0 }}
+            mb={{ base: 0, md: 0 }}
             flexShrink="0"
-            mr={8}
-            display={{ base: 'none', md: 'block' }}
+            mr={{ md: 8, base: 0 }}
+            display={{ md: 'block' }}
           >
             <Text fontWeight="bold" as="span">
               Page {pageIndex + 1}

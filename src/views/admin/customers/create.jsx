@@ -20,28 +20,29 @@ import {
   Select,
   Text,
   useColorModeValue,
-} from '@chakra-ui/react';
-import React, { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+} from "@chakra-ui/react";
+import React, { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
 
 // Custom components
 
 // Assets
-import Card from 'components/card/Card.js';
-import { useForm } from 'react-hook-form';
-import { MdOutlineRemoveRedEye } from 'react-icons/md';
-import { RiEyeCloseLine } from 'react-icons/ri';
-import axiosService from 'utils/axiosService';
-import { toast } from 'react-toastify';
-import BackButton from 'components/menu/BackButton';
-import { useAuth } from 'contexts/AuthContext';
+import Card from "components/card/Card.js";
+import { useForm } from "react-hook-form";
+import { MdOutlineRemoveRedEye } from "react-icons/md";
+import { RiEyeCloseLine } from "react-icons/ri";
+import axiosService from "utils/axiosService";
+import { toast } from "react-toastify";
+import BackButton from "components/menu/BackButton";
+import { useAuth } from "contexts/AuthContext";
+import { toSentenceCase } from "utils/helper";
 
 export default function Customer() {
   const history = useHistory();
   const { currentUser } = useAuth();
-  const brandStars = useColorModeValue('brand.500', 'brand.400');
-  const textColor = useColorModeValue('navy.700', 'white');
-  const textColorSecondary = 'gray.400';
+  const brandStars = useColorModeValue("brand.500", "brand.400");
+  const textColor = useColorModeValue("navy.700", "white");
+  const textColorSecondary = "gray.400";
 
   const {
     handleSubmit,
@@ -53,22 +54,25 @@ export default function Customer() {
   const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
 
   const [staffInfo, setStaffInfo] = useState({});
+  const [branches, setBranches] = useState(null);
 
   useEffect(() => {
-    const fetchStaff = async () => {
+    const fetchData = async () => {
       try {
         if (currentUser) {
           const getStaff = await axiosService.get(
             `/staff/user/${currentUser.id}`
           );
+          const getBranches = await axiosService.get(`/branch/`);
           setStaffInfo(getStaff.data);
+          setBranches(getBranches.data.results);
         }
       } catch (error) {
         console.error(error);
       }
     };
 
-    fetchStaff();
+    fetchData();
   }, [currentUser]);
 
   const onCancel = () => {
@@ -81,21 +85,23 @@ export default function Customer() {
 
   const onConfirmCancel = () => {
     setIsCancelDialogOpen(false);
-    history.push('/');
+    history.push("/");
   };
 
   const handleClick = () => setShow(!show);
 
   const submitHandler = async (customerData) => {
     // Remove email property if it's an empty string
-    if (customerData.email === '') {
+    if (customerData.email === "") {
       delete customerData.email;
     }
-    customerData.branchId = staffInfo.branchId;
+    if (currentUser.role !== "superAdmin") {
+      customerData.branchId = staffInfo.branchId;
+    }
     try {
       await axiosService.post(`/customer`, customerData);
-      toast.success('Customer created successfully!');
-      history.push('/admin/customers');
+      toast.success("Customer created successfully!");
+      history.push("/admin/customers");
     } catch (error) {
       if (
         error.response &&
@@ -107,26 +113,27 @@ export default function Customer() {
         toast.error(errorMessage);
       } else {
         // Network error or other error
-        toast.error('Something went wrong. Please try again later.');
+        console.error("Error creating customer", error);
+        toast.error("Something went wrong. Please try again later.");
       }
     }
   };
 
   return (
-    <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
+    <Box pt={{ base: "90px", md: "80px", xl: "80px" }}>
       {/* Main Fields */}
       <Grid
         templateColumns={{
-          base: '1fr',
-          lg: '3.96fr',
+          base: "1fr",
+          lg: "3.96fr",
         }}
         templateRows={{
-          base: 'repeat(1, 1fr)',
-          lg: '1fr',
+          base: "repeat(1, 1fr)",
+          lg: "1fr",
         }}
-        gap={{ base: '20px', xl: '20px' }}
+        gap={{ base: "20px", xl: "20px" }}
       >
-        <Card p={{ base: '30px', md: '30px', sm: '10px' }}>
+        <Card p={{ base: "30px", md: "30px", sm: "10px" }}>
           <BackButton />
           <Text marginBottom="20px" fontSize="3xl" fontWeight="bold">
             Create Customer
@@ -135,9 +142,9 @@ export default function Customer() {
             <Flex
               gap="20px"
               marginBottom="20px"
-              flexDirection={{ base: 'column', md: 'row' }}
+              flexDirection={{ base: "column", md: "row" }}
             >
-              <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
+              <Box width={{ base: "50%", md: "50%", sm: "100%" }}>
                 <FormControl isInvalid={errors.phoneNumber}>
                   <FormLabel
                     htmlFor="phoneNumber"
@@ -154,14 +161,14 @@ export default function Customer() {
                     isRequired={true}
                     variant="auth"
                     fontSize="sm"
-                    ms={{ base: '0px', md: '0px' }}
+                    ms={{ base: "0px", md: "0px" }}
                     type="text"
                     id="phoneNumber"
                     mb="24px"
                     fontWeight="500"
                     size="lg"
-                    {...register('phoneNumber', {
-                      required: 'Phone number is required',
+                    {...register("phoneNumber", {
+                      required: "Phone number is required",
                     })}
                   />
                   <FormErrorMessage>
@@ -169,7 +176,7 @@ export default function Customer() {
                   </FormErrorMessage>
                 </FormControl>
               </Box>
-              <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
+              <Box width={{ base: "50%", md: "50%", sm: "100%" }}>
                 <FormControl isInvalid={errors.password}>
                   <FormLabel
                     ms="4px"
@@ -188,14 +195,14 @@ export default function Customer() {
                       placeholder="Min. 8 characters"
                       mb="24px"
                       size="lg"
-                      type={show ? 'text' : 'password'}
+                      type={show ? "text" : "password"}
                       id="password"
                       variant="auth"
-                      {...register('password', {
-                        required: 'Password is required',
+                      {...register("password", {
+                        required: "Password is required",
                         minLength: {
                           value: 8,
-                          message: 'Minimum length should be 8',
+                          message: "Minimum length should be 8",
                         },
                       })}
                     />
@@ -206,7 +213,7 @@ export default function Customer() {
                     >
                       <Icon
                         color={textColorSecondary}
-                        _hover={{ cursor: 'pointer' }}
+                        _hover={{ cursor: "pointer" }}
                         as={show ? RiEyeCloseLine : MdOutlineRemoveRedEye}
                         onClick={handleClick}
                       />
@@ -221,9 +228,9 @@ export default function Customer() {
             <Flex
               gap="20px"
               marginBottom="20px"
-              flexDirection={{ base: 'column', md: 'row' }}
+              flexDirection={{ base: "column", md: "row" }}
             >
-              <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
+              <Box width={{ base: "50%", md: "50%", sm: "100%" }}>
                 <FormControl isInvalid={errors.firstName}>
                   <FormLabel
                     htmlFor="firstName"
@@ -240,14 +247,14 @@ export default function Customer() {
                     isRequired={true}
                     variant="auth"
                     fontSize="sm"
-                    ms={{ base: '0px', md: '0px' }}
+                    ms={{ base: "0px", md: "0px" }}
                     type="text"
                     id="firstName"
                     mb="24px"
                     fontWeight="500"
                     size="lg"
-                    {...register('firstName', {
-                      required: 'Firsname is required',
+                    {...register("firstName", {
+                      required: "Firsname is required",
                     })}
                   />
                   <FormErrorMessage>
@@ -255,7 +262,7 @@ export default function Customer() {
                   </FormErrorMessage>
                 </FormControl>
               </Box>
-              <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
+              <Box width={{ base: "50%", md: "50%", sm: "100%" }}>
                 <FormControl isInvalid={errors.lastName}>
                   <FormLabel
                     htmlFor="lastName"
@@ -272,14 +279,14 @@ export default function Customer() {
                     isRequired={true}
                     variant="auth"
                     fontSize="sm"
-                    ms={{ base: '0px', md: '0px' }}
+                    ms={{ base: "0px", md: "0px" }}
                     type="text"
                     id="lastName"
                     mb="24px"
                     fontWeight="500"
                     size="lg"
-                    {...register('lastName', {
-                      required: 'Firsname is required',
+                    {...register("lastName", {
+                      required: "Firsname is required",
                     })}
                   />
                   <FormErrorMessage>
@@ -291,9 +298,9 @@ export default function Customer() {
             <Flex
               gap="20px"
               marginBottom="20px"
-              flexDirection={{ base: 'column', md: 'row' }}
+              flexDirection={{ base: "column", md: "row" }}
             >
-              <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
+              <Box width={{ base: "50%", md: "50%", sm: "100%" }}>
                 <FormControl isInvalid={errors.address}>
                   <FormLabel
                     htmlFor="address"
@@ -310,14 +317,14 @@ export default function Customer() {
                     isRequired={true}
                     variant="auth"
                     fontSize="sm"
-                    ms={{ base: '0px', md: '0px' }}
+                    ms={{ base: "0px", md: "0px" }}
                     type="text"
                     id="address"
                     mb="24px"
                     fontWeight="500"
                     size="lg"
-                    {...register('address', {
-                      required: 'Address is required',
+                    {...register("address", {
+                      required: "Address is required",
                     })}
                   />
                   <FormErrorMessage>
@@ -326,7 +333,7 @@ export default function Customer() {
                 </FormControl>
               </Box>
 
-              <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
+              <Box width={{ base: "50%", md: "50%", sm: "100%" }}>
                 <FormControl isInvalid={errors.email}>
                   <FormLabel
                     htmlFor="email"
@@ -343,17 +350,17 @@ export default function Customer() {
                     isRequired={false}
                     variant="auth"
                     fontSize="sm"
-                    ms={{ base: '0px', md: '0px' }}
+                    ms={{ base: "0px", md: "0px" }}
                     type="email"
                     id="email"
                     placeholder="mail@surebank.com"
                     mb="24px"
                     fontWeight="500"
                     size="lg"
-                    {...register('email', {
+                    {...register("email", {
                       pattern: {
                         value: /\S+@\S+\.\S+/,
-                        message: 'Invalid email address',
+                        message: "Invalid email address",
                       },
                     })}
                   />
@@ -366,9 +373,9 @@ export default function Customer() {
             <Flex
               gap="20px"
               marginBottom="20px"
-              flexDirection={{ base: 'column', md: 'row' }}
+              flexDirection={{ base: "column", md: "row" }}
             >
-              <Box width={{ base: '50%', md: '50%', sm: '100%' }}>
+              <Box width={{ base: "50%", md: "50%", sm: "100%" }}>
                 <FormControl isInvalid={errors.accountType}>
                   <FormLabel
                     htmlFor="address"
@@ -382,7 +389,7 @@ export default function Customer() {
                     Account Type<Text color={brandStars}>*</Text>
                   </FormLabel>
                   <Select
-                    {...register('accountType')}
+                    {...register("accountType")}
                     name="accountType"
                     defaultValue="Hq"
                   >
@@ -392,15 +399,41 @@ export default function Customer() {
                   </Select>
                 </FormControl>
               </Box>
+              {currentUser.role === "superAdmin" && (
+                <Box width={{ base: "50%", md: "50%", sm: "100%" }}>
+                  <FormControl isInvalid={errors.branch}>
+                    <FormLabel
+                      htmlFor="branch"
+                      display="flex"
+                      ms="4px"
+                      fontSize="sm"
+                      fontWeight="500"
+                      color={textColor}
+                      mb="8px"
+                    >
+                      Branch<Text color={brandStars}>*</Text>
+                    </FormLabel>
+                    <Select {...register("branchId")} name="branchId">
+                      <option value="">Select a branch</option>
+                      {branches &&
+                        branches.map((branch) => (
+                          <option key={branch.id} value={branch.id}>
+                            {toSentenceCase(branch?.name)}
+                          </option>
+                        ))}
+                    </Select>
+                  </FormControl>
+                </Box>
+              )}
             </Flex>
 
             <Flex
               gap="20px"
               marginTop="20px"
-              flexDirection={{ base: 'row' }}
+              flexDirection={{ base: "row" }}
               justifyContent="center"
             >
-              <Box width={{ base: '50%', md: '50%', sm: '50%' }}>
+              <Box width={{ base: "50%", md: "50%", sm: "50%" }}>
                 <Button
                   colorScheme="red"
                   variant="solid"
@@ -413,7 +446,7 @@ export default function Customer() {
                   Cancel
                 </Button>
               </Box>
-              <Box width={{ base: '50%', md: '50%', sm: '50%' }}>
+              <Box width={{ base: "50%", md: "50%", sm: "50%" }}>
                 <Button
                   colorScheme="green"
                   variant="solid"

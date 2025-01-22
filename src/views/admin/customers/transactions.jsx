@@ -30,7 +30,7 @@ export default function TransactionHistory() {
       }
 
       const response = await axiosService.get(endpoint);
-      setTransactions(response.data);
+      setTransactions(response.data.transactions);
     } catch (error) {
       console.error(error);
     }

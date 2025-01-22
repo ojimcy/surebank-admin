@@ -12,14 +12,12 @@ import {
 } from '@chakra-ui/react';
 import { SearchIcon } from '@chakra-ui/icons';
 import axiosService from 'utils/axiosService';
-import { useAppContext } from 'contexts/AppContext';
 import TransactionItem from 'components/transactions/TransactionItem';
 import { useAuth } from 'contexts/AuthContext';
 import { formatDate } from 'utils/helper';
 import CustomDateModal from 'components/modals/CustomDateModal';
 
 function StaffRecentTransactions({ staffId }) {
-  const { customerData } = useAppContext();
   const { currentUser } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredTransaction, setFilteredTransaction] = useState([]);
@@ -31,6 +29,8 @@ function StaffRecentTransactions({ staffId }) {
   const [isCustomDateModalOpen, setCustomDateModalOpen] = useState(false);
   const [customRangeLabel, setCustomRangeLabel] = useState('Custom Range');
   const [timeRange, setTimeRange] = useState('all');
+  const [selectedStaff, setSelectedStaff] = useState(staffId);
+  const [staffList, setStaffList] = useState([]);
 
   const handleSelectChange = (e) => {
     const selectedValue = e.target.value;
@@ -55,17 +55,38 @@ function StaffRecentTransactions({ staffId }) {
     },
     [setEndDate]
   );
+
+  const fetchStaffList = async () => {
+    try {
+      const response = await axiosService.get('/staff');
+      console.log('Staff list:', response);
+
+      setStaffList(response.data);
+    } catch (error) {
+      console.error('Error fetching staff list:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (currentUser.role === 'superAdmin') {
+      fetchStaffList();
+    }
+  }, [currentUser.role]);
+
   useEffect(() => {
     const fetchActivities = async () => {
-      const response = await axiosService.get(
-        `/transactions?createdBy=${staffId}`
-      );
-
-      setTransactions(response.data);
+      let endpoint = '/transactions';
+      if (currentUser.role === 'superAdmin' && selectedStaff) {
+        endpoint += `?createdBy=${selectedStaff}`;
+      } else if (currentUser.role !== 'superAdmin') {
+        endpoint += `?createdBy=${selectedStaff}`;
+      }
+      const response = await axiosService.get(endpoint);
+      setTransactions(response.data.transactions);
     };
 
     fetchActivities();
-  }, [currentUser.id, currentUser.role, customerData?.accountNumber, staffId]);
+  }, [selectedStaff, currentUser.role]);
 
   useEffect(() => {
     const filtered = transactions?.filter((transaction) => {
@@ -185,6 +206,22 @@ function StaffRecentTransactions({ staffId }) {
               <option value="last30days">Last 30 Days</option>
               <option value="custom">{customRangeLabel}</option>
             </Select>
+            {currentUser.role === 'superAdmin' ||
+            currentUser.role === 'manager' ? (
+              <Select
+                value={selectedStaff}
+                onChange={(e) => setSelectedStaff(e.target.value)}
+              >
+                <option value="">Select Staff</option>
+                {staffList?.map((staff) => (
+                  <option key={staff.id} value={staff.id}>
+                    {staff.staffId?.firstName} {staff.staffId?.lastName}
+                  </option>
+                ))}
+              </Select>
+            ) : (
+              ''
+            )}
             <FormControl>
               <Input
                 type="search"
