@@ -17,6 +17,7 @@ import { useAuth } from 'contexts/AuthContext';
 import axiosService from 'utils/axiosService';
 import CustomDateModal from 'components/modals/CustomDateModal';
 import { formatDate, formatNaira } from 'utils/helper';
+import { Form } from 'react-hook-form';
 
 const Transactions = () => {
   const { currentUser } = useAuth();
@@ -129,6 +130,15 @@ const Transactions = () => {
       }
     }
 
+    // Filter by search term
+    if (searchTerm) {
+      filtered = filtered.filter((transaction) => {
+        const fullNameRep =
+          `${transaction.createdBy?.firstName} ${transaction.createdBy?.lastName}`.toLowerCase();
+        return fullNameRep.includes(searchTerm.toLowerCase());
+      });
+    }
+
     // Calculate total amount
     const total = filtered.reduce(
       (sum, transaction) => sum + transaction.amount,
@@ -138,7 +148,7 @@ const Transactions = () => {
 
     // Update filtered transactions
     setFilteredTransactions(filtered);
-  }, [transactions, selectedFilter, timeRange, startDate, endDate]);
+  }, [transactions, selectedFilter, timeRange, startDate, endDate, searchTerm]);
 
   const handleSelectChange = (e) => {
     const selectedValue = e.target.value;
@@ -189,15 +199,6 @@ const Transactions = () => {
         Header: 'Date',
         accessor: (row) => formatDate(row.date),
       },
-      {
-        Header: 'Status',
-        accessor: 'status',
-        Cell: ({ value }) => (
-          <Text color={value === 'success' ? 'green.500' : 'red.500'}>
-            {value}
-          </Text>
-        ),
-      },
     ],
     []
   );
@@ -224,32 +225,39 @@ const Transactions = () => {
               <option value="custom">{customRangeLabel}</option>
             </Select>
             {currentUser.role === 'superAdmin' && (
-              <Select
-                value={selectedStaff}
-                onChange={(e) => setSelectedStaff(e.target.value)}
-              >
-                <option value="">Select Staff</option>
-                <option value="all">All Staff</option>
-                {staffList.map((staff) => (
-                  <option key={staff.id} value={staff.staffId?.id}>
-                    {staff.staffId?.firstName} {staff.staffId?.lastName}
-                  </option>
-                ))}
-              </Select>
+              <>
+                <Select
+                  value={selectedStaff}
+                  onChange={(e) => setSelectedStaff(e.target.value)}
+                >
+                  <option value="">Select Staff</option>
+                  <option value="all">All Staff</option>
+                  {staffList.map((staff) => (
+                    <option key={staff.id} value={staff.staffId?.id}>
+                      {staff.staffId?.firstName} {staff.staffId?.lastName}
+                    </option>
+                  ))}
+                </Select>
+                <FormControl>
+                  <Input
+                    type="search"
+                    placeholder="Search"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </FormControl>
+              </>
             )}
-            <FormControl>
-              <Input
-                type="search"
-                placeholder="Search"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </FormControl>
           </Stack>
         </Flex>
+
         <Flex justifyContent="space-between" alignItems="center" mb="30px">
           <Heading size={{ base: 'sm', md: 'lg' }}>Recent Transactions</Heading>
-          <Text>Total Amount: {formatNaira(totalAmount)}</Text>
+          {currentUser.role === 'superAdmin' && (
+            <Text justifyContent="flex-end">
+              Total Amount: {formatNaira(totalAmount)}
+            </Text>
+          )}
         </Flex>
         {loading ? (
           <Flex justifyContent="center" alignItems="center" h="50vh">
