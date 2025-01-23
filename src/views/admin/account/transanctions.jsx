@@ -8,6 +8,7 @@ import {
   Select,
   Stack,
   Text,
+  Spinner,
 } from '@chakra-ui/react';
 
 import BackButton from 'components/menu/BackButton';
@@ -21,11 +22,13 @@ const Transactions = () => {
   const { currentUser } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [transactions, setTransactions] = useState([]);
+  const [filteredTransactions, setFilteredTransactions] = useState([]);
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [timeRange, setTimeRange] = useState('all');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [isCustomDateModalOpen, setCustomDateModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [customRangeLabel, setCustomRangeLabel] = useState('Custom Range');
   const [selectedStaff, setSelectedStaff] = useState(currentUser.id);
   const [staffList, setStaffList] = useState([]);
@@ -51,59 +54,91 @@ const Transactions = () => {
   }, [currentUser.role]);
 
   const fetchTransactions = useCallback(async () => {
+    setLoading(true);
     const { pageIndex, pageSize } = pagination;
 
     const params = new URLSearchParams();
     params.append('page', pageIndex + 1);
     params.append('limit', pageSize);
 
-    // Handle time range filters with timestamps
-    if (timeRange === 'last7days') {
-      const last7Days = new Date();
-      last7Days.setDate(last7Days.getDate() - 7);
-      params.append('startDate', last7Days.getTime());
-    } else if (timeRange === 'last30days') {
-      const last30Days = new Date();
-      last30Days.setDate(last30Days.getDate() - 30);
-      params.append('startDate', last30Days.getTime());
-    } else if (timeRange === 'custom' && startDate && endDate) {
-      params.append('startDate', new Date(startDate).getTime());
-      params.append('endDate', new Date(endDate).getTime());
-    }
-
-    // Filter by narration
-    if (selectedFilter === 'deposit') {
-      params.append('narration', 'daily contribution') ||
-        params.append('narration', 'sb daily contribution - cash') ||
-        params.append('narration', 'sb daily contribution - transfer');
-    } else if (selectedFilter === 'withdrawal') {
-      params.append('narration', 'daily contribution withdrawal');
-    }
-
     // Filter by staff
     if (selectedStaff !== 'all') params.append('createdBy', selectedStaff);
 
+    // Fetch all transactions without filters
     try {
       const response = await axiosService.get(
         `/transactions?${params.toString()}`
       );
       setTransactions(response.data.transactions);
-      setTotalAmount(response.data.totalAmount);
+      setFilteredTransactions(response.data.transactions);
     } catch (error) {
       console.error('Error fetching transactions:', error);
+    } finally {
+      setLoading(false);
     }
-  }, [
-    pagination,
-    selectedFilter,
-    timeRange,
-    startDate,
-    endDate,
-    selectedStaff,
-  ]);
+  }, [pagination, selectedStaff]);
 
   useEffect(() => {
     fetchTransactions();
   }, [fetchTransactions]);
+
+  // Filter transactions on the frontend
+  useEffect(() => {
+    let filtered = [...transactions];
+
+    // Filter by narration
+    if (selectedFilter !== 'all') {
+      filtered = filtered.filter((transaction) => {
+        const narration = transaction.narration.toLowerCase();
+        if (selectedFilter === 'ds-deposit') {
+          return narration === 'daily contribution';
+        } else if (selectedFilter === 'sb-deposit') {
+          return (
+            narration === 'sb daily contribution - cash' ||
+            narration === 'sb daily contribution - transfer'
+          );
+        } else if (selectedFilter === 'withdrawal') {
+          return narration === 'daily contribution withdrawal';
+        }
+        return true;
+      });
+    }
+
+    // Filter by date range
+    if (timeRange !== 'all') {
+      const now = new Date();
+      if (timeRange === 'last7days') {
+        const last7Days = new Date();
+        last7Days.setDate(now.getDate() - 7);
+        filtered = filtered.filter(
+          (transaction) => new Date(transaction.date) >= last7Days
+        );
+      } else if (timeRange === 'last30days') {
+        const last30Days = new Date();
+        last30Days.setDate(now.getDate() - 30);
+        filtered = filtered.filter(
+          (transaction) => new Date(transaction.date) >= last30Days
+        );
+      } else if (timeRange === 'custom' && startDate && endDate) {
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        filtered = filtered.filter((transaction) => {
+          const transactionDate = new Date(transaction.date);
+          return transactionDate >= start && transactionDate <= end;
+        });
+      }
+    }
+
+    // Calculate total amount
+    const total = filtered.reduce(
+      (sum, transaction) => sum + transaction.amount,
+      0
+    );
+    setTotalAmount(total);
+
+    // Update filtered transactions
+    setFilteredTransactions(filtered);
+  }, [transactions, selectedFilter, timeRange, startDate, endDate]);
 
   const handleSelectChange = (e) => {
     const selectedValue = e.target.value;
@@ -178,8 +213,9 @@ const Transactions = () => {
               onChange={(e) => setSelectedFilter(e.target.value)}
             >
               <option value="all">All</option>
-              <option value="deposit">Deposit</option>
-              <option value="withdrawal">Withdrawal</option>
+              <option value="ds-deposit">DS Deposit</option>
+              <option value="sb-deposit">SB Deposit</option>
+              <option value="withdrawal">Withdrawals</option>
             </Select>
             <Select value={timeRange} onChange={handleSelectChange}>
               <option value="all">All Time</option>
@@ -215,10 +251,14 @@ const Transactions = () => {
           <Heading size={{ base: 'sm', md: 'lg' }}>Recent Transactions</Heading>
           <Text>Total Amount: {formatNaira(totalAmount)}</Text>
         </Flex>
-        {transactions.length > 0 ? (
+        {loading ? (
+          <Flex justifyContent="center" alignItems="center" h="50vh">
+            <Spinner size="xl" />
+          </Flex>
+        ) : filteredTransactions.length > 0 ? (
           <CustomTable
             columns={columns}
-            data={transactions}
+            data={filteredTransactions}
             onPageChange={onPageChange}
           />
         ) : (
