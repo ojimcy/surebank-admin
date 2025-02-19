@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import 'assets/css/App.css';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { HashRouter, Route, Switch, Redirect } from 'react-router-dom';
+import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import AuthLayout from 'layouts/auth';
 import AdminLayout from 'layouts/admin';
 import { ChakraProvider } from '@chakra-ui/react';
@@ -25,7 +25,7 @@ ReactDOM.render(
           <AuthProvider>
             <AppProvider>
               <LogoutInactiveUser timeout={15 * 60 * 1000} />
-              <HashRouter>
+              <BrowserRouter>
                 <Switch>
                   <Route path={`/auth`} component={AuthLayout} />
                   <Route path={`/admin`} component={WithAuth(AdminLayout)} />
@@ -33,7 +33,7 @@ ReactDOM.render(
                   <Redirect from="/" to="/admin" />
                 </Switch>
                 <ToastContainer />
-              </HashRouter>
+              </BrowserRouter>
             </AppProvider>
           </AuthProvider>
         </QueryClientProvider>
