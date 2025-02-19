@@ -80,6 +80,9 @@ import { IoIosAnalytics } from 'react-icons/io';
 import BranchDashboard from 'views/admin/branches/BranchDashboard';
 import BulkSms from 'views/admin/sms/bulk';
 import Note from 'views/admin/accounting/note-keeping';
+import LandingPage from 'views/landing';
+import PrivacyPolicy from 'views/privacy';
+import TermsOfService from 'views/terms';
 
 const routes = [
   {
@@ -568,11 +571,30 @@ const routes = [
     name: 'SMS',
     layout: '/admin',
     path: '/sms',
-    icon: (
-      <Icon as={FaSms} width="20px" height="20px" color="inherit" />
-    ),
+    icon: <Icon as={FaSms} width="20px" height="20px" color="inherit" />,
     roles: ['superAdmin'],
     component: BulkSms,
+  },
+
+  {
+    name: 'Home',
+    layout: '/home',
+    path: '/',
+    component: LandingPage,
+  },
+
+  {
+    name: 'Privacy',
+    layout: '/home',
+    path: '/privacy',
+    component: PrivacyPolicy,
+  },
+
+  {
+    name: 'Terms',
+    layout: '/home',
+    path: '/terms',
+    component: TermsOfService,
   },
 ];
 

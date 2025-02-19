@@ -14,7 +14,7 @@ import { AppProvider } from 'contexts/AppContext';
 import WithAuth from 'utils/withAuth';
 import LogoutInactiveUser from 'views/auth/logout-inactive-user';
 import { QueryClient, QueryClientProvider } from 'react-query';
-
+import HomeLayout from 'layouts/home';
 const queryClient = new QueryClient();
 
 ReactDOM.render(
@@ -29,6 +29,7 @@ ReactDOM.render(
                 <Switch>
                   <Route path={`/auth`} component={AuthLayout} />
                   <Route path={`/admin`} component={WithAuth(AdminLayout)} />
+                  <Route path={`/landing`} component={HomeLayout} />
                   <Redirect from="/" to="/admin" />
                 </Switch>
                 <ToastContainer />
