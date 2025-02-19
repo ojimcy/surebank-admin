@@ -1,6 +1,6 @@
 // Import necessary Chakra components and dependencies
 import React, { useEffect, useState } from 'react';
-import { Box, Flex, Text, Spacer, Button, Select } from '@chakra-ui/react';
+import { Box, Flex, Text, Button, Select } from '@chakra-ui/react';
 import { NavLink } from 'react-router-dom';
 import CustomTable from 'components/table/CustomTable';
 import LoadingSpinner from 'components/scroll/LoadingSpinner';
@@ -19,6 +19,8 @@ const OrdersPage = () => {
     pageSize: 10, // Set your desired page size
   });
   const [staffInfo, setStaffInfo] = useState({});
+  const [totalCount, setTotalCount] = useState(0);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchStaff = async () => {
@@ -39,49 +41,51 @@ const OrdersPage = () => {
 
   useEffect(() => {
     const fetchOrders = async () => {
-      if (currentUser && staffInfo && staffInfo.branchId !== undefined) {
-        const { pageIndex, pageSize } = pagination;
-        try {
-          setLoading(true);
-          let query = `/orders?&limit=${pageSize}&page=${pageIndex + 1}`;
-          // Add query parameters based on user role
-          if (currentUser.role === 'manager') {
-            query += `&branchId=${staffInfo.branchId}`;
-          } else if (currentUser.role === 'userReps') {
-            query += `&createdBy=${currentUser.id}`;
-          }
-          const response = await axiosService.get(query);
-          setOrders(response.data.orders);
-        } catch (error) {
-          console.error(
-            error.response?.data?.message || 'Error fetching orders:',
-            error
-          );
-        } finally {
-          setLoading(false);
+      if (!currentUser) return;
+
+      // Only require staffInfo for manager role
+      if (currentUser.role === 'manager' && !staffInfo?.branchId) return;
+
+      const { pageIndex, pageSize } = pagination;
+      try {
+        setLoading(true);
+        setError(null);
+
+        let query = `/orders?limit=${pageSize}&page=${pageIndex + 1}`;
+
+        // Add query parameters based on user role
+        if (currentUser.role === 'manager') {
+          query += `&branchId=${staffInfo.branchId}`;
+        } else if (currentUser.role === 'userReps') {
+          query += `&createdBy=${currentUser.id}`;
         }
+        // superAdmin gets all orders by default
+
+        // Add status filter if not "All"
+        if (selectedStatus !== 'All') {
+          query += `&status=${selectedStatus.toLowerCase()}`;
+        }
+
+        const response = await axiosService.get(query);
+        setOrders(response.data.orders);
+        setTotalCount(response.data.totalCount || 0);
+      } catch (error) {
+        const errorMessage =
+          error.response?.data?.message || 'Error fetching orders';
+        console.error(errorMessage, error);
+        setError(errorMessage);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchOrders();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentUser, staffInfo, pagination]);
+  }, [currentUser, staffInfo, pagination, selectedStatus]);
 
   // Function to handle page change
   const onPageChange = ({ pageIndex, pageSize }) => {
     setPagination({ pageIndex, pageSize });
   };
-
-  // Function to filter orders based on the selected status
-  const filterOrdersByStatus = (orders, status) => {
-    if (status === 'All') {
-      return orders;
-    }
-    return orders.filter(
-      (order) => order.status.toLowerCase() === status.toLowerCase()
-    );
-  };
-  const filteredOrders = filterOrdersByStatus(orders, selectedStatus);
 
   // Columns for the order table
   const columns = React.useMemo(
@@ -89,34 +93,50 @@ const OrdersPage = () => {
       {
         Header: 'Order ID',
         accessor: 'id',
-        Cell: ({ value }) => <Text>{value.substring(0, 6)}</Text>,
+        Cell: ({ value }) => (
+          <Text color="blue.500" fontWeight="medium">
+            #{value.substring(0, 6)}
+          </Text>
+        ),
       },
-      // {
-      //   Header: 'Image',
-      //   accessor: 'products[0].productCatalogueId.images',
-      //   Cell: ({ value, row }) => (
-      //     <NavLink
-      //       to={`/product/catalogue-details/${row.original.products[0].productCatalogueId.id}`}
-      //     >
-      //       <img src={value} alt="Product" style={{ width: '50px' }} />
-      //     </NavLink>
-      //   ),
-      // },
       {
         Header: 'Name',
         accessor: 'products[0].productCatalogueId.name',
+        Cell: ({ value }) => (
+          <Text noOfLines={2} maxW="200px">
+            {value}
+          </Text>
+        ),
       },
       {
         Header: 'Reps',
         accessor: (row) => (
           <NavLink to={`/admin/user/${row.createdBy.id}`}>
-            {row.createdBy.firstName} {row.createdBy.lastName}
+            <Text color="blue.500" _hover={{ textDecoration: 'underline' }}>
+              {row.createdBy.firstName} {row.createdBy.lastName}
+            </Text>
           </NavLink>
         ),
       },
       {
         Header: 'Status',
         accessor: 'status',
+        Cell: ({ value }) => {
+          const statusColors = {
+            pending: 'orange',
+            paid: 'green',
+            delivered: 'blue',
+            canceled: 'red',
+          };
+          return (
+            <Text
+              color={`${statusColors[value.toLowerCase()]}.500`}
+              fontWeight="medium"
+            >
+              {value}
+            </Text>
+          );
+        },
       },
       {
         Header: 'Action',
@@ -126,6 +146,7 @@ const OrdersPage = () => {
             to={`/admin/orders/${row.id}`}
             variant="outline"
             colorScheme="blue"
+            size="sm"
           >
             View Details
           </Button>
@@ -137,39 +158,53 @@ const OrdersPage = () => {
 
   return (
     <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
-      {/* Main Fields */}
-      <Flex justifyContent="space-between" mb="20px">
-        <Text fontSize="2xl">Orders</Text>
-        <Spacer />
+      <Flex direction="column" gap={6}>
+        {/* Header Section */}
+        <Flex justifyContent="space-between" alignItems="center">
+          <Text fontSize="2xl" fontWeight="bold">
+            Orders {totalCount > 0 && `(${totalCount})`}
+          </Text>
+          <Select
+            value={selectedStatus}
+            onChange={(e) => setSelectedStatus(e.target.value)}
+            width="auto"
+            minW="200px"
+          >
+            {['All', 'Pending', 'Paid', 'Delivered', 'Canceled'].map(
+              (option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              )
+            )}
+          </Select>
+        </Flex>
 
-        {/* Select for selecting status */}
-        <Select
-          value={selectedStatus}
-          onChange={(e) => setSelectedStatus(e.target.value)}
-          width={250}
-        >
-          {['All', 'Pending', 'Paid', 'Delivered', 'Canceled'].map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </Select>
-      </Flex>
-      <Box marginTop="30">
-        {loading ? (
-          <LoadingSpinner />
-        ) : filteredOrders && filteredOrders.length !== 0 ? (
-          <CustomTable
-            columns={columns}
-            data={filteredOrders}
-            onPageChange={onPageChange}
-          />
-        ) : (
-          <Text fontSize="lg" textAlign="center" mt="20">
-            No records found!
+        {/* Error Message */}
+        {error && (
+          <Text color="red.500" textAlign="center">
+            {error}
           </Text>
         )}
-      </Box>
+
+        {/* Table Section */}
+        {loading ? (
+          <LoadingSpinner />
+        ) : orders && orders.length > 0 ? (
+          <CustomTable
+            columns={columns}
+            data={orders}
+            onPageChange={onPageChange}
+            totalCount={totalCount}
+            pageCount={Math.ceil(totalCount / pagination.pageSize)}
+            {...pagination}
+          />
+        ) : (
+          <Text fontSize="lg" textAlign="center" color="gray.500">
+            No orders found
+          </Text>
+        )}
+      </Flex>
     </Box>
   );
 };

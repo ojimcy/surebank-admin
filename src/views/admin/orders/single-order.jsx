@@ -14,6 +14,7 @@ import {
   Thead,
   Tr,
   TableContainer,
+  Flex,
 } from '@chakra-ui/react';
 import { NavLink, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -21,6 +22,7 @@ import BackButton from 'components/menu/BackButton';
 import axiosService from 'utils/axiosService'; // Adjust the import path
 import { useAuth } from 'contexts/AuthContext';
 import Card from 'components/card/Card';
+import { FaTimesCircle, FaTruck, FaMoneyBill } from 'react-icons/fa';
 
 import { formatNaira, formatMdbDate } from 'utils/helper';
 import LoadingSpinner from 'components/scroll/LoadingSpinner';
@@ -77,178 +79,209 @@ function SingleOrder() {
     toast.error('Not available');
   };
 
+  const handleCancelOrder = async () => {
+    if (!window.confirm('Are you sure you want to cancel this order?')) {
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await axiosService.post(`/orders/${orderId}/cancel`);
+      toast.success('Order cancelled successfully');
+      fetchOrderDetails();
+    } catch (error) {
+      console.error('An error occurred:', error);
+      toast.error(error.response?.data?.message || 'Failed to cancel order');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Check if user can cancel order
+  const canCancelOrder =
+    order &&
+    !order.isDelivered &&
+    !order.isPaid &&
+    (currentUser.role === 'superAdmin' ||
+      currentUser.id === order.createdBy?.id);
+
+  const getStatusColor = (status) => {
+    if (order.isDelivered) return 'green.500';
+    if (order.isPaid) return 'blue.500';
+    if (order.status === 'canceled') return 'red.500';
+    return 'orange.500';
+  };
+
   return (
     <Box pt={{ base: '90px', md: '80px', xl: '80px' }}>
       <BackButton />
-      <Heading as="h1" size={{ base: 'l', md: 'xl' }} mb={4}>
-        Order {orderId.substring(0, 6)}
-      </Heading>
       {loading ? (
         <LoadingSpinner />
       ) : (
-        <Grid
-          templateColumns={{ base: '1fr', md: '1fr', lg: '2fr 1fr' }}
-          gap={4}
-        >
-          <Box>
-            {/* Left Section: Shipping Address */}
-            <Card>
-              <List spacing={3} mb={4}>
-                <ListItem>
-                  <Heading as="h2" size={{ base: 'md', md: 'lg' }}>
-                    Customer Details
-                  </Heading>
-                </ListItem>
-                <ListItem>
-                  {order.deliveryAddress.fullName},{' '}
-                  {order.deliveryAddress.phoneNumber},{' '}
-                  {order.deliveryAddress.address}, {order.deliveryAddress.city},{' '}
-                  &nbsp;
-                </ListItem>
-                <ListItem>
-                  Status:{' '}
-                  {order.isDelivered
-                    ? `Delivered at ${formatMdbDate(order.deliveredAt)}`
-                    : 'Not Delivered'}
-                </ListItem>
-              </List>
-            </Card>
-            {/* Middle Section: Payment Method */}
-            <Box mt={4}>
-              <Card>
-                <List spacing={3} mb={4}>
-                  <ListItem>
-                    <Heading as="h2" size={{ base: 'md', md: 'lg' }}>
-                      Payment Method
-                    </Heading>
-                  </ListItem>
-                  <ListItem>
-                    {paymentMethodLabels[order.paymentMethod]}
-                  </ListItem>
-                  <ListItem>
-                    Status:{' '}
-                    {order.isPaid
-                      ? `Paid at ${formatMdbDate(order.paidAt)}`
-                      : 'Not paid'}
-                  </ListItem>
-                  <ListItem>
-                    Rep: {order.createdBy?.firstName}{' '}
-                    {order.createdBy?.lastName}
-                  </ListItem>
-                </List>
-              </Card>
-            </Box>
-            {/* Right Section: Order Items List */}
-            <Box mt={4}>
-              <Card>
-                <List spacing={3}>
-                  <ListItem>
-                    <>
-                      <Heading as="h2" size={{ base: 'md', md: 'lg' }}>
-                        Order Items
-                      </Heading>
+        <>
+          <Flex justifyContent="space-between" alignItems="center" mb={6}>
+            <Heading as="h1" size={{ base: 'md', md: 'lg' }}>
+              Order #{orderId.substring(0, 6)}
+            </Heading>
+            <Text
+              color={getStatusColor(order.status)}
+              fontWeight="bold"
+              fontSize="lg"
+            >
+              {order.status.toUpperCase()}
+            </Text>
+          </Flex>
 
-                      <TableContainer overflowX="auto">
-                        <Table variant="simple">
-                          <Thead>
-                            <Tr>
-                              {/* <Th>Image</Th> */}
-                              <Th>Name</Th>
-                              <Th>Quantity</Th>
-                              <Th>Unit Price</Th>
-                            </Tr>
-                          </Thead>
-                          <Tbody>
-                            {order.products.map((item) => (
-                              <Tr key={item._id}>
-                                {/* <Td>
-                                  <NavLink
-                                    to={`/product/${item.productCatalogueId.id}`}
-                                  >
-                                    <Image
-                                      src={item.productCatalogueId?.images[0]}
-                                      alt={item.productCatalogueId.name}
-                                      boxSize="50px"
-                                    />
-                                  </NavLink>
-                                </Td> */}
-                                <Td>
-                                  <NavLink
-                                    to={`/product/${item.productCatalogueId.id}`}
-                                  >
-                                    <Text>{item.productCatalogueId.name}</Text>
-                                  </NavLink>
-                                </Td>
-                                <Td>{item.quantity}</Td>
-                                <Td>
-                                  {item.sellingPrice &&
-                                    formatNaira(item.sellingPrice)}
-                                </Td>
-                              </Tr>
-                            ))}
-                          </Tbody>
-                        </Table>
-                      </TableContainer>
-                    </>
-                  </ListItem>
-                </List>
+          <Grid templateColumns={{ base: '1fr', lg: '2fr 1fr' }} gap={6}>
+            <Box>
+              {/* Customer Details Card */}
+              <Card mb={6}>
+                <Heading as="h2" size="md" mb={4}>
+                  Customer Details
+                </Heading>
+                <Grid templateColumns={{ base: '1fr', md: '1fr 1fr' }} gap={4}>
+                  <Box>
+                    <Text fontWeight="medium">Delivery Address</Text>
+                    <Text>{order.deliveryAddress.fullName}</Text>
+                    <Text>{order.deliveryAddress.phoneNumber}</Text>
+                    <Text>{order.deliveryAddress.address}</Text>
+                    <Text>{order.deliveryAddress.city}</Text>
+                  </Box>
+                  <Box>
+                    <Text fontWeight="medium">Order Info</Text>
+                    <Text>
+                      Rep: {order.createdBy?.firstName}{' '}
+                      {order.createdBy?.lastName}
+                    </Text>
+                    <Text>Created: {formatMdbDate(order.createdAt)}</Text>
+                    <Text>
+                      Payment: {paymentMethodLabels[order.paymentMethod]}
+                    </Text>
+                    <Text>
+                      Payment Status:{' '}
+                      {order.isPaid
+                        ? `Paid on ${formatMdbDate(order.paidAt)}`
+                        : 'Pending'}
+                    </Text>
+                    <Text>
+                      Delivery Status:{' '}
+                      {order.isDelivered
+                        ? `Delivered on ${formatMdbDate(order.deliveredAt)}`
+                        : 'Pending'}
+                    </Text>
+                  </Box>
+                </Grid>
+              </Card>
+
+              {/* Order Items Card */}
+              <Card>
+                <Heading as="h2" size="md" mb={4}>
+                  Order Items
+                </Heading>
+                <TableContainer>
+                  <Table variant="simple">
+                    <Thead>
+                      <Tr>
+                        <Th>Product</Th>
+                        <Th isNumeric>Quantity</Th>
+                        <Th isNumeric>Unit Price</Th>
+                        <Th isNumeric>Total</Th>
+                      </Tr>
+                    </Thead>
+                    <Tbody>
+                      {order.products.map((item) => (
+                        <Tr key={item._id}>
+                          <Td>
+                            <NavLink
+                              to={`/admin/products/catalogue-details/${item.productCatalogueId.id}`}
+                            >
+                              <Text
+                                color="blue.500"
+                                _hover={{ textDecoration: 'underline' }}
+                              >
+                                {item.productCatalogueId.name}
+                              </Text>
+                            </NavLink>
+                          </Td>
+                          <Td isNumeric>{item.quantity}</Td>
+                          <Td isNumeric>{formatNaira(item.sellingPrice)}</Td>
+                          <Td isNumeric>
+                            {formatNaira(item.sellingPrice * item.quantity)}
+                          </Td>
+                        </Tr>
+                      ))}
+                    </Tbody>
+                  </Table>
+                </TableContainer>
               </Card>
             </Box>
-          </Box>
-          <Box>
-            {/* Right Section: Order Summary */}
+
+            {/* Order Summary Card */}
             <Card>
-              <Box mt={1}>
-                <List spacing={3} mb={4}>
-                  <ListItem>
-                    <Heading as="h2" size={{ base: 'md', md: 'lg' }}>
-                      Order Summary
-                    </Heading>
-                  </ListItem>
-                  <ListItem>
-                    <Grid templateColumns="repeat(2, 1fr)" gap={4}>
-                      <Box>
-                        <strong>Sum Total:</strong>
-                      </Box>
-                      <Box align="right">
-                        <strong>
-                          {order.totalAmount && formatNaira(order?.totalAmount)}
-                        </strong>
-                      </Box>
-                    </Grid>
-                  </ListItem>
-                  {!order.isPaid && (
-                    <ListItem>
+              <Heading as="h2" size="md" mb={4}>
+                Order Summary
+              </Heading>
+              <List spacing={3}>
+                <ListItem>
+                  <Flex justify="space-between">
+                    <Text>Subtotal:</Text>
+                    <Text fontWeight="bold">
+                      {formatNaira(order.totalAmount)}
+                    </Text>
+                  </Flex>
+                </ListItem>
+                <ListItem>
+                  <Flex justify="space-between">
+                    <Text>Total:</Text>
+                    <Text fontSize="xl" fontWeight="bold" color="blue.500">
+                      {formatNaira(order.totalAmount)}
+                    </Text>
+                  </Flex>
+                </ListItem>
+
+                {/* Action Buttons */}
+                <ListItem pt={4}>
+                  <Grid templateColumns="1fr" gap={3}>
+                    {!order.isPaid && (
                       <Button
-                        width="full"
-                        colorScheme="teal"
+                        leftIcon={<FaMoneyBill />}
+                        colorScheme="green"
                         onClick={handleMakePayment}
+                        isDisabled={order.status === 'canceled'}
                       >
                         Make Payment
                       </Button>
-                    </ListItem>
-                  )}
-                  {currentUser.role === 'superAdmin' ||
-                  (currentUser.role === 'superAdmin' &&
-                    order.isPaid &&
-                    !order.isDelivered) ? (
-                    <ListItem>
+                    )}
+
+                    {currentUser.role === 'superAdmin' &&
+                      order.isPaid &&
+                      !order.isDelivered && (
+                        <Button
+                          leftIcon={<FaTruck />}
+                          colorScheme="blue"
+                          onClick={handleDeliverOrder}
+                          isDisabled={order.status === 'canceled'}
+                        >
+                          Mark as Delivered
+                        </Button>
+                      )}
+
+                    {canCancelOrder && (
                       <Button
-                        width="full"
-                        colorScheme="teal"
-                        onClick={handleDeliverOrder}
+                        leftIcon={<FaTimesCircle />}
+                        colorScheme="red"
+                        variant="outline"
+                        onClick={handleCancelOrder}
                       >
-                        Deliver Order
+                        Cancel Order
                       </Button>
-                    </ListItem>
-                  ) : (
-                    ''
-                  )}
-                </List>
-              </Box>
+                    )}
+                  </Grid>
+                </ListItem>
+              </List>
             </Card>
-          </Box>
-        </Grid>
+          </Grid>
+        </>
       )}
     </Box>
   );
