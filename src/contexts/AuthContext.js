@@ -8,13 +8,15 @@ export function useAuth() {
   return useContext(AuthContext);
 }
 
-// const baseURL = 'http://localhost:3000/v1';
-const baseURL = 'https://7jvk31k960.execute-api.us-east-1.amazonaws.com/v1';
+const baseURL = 'http://localhost:3000/v1'; // LocalHost
+// const baseURL = 'https://7jvk31k960.execute-api.us-east-1.amazonaws.com/v1'; // Prod
+
+// const baseURL = 'https://19igw0ftch.execute-api.us-east-2.amazonaws.com/v1'; // Local
 
 export function AuthProvider({ children }) {
   const initialToken = localStorage.getItem('ACCESS_TOKEN_KEY');
   const [currentUser, setCurrentUser] = useState(null);
-  
+
   useEffect(() => {
     if (initialToken) {
       const fetchUser = async () => {
@@ -36,10 +38,7 @@ export function AuthProvider({ children }) {
 
   const signup = async (userData) => {
     try {
-      const response = await axios.post(
-        `${baseURL}/auth/register`,
-        userData
-      );
+      const response = await axios.post(`${baseURL}/auth/register`, userData);
       const accessToken = response.data.tokens.access.token;
       const refreshToken = response.data.tokens.refresh.token;
       // Store the JWT token in session storage
