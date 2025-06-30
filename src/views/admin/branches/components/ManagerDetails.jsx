@@ -260,52 +260,14 @@ async function fetchData({ queryKey }) {
       endDate.setHours(23, 59, 59, 999);
       const endTimeStamp = endDate.getTime();
 
-      const [
-        contributionResponse,
-        dsResponse,
-        sbResponse,
-        withdrawalResponse,
-        managerTotalContributionResponse,
-        managerDsResponse,
-        managerSbResponse,
-        managerWithdrawalResponse,
-      ] = await Promise.all([
-        axiosService.get(
-          `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&branchId=${staffInfo.branchId}`
-        ),
-        axiosService.get(
-          `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&branchId=${staffInfo.branchId}&narration=Daily contribution`
-        ),
-        axiosService.get(
-          `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&branchId=${staffInfo.branchId}&narration=SB contribution`
-        ),
-        axiosService.get(
-          `/transactions/withdraw/cash?startDate=${startTimeStamp}&endDate=${endTimeStamp}&branchId=${staffInfo.branchId}&status=pending`
-        ),
-        axiosService.get(
-          `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&createdBy=${staffId}`
-        ),
-        axiosService.get(
-          `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&createdBy=${staffId}&narration=Daily contribution`
-        ),
-        axiosService.get(
-          `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&createdBy=${staffId}&narration=SB contribution`
-        ),
-        axiosService.get(
-          `/transactions/withdraw/cash?startDate=${startTimeStamp}&endDate=${endTimeStamp}&createdBy=${staffId}&status=pending`
-        ),
-      ]);
+      const response = await axiosService.get('/reports/dashboard-summary', {
+        branchId: staffInfo.branchId,
+        staffId: staffId,
+        startDate: startTimeStamp,
+        endDate: endTimeStamp,
+      });
 
-      return {
-        contributionsDailyTotal: contributionResponse.data,
-        dailySavingsWithdrawals: withdrawalResponse.data.totalAmount,
-        sbDailyTotal: sbResponse.data,
-        dsDailyTotal: dsResponse.data,
-        managerTotal: managerTotalContributionResponse.data,
-        managerDsTotal: managerDsResponse.data,
-        managerSbTotal: managerSbResponse.data,
-        managerWithdrawals: managerWithdrawalResponse.data.totalAmount,
-      };
+      return response.data;
     } else {
       throw new Error('Branch ID not found');
     }

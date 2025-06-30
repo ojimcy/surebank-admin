@@ -733,9 +733,10 @@ export default function SuperAdminDashboard() {
 async function fetchDashboardSummary(branchId) {
   try {
     const params = branchId ? { branchId } : {};
-    const response = await axiosService.get('/reports/dashboard-summary', {
-      params,
-    });
+    const response = await axiosService.get(
+      '/reports/dashboard-summary',
+      params
+    );
     return response.data;
   } catch (error) {
     console.error('Error fetching dashboard summary:', error);

@@ -1,9 +1,6 @@
 import axios from 'axios';
 
-const baseURL = 'http://localhost:3000/v1'; // LocalHost
-// const baseURL = 'https://7jvk31k960.execute-api.us-east-1.amazonaws.com/v1'; // Prod
-
-// const baseURL = 'https://19igw0ftch.execute-api.us-east-2.amazonaws.com/v1'; // Local
+const baseURL = process.env.REACT_APP_API_BASE_URL;
 
 const api = axios.create({
   baseURL,

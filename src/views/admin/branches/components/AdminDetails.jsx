@@ -39,12 +39,7 @@ export default function AdminDetails() {
       <BackButton />
       <Flex direction={{ base: 'column', md: 'row' }} mb="20px">
         <Card>
-          <Text
-            fontWeight="bold"
-            fontSize="xl"
-            mt="10px"
-            color={textColor}
-          >
+          <Text fontWeight="bold" fontSize="xl" mt="10px" color={textColor}>
             Overview
           </Text>
           <Text fontSize="sm" color={textColorSecondary} pb="20px">
@@ -167,32 +162,12 @@ async function fetchData() {
     endDate.setHours(23, 59, 59, 999);
     const endTimeStamp = endDate.getTime();
 
-    const [
-      contributionResponse,
-      dsResponse,
-      sbResponse,
-      withdrawalResponse,
-    ] = await Promise.all([
-      axiosService.get(
-        `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}`
-      ),
-      axiosService.get(
-        `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&narration=Daily contribution`
-      ),
-      axiosService.get(
-        `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&narration=SB contribution`
-      ),
-      axiosService.get(
-        `/transactions/withdraw/cash?startDate=${startTimeStamp}&endDate=${endTimeStamp}&status=pending`
-      ),
-    ]);
+    const response = await axiosService.get('/reports/dashboard-summary', {
+      startDate: startTimeStamp,
+      endDate: endTimeStamp,
+    });
 
-    return {
-      contributionsDailyTotal: contributionResponse.data,
-      dsDailyTotal: dsResponse.data,
-      sbDailyTotal: sbResponse.data,
-      dailySavingsWithdrawals: withdrawalResponse.data.totalAmount,
-    };
+    return response.data;
   } catch (error) {
     console.error(error);
     throw new Error(

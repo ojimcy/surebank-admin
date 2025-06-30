@@ -292,48 +292,13 @@ async function fetchData({ queryKey }) {
     endDate.setHours(23, 59, 59, 999);
     const endTimeStamp = endDate.getTime();
 
-    const [
-      totalContributionsResponse,
-      dsResponse,
-      sbResponse,
-      withdrawalResponse,
-      openDailyDsPackages,
-      opendailySbCustomers,
-      openPackagesResponse,
-      openSbPackagesResponse,
-    ] = await Promise.all([
-      axiosService.get(
-        `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&createdBy=${staffId}`
-      ),
-      axiosService.get(
-        `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&createdBy=${staffId}&narration=Daily contribution`
-      ),
-      axiosService.get(
-        `/reports/total-contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&createdBy=${staffId}&narration=SB contribution`
-      ),
-      axiosService.get(
-        `/transactions/withdraw/cash?startDate=${startTimeStamp}&endDate=${endTimeStamp}&createdBy=${staffId}`
-      ),
-      axiosService.get(
-        `/reports/packages/contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&createdBy=${staffId}&narration=Daily contribution`
-      ),
-      axiosService.get(
-        `/reports/packages/contributions?startDate=${startTimeStamp}&endDate=${endTimeStamp}&createdBy=${staffId}&narration=SB contribution`
-      ),
-      axiosService.get(`/reports/packages?status=open&createdBy=${staffId}`),
-      axiosService.get(`/reports/packages/sb?status=open&createdBy=${staffId}`),
-    ]);
+    const response = await axiosService.get('/reports/dashboard-summary', {
+      staffId: staffId,
+      startDate: startTimeStamp,
+      endDate: endTimeStamp,
+    });
 
-    return {
-      contributionsDailyTotal: totalContributionsResponse.data,
-      dsDailyTotal: dsResponse.data,
-      sbDailyTotal: sbResponse.data,
-      dailySavingsWithdrawals: withdrawalResponse.data.totalAmount,
-      dailyDsCustomers: openDailyDsPackages.data.length,
-      dailySbCustomers: opendailySbCustomers.data.length,
-      openPackageCount: openPackagesResponse.data.totalResults,
-      openSbPackageCount: openSbPackagesResponse.data.totalResults,
-    };
+    return response.data;
   } catch (error) {
     console.error(error);
     throw new Error(

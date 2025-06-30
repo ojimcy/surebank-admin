@@ -1,6 +1,6 @@
 {
   "name": "SurebankLtd",
-  "proxy": "http://localhost:3000",
+  "proxy": "http://localhost:3001",
   "version": "1.0.1",
   "private": true,
   "dependencies": {
