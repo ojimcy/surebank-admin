@@ -1,18 +1,60 @@
-
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/icon.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <title itemprop="name">Surebank Stores</title>
-    <!-- Manifest and apple icon -->
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/icon.png" />
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-  </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-  </body>
+
+<head>
+  <meta charset="utf-8" />
+  <link rel="icon" type="image/png" href="%PUBLIC_URL%/icon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="description" content="SureBank Admin Dashboard" />
+  <meta http-equiv="Content-Security-Policy"
+    content="script-src 'self' 'unsafe-inline' 'unsafe-eval'; object-src 'none'; base-uri 'self';">
+  <link rel="apple-touch-icon" href="%PUBLIC_URL%/icon.png" />
+  <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+  <title>SureBank Admin</title>
+
+  <script>
+    // Prevent browser extension conflicts
+    (function () {
+      // Override console.error to catch and ignore extension errors
+      const originalError = console.error;
+      console.error = function (...args) {
+        const errorString = args.join(' ');
+
+        // Ignore known extension errors
+        if (errorString.includes('chrome-extension://') ||
+          errorString.includes('Cannot read properties of null') && errorString.includes('type')) {
+          return; // Silently ignore extension errors
+        }
+
+        // Log other errors normally
+        originalError.apply(console, args);
+      };
+
+      // Prevent uncaught extension errors from breaking the app
+      window.addEventListener('error', function (event) {
+        if (event.filename && event.filename.includes('chrome-extension://')) {
+          event.preventDefault();
+          event.stopPropagation();
+          return false;
+        }
+      });
+
+      // Handle unhandled promise rejections from extensions
+      window.addEventListener('unhandledrejection', function (event) {
+        if (event.reason && event.reason.stack &&
+          event.reason.stack.includes('chrome-extension://')) {
+          event.preventDefault();
+          return false;
+        }
+      });
+    })();
+  </script>
+</head>
+
+<body>
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+  <div id="root"></div>
+</body>
+
 </html>

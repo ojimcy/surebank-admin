@@ -266,7 +266,7 @@ async function fetchData({ queryKey }) {
         startDate: startTimeStamp,
         endDate: endTimeStamp,
       });
-
+      console.log(response.data);
       return response.data;
     } else {
       throw new Error('Branch ID not found');
