@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   Box,
   Flex,
@@ -9,6 +9,7 @@ import {
   Input,
   Button,
   Text,
+  useToast,
 } from '@chakra-ui/react';
 import { SearchIcon } from '@chakra-ui/icons';
 import axiosService from 'utils/axiosService';
@@ -21,6 +22,9 @@ import CustomDateModal from 'components/modals/CustomDateModal';
 function RecentTransactions() {
   const { customerData } = useAppContext();
   const { currentUser } = useAuth();
+  const toast = useToast();
+  const isMounted = useRef(true);
+
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredTransaction, setFilteredTransaction] = useState([]);
   const [selectedFilter, setSelectedFilter] = useState('all');
@@ -31,6 +35,14 @@ function RecentTransactions() {
   const [isCustomDateModalOpen, setCustomDateModalOpen] = useState(false);
   const [customRangeLabel, setCustomRangeLabel] = useState('Custom Range');
   const [timeRange, setTimeRange] = useState('all');
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   const handleSelectChange = (e) => {
     const selectedValue = e.target.value;
@@ -46,32 +58,55 @@ function RecentTransactions() {
     (e) => {
       setStartDate(e.target.value);
     },
-    [setStartDate]
+    []
   );
 
   const handleEndDateChange = useCallback(
     (e) => {
       setEndDate(e.target.value);
     },
-    [setEndDate]
+    []
   );
 
+  // Fetch transactions
   useEffect(() => {
     const fetchActivities = async () => {
-      let response;
+      if (!customerData?.accountNumber) return;
 
-      response = await axiosService.get(
-        `/transactions?accountNumber=${customerData?.accountNumber}`
-      );
+      try {
+        setIsLoading(true);
+        const response = await axiosService.get(
+          `/transactions?accountNumber=${customerData.accountNumber}`
+        );
 
-      setTransactions(response.data.transactions);
+        if (isMounted.current) {
+          setTransactions(response.data.transactions || []);
+        }
+      } catch (error) {
+        if (isMounted.current) {
+          toast({
+            title: 'Error fetching transactions',
+            description: error.response?.data?.message || 'Something went wrong',
+            status: 'error',
+            duration: 5000,
+            isClosable: true,
+          });
+        }
+      } finally {
+        if (isMounted.current) {
+          setIsLoading(false);
+        }
+      }
     };
 
     fetchActivities();
-  }, [currentUser.id, currentUser.role, customerData?.accountNumber]);
+  }, [currentUser.id, currentUser.role, customerData?.accountNumber, toast]);
 
+  // Filter by transaction type
   useEffect(() => {
-    const filtered = transactions?.filter((transaction) => {
+    if (!transactions) return;
+
+    const filtered = transactions.filter((transaction) => {
       if (selectedFilter === 'all') {
         return true;
       } else if (selectedFilter === 'deposit') {
@@ -88,11 +123,20 @@ function RecentTransactions() {
       }
       return false;
     });
-    setFilteredTransaction(filtered);
+
+    if (isMounted.current) {
+      setFilteredTransaction(filtered);
+    }
   }, [selectedFilter, transactions]);
 
+  // Filter by search term
   useEffect(() => {
-    const filtered = transactions?.filter((transaction) => {
+    if (!transactions || !searchTerm) {
+      setFilteredTransaction(transactions || []);
+      return;
+    }
+
+    const filtered = transactions.filter((transaction) => {
       const fullNameRep =
         `${transaction.createdBy?.firstName} ${transaction.createdBy?.lastName}`.toLowerCase();
       const fullNameUser =
@@ -103,16 +147,16 @@ function RecentTransactions() {
 
       return repNameMatch || userMameMatch;
     });
-    setFilteredTransaction(filtered);
+
+    if (isMounted.current) {
+      setFilteredTransaction(filtered);
+    }
   }, [searchTerm, transactions]);
 
-  const visibleTransactions = showAllTransactions
-    ? filteredTransaction
-    : filteredTransaction.slice(0, 20);
-
-  const shouldShowViewAllButton = filteredTransaction.length > 20;
-
+  // Filter by date range
   useEffect(() => {
+    if (!transactions) return;
+
     let filteredData = transactions;
 
     if (timeRange === 'last7days') {
@@ -127,20 +171,21 @@ function RecentTransactions() {
       filteredData = filteredData.filter(
         (item) => new Date(item.date) >= last30Days
       );
-    } else if (timeRange === 'custom') {
-      if (startDate && endDate) {
-        const customStartDate = new Date(startDate);
-        customStartDate.setHours(0, 0, 0, 0);
-        const customEndDate = new Date(endDate);
-        customEndDate.setHours(23, 59, 59, 999);
-        filteredData = filteredData.filter(
-          (item) =>
-            new Date(item.date) >= customStartDate &&
-            new Date(item.date) <= customEndDate
-        );
-      }
+    } else if (timeRange === 'custom' && startDate && endDate) {
+      const customStartDate = new Date(startDate);
+      customStartDate.setHours(0, 0, 0, 0);
+      const customEndDate = new Date(endDate);
+      customEndDate.setHours(23, 59, 59, 999);
+      filteredData = filteredData.filter(
+        (item) =>
+          new Date(item.date) >= customStartDate &&
+          new Date(item.date) <= customEndDate
+      );
     }
-    setFilteredTransaction(filteredData);
+
+    if (isMounted.current) {
+      setFilteredTransaction(filteredData);
+    }
   }, [timeRange, startDate, endDate, transactions]);
 
   const handleCustomDateApply = useCallback(
@@ -158,6 +203,12 @@ function RecentTransactions() {
     },
     []
   );
+
+  const visibleTransactions = showAllTransactions
+    ? filteredTransaction
+    : filteredTransaction?.slice(0, 20);
+
+  const shouldShowViewAllButton = filteredTransaction?.length > 20;
 
   return (
     <Box mt="80px">
@@ -191,7 +242,7 @@ function RecentTransactions() {
             <FormControl>
               <Input
                 type="search"
-                placeholder="Search"
+                placeholder="Search by name"
                 borderColor="black"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -203,10 +254,13 @@ function RecentTransactions() {
           </Stack>
         </Box>
       </Flex>
-      {visibleTransactions && visibleTransactions.length > 0 ? (
+
+      {isLoading ? (
+        <Text>Loading transactions...</Text>
+      ) : visibleTransactions?.length > 0 ? (
         <>
           {visibleTransactions.map((transaction, index) => (
-            <TransactionItem key={index} transaction={transaction} />
+            <TransactionItem key={transaction.id || index} transaction={transaction} />
           ))}
           {!showAllTransactions && shouldShowViewAllButton && (
             <Button
@@ -220,14 +274,14 @@ function RecentTransactions() {
           )}
         </>
       ) : (
-        <Text>Transaction not found</Text>
+        <Text>No transactions found</Text>
       )}
 
       <CustomDateModal
         isOpen={isCustomDateModalOpen}
         onClose={() => setCustomDateModalOpen(false)}
-        startDate={new Date(startDate)}
-        endDate={new Date(endDate)}
+        startDate={startDate ? new Date(startDate) : new Date()}
+        endDate={endDate ? new Date(endDate) : new Date()}
         handleStartDateChange={handleStartDateChange}
         handleEndDateChange={handleEndDateChange}
         handleCustomDateApply={handleCustomDateApply}

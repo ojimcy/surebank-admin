@@ -36,6 +36,7 @@ const hiddenRoutes = [
   '/admin/customer/create-account',
   '/admin/customer/ds/:id',
   '/admin/customer/sb/:id',
+  '/admin/customer/ibs/:id',
   '/admin/customer/edit-customer/:id',
   '/admin/account/assign-manager',
   '/admin/transaction/deposit',
@@ -63,7 +64,8 @@ const hiddenRoutes = [
   '/admin/stores/brands',
   '/admin/orders/placeorder',
   '/admin/orders/:id',
-  '/admin/branch/dashboard/:id'
+  '/admin/branch/dashboard/:id',
+  '/admin/kyc/details/:kycId'
 ];
 
 export function SidebarLinks(props) {

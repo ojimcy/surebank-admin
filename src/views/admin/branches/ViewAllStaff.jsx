@@ -36,7 +36,6 @@ import { toSentenceCase } from 'utils/helper';
 
 export default function Users() {
   const [staffs, setStaffs] = useState([]);
-  const [users, setUsers] = useState([]);
   const [staffUser, setStaffUser] = useState('');
   const [allBranch, setAllBranch] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -109,10 +108,6 @@ export default function Users() {
         );
       }
 
-      const UserResponse = await axiosService.get(
-        `/users?role=user&limit=${pageSize}`
-      );
-      setUsers(UserResponse.data.results);
       setAllBranch(branches.data.results);
       setStaffs(filteredStaffs);
     } catch (error) {

@@ -111,7 +111,7 @@ export default function CreateCatalogue() {
                     Product<Text>*</Text>
                   </FormLabel>
                   <CustomSelect
-                    options={products.map((product) => ({
+                    options={products?.map((product) => ({
                       value: product.id,
                       label: `${product.name}`,
                     }))}

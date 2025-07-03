@@ -43,6 +43,7 @@ import CreateCustomer from 'views/admin/customers/create';
 import CustomerByStaff from 'views/admin/customers/customerByStaff';
 import ViewCustomerDs from 'views/admin/daily-savings/ds-package';
 import ViewCustomerSb from 'views/admin/daily-savings/sb-package';
+import ViewCustomerIbs from 'views/admin/daily-savings/ibs-package';
 import EditCustomer from 'views/admin/customers/edit-customer';
 import Deposit from 'views/admin/account/deposit';
 import Withdraw from 'views/admin/account/withdraw';
@@ -83,6 +84,8 @@ import Note from 'views/admin/accounting/note-keeping';
 import LandingPage from 'views/landing';
 import PrivacyPolicy from 'views/privacy';
 import TermsOfService from 'views/terms';
+import Kyc from 'views/admin/kyc';
+import KYCDetails from 'views/admin/kyc/details';
 
 const routes = [
   {
@@ -258,9 +261,7 @@ const routes = [
     name: 'Customer',
     layout: '/admin',
     path: '/customer/ds/:id',
-    icon: (
-      <Icon as={MdOutlinePerson3} width="20px" height="20px" color="inherit" />
-    ),
+    icon: <Icon as={MdPerson} width="20px" height="20px" color="inherit" />,
     roles: ['superAdmin', 'admin', 'manager', 'userReps'],
     component: ViewCustomerDs,
   },
@@ -269,11 +270,18 @@ const routes = [
     name: 'Customer',
     layout: '/admin',
     path: '/customer/sb/:id',
-    icon: (
-      <Icon as={MdOutlinePerson3} width="20px" height="20px" color="inherit" />
-    ),
+    icon: <Icon as={MdPerson} width="20px" height="20px" color="inherit" />,
     roles: ['superAdmin', 'admin', 'manager', 'userReps'],
     component: ViewCustomerSb,
+  },
+
+  {
+    name: 'Customer',
+    layout: '/admin',
+    path: '/customer/ibs/:id',
+    icon: <Icon as={MdPerson} width="20px" height="20px" color="inherit" />,
+    roles: ['superAdmin', 'admin', 'manager', 'userReps'],
+    component: ViewCustomerIbs,
   },
 
   // account routes
@@ -595,6 +603,23 @@ const routes = [
     layout: '/home',
     path: '/terms',
     component: TermsOfService,
+  },
+
+  {
+    name: 'KYC',
+    layout: '/admin',
+    path: '/kyc/details/:kycId',
+    icon: <Icon as={FaSms} width="20px" height="20px" color="inherit" />,
+    roles: ['superAdmin', 'admin', 'manager'],
+    component: KYCDetails,
+  },
+  {
+    name: 'KYC',
+    layout: '/admin',
+    path: '/kyc',
+    icon: <Icon as={FaSms} width="20px" height="20px" color="inherit" />,
+    roles: ['superAdmin', 'admin', 'manager'],
+    component: Kyc,
   },
 ];
 

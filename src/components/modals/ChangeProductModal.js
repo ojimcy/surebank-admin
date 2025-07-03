@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Modal,
   ModalOverlay,
@@ -13,10 +13,9 @@ import {
   Text,
   Box,
   Spinner,
+  useToast,
 } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
-import { toast } from 'react-toastify';
-
 import axiosService from 'utils/axiosService';
 import { formatNaira } from 'utils/helper';
 import CustomSelect from 'components/dataDispaly/CustomSelect';
@@ -24,34 +23,75 @@ import CustomSelect from 'components/dataDispaly/CustomSelect';
 const ChangeProductModal = ({ isOpen, onClose, onSuccess, packageData }) => {
   const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [productDetails, setProductDetails] = useState({});
+  const [productDetails, setProductDetails] = useState(null);
   const [loading, setLoading] = useState(false);
+  const isMounted = useRef(true);
+  const toast = useToast();
 
   const {
     handleSubmit,
     formState: { isSubmitting },
+    reset,
   } = useForm();
 
+  // Cleanup on unmount
   useEffect(() => {
-    // Fetch products from the backend
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
+  // Reset state when modal closes
+  useEffect(() => {
+    if (!isOpen) {
+      setSelectedProduct(null);
+      setProductDetails(null);
+      reset();
+    }
+  }, [isOpen, reset]);
+
+  useEffect(() => {
+    // Only fetch products when modal is open
+    if (!isOpen) return;
+
     const fetchProducts = async () => {
       try {
         setLoading(true);
         const response = await axiosService.get('products/catalogue');
-        setProducts(response.data);
+        if (isMounted.current) {
+          // Extract products from the results array in the response
+          const productsData = response.data?.results || [];
+          setProducts(productsData);
+        }
       } catch (error) {
-        console.error('Error fetching products:', error);
+        if (isMounted.current) {
+          toast({
+            title: 'Error fetching products',
+            description: error.response?.data?.message || 'Something went wrong',
+            status: 'error',
+            duration: 5000,
+            isClosable: true,
+          });
+        }
       } finally {
-        setLoading(false);
+        if (isMounted.current) {
+          setLoading(false);
+        }
       }
     };
 
     fetchProducts();
-  }, []);
+  }, [isOpen, toast]);
 
   const handleProductSelection = (selectedOption) => {
+    if (!selectedOption) {
+      setSelectedProduct(null);
+      setProductDetails(null);
+      return;
+    }
+
     setSelectedProduct(selectedOption);
-    const selectedProductDetails = products.find(
+    const selectedProductDetails = products?.find(
       (product) => product.id === selectedOption.value
     );
     setProductDetails(selectedProductDetails);
@@ -60,31 +100,53 @@ const ChangeProductModal = ({ isOpen, onClose, onSuccess, packageData }) => {
   // Handle form submission
   const onSubmit = async (formData) => {
     try {
-      if (selectedProduct) {
-        formData.newProductId = selectedProduct.value;
+      if (!selectedProduct) {
+        toast({
+          title: 'Error',
+          description: 'Please select a product',
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+        });
+        return;
       }
+
+      const payload = {
+        ...formData,
+        newProductId: selectedProduct.value,
+      };
+
       await axiosService.patch(
         `/daily-savings/sb/package/${packageData._id}`,
-        formData
+        payload
       );
-      toast.success('Product changed successfully!');
-      onSuccess();
-      onClose();
+
+      if (isMounted.current) {
+        toast({
+          title: 'Success',
+          description: 'Product changed successfully!',
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+        });
+
+        reset();
+        onSuccess?.();
+        onClose();
+      }
     } catch (error) {
-      if (
-        error.response &&
-        error.response.data &&
-        error.response.data.message
-      ) {
-        // Backend error with a specific error message
-        const errorMessage = error.response.data.message;
-        toast.error(errorMessage);
-      } else {
-        // Network error or other error
-        toast.error('Something went wrong. Please try again later.');
+      if (isMounted.current) {
+        toast({
+          title: 'Error',
+          description: error.response?.data?.message || 'Something went wrong',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
       }
     }
   };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -94,9 +156,9 @@ const ChangeProductModal = ({ isOpen, onClose, onSuccess, packageData }) => {
         <ModalBody>
           {packageData && (
             <>
-              <Text>Product: {packageData.product.name}</Text>
+              <Text>Current Product: {packageData.product.name}</Text>
               <Text mb="8px">
-                Price: {formatNaira(packageData.product.sellingPrice)}
+                Current Price: {formatNaira(packageData.product.sellingPrice)}
               </Text>
               <form onSubmit={handleSubmit(onSubmit)}>
                 <Grid templateColumns="1fr" gap={4}>
@@ -113,16 +175,18 @@ const ChangeProductModal = ({ isOpen, onClose, onSuccess, packageData }) => {
                       Select new Product
                     </FormLabel>
                     <CustomSelect
+                      isDisabled={loading}
                       options={products.map((product) => ({
                         value: product.id,
-                        label: product.name,
+                        label: `${product.name} - ${formatNaira(product.sellingPrice)}`,
                       }))}
                       onChange={handleProductSelection}
-                      placeholder="Select new product"
+                      placeholder={loading ? "Loading products..." : "Select new product"}
+                      value={selectedProduct}
                     />
                   </FormControl>
                 </Grid>
-                {selectedProduct && (
+                {selectedProduct && productDetails && (
                   <Box mt={4}>
                     {loading ? (
                       <Spinner size="lg" />
@@ -133,15 +197,20 @@ const ChangeProductModal = ({ isOpen, onClose, onSuccess, packageData }) => {
                           flexDirection="column"
                           justifyContent="center"
                           alignItems="center"
+                          p={4}
+                          borderRadius="md"
+                          border="1px"
+                          borderColor="gray.200"
                         >
-                          <Text>{productDetails?.name}</Text>
+                          <Text fontWeight="medium">{productDetails.name}</Text>
                           <Text fontSize="lg" fontWeight="bold">
-                            {selectedProduct &&
-                            productDetails &&
-                            productDetails.sellingPrice
-                              ? formatNaira(productDetails.sellingPrice)
-                              : 'Price not available'}
+                            {formatNaira(productDetails.sellingPrice)}
                           </Text>
+                          {productDetails.description && (
+                            <Text fontSize="sm" color="gray.600" mt={2}>
+                              {productDetails.description}
+                            </Text>
+                          )}
                         </Box>
                       </>
                     )}
@@ -157,6 +226,7 @@ const ChangeProductModal = ({ isOpen, onClose, onSuccess, packageData }) => {
                   mb="24px"
                   type="submit"
                   isLoading={isSubmitting}
+                  loadingText="Changing product..."
                 >
                   Change Product
                 </Button>
