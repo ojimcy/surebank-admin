@@ -1,7 +1,19 @@
 import React, { useEffect } from 'react';
-import { Flex, Icon, Text, useColorModeValue, Box } from '@chakra-ui/react';
+import {
+  Flex,
+  Icon,
+  Text,
+  useColorModeValue,
+  Box,
+  SimpleGrid,
+} from '@chakra-ui/react';
 import { useHistory } from 'react-router-dom';
-import { MdAttachMoney } from 'react-icons/md';
+import {
+  MdAttachMoney,
+  MdTrendingDown,
+  MdAccountBalanceWallet,
+  MdDonutLarge,
+} from 'react-icons/md';
 import axiosService from 'utils/axiosService';
 import { formatNaira } from 'utils/helper';
 import Card from 'components/card/Card';
@@ -22,11 +34,14 @@ export default function ManagerDashboard() {
   const textColor = useColorModeValue('secondaryGray.900', 'white');
   const textColorSecondary = 'secondaryGray.600';
 
-  const staffId = currentUser.id;
+  const staffId = currentUser?.id;
 
-  const { data, isLoading, isError, refetch } = useQuery(
+  const { data, isLoading, isError } = useQuery(
     ['managerDashboardData', staffId],
-    fetchData
+    fetchData,
+    {
+      enabled: !!staffId, // ensure staffId is available before fetching
+    }
   );
 
   useEffect(() => {
@@ -35,15 +50,11 @@ export default function ManagerDashboard() {
     }
   }, [currentUser, history]);
 
-  useEffect(() => {
-    refetch();
-  }, [staffId, refetch]);
-
   if (isLoading) return <LoadingSpinner />;
   if (isError) {
     return (
-      <Box>
-        <Text>Error fetching data</Text>
+      <Box pt={{ base: '10px', md: '80px', xl: '80px' }}>
+        <Text>Error fetching dashboard data. Please try again later.</Text>
       </Box>
     );
   }
@@ -57,208 +68,156 @@ export default function ManagerDashboard() {
     managerWithdrawals,
     managerSbTotal,
     managerDsTotal,
-  } = data;
+  } = data || {};
+
+  const branchStats = [
+    {
+      name: 'Branch Total Contributions',
+      value: formatNaira(contributionsDailyTotal || 0),
+      icon: MdAttachMoney,
+    },
+    {
+      name: 'Branch Total Withdrawal Requests',
+      value: formatNaira(dailySavingsWithdrawals || 0),
+      icon: MdTrendingDown,
+    },
+    {
+      name: 'Branch Total SB Contributions',
+      value: formatNaira(sbDailyTotal || 0),
+      icon: MdAccountBalanceWallet,
+    },
+    {
+      name: 'Branch Total DS Contributions',
+      value: formatNaira(dsDailyTotal || 0),
+      icon: MdDonutLarge,
+    },
+  ];
+
+  const managerStats = [
+    {
+      name: 'My Total Contributions',
+      value: formatNaira(managerTotal || 0),
+      icon: MdAttachMoney,
+    },
+    {
+      name: 'My Total Withdrawal Requests',
+      value: formatNaira(managerWithdrawals || 0),
+      icon: MdTrendingDown,
+    },
+    {
+      name: 'My Total SB Contributions',
+      value: formatNaira(managerSbTotal || 0),
+      icon: MdAccountBalanceWallet,
+    },
+    {
+      name: 'My Total DS Contributions',
+      value: formatNaira(managerDsTotal || 0),
+      icon: MdDonutLarge,
+    },
+  ];
 
   return (
-    <Box>
-      <Box pt={{ base: '10px', md: '80px', xl: '80px' }}>
-        <Flex direction={{ base: 'column', md: 'row' }} mb="20px">
-          <Card>
-            <Text fontWeight="bold" fontSize="xl" mt="10px" color={textColor}>
-              Overview
-            </Text>
-            <Text fontSize="sm" color={textColorSecondary} pb="20px">
-              Overview of your activities
-            </Text>
-            <hr color={textColor} />
-            <Flex
-              direction={{ base: 'column', md: 'row' }}
-              justifyContent="space-between"
-              mt="20px"
-            >
-              <MiniStatistics
-                startContent={
-                  <IconBox
-                    w="56px"
-                    h="56px"
-                    bg={boxBg}
-                    icon={
-                      <Icon
-                        w="32px"
-                        h="32px"
-                        as={MdAttachMoney}
-                        color={brandColor}
-                      />
-                    }
-                  />
-                }
-                name="Branch Total Contributions"
-                value={formatNaira(contributionsDailyTotal)}
-              />
+    <Box pt={{ base: '10px', md: '80px', xl: '80px' }}>
+      <Flex
+        justify="space-between"
+        alignItems="center"
+        mb="20px"
+        flexDirection={{ base: 'column', md: 'row' }}
+      >
+        <Box>
+          <Text fontWeight="bold" fontSize="2xl" color={textColor}>
+            Manager's Dashboard
+          </Text>
+          <Text fontSize="md" color={textColorSecondary}>
+            Welcome, {currentUser?.firstName}! Here's your daily summary.
+          </Text>
+        </Box>
+        <ActionButton
+          to="/admin/accounting/expenditure"
+          icon={FaMoneyBillWave}
+          label="Expenditure"
+        />
+      </Flex>
 
-              <MiniStatistics
-                startContent={
-                  <IconBox
-                    w="56px"
-                    h="56px"
-                    bg={boxBg}
-                    icon={
-                      <Icon
-                        w="32px"
-                        h="32px"
-                        as={MdAttachMoney}
-                        color={brandColor}
-                      />
-                    }
-                  />
-                }
-                name="Branch Total Withdrawal Requests"
-                value={formatNaira(dailySavingsWithdrawals || 0)}
-              />
-              <MiniStatistics
-                startContent={
-                  <IconBox
-                    w="56px"
-                    h="56px"
-                    bg={boxBg}
-                    icon={
-                      <Icon
-                        w="32px"
-                        h="32px"
-                        as={MdAttachMoney}
-                        color={brandColor}
-                      />
-                    }
-                  />
-                }
-                name="Branch Total SB Contributions"
-                value={formatNaira(sbDailyTotal)}
-              />
-
-              <MiniStatistics
-                startContent={
-                  <IconBox
-                    w="56px"
-                    h="56px"
-                    bg={boxBg}
-                    icon={
-                      <Icon
-                        w="32px"
-                        h="32px"
-                        as={MdAttachMoney}
-                        color={brandColor}
-                      />
-                    }
-                  />
-                }
-                name="Branch Total DS Contributions"
-                value={formatNaira(dsDailyTotal || 0)}
-              />
-            </Flex>
-
-            <Flex
-              direction={{ base: 'column', md: 'row' }}
-              justifyContent="space-between"
-              mt="20px"
-            >
-              <MiniStatistics
-                startContent={
-                  <IconBox
-                    w="56px"
-                    h="56px"
-                    bg={boxBg}
-                    icon={
-                      <Icon
-                        w="32px"
-                        h="32px"
-                        as={MdAttachMoney}
-                        color={brandColor}
-                      />
-                    }
-                  />
-                }
-                name="My Total Contributions"
-                value={formatNaira(managerTotal)}
-              />
-
-              <MiniStatistics
-                startContent={
-                  <IconBox
-                    w="56px"
-                    h="56px"
-                    bg={boxBg}
-                    icon={
-                      <Icon
-                        w="32px"
-                        h="32px"
-                        as={MdAttachMoney}
-                        color={brandColor}
-                      />
-                    }
-                  />
-                }
-                name="My Total Withdrawal Requests"
-                value={formatNaira(managerWithdrawals || 0)}
-              />
-              <MiniStatistics
-                startContent={
-                  <IconBox
-                    w="56px"
-                    h="56px"
-                    bg={boxBg}
-                    icon={
-                      <Icon
-                        w="32px"
-                        h="32px"
-                        as={MdAttachMoney}
-                        color={brandColor}
-                      />
-                    }
-                  />
-                }
-                name="My Total SB Contributions"
-                value={formatNaira(managerSbTotal)}
-              />
-
-              <MiniStatistics
-                startContent={
-                  <IconBox
-                    w="56px"
-                    h="56px"
-                    bg={boxBg}
-                    icon={
-                      <Icon
-                        w="32px"
-                        h="32px"
-                        as={MdAttachMoney}
-                        color={brandColor}
-                      />
-                    }
-                  />
-                }
-                name="My Total DS Contributions"
-                value={formatNaira(managerDsTotal || 0)}
-              />
-            </Flex>
-          </Card>
-        </Flex>
-      </Box>
-      <Box>
-        <Flex
-          justify="end"
-          alignItems="center"
-          mb="20px"
-          flexDirection={{ base: 'column', md: 'row' }}
+      <Card mb="20px">
+        <Text fontWeight="bold" fontSize="xl" color={textColor}>
+          Branch Overview
+        </Text>
+        <Text fontSize="sm" color={textColorSecondary} pb="10px">
+          Today's summary for your branch
+        </Text>
+        <hr />
+        <SimpleGrid
+          columns={{ base: 1, md: 2, lg: 4 }}
+          gap="20px"
+          mt="20px"
         >
-          <ActionButton
-            to="/admin/accounting/expenditure"
-            icon={FaMoneyBillWave}
-            label="Expenditure"
-          />
-        </Flex>
-      </Box>
+          {branchStats.map((stat, index) => (
+            <MiniStatistics
+              key={index}
+              startContent={
+                <IconBox
+                  w="56px"
+                  h="56px"
+                  bg={boxBg}
+                  icon={
+                    <Icon
+                      w="32px"
+                      h="32px"
+                      as={stat.icon}
+                      color={brandColor}
+                    />
+                  }
+                />
+              }
+              name={stat.name}
+              value={stat.value}
+            />
+          ))}
+        </SimpleGrid>
+      </Card>
 
-      <BranchWithdrawals staffInfo={staffId} />
+      <Card>
+        <Text fontWeight="bold" fontSize="xl" color={textColor}>
+          My Performance
+        </Text>
+        <Text fontSize="sm" color={textColorSecondary} pb="10px">
+          Today's summary of your activities
+        </Text>
+        <hr />
+        <SimpleGrid
+          columns={{ base: 1, md: 2, lg: 4 }}
+          gap="20px"
+          mt="20px"
+        >
+          {managerStats.map((stat, index) => (
+            <MiniStatistics
+              key={index}
+              startContent={
+                <IconBox
+                  w="56px"
+                  h="56px"
+                  bg={boxBg}
+                  icon={
+                    <Icon
+                      w="32px"
+                      h="32px"
+                      as={stat.icon}
+                      color={brandColor}
+                    />
+                  }
+                />
+              }
+              name={stat.name}
+              value={stat.value}
+            />
+          ))}
+        </SimpleGrid>
+      </Card>
+
+      <Box mt="20px">
+        <BranchWithdrawals staffInfo={staffId} />
+      </Box>
     </Box>
   );
 }
