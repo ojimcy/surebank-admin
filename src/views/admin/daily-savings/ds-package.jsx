@@ -181,6 +181,7 @@ const ViewCustomerDs = () => {
                 borderRadius="lg"
                 boxShadow="sm"
                 border="1px"
+                mb={6}
                 borderColor={borderColor}
                 overflow="hidden"
               >

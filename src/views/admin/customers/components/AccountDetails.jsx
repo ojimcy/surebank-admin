@@ -16,7 +16,7 @@ const AccountDetails = ({ customerData }) => {
   // Function to handle copy to clipboard
   const handleCopyToClipboard = useCallback(() => {
     const textField = document.createElement('textarea');
-    textField.innerText = customerData.accountNumber;
+    textField.innerText = customerData?.accountNumber;
     document.body.appendChild(textField);
     textField.select();
     document.execCommand('copy');
@@ -24,7 +24,7 @@ const AccountDetails = ({ customerData }) => {
 
     setIsCopied(true);
     setTimeout(() => setIsCopied(false), 1500);
-  }, [customerData.accountNumber]);
+  }, [customerData?.accountNumber]);
 
   const handleShowUserDetails = () => {
     setShowUserDetails((prevShowUserDetails) => !prevShowUserDetails);
@@ -49,7 +49,7 @@ const AccountDetails = ({ customerData }) => {
                   Account Name: {customerData?.firstName} {customerData?.lastName}
                 </Text>
                 <Text fontSize={{ base: 'md', md: 'lg' }}>
-                  Account Number: {customerData.accountNumber}
+                  Account Number: {customerData?.accountNumber}
                   <Button size="sm" onClick={handleCopyToClipboard}>
                     {isCopied ? 'Copied!' : <FaCopy />}
                   </Button>
