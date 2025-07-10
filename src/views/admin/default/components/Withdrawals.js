@@ -136,11 +136,15 @@ export default function Withdrawals() {
       const { pageIndex, pageSize } = pagination;
 
       const endpoints = [
-        `/transactions/withdraw/cash?narration=Request Cash SB&limit=${pageSize}&page=${
-          pageIndex + 1
+        `/transactions/withdraw/cash?narration=Request Cash SB&limit=${pageSize}&page=${pageIndex + 1
         }`,
-        `/transactions/withdraw/cash?narration=Request Cash&limit=${pageSize}&page=${
-          pageIndex + 1
+        `/transactions/withdraw/cash?narration=Request Cash&limit=${pageSize}&page=${pageIndex + 1
+        }`,
+        `/transactions/withdraw/cash?narration=Self withdrawal request - ds&limit=${pageSize}&page=${pageIndex + 1
+        }`,
+        `/transactions/withdraw/cash?narration=Self withdrawal request - sb&limit=${pageSize}&page=${pageIndex + 1
+        }`,
+        `/transactions/withdraw/cash?narration=Self withdrawal request - ibs&limit=${pageSize}&page=${pageIndex + 1
         }`,
       ];
 
@@ -214,7 +218,7 @@ export default function Withdrawals() {
   ]);
 
   useEffect(() => {
-    let filteredData = withdrawals;
+    let filteredData = [...withdrawals];
 
     // Apply search filter
     if (searchTerm) {
@@ -262,6 +266,9 @@ export default function Withdrawals() {
         (item) => item.status === selectedStatus
       );
     }
+
+    // Sort by date descending
+    filteredData.sort((a, b) => b.date - a.date);
 
     setFilteredWithdrawals(filteredData);
   }, [withdrawals, timeRange, selectedStatus, startDate, endDate, searchTerm]);
@@ -540,24 +547,24 @@ export default function Withdrawals() {
             {/* Branch Filter */}
             {(currentUser.role === 'superAdmin' ||
               currentUser.role === 'admin') && (
-              <Select
-                value={branch}
-                onChange={handleBranchChange}
-                borderRadius="lg"
-                bg={filterBg}
-                border="1px"
-                borderColor={borderColor}
-                _focus={{ borderColor: 'blue.300', bg: cardBg }}
-              >
-                <option value="">All Branches</option>
-                {branches &&
-                  branches.map((branch) => (
-                    <option key={branch.id} value={branch.id}>
-                      {branch.name && toSentenceCase(branch?.name)}
-                    </option>
-                  ))}
-              </Select>
-            )}
+                <Select
+                  value={branch}
+                  onChange={handleBranchChange}
+                  borderRadius="lg"
+                  bg={filterBg}
+                  border="1px"
+                  borderColor={borderColor}
+                  _focus={{ borderColor: 'blue.300', bg: cardBg }}
+                >
+                  <option value="">All Branches</option>
+                  {branches &&
+                    branches.map((branch) => (
+                      <option key={branch.id} value={branch.id}>
+                        {branch.name && toSentenceCase(branch?.name)}
+                      </option>
+                    ))}
+                </Select>
+              )}
 
             {/* Status Filter */}
             <Select
@@ -630,9 +637,9 @@ export default function Withdrawals() {
                 color={subtextColor}
               >
                 {searchTerm ||
-                selectedStatus !== 'all' ||
-                timeRange !== 'all' ||
-                branch
+                  selectedStatus !== 'all' ||
+                  timeRange !== 'all' ||
+                  branch
                   ? 'Try adjusting your filters to see more results.'
                   : 'There are no withdrawal requests to display at this time.'}
               </AlertDescription>
