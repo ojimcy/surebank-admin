@@ -65,7 +65,9 @@ const hiddenRoutes = [
   '/admin/orders/placeorder',
   '/admin/orders/:id',
   '/admin/branch/dashboard/:id',
-  '/admin/kyc/details/:kycId'
+  '/admin/kyc/details/:kycId',
+  '/admin/schedules/:scheduleId',
+  '/admin/schedules/analytics'
 ];
 
 export function SidebarLinks(props) {

@@ -15,8 +15,10 @@ import {
   FaShoppingBag,
   FaShoppingCart,
   FaSms,
+  FaUserCheck,
 } from 'react-icons/fa';
 import { AiOutlineUsergroupAdd } from 'react-icons/ai';
+import { MdSchedule } from 'react-icons/md';
 
 // Admin Imports
 import MainDashboard from 'views/admin/default';
@@ -86,6 +88,11 @@ import PrivacyPolicy from 'views/privacy';
 import TermsOfService from 'views/terms';
 import Kyc from 'views/admin/kyc';
 import KYCDetails from 'views/admin/kyc/details';
+
+// Schedule Imports
+import Schedules from 'views/admin/schedules';
+import ScheduleDetail from 'views/admin/schedules/ScheduleDetail';
+import ScheduleAnalytics from 'views/admin/schedules/Analytics';
 
 const routes = [
   {
@@ -609,7 +616,7 @@ const routes = [
     name: 'KYC',
     layout: '/admin',
     path: '/kyc/details/:kycId',
-    icon: <Icon as={FaSms} width="20px" height="20px" color="inherit" />,
+    icon: <Icon as={FaUserCheck} width="20px" height="20px" color="inherit" />,
     roles: ['superAdmin', 'admin', 'manager'],
     component: KYCDetails,
   },
@@ -617,9 +624,33 @@ const routes = [
     name: 'KYC',
     layout: '/admin',
     path: '/kyc',
-    icon: <Icon as={FaSms} width="20px" height="20px" color="inherit" />,
+    icon: <Icon as={FaUserCheck} width="20px" height="20px" color="inherit" />,
     roles: ['superAdmin', 'admin', 'manager'],
     component: Kyc,
+  },
+
+  // Schedule routes
+  {
+    name: 'Schedules',
+    layout: '/admin',
+    path: '/schedules',
+    icon: <Icon as={MdSchedule} width="20px" height="20px" color="inherit" />,
+    roles: ['superAdmin', 'admin', 'manager'],
+    component: Schedules,
+  },
+  {
+    name: 'Schedule Detail',
+    layout: '/admin',
+    path: '/schedules/:scheduleId',
+    roles: ['superAdmin', 'admin', 'manager'],
+    component: ScheduleDetail,
+  },
+  {
+    name: 'Schedule Analytics',
+    layout: '/admin',
+    path: '/schedules/analytics',
+    roles: ['superAdmin', 'admin', 'manager'],
+    component: ScheduleAnalytics,
   },
 ];
 
