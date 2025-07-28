@@ -175,13 +175,6 @@ const Schedules = () => {
         ),
       },
       {
-        Header: 'Schedule Name',
-        accessor: 'name',
-        Cell: ({ value }) => (
-          <Text fontWeight="semibold">{value}</Text>
-        ),
-      },
-      {
         Header: 'Amount',
         accessor: 'amount',
         Cell: ({ value }) => (
