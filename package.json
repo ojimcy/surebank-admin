@@ -53,6 +53,7 @@
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
     "deploy": "aws s3 sync build/ s3://surebankstores.ng",
+    "deploy:admin": "npm run build &&aws s3 sync build/ s3://admin.surebankstores.ng",
     "sitemap": "babel-node ./sitemap-builder.js"
   },
   "resolutions": {

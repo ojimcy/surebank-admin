@@ -60,7 +60,7 @@ const Schedules = () => {
       const response = await axiosService.get('/scheduled-contributions/admin/all');
       console.log('response', response);
       
-      setSchedules(response.data.results || []);
+      setSchedules(response.data.data || []);
     } catch (error) {
       toast({
         title: 'Error',
@@ -367,7 +367,7 @@ const Schedules = () => {
                   {selectedSchedule.status === 'active' && (
                     <Button
                       colorScheme="yellow"
-                      onClick={() => handleScheduleAction(selectedSchedule.id, 'pause')}
+                      onClick={() => handleScheduleAction(selectedSchedule._id || selectedSchedule.id, 'pause')}
                       isLoading={actionLoading}
                     >
                       Pause Schedule
@@ -376,7 +376,7 @@ const Schedules = () => {
                   {selectedSchedule.status === 'paused' && (
                     <Button
                       colorScheme="green"
-                      onClick={() => handleScheduleAction(selectedSchedule.id, 'resume')}
+                      onClick={() => handleScheduleAction(selectedSchedule._id || selectedSchedule.id, 'resume')}
                       isLoading={actionLoading}
                     >
                       Resume Schedule
@@ -385,7 +385,7 @@ const Schedules = () => {
                   {(selectedSchedule.status === 'active' || selectedSchedule.status === 'paused') && (
                     <Button
                       colorScheme="red"
-                      onClick={() => handleScheduleAction(selectedSchedule.id, 'cancel')}
+                      onClick={() => handleScheduleAction(selectedSchedule._id || selectedSchedule.id, 'cancel')}
                       isLoading={actionLoading}
                     >
                       Cancel Schedule
