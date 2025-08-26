@@ -1,5 +1,6 @@
 export const formatDate = (timestamp) => {
-  const date = new Date(parseInt(timestamp));
+  // Handle both ISO strings and numeric timestamps
+  const date = new Date(timestamp);
   const options = {
     year: 'numeric',
     month: 'numeric',

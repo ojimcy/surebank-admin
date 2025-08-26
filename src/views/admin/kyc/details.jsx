@@ -46,7 +46,7 @@ function KYCDetails() {
     const [actionType, setActionType] = useState('');
     const [remarks, setRemarks] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [imageLoading, setImageLoading] = useState({});
+    const [imageLoading, setImageLoading] = useState({ idImage: true, selfieImage: true });
 
     const { isOpen, onOpen, onClose } = useDisclosure();
 
