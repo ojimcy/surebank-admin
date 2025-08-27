@@ -46,13 +46,13 @@ export default function UserRepsDashboard() {
   } = data;
 
   return (
-    <Box pt={{ base: '40px', md: '80px', xl: '80px' }}>
+    <Box pt={{ base: '20px', md: '40px', xl: '40px' }}>
       <Flex direction={{ base: 'column', md: 'row' }} mb="20px">
         <Card>
-          <Text fontWeight="bold" fontSize="xl" mt="10px" color={textColor}>
+          <Text fontWeight="bold" fontSize="lg" mt="10px" color={textColor}>
             Overview
           </Text>
-          <Text fontSize="sm" color={textColorSecondary} pb="20px">
+          <Text fontSize="xs" color={textColorSecondary} pb="20px">
             Overview of your activities
           </Text>
           <hr color={textColor} />

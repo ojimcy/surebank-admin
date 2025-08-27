@@ -117,7 +117,7 @@ export default function ManagerDashboard() {
   ];
 
   return (
-    <Box pt={{ base: '10px', md: '80px', xl: '80px' }}>
+    <Box pt={{ base: '10px', md: '40px', xl: '40px' }}>
       <Flex
         justify="space-between"
         alignItems="center"
@@ -125,10 +125,10 @@ export default function ManagerDashboard() {
         flexDirection={{ base: 'column', md: 'row' }}
       >
         <Box>
-          <Text fontWeight="bold" fontSize="2xl" color={textColor}>
+          <Text fontWeight="bold" fontSize="xl" color={textColor}>
             Manager's Dashboard
           </Text>
-          <Text fontSize="md" color={textColorSecondary}>
+          <Text fontSize="sm" color={textColorSecondary}>
             Welcome, {currentUser?.firstName}! Here's your daily summary.
           </Text>
         </Box>
@@ -140,10 +140,10 @@ export default function ManagerDashboard() {
       </Flex>
 
       <Card mb="20px">
-        <Text fontWeight="bold" fontSize="xl" color={textColor}>
+        <Text fontWeight="bold" fontSize="lg" color={textColor}>
           Branch Overview
         </Text>
-        <Text fontSize="sm" color={textColorSecondary} pb="10px">
+        <Text fontSize="xs" color={textColorSecondary} pb="10px">
           Today's summary for your branch
         </Text>
         <hr />
@@ -178,10 +178,10 @@ export default function ManagerDashboard() {
       </Card>
 
       <Card>
-        <Text fontWeight="bold" fontSize="xl" color={textColor}>
+        <Text fontWeight="bold" fontSize="lg" color={textColor}>
           My Performance
         </Text>
-        <Text fontSize="sm" color={textColorSecondary} pb="10px">
+        <Text fontSize="xs" color={textColorSecondary} pb="10px">
           Today's summary of your activities
         </Text>
         <hr />

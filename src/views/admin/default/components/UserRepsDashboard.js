@@ -60,14 +60,14 @@ export default function UserRepsDashboard() {
         templateColumns={{ base: '1fr', md: '1fr 1fr' }}
         gap={6}
         mb="20px"
-        mt="40px"
+        mt="20px"
       >
         {/* Left Card */}
         <Card>
-          <Text fontWeight="bold" fontSize="xl" mt="10px" color={textColor}>
+          <Text fontWeight="bold" fontSize="lg" mt="10px" color={textColor}>
             Overview
           </Text>
-          <Text fontSize="sm" color={textColorSecondary} pb="20px">
+          <Text fontSize="xs" color={textColorSecondary} pb="20px">
             Overview of your activities
           </Text>
           <hr color={textColor} />
@@ -160,10 +160,10 @@ export default function UserRepsDashboard() {
 
         {/* Right Card */}
         <Card>
-          <Text fontWeight="bold" fontSize="xl" mt="10px">
+          <Text fontWeight="bold" fontSize="lg" mt="10px">
             Package Reports
           </Text>
-          <Text fontSize="sm" color="gray.500" pb="20px">
+          <Text fontSize="xs" color="gray.500" pb="20px">
             Details of package reports
           </Text>
           <hr />

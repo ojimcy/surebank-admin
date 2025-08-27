@@ -216,13 +216,13 @@ export default function SuperAdminDashboard() {
 
   return (
     <Box minHeight="100vh">
-      <Container maxW="7xl" py={{ base: 2, md: 4 }} px={{ base: 2, md: 6 }}>
+      <Container maxW="7xl" py={{ base: 2, md: 3 }} px={{ base: 2, md: 4 }}>
         {/* Header Section */}
-        <Box mb={{ base: 6, md: 10 }}>
+        <Box mb={{ base: 4, md: 6 }}>
           <VStack align="start" spacing={{ base: 2, md: 3 }}>
             <HStack spacing={{ base: 2, md: 3 }} flexWrap="wrap">
               <Text
-                fontSize={{ base: '2xl', md: '3xl', lg: '4xl' }}
+                fontSize={{ base: 'xl', md: '2xl', lg: '3xl' }}
                 fontWeight="700"
                 color={textColor}
                 letterSpacing="-0.025em"
@@ -231,10 +231,10 @@ export default function SuperAdminDashboard() {
               </Text>
               <Badge
                 colorScheme="green"
-                px={3}
-                py={1}
+                px={2}
+                py={0.5}
                 borderRadius="full"
-                fontSize="sm"
+                fontSize="xs"
                 fontWeight="600"
                 textTransform="none"
               >
@@ -243,7 +243,7 @@ export default function SuperAdminDashboard() {
             </HStack>
             <Text
               color={subtextColor}
-              fontSize={{ base: 'sm', md: 'md', lg: 'lg' }}
+              fontSize={{ base: 'xs', md: 'sm' }}
               fontWeight="400"
             >
               Comprehensive overview of all financial operations and performance
@@ -253,9 +253,9 @@ export default function SuperAdminDashboard() {
         </Box>
 
         {/* Main Financial Overview */}
-        <Box mb={{ base: 6, md: 8 }}>
+        <Box mb={{ base: 4, md: 6 }}>
           <Text
-            fontSize={{ base: 'lg', md: 'xl', lg: '2xl' }}
+            fontSize={{ base: 'md', md: 'lg', lg: 'xl' }}
             fontWeight="600"
             color={textColor}
             mb={{ base: 3, md: 4 }}
@@ -264,7 +264,7 @@ export default function SuperAdminDashboard() {
           </Text>
           <SimpleGrid
             columns={{ base: 1, sm: 2, lg: 4 }}
-            gap={{ base: 3, md: 4, lg: 6 }}
+            gap={{ base: 2, md: 3, lg: 4 }}
           >
             {mainStatsData.map((stat, index) => (
               <Box
@@ -315,7 +315,7 @@ export default function SuperAdminDashboard() {
                   </Text>
                   <Text
                     color={textColor}
-                    fontSize={{ base: 'xl', md: '2xl', lg: '3xl' }}
+                    fontSize={{ base: 'lg', md: 'xl', lg: '2xl' }}
                     fontWeight="700"
                     lineHeight="1"
                   >
@@ -335,9 +335,9 @@ export default function SuperAdminDashboard() {
         </Box>
 
         {/* Today's Performance */}
-        <Box mb={{ base: 6, md: 8 }}>
+        <Box mb={{ base: 4, md: 6 }}>
           <Text
-            fontSize={{ base: 'lg', md: 'xl', lg: '2xl' }}
+            fontSize={{ base: 'md', md: 'lg', lg: 'xl' }}
             fontWeight="600"
             color={textColor}
             mb={{ base: 3, md: 4 }}
@@ -346,7 +346,7 @@ export default function SuperAdminDashboard() {
           </Text>
           <SimpleGrid
             columns={{ base: 1, sm: 2, lg: 4 }}
-            gap={{ base: 3, md: 4, lg: 6 }}
+            gap={{ base: 2, md: 3, lg: 4 }}
           >
             {dailyStatsData.map((stat, index) => (
               <Box
@@ -408,7 +408,7 @@ export default function SuperAdminDashboard() {
                   </Text>
                   <Text
                     color={textColor}
-                    fontSize={{ base: 'lg', md: 'xl', lg: '2xl' }}
+                    fontSize={{ base: 'md', md: 'lg', lg: 'xl' }}
                     fontWeight="700"
                   >
                     {stat.value}
@@ -420,9 +420,9 @@ export default function SuperAdminDashboard() {
         </Box>
 
         {/* Active Packages */}
-        <Box mb={{ base: 6, md: 8 }}>
+        <Box mb={{ base: 4, md: 6 }}>
           <Text
-            fontSize={{ base: 'lg', md: 'xl', lg: '2xl' }}
+            fontSize={{ base: 'md', md: 'lg', lg: 'xl' }}
             fontWeight="600"
             color={textColor}
             mb={{ base: 3, md: 4 }}
@@ -431,7 +431,7 @@ export default function SuperAdminDashboard() {
           </Text>
           <SimpleGrid
             columns={{ base: 1, sm: 2, md: 3 }}
-            gap={{ base: 3, md: 4, lg: 6 }}
+            gap={{ base: 2, md: 3, lg: 4 }}
           >
             {packageStatsData.map((stat, index) => (
               <Box
@@ -482,7 +482,7 @@ export default function SuperAdminDashboard() {
                   </Text>
                   <Text
                     color={textColor}
-                    fontSize={{ base: 'xl', md: '2xl', lg: '3xl' }}
+                    fontSize={{ base: 'lg', md: 'xl', lg: '2xl' }}
                     fontWeight="700"
                   >
                     {stat.value}
@@ -494,9 +494,9 @@ export default function SuperAdminDashboard() {
         </Box>
 
         {/* IBS Details */}
-        <Box mb={{ base: 6, md: 8 }}>
+        <Box mb={{ base: 4, md: 6 }}>
           <Text
-            fontSize={{ base: 'lg', md: 'xl', lg: '2xl' }}
+            fontSize={{ base: 'md', md: 'lg', lg: 'xl' }}
             fontWeight="600"
             color={textColor}
             mb={{ base: 3, md: 4 }}
@@ -505,7 +505,7 @@ export default function SuperAdminDashboard() {
           </Text>
           <SimpleGrid
             columns={{ base: 1, sm: 2, md: 3 }}
-            gap={{ base: 3, md: 4, lg: 6 }}
+            gap={{ base: 2, md: 3, lg: 4 }}
           >
             {ibsStatsData.map((stat, index) => (
               <Box
@@ -556,7 +556,7 @@ export default function SuperAdminDashboard() {
                   </Text>
                   <Text
                     color={textColor}
-                    fontSize={{ base: 'lg', md: 'xl', lg: '2xl' }}
+                    fontSize={{ base: 'md', md: 'lg', lg: 'xl' }}
                     fontWeight="700"
                   >
                     {stat.value}
@@ -568,9 +568,9 @@ export default function SuperAdminDashboard() {
         </Box>
 
         {/* Quick Actions */}
-        <Box mb={{ base: 6, md: 8 }}>
+        <Box mb={{ base: 4, md: 6 }}>
           <Text
-            fontSize={{ base: 'lg', md: 'xl', lg: '2xl' }}
+            fontSize={{ base: 'md', md: 'lg', lg: 'xl' }}
             fontWeight="600"
             color={textColor}
             mb={{ base: 3, md: 4 }}
@@ -579,7 +579,7 @@ export default function SuperAdminDashboard() {
           </Text>
           <SimpleGrid
             columns={{ base: 1, md: 2 }}
-            gap={{ base: 3, md: 4, lg: 6 }}
+            gap={{ base: 2, md: 3, lg: 4 }}
           >
             <Button
               size={{ base: 'md', md: 'lg' }}
@@ -621,7 +621,7 @@ export default function SuperAdminDashboard() {
                   />
                 </Box>
                 <Text
-                  fontSize={{ base: 'sm', md: 'lg' }}
+                  fontSize={{ base: 'sm', md: 'md' }}
                   fontWeight="600"
                   color={textColor}
                 >
@@ -676,7 +676,7 @@ export default function SuperAdminDashboard() {
                   />
                 </Box>
                 <Text
-                  fontSize={{ base: 'sm', md: 'lg' }}
+                  fontSize={{ base: 'sm', md: 'md' }}
                   fontWeight="600"
                   color={textColor}
                 >
@@ -708,7 +708,7 @@ export default function SuperAdminDashboard() {
             borderColor={borderColor}
           >
             <Text
-              fontSize={{ base: 'lg', md: 'xl' }}
+              fontSize={{ base: 'md', md: 'lg' }}
               fontWeight="600"
               color={textColor}
             >
