@@ -29,14 +29,32 @@ export default function UserRepsDashboard() {
 
   const { currentUser } = useAuth();
   const staffId = currentUser.id;
-  const { data, isLoading, isError } = useQuery(
+  const { data, isLoading, isError, error } = useQuery(
     ['userRepsDashboardData', staffId],
-    fetchData
+    fetchData,
+    {
+      retry: (failureCount, error) => {
+        // Don't retry on auth errors
+        if (error?.response?.status === 401 || error?.response?.status === 403) {
+          return false;
+        }
+        // Retry other errors max 2 times
+        return failureCount < 2;
+      },
+      onError: (error) => {
+        // Only show toast for non-auth errors
+        if (error?.response?.status !== 401 && error?.response?.status !== 403) {
+          toast.error('An error occurred while fetching data.');
+        }
+      },
+    }
   );
 
   if (isLoading) return <LoadingSpinner />;
+  if (isError && error?.response?.status === 401) {
+    return null; // Auth error handled by interceptor
+  }
   if (isError) {
-    toast.error('An error occurred while fetching data.');
     return null;
   }
 

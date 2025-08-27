@@ -59,19 +59,35 @@ export default function SuperAdminDashboard() {
     }
   }, [currentUser, history]);
 
-  const { data, isLoading, isError } = useQuery(
+  const { data, isLoading, isError, error } = useQuery(
     ['dashboardSummary', currentUser?.role, currentUser?.branchId],
     () => fetchDashboardSummary(currentUser?.branchId),
     {
       enabled: !!currentUser,
       staleTime: 60000,
       refetchInterval: 60000,
+      retry: (failureCount, error) => {
+        // Don't retry on auth errors
+        if (error?.response?.status === 401 || error?.response?.status === 403) {
+          return false;
+        }
+        // Retry other errors max 2 times
+        return failureCount < 2;
+      },
+      onError: (error) => {
+        // Only show toast for non-auth errors
+        if (error?.response?.status !== 401 && error?.response?.status !== 403) {
+          toast.error('An error occurred while fetching dashboard data.');
+        }
+      },
     }
   );
 
   if (isLoading) return <LoadingSpinner />;
+  if (isError && error?.response?.status === 401) {
+    return null; // Auth error handled by interceptor
+  }
   if (isError) {
-    toast.error('An error occurred while fetching dashboard data.');
     return null;
   }
 
@@ -133,7 +149,6 @@ export default function SuperAdminDashboard() {
       value: formatNaira(contributionsDailyTotal),
       icon: MdTrendingUp,
       iconColor: 'green.500',
-      change: '+8.2%',
       changeType: 'positive',
     },
     {
@@ -141,7 +156,6 @@ export default function SuperAdminDashboard() {
       value: formatNaira(dailySavingsWithdrawals || 0),
       icon: MdAttachMoney,
       iconColor: 'red.500',
-      change: '-2.1%',
       changeType: 'negative',
     },
     {
@@ -149,7 +163,6 @@ export default function SuperAdminDashboard() {
       value: formatNaira(dsDailyTotal),
       icon: FaPiggyBank,
       iconColor: 'purple.500',
-      change: '+5.4%',
       changeType: 'positive',
     },
     {
@@ -157,7 +170,6 @@ export default function SuperAdminDashboard() {
       value: formatNaira(sbDailyTotal),
       icon: FaWallet,
       iconColor: 'blue.500',
-      change: '+3.7%',
       changeType: 'positive',
     },
   ];
@@ -227,19 +239,8 @@ export default function SuperAdminDashboard() {
                 color={textColor}
                 letterSpacing="-0.025em"
               >
-                Super Admin Dashboard
+                Dashboard
               </Text>
-              <Badge
-                colorScheme="green"
-                px={2}
-                py={0.5}
-                borderRadius="full"
-                fontSize="xs"
-                fontWeight="600"
-                textTransform="none"
-              >
-                Live
-              </Badge>
             </HStack>
             <Text
               color={subtextColor}
@@ -376,27 +377,6 @@ export default function SuperAdminDashboard() {
                     h={{ base: '16px', md: '20px' }}
                     color={stat.iconColor}
                   />
-                  <HStack spacing={1}>
-                    <Icon
-                      as={
-                        stat.changeType === 'positive' ? FaArrowUp : FaArrowDown
-                      }
-                      w="10px"
-                      h="10px"
-                      color={
-                        stat.changeType === 'positive' ? 'green.500' : 'red.500'
-                      }
-                    />
-                    <Text
-                      fontSize="xs"
-                      fontWeight="600"
-                      color={
-                        stat.changeType === 'positive' ? 'green.500' : 'red.500'
-                      }
-                    >
-                      {stat.change}
-                    </Text>
-                  </HStack>
                 </Flex>
                 <VStack align="start" spacing={1}>
                   <Text

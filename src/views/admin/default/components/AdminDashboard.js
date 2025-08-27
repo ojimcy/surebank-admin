@@ -28,13 +28,29 @@ export default function UserRepsDashboard() {
     }
   }, [currentUser, history]);
 
-  const { data, isLoading, isError } = useQuery('dashboardData', fetchData, {
+  const { data, isLoading, isError, error } = useQuery('dashboardData', fetchData, {
     staleTime: 60000, // Refresh data every 60 seconds
+    retry: (failureCount, error) => {
+      // Don't retry on auth errors
+      if (error?.response?.status === 401 || error?.response?.status === 403) {
+        return false;
+      }
+      // Retry other errors max 2 times
+      return failureCount < 2;
+    },
+    onError: (error) => {
+      // Only show error message for non-auth errors
+      if (error?.response?.status !== 401 && error?.response?.status !== 403) {
+        console.error('An error occurred while fetching data.');
+      }
+    },
   });
 
   if (isLoading) return <LoadingSpinner />;
+  if (isError && error?.response?.status === 401) {
+    return null; // Auth error handled by interceptor
+  }
   if (isError) {
-    console.error('An error occurred while fetching data.');
     return null;
   }
 

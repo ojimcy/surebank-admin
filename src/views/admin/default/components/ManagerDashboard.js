@@ -36,11 +36,25 @@ export default function ManagerDashboard() {
 
   const staffId = currentUser?.id;
 
-  const { data, isLoading, isError } = useQuery(
+  const { data, isLoading, isError, error } = useQuery(
     ['managerDashboardData', staffId],
     fetchData,
     {
       enabled: !!staffId, // ensure staffId is available before fetching
+      retry: (failureCount, error) => {
+        // Don't retry on auth errors
+        if (error?.response?.status === 401 || error?.response?.status === 403) {
+          return false;
+        }
+        // Retry other errors max 2 times
+        return failureCount < 2;
+      },
+      onError: (error) => {
+        // Only show error message for non-auth errors
+        if (error?.response?.status !== 401 && error?.response?.status !== 403) {
+          console.error('Error fetching manager dashboard data:', error);
+        }
+      },
     }
   );
 
@@ -51,9 +65,12 @@ export default function ManagerDashboard() {
   }, [currentUser, history]);
 
   if (isLoading) return <LoadingSpinner />;
+  if (isError && error?.response?.status === 401) {
+    return null; // Auth error handled by interceptor
+  }
   if (isError) {
     return (
-      <Box pt={{ base: '10px', md: '80px', xl: '80px' }}>
+      <Box pt={{ base: '10px', md: '40px', xl: '40px' }}>
         <Text>Error fetching dashboard data. Please try again later.</Text>
       </Box>
     );
