@@ -234,7 +234,7 @@ export default function Catalogue() {
             flexShrink={0}
           />
           <VStack align="start" spacing={{ base: 0, md: 1 }} flex="1" minW="0">
-            <NavLink to={`/admin/products/catalogue-details/${row.id}`}>
+            <NavLink to={`/admin/products/catalogue-details/${row._id || row.id}`}>
               <Text
                 fontWeight="bold"
                 fontSize={{ base: 'sm', md: 'md' }}
@@ -358,7 +358,7 @@ export default function Catalogue() {
         <VStack spacing={{ base: 1, md: 2 }}>
           <HStack spacing={{ base: 0.5, md: 1 }}>
             <Tooltip label="View Details" placement="top">
-              <NavLink to={`/admin/products/catalogue-details/${row.id}`}>
+              <NavLink to={`/admin/products/catalogue-details/${row._id || row.id}`}>
                 <IconButton
                   aria-label="View"
                   icon={<FiEye />}
@@ -372,7 +372,7 @@ export default function Catalogue() {
               </NavLink>
             </Tooltip>
             <Tooltip label="Edit Product" placement="top">
-              <NavLink to={`/admin/products/catalogue-details/${row.id}`}>
+              <NavLink to={`/admin/products/catalogue/edit/${row._id || row.id}`}>
                 <IconButton
                   aria-label="Edit"
                   icon={<FiEdit3 />}
@@ -664,7 +664,7 @@ export default function Catalogue() {
                         <Tbody>
                           {filteredProducts.map((product, index) => (
                             <Tr
-                              key={product.id || index}
+                              key={product._id || product.id || index}
                               _hover={{
                                 bg: tableHoverBg,
                                 transform: 'translateY(-2px)',

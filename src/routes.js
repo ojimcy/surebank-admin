@@ -63,9 +63,9 @@ import ExpenditureDetail from 'views/admin/accounting/expenditure-detail';
 import Products from 'views/admin/products';
 import ProductsRequest from 'views/admin/products/product-requests';
 import SelectedProducts from 'views/admin/products/selected-products';
-import CreateCatalogue from 'views/admin/products/create-catalogue';
-import CatalogueDetails from 'views/admin/products/single-product-catalogue';
-import EditProductCatalogue from 'views/admin/products/catalogue/edit';
+import CreateProduct from 'views/admin/products/CreateProduct';
+import EditProduct from 'views/admin/products/EditProduct';
+import ProductDetails from 'views/admin/products/ProductDetails';
 
 import Collections from 'views/admin/stores/collections';
 import Categories from 'views/admin/stores/category';
@@ -471,7 +471,7 @@ const routes = [
       <Icon as={FaProductHunt} width="20px" height="20px" color="inherit" />
     ),
     roles: ['superAdmin', 'admin', 'manager', 'userReps'],
-    component: CatalogueDetails,
+    component: ProductDetails,
   },
   {
     name: 'Catalogue',
@@ -481,17 +481,17 @@ const routes = [
       <Icon as={FaProductHunt} width="20px" height="20px" color="inherit" />
     ),
     roles: ['superAdmin', 'admin', 'manager', 'userReps'],
-    component: EditProductCatalogue,
+    component: EditProduct,
   },
   {
-    name: 'Catalogue',
+    name: 'Add Product',
     layout: '/admin',
     path: '/products/catalogue/create',
     icon: (
       <Icon as={FaProductHunt} width="20px" height="20px" color="inherit" />
     ),
     roles: ['superAdmin', 'admin', 'manager', 'userReps'],
-    component: CreateCatalogue,
+    component: CreateProduct,
   },
   {
     name: 'Products',
