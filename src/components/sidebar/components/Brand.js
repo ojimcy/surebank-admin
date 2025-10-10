@@ -6,7 +6,7 @@ import { Flex, Image } from '@chakra-ui/react';
 // Custom components
 import { HSeparator } from 'components/separator/Separator';
 
-import sbLogo from 'assets/img/logo.webp';
+import sbLogo from 'assets/img/logo.png';
 
 export function SidebarBrand() {
   //   Chakra color mode

@@ -20,7 +20,7 @@ import { NavLink } from 'react-router-dom';
 import { useAuth } from 'contexts/AuthContext';
 import { HamburgerIcon } from '@chakra-ui/icons';
 import LandingPage from 'views/landing';
-import logo from '../../assets/img/logo.webp';
+import logo from '../../assets/img/logo.png';
 
 const HomeLayout = () => {
   const { currentUser } = useAuth();
