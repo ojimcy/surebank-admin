@@ -46,7 +46,7 @@ function KYCDetails() {
     const [actionType, setActionType] = useState('');
     const [remarks, setRemarks] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [imageLoading, setImageLoading] = useState({ idImage: true, selfieImage: true });
+    const [imageLoading, setImageLoading] = useState({ idImage: true });
 
     const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -360,38 +360,6 @@ function KYCDetails() {
                                             </Box>
                                         )}
 
-                                        {/* Selfie Image */}
-                                        {kycRequest.selfieImage && (
-                                            <Box>
-                                                <Text fontWeight="semibold" mb={2}>
-                                                    <FaFileImage style={{ display: 'inline', marginRight: '8px' }} />
-                                                    Selfie
-                                                </Text>
-                                                <Box
-                                                    border="1px"
-                                                    borderColor={borderColor}
-                                                    borderRadius="md"
-                                                    p={2}
-                                                    maxW="300px"
-                                                >
-                                                    {imageLoading.selfieImage !== false && (
-                                                        <Center h="200px">
-                                                            <Spinner />
-                                                        </Center>
-                                                    )}
-                                                    <Image
-                                                        src={kycRequest.selfieImage}
-                                                        alt="Selfie"
-                                                        maxH="200px"
-                                                        w="100%"
-                                                        objectFit="contain"
-                                                        onLoad={() => handleImageLoad('selfieImage')}
-                                                        onError={() => handleImageError('selfieImage')}
-                                                        display={imageLoading.selfieImage === false ? 'block' : 'none'}
-                                                    />
-                                                </Box>
-                                            </Box>
-                                        )}
                                     </VStack>
                                 </Grid>
                             </VStack>
