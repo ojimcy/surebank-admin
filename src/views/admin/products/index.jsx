@@ -56,7 +56,7 @@ import axiosService from 'utils/axiosService';
 import CatalogueDetailsModal from 'components/modals/CatalogueDetailsModal';
 import { useAuth } from 'contexts/AuthContext';
 import { ChevronDownIcon } from '@chakra-ui/icons';
-import { FiPackage, FiBox, FiImage, FiEye, FiEdit3, FiShoppingCart } from 'react-icons/fi';
+import { FiPackage, FiBox, FiImage, FiEye, FiEdit3, FiShoppingCart, FiGrid, FiList } from 'react-icons/fi';
 
 export default function Catalogue() {
   const { currentUser } = useAuth();
@@ -66,6 +66,8 @@ export default function Catalogue() {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [viewMode, setViewMode] = useState('table'); // 'table' or 'card'
+  const [isSearchOpen, setIsSearchOpen] = useState(false); // Search expand state for mobile
 
   const [stats, setStats] = useState({
     total: 0,
@@ -88,6 +90,7 @@ export default function Catalogue() {
   const tableHeadBg = useColorModeValue('gray.50', 'gray.700');
   const tableHoverBg = useColorModeValue('blue.50', 'blue.900');
   const selectBg = useColorModeValue('white', 'gray.700');
+  const inputBg = useColorModeValue('white', 'gray.700');
 
   const fetchProducts = async () => {
     const { pageIndex, pageSize } = pagination;
@@ -223,17 +226,17 @@ export default function Catalogue() {
     {
       Header: 'Product',
       accessor: (row) => (
-        <HStack spacing={{ base: 1, md: 2, lg: 4 }} align="center" w="full">
+        <HStack spacing={{ base: 2, md: 3 }} align="center" w="full">
           <Avatar
-            size={{ base: 'xs', md: 'sm', lg: 'md' }}
+            size="sm"
             src={row.images && row.images[0] ? row.images[0] : ''}
             icon={<FiImage />}
             bg="gray.100"
             color="gray.400"
-            borderRadius="lg"
+            borderRadius="md"
             flexShrink={0}
           />
-          <VStack align="start" spacing={{ base: 0, md: 1 }} flex="1" minW="0">
+          <VStack align="start" spacing={1} flex="1" minW="0">
             <NavLink to={`/admin/products/catalogue-details/${row._id || row.id}`}>
               <Text
                 fontWeight="bold"
@@ -418,14 +421,15 @@ export default function Catalogue() {
       pt={{ base: '70px', md: '80px', xl: '80px' }}
       bg={useColorModeValue('gray.50', 'gray.900')}
       minH="100vh"
+      px={{ base: 2, md: 4, lg: 6 }}
     >
-      <Container maxW="container.2xl" px={{ base: 2, md: 2, lg: 8 }}>
+      <Container maxW="container.2xl" px={{ base: 0, md: 2, lg: 8 }}>
         {/* Statistics Cards */}
         <ScaleFade in={!loading} initialScale={0.9}>
           <SimpleGrid
             columns={{ base: 1, sm: 2 }}
-            spacing={{ base: 2, md: 4, lg: 6 }}
-            mb={{ base: 4, md: 6, lg: 8 }}
+            spacing={{ base: 3, md: 4, lg: 6 }}
+            mb={{ base: 3, md: 6, lg: 8 }}
           >
             <Card
               p={{ base: 4, md: 5, lg: 6 }}
@@ -478,44 +482,79 @@ export default function Catalogue() {
         {/* Main Content Card */}
         <Fade in={!loading}>
           <Card
-            p={{ base: '12px', md: '20px', lg: '30px' }}
+            p={{ base: 3, md: 5, lg: 6 }}
             bg={cardBg}
             borderWidth="1px"
             borderColor={borderColor}
-            borderRadius="xl"
+            borderRadius={{ base: 'lg', md: 'xl' }}
             shadow="lg"
           >
-            <BackButton />
+            <Box mb={{ base: 2, md: 3 }}>
+              <BackButton />
+            </Box>
             <Stack
               direction={{ base: 'column', lg: 'row' }}
               justifyContent="space-between"
-              align={{ base: 'start', lg: 'center' }}
-              mb={{ base: 4, md: 6, lg: 8 }}
-              spacing={{ base: 3, md: 4, lg: 6 }}
+              align={{ base: 'stretch', lg: 'center' }}
+              mb={{ base: 3, md: 5, lg: 6 }}
+              spacing={{ base: 3, md: 4 }}
             >
-              <VStack align={{ base: 'center', md: 'start' }} spacing={1} textAlign={{ base: 'center', md: 'left' }}>
+              <VStack align={{ base: 'start', md: 'start' }} spacing={0} textAlign="left">
                 <Heading size={{ base: 'md', md: 'lg' }} color={textColor}>
                   Product Catalog
                 </Heading>
-                <Text color={secondaryText} fontSize="sm">
+                <Text color={secondaryText} fontSize={{ base: 'xs', md: 'sm' }}>
                   Manage your inventory and product listings
                 </Text>
               </VStack>
 
-              <Stack direction={{ base: 'column', sm: 'row' }} spacing={{ base: 2, md: 3 }} w={{ base: 'full', lg: 'auto' }}>
+              <Stack direction={{ base: 'column', sm: 'row' }} spacing={{ base: 2, md: 3 }} w={{ base: 'full', lg: 'auto' }} align="stretch">
+                {/* View Toggle Buttons - Show on mobile and tablet */}
+                <HStack spacing={1} display={{ base: 'flex', lg: 'none' }} justify="center">
+                  <Tooltip label="Card View">
+                    <IconButton
+                      icon={<FiGrid />}
+                      onClick={() => setViewMode('card')}
+                      colorScheme={viewMode === 'card' ? 'blue' : 'gray'}
+                      variant={viewMode === 'card' ? 'solid' : 'outline'}
+                      size={{ base: 'sm', md: 'md' }}
+                      aria-label="Card view"
+                      borderRadius="md"
+                      _hover={{ transform: 'translateY(-1px)', shadow: 'sm' }}
+                      transition="all 0.2s"
+                    />
+                  </Tooltip>
+                  <Tooltip label="Table View">
+                    <IconButton
+                      icon={<FiList />}
+                      onClick={() => setViewMode('table')}
+                      colorScheme={viewMode === 'table' ? 'blue' : 'gray'}
+                      variant={viewMode === 'table' ? 'solid' : 'outline'}
+                      size={{ base: 'sm', md: 'md' }}
+                      aria-label="Table view"
+                      borderRadius="md"
+                      _hover={{ transform: 'translateY(-1px)', shadow: 'sm' }}
+                      transition="all 0.2s"
+                    />
+                  </Tooltip>
+                </HStack>
+
                 <Menu>
                   <MenuButton
                     as={Button}
                     rightIcon={<ChevronDownIcon />}
                     colorScheme="blue"
-                    size={{ base: 'md', md: 'md' }}
+                    size={{ base: 'sm', md: 'md' }}
                     w={{ base: 'full', sm: 'auto' }}
-                    _hover={{ transform: 'translateY(-2px)', shadow: 'md' }}
+                    _hover={{ transform: 'translateY(-1px)', shadow: 'md' }}
                     transition="all 0.2s"
+                    px={{ base: 4, md: 5 }}
+                    fontWeight="medium"
+                    borderRadius="md"
                   >
                     <HStack spacing={2} justify="center">
-                      <AddIcon />
-                      <Text>Manage Products</Text>
+                      <AddIcon boxSize={{ base: 3, md: 4 }} />
+                      <Text fontSize={{ base: 'sm', md: 'md' }}>Manage Products</Text>
                     </HStack>
                   </MenuButton>
                   <MenuList>
@@ -548,24 +587,68 @@ export default function Catalogue() {
                   </MenuList>
                 </Menu>
 
-                <InputGroup w={{ base: 'full', sm: 'auto' }} maxW={{ base: '100%', md: '300px' }}>
-                  <InputLeftElement pointerEvents="none">
-                    <SearchIcon color={secondaryText} />
-                  </InputLeftElement>
-                  <Input
-                    type="search"
-                    placeholder="Search products..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    borderRadius="full"
-                    bg={useColorModeValue('white', 'gray.700')}
-                    _focus={{
-                      borderColor: 'blue.500',
-                      boxShadow: '0 0 0 1px rgba(66, 153, 225, 0.6)',
-                    }}
-                  />
-                </InputGroup>
+                {/* Search - Icon on mobile, full input on desktop */}
+                <Box display={{ base: 'none', md: 'block' }} w={{ base: 'full', sm: 'auto' }} maxW={{ base: '100%', md: '300px' }}>
+                  <InputGroup size="md">
+                    <InputLeftElement pointerEvents="none">
+                      <SearchIcon color={secondaryText} boxSize={4} />
+                    </InputLeftElement>
+                    <Input
+                      type="search"
+                      placeholder="Search products..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      borderRadius="md"
+                      fontSize="sm"
+                      bg={inputBg}
+                      _hover={{
+                        borderColor: 'blue.300',
+                      }}
+                      _focus={{
+                        borderColor: 'blue.500',
+                        boxShadow: '0 0 0 2px rgba(66, 153, 225, 0.1)',
+                      }}
+                    />
+                  </InputGroup>
+                </Box>
+
+                {/* Search Icon Button for Mobile */}
+                <IconButton
+                  display={{ base: 'flex', md: 'none' }}
+                  icon={<SearchIcon />}
+                  onClick={() => setIsSearchOpen(!isSearchOpen)}
+                  colorScheme={isSearchOpen ? 'blue' : 'gray'}
+                  variant={isSearchOpen ? 'solid' : 'outline'}
+                  size="sm"
+                  aria-label="Search"
+                  borderRadius="md"
+                />
               </Stack>
+
+              {/* Expandable Mobile Search */}
+              {isSearchOpen && (
+                <Box display={{ base: 'block', md: 'none' }} w="full">
+                  <InputGroup size="sm">
+                    <InputLeftElement pointerEvents="none">
+                      <SearchIcon color={secondaryText} boxSize={3} />
+                    </InputLeftElement>
+                    <Input
+                      type="search"
+                      placeholder="Search products..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      borderRadius="md"
+                      fontSize="sm"
+                      bg={inputBg}
+                      _focus={{
+                        borderColor: 'blue.500',
+                        boxShadow: '0 0 0 2px rgba(66, 153, 225, 0.1)',
+                      }}
+                      autoFocus
+                    />
+                  </InputGroup>
+                </Box>
+              )}
             </Stack>
 
             <Divider mb={{ base: 3, md: 4, lg: 6 }} />
@@ -614,83 +697,247 @@ export default function Catalogue() {
                 </VStack>
               ) : (
                 <VStack spacing={4}>
-                  <Box
-                    overflowX={{ base: 'auto', lg: 'visible' }}
-                    w="full"
-                    css={{
-                      '&::-webkit-scrollbar': {
-                        height: '8px',
-                      },
-                      '&::-webkit-scrollbar-track': {
-                        background: '#f1f1f1',
-                        borderRadius: '10px',
-                      },
-                      '&::-webkit-scrollbar-thumb': {
-                        background: '#888',
-                        borderRadius: '10px',
-                      },
-                      '&::-webkit-scrollbar-thumb:hover': {
-                        background: '#555',
-                      },
-                    }}
-                  >
-                    <TableContainer
-                      bg={cardBg}
-                      borderRadius="xl"
-                      shadow="sm"
-                      border="1px"
-                      borderColor={borderColor}
+                  {/* Card View for Mobile/Tablet */}
+                  {viewMode === 'card' ? (
+                    <SimpleGrid
+                      columns={{ base: 1, sm: 2, md: 2, lg: 3 }}
+                      spacing={{ base: 3, md: 4, lg: 6 }}
+                      w="full"
                     >
-                      <Table variant="simple" size={{ base: 'sm', md: 'md', lg: 'lg' }}>
-                        <Thead bg={tableHeadBg}>
-                          <Tr>
-                            {columns.map((column, index) => (
-                              <Th
-                                key={index}
-                                py={{ base: 2, md: 3, lg: 4 }}
-                                px={{ base: 1, md: 3, lg: 4 }}
-                                fontWeight="bold"
-                                fontSize={{ base: 'xs', md: 'sm' }}
-                                textTransform="uppercase"
-                                letterSpacing="wide"
-                                color={textColor}
-                                borderColor={borderColor}
-                              >
-                                {column.Header}
-                              </Th>
-                            ))}
-                          </Tr>
-                        </Thead>
-                        <Tbody>
-                          {filteredProducts.map((product, index) => (
-                            <Tr
-                              key={product._id || product.id || index}
-                              _hover={{
-                                bg: tableHoverBg,
-                                transform: 'translateY(-2px)',
-                                shadow: 'md',
-                                borderColor: 'blue.200'
-                              }}
-                              transition="all 0.2s ease-in-out"
-                              cursor="pointer"
+                      {filteredProducts.map((product, index) => (
+                        <Card
+                          key={product._id || product.id || index}
+                          p={{ base: 4, md: 5 }}
+                          bg={cardBg}
+                          borderWidth="1px"
+                          borderColor={borderColor}
+                          borderRadius="xl"
+                          shadow="md"
+                          _hover={{
+                            transform: 'translateY(-4px)',
+                            shadow: 'xl',
+                            borderColor: 'blue.300'
+                          }}
+                          transition="all 0.3s"
+                          position="relative"
+                        >
+                          {/* Stock Badge - Top Right */}
+                          <Badge
+                            position="absolute"
+                            top={3}
+                            right={3}
+                            colorScheme={product.quantity > 10 ? 'green' : product.quantity > 5 ? 'yellow' : 'red'}
+                            fontSize="sm"
+                            px={3}
+                            py={1}
+                            borderRadius="full"
+                          >
+                            {product.quantity} in stock
+                          </Badge>
+
+                          {/* Product Image */}
+                          <VStack spacing={3} align="stretch">
+                            <Box
+                              position="relative"
+                              w="full"
+                              h="180px"
+                              bg="gray.100"
+                              borderRadius="lg"
+                              overflow="hidden"
                             >
-                              {columns.map((column, colIndex) => (
-                                <Td
-                                  key={colIndex}
+                              {product.images && product.images[0] ? (
+                                <Box
+                                  as="img"
+                                  src={product.images[0]}
+                                  alt={product.name}
+                                  w="full"
+                                  h="full"
+                                  objectFit="cover"
+                                />
+                              ) : (
+                                <VStack justify="center" h="full" color="gray.400">
+                                  <Icon as={FiImage} w={12} h={12} />
+                                  <Text fontSize="xs">No image</Text>
+                                </VStack>
+                              )}
+                            </Box>
+
+                            {/* Product Info */}
+                            <VStack align="start" spacing={2}>
+                              <NavLink to={`/admin/products/catalogue-details/${product._id || product.id}`}>
+                                <Text
+                                  fontWeight="bold"
+                                  fontSize="lg"
+                                  color={textColor}
+                                  noOfLines={2}
+                                  _hover={{ color: 'blue.500' }}
+                                  transition="color 0.2s"
+                                >
+                                  {product.name || 'Unnamed Product'}
+                                </Text>
+                              </NavLink>
+
+                              <Text fontSize="sm" color={secondaryText} noOfLines={2}>
+                                {product.description || 'No description available'}
+                              </Text>
+
+                              {product.productId?.brand && (
+                                <Badge colorScheme="gray" variant="subtle">
+                                  {typeof product.productId.brand === 'object' ? product.productId.brand.name : product.productId.brand}
+                                </Badge>
+                              )}
+                            </VStack>
+
+                            <Divider />
+
+                            {/* Pricing Info */}
+                            <VStack align="stretch" spacing={2}>
+                              <HStack justify="space-between">
+                                <Text fontSize="xs" color={secondaryText}>Selling Price:</Text>
+                                <Text fontWeight="bold" fontSize="lg" color="green.500">
+                                  ₦{product.sellingPrice?.toLocaleString() || '0'}
+                                </Text>
+                              </HStack>
+
+                              {(currentUser.role === 'admin' || currentUser.role === 'superAdmin') && (
+                                <HStack justify="space-between">
+                                  <Text fontSize="xs" color={secondaryText}>Cost Price:</Text>
+                                  <Text fontWeight="semibold" fontSize="md" color="orange.500">
+                                    ₦{product.costPrice?.toLocaleString() || '0'}
+                                  </Text>
+                                </HStack>
+                              )}
+
+                              {product.discount > 0 && (
+                                <HStack justify="space-between">
+                                  <Text fontSize="xs" color={secondaryText}>Discount:</Text>
+                                  <Badge colorScheme="purple" fontSize="sm" px={2} py={1}>
+                                    ₦{product.discount?.toLocaleString() || '0'}
+                                  </Badge>
+                                </HStack>
+                              )}
+                            </VStack>
+
+                            <Divider />
+
+                            {/* Action Buttons */}
+                            <HStack spacing={2} w="full">
+                              <NavLink to={`/admin/products/catalogue-details/${product._id || product.id}`} style={{ flex: 1 }}>
+                                <Button
+                                  leftIcon={<FiEye />}
+                                  colorScheme="blue"
+                                  size="sm"
+                                  w="full"
+                                  variant="solid"
+                                >
+                                  View
+                                </Button>
+                              </NavLink>
+                              <NavLink to={`/admin/products/catalogue/edit/${product._id || product.id}`} style={{ flex: 1 }}>
+                                <Button
+                                  leftIcon={<FiEdit3 />}
+                                  colorScheme="teal"
+                                  size="sm"
+                                  w="full"
+                                  variant="outline"
+                                >
+                                  Edit
+                                </Button>
+                              </NavLink>
+                            </HStack>
+
+                            {/* Date Info */}
+                            <Text fontSize="xs" color={secondaryText} textAlign="center">
+                              Added {formatMdbDate(product.createdAt)}
+                            </Text>
+                          </VStack>
+                        </Card>
+                      ))}
+                    </SimpleGrid>
+                  ) : (
+                    /* Table View for Desktop */
+                    <Box
+                      overflowX="auto"
+                      w="full"
+                      display={{ base: viewMode === 'table' ? 'block' : 'none', lg: 'block' }}
+                      mx={{ base: -3, md: 0 }}
+                      px={{ base: 3, md: 0 }}
+                      css={{
+                        '&::-webkit-scrollbar': {
+                          height: '6px',
+                        },
+                        '&::-webkit-scrollbar-track': {
+                          background: '#f1f1f1',
+                          borderRadius: '10px',
+                        },
+                        '&::-webkit-scrollbar-thumb': {
+                          background: '#888',
+                          borderRadius: '10px',
+                        },
+                        '&::-webkit-scrollbar-thumb:hover': {
+                          background: '#555',
+                        },
+                      }}
+                    >
+                      <TableContainer
+                        bg={cardBg}
+                        borderRadius={{ base: 'md', md: 'xl' }}
+                        shadow="sm"
+                        border="1px"
+                        borderColor={borderColor}
+                        minW={{ base: '800px', lg: 'auto' }}
+                      >
+                        <Table variant="simple" size={{ base: 'sm', md: 'md' }}>
+                          <Thead bg={tableHeadBg}>
+                            <Tr>
+                              {columns.map((column, index) => (
+                                <Th
+                                  key={index}
                                   py={{ base: 2, md: 3, lg: 4 }}
                                   px={{ base: 1, md: 3, lg: 4 }}
+                                  fontWeight="bold"
+                                  fontSize={{ base: 'xs', md: 'sm' }}
+                                  textTransform="uppercase"
+                                  letterSpacing="wide"
+                                  color={textColor}
                                   borderColor={borderColor}
-                                  verticalAlign="top"
                                 >
-                                  {column.accessor(product)}
-                                </Td>
+                                  {column.Header}
+                                </Th>
                               ))}
                             </Tr>
-                          ))}
-                        </Tbody>
-                      </Table>
-                    </TableContainer>
-                  </Box>
+                          </Thead>
+                          <Tbody>
+                            {filteredProducts.map((product, index) => (
+                              <Tr
+                                key={product._id || product.id || index}
+                                _hover={{
+                                  bg: tableHoverBg,
+                                  transform: 'translateY(-2px)',
+                                  shadow: 'md',
+                                  borderColor: 'blue.200'
+                                }}
+                                transition="all 0.2s ease-in-out"
+                                cursor="pointer"
+                              >
+                                {columns.map((column, colIndex) => (
+                                  <Td
+                                    key={colIndex}
+                                    py={{ base: 2, md: 3, lg: 4 }}
+                                    px={{ base: 1, md: 3, lg: 4 }}
+                                    borderColor={borderColor}
+                                    verticalAlign="top"
+                                  >
+                                    {column.accessor(product)}
+                                  </Td>
+                                ))}
+                              </Tr>
+                            ))}
+                          </Tbody>
+                        </Table>
+                      </TableContainer>
+                    </Box>
+                  )}
 
                   {/* Enhanced Server-side Pagination Controls */}
                   <Card

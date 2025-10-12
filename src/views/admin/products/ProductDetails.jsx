@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
-  Flex,
   Text,
   useColorModeValue,
   Grid,
@@ -21,7 +20,6 @@ import {
   Skeleton,
   SkeletonText,
   Container,
-  Tooltip,
   Icon,
   AlertDialog,
   AlertDialogBody,
@@ -96,6 +94,7 @@ export default function ProductDetails() {
   const textColor = useColorModeValue('gray.700', 'white');
   const mutedColor = useColorModeValue('gray.500', 'gray.400');
   const statBg = useColorModeValue('gray.50', 'gray.700');
+  const pageBg = useColorModeValue('gray.50', 'gray.900');
 
   useEffect(() => {
     fetchProductDetails();
@@ -171,12 +170,12 @@ export default function ProductDetails() {
 
   if (loading) {
     return (
-      <Box pt={{ base: '70px', md: '80px', xl: '80px' }}>
-        <Container maxW="container.xl">
-          <Card bg={bgColor} p={8}>
+      <Box pt={{ base: '70px', md: '80px', xl: '80px' }} bg={pageBg} minH="100vh" px={{ base: 2, md: 4, lg: 6 }}>
+        <Container maxW="container.xl" px={{ base: 0, md: 2, lg: 4 }}>
+          <Card bg={bgColor} p={{ base: 4, md: 6, lg: 8 }}>
             <VStack spacing={4}>
-              <Skeleton height="300px" width="100%" />
-              <SkeletonText mt="4" noOfLines={4} spacing="4" />
+              <Skeleton height={{ base: '200px', md: '300px' }} width="100%" borderRadius="md" />
+              <SkeletonText mt="4" noOfLines={4} spacing="4" width="100%" />
             </VStack>
           </Card>
         </Container>
@@ -186,15 +185,15 @@ export default function ProductDetails() {
 
   if (!product) {
     return (
-      <Box pt={{ base: '70px', md: '80px', xl: '80px' }}>
-        <Container maxW="container.xl">
-          <Card bg={bgColor} p={8}>
+      <Box pt={{ base: '70px', md: '80px', xl: '80px' }} bg={pageBg} minH="100vh" px={{ base: 2, md: 4, lg: 6 }}>
+        <Container maxW="container.xl" px={{ base: 0, md: 2, lg: 4 }}>
+          <Card bg={bgColor} p={{ base: 6, md: 8 }}>
             <Center>
               <VStack spacing={4}>
-                <Icon as={FiPackage} boxSize={16} color={mutedColor} />
-                <Heading size="md">Product not found</Heading>
+                <Icon as={FiPackage} boxSize={{ base: 12, md: 16 }} color={mutedColor} />
+                <Heading size={{ base: 'sm', md: 'md' }}>Product not found</Heading>
                 <Link to="/admin/products">
-                  <Button colorScheme="blue">Back to Products</Button>
+                  <Button colorScheme="blue" size={{ base: 'sm', md: 'md' }}>Back to Products</Button>
                 </Link>
               </VStack>
             </Center>
@@ -208,73 +207,127 @@ export default function ProductDetails() {
   const displayImage = allImages[selectedImageIndex] || product.featuredImage || '';
 
   return (
-    <Box pt={{ base: '70px', md: '80px', xl: '80px' }}>
-      <Container maxW="container.xl">
-        <Card bg={bgColor} shadow="lg" borderRadius="lg">
-          <Box p={{ base: 4, md: 6, lg: 8 }}>
-            <BackButton />
+    <Box
+      pt={{ base: '70px', md: '80px', xl: '80px' }}
+      bg={pageBg}
+      minH="100vh"
+      px={{ base: 2, md: 4, lg: 6 }}
+    >
+      <Container maxW="container.xl" px={{ base: 0, md: 2, lg: 4 }}>
+        <Card bg={bgColor} shadow="lg" borderRadius={{ base: 'lg', md: 'xl' }}>
+          <Box p={{ base: 3, md: 5, lg: 6 }}>
+            <Box mb={{ base: 2, md: 3 }}>
+              <BackButton />
+            </Box>
 
             {/* Header Section */}
-            <Flex justify="space-between" align="center" mb={6}>
-              <VStack align="start" spacing={2}>
-                <Heading size="xl">{product.name}</Heading>
-                <HStack spacing={3}>
+            <VStack spacing={{ base: 4, md: 5 }} align="stretch" mb={{ base: 4, md: 6 }}>
+              {/* Title and Stock Info */}
+              <Box>
+                <Heading size={{ base: 'lg', md: 'xl' }} mb={3}>{product.name}</Heading>
+                <HStack spacing={3} mb={2}>
+                  <HStack>
+                    <Icon as={FiPackage} color={mutedColor} boxSize={{ base: 4, md: 5 }} />
+                    <Text fontSize={{ base: 'sm', md: 'md' }} fontWeight="medium" color={textColor}>
+                      Stock:
+                    </Text>
+                  </HStack>
                   <Badge
                     colorScheme={getStockBadgeColor(product.quantity)}
-                    fontSize="md"
+                    fontSize={{ base: 'sm', md: 'md' }}
                     px={3}
-                    py={1}
+                    py={1.5}
+                    borderRadius="md"
+                    fontWeight="bold"
                   >
-                    {getStockStatus(product.quantity)} ({product.quantity} units)
+                    {getStockStatus(product.quantity)} • {product.quantity} units
                   </Badge>
-                  {product.isSbAvailable && (
-                    <Badge colorScheme="blue" fontSize="md" px={3} py={1}>
-                      <Icon as={FiCheck} mr={1} />
-                      Available on Surebank
-                    </Badge>
-                  )}
                 </HStack>
-              </VStack>
 
-              <HStack spacing={3}>
+                {product.isSbAvailable && (
+                  <HStack spacing={2}>
+                    <Icon as={FiCheck} color="blue.500" boxSize={{ base: 4, md: 5 }} />
+                    <Text fontSize={{ base: 'sm', md: 'md' }} color="blue.600" fontWeight="medium">
+                      Available on Surebank
+                    </Text>
+                  </HStack>
+                )}
+              </Box>
+
+              {/* Action Buttons */}
+              <HStack spacing={3} justify="start" flexWrap="wrap">
                 <Link to={`/admin/products/catalogue/edit/${id}`}>
                   <Button
                     leftIcon={<FiEdit3 />}
                     colorScheme="blue"
-                    size="md"
+                    size={{ base: 'md', md: 'lg' }}
+                    variant="solid"
+                    _hover={{
+                      transform: 'translateY(-2px)',
+                      shadow: 'lg',
+                      bg: 'blue.600'
+                    }}
+                    _active={{
+                      transform: 'translateY(0)',
+                      shadow: 'md'
+                    }}
+                    transition="all 0.2s"
+                    px={{ base: 6, md: 8 }}
+                    py={{ base: 5, md: 6 }}
+                    height="auto"
+                    fontWeight="semibold"
+                    borderRadius="lg"
+                    boxShadow="sm"
                   >
                     Edit Product
                   </Button>
                 </Link>
                 {(currentUser.role === 'admin' || currentUser.role === 'superAdmin') && (
-                  <Tooltip label="Delete Product">
-                    <IconButton
-                      icon={<FiTrash2 />}
-                      colorScheme="red"
-                      variant="outline"
-                      onClick={onOpen}
-                      size="md"
-                    />
-                  </Tooltip>
+                  <Button
+                    leftIcon={<FiTrash2 />}
+                    colorScheme="red"
+                    variant="outline"
+                    onClick={onOpen}
+                    size={{ base: 'md', md: 'lg' }}
+                    _hover={{
+                      transform: 'translateY(-2px)',
+                      shadow: 'md',
+                      bg: 'red.50',
+                      borderColor: 'red.600'
+                    }}
+                    _active={{
+                      transform: 'translateY(0)',
+                      shadow: 'sm'
+                    }}
+                    transition="all 0.2s"
+                    px={{ base: 6, md: 8 }}
+                    py={{ base: 5, md: 6 }}
+                    height="auto"
+                    fontWeight="semibold"
+                    borderRadius="lg"
+                    borderWidth="2px"
+                  >
+                    Delete
+                  </Button>
                 )}
               </HStack>
-            </Flex>
+            </VStack>
 
-            <Divider mb={6} />
+            <Divider mb={{ base: 4, md: 6 }} />
 
-            <Grid templateColumns={{ base: '1fr', lg: 'repeat(2, 1fr)' }} gap={8}>
+            <Grid templateColumns={{ base: '1fr', lg: 'repeat(2, 1fr)' }} gap={{ base: 4, md: 6, lg: 8 }}>
               {/* Image Gallery Section */}
               <GridItem>
-                <VStack spacing={4} align="stretch">
+                <VStack spacing={{ base: 3, md: 4 }} align="stretch">
                   {/* Main Image Display */}
                   <Box
                     position="relative"
-                    borderRadius="lg"
+                    borderRadius={{ base: 'md', md: 'lg' }}
                     overflow="hidden"
                     bg={statBg}
                     border="1px solid"
                     borderColor={borderColor}
-                    h="400px"
+                    h={{ base: '250px', md: '350px', lg: '400px' }}
                     cursor="pointer"
                     onClick={() => setIsImageModalOpen(true)}
                   >
@@ -289,10 +342,10 @@ export default function ProductDetails() {
                         />
                         <IconButton
                           position="absolute"
-                          top={4}
-                          right={4}
+                          top={{ base: 2, md: 4 }}
+                          right={{ base: 2, md: 4 }}
                           icon={<FiMaximize2 />}
-                          size="sm"
+                          size={{ base: 'xs', md: 'sm' }}
                           colorScheme="blackAlpha"
                           aria-label="Expand image"
                         />
@@ -311,7 +364,7 @@ export default function ProductDetails() {
                       <>
                         <IconButton
                           position="absolute"
-                          left={2}
+                          left={{ base: 1, md: 2 }}
                           top="50%"
                           transform="translateY(-50%)"
                           icon={<FiChevronLeft />}
@@ -320,12 +373,12 @@ export default function ProductDetails() {
                             handleImageNavigation('prev');
                           }}
                           colorScheme="blackAlpha"
-                          size="sm"
+                          size={{ base: 'xs', md: 'sm' }}
                           borderRadius="full"
                         />
                         <IconButton
                           position="absolute"
-                          right={2}
+                          right={{ base: 1, md: 2 }}
                           top="50%"
                           transform="translateY(-50%)"
                           icon={<FiChevronRight />}
@@ -334,7 +387,7 @@ export default function ProductDetails() {
                             handleImageNavigation('next');
                           }}
                           colorScheme="blackAlpha"
-                          size="sm"
+                          size={{ base: 'xs', md: 'sm' }}
                           borderRadius="full"
                         />
                       </>
@@ -344,10 +397,10 @@ export default function ProductDetails() {
                   {/* Thumbnail Gallery */}
                   {allImages.length > 0 && (
                     <Box>
-                      <Text fontSize="sm" fontWeight="bold" mb={2}>
+                      <Text fontSize={{ base: 'xs', md: 'sm' }} fontWeight="bold" mb={2}>
                         Product Images ({allImages.length})
                       </Text>
-                      <SimpleGrid columns={5} spacing={2}>
+                      <SimpleGrid columns={{ base: 4, sm: 5, md: 5 }} spacing={{ base: 2, md: 2 }}>
                         {allImages.map((image, index) => (
                           <Box
                             key={index}
@@ -359,12 +412,13 @@ export default function ProductDetails() {
                             onClick={() => setSelectedImageIndex(index)}
                             transition="all 0.2s"
                             _hover={{ borderColor: 'blue.400' }}
+                            position="relative"
                           >
                             <Image
                               src={image}
                               alt={`Product ${index + 1}`}
                               objectFit="cover"
-                              h="80px"
+                              h={{ base: '60px', md: '80px' }}
                               w="100%"
                             />
                             {product.featuredImage === image && (
@@ -388,50 +442,52 @@ export default function ProductDetails() {
 
               {/* Product Details Section */}
               <GridItem>
-                <VStack spacing={6} align="stretch">
+                <VStack spacing={{ base: 4, md: 5, lg: 6 }} align="stretch">
                   {/* Pricing Information */}
-                  <Card bg={statBg} p={6} borderRadius="lg">
-                    <StatGroup>
+                  <Card bg={statBg} p={{ base: 4, md: 5, lg: 6 }} borderRadius={{ base: 'md', md: 'lg' }}>
+                    <SimpleGrid columns={{ base: 2, md: product.discount > 0 ? 3 : 2 }} spacing={{ base: 3, md: 4 }}>
                       <Stat>
-                        <StatLabel color={mutedColor}>Cost Price</StatLabel>
-                        <StatNumber color="orange.500" fontSize="2xl">
+                        <StatLabel color={mutedColor} fontSize={{ base: 'xs', md: 'sm' }}>Cost Price</StatLabel>
+                        <StatNumber color="orange.500" fontSize={{ base: 'lg', md: 'xl', lg: '2xl' }}>
                           ₦{product.costPrice?.toLocaleString() || '0'}
                         </StatNumber>
                       </Stat>
                       <Stat>
-                        <StatLabel color={mutedColor}>Selling Price</StatLabel>
-                        <StatNumber color="green.500" fontSize="2xl">
+                        <StatLabel color={mutedColor} fontSize={{ base: 'xs', md: 'sm' }}>Selling Price</StatLabel>
+                        <StatNumber color="green.500" fontSize={{ base: 'lg', md: 'xl', lg: '2xl' }}>
                           ₦{product.sellingPrice?.toLocaleString() || '0'}
                         </StatNumber>
                       </Stat>
                       {product.discount > 0 && (
                         <Stat>
-                          <StatLabel color={mutedColor}>Discount</StatLabel>
-                          <StatNumber color="purple.500" fontSize="2xl">
+                          <StatLabel color={mutedColor} fontSize={{ base: 'xs', md: 'sm' }}>Discount</StatLabel>
+                          <StatNumber color="purple.500" fontSize={{ base: 'lg', md: 'xl', lg: '2xl' }}>
                             ₦{product.discount?.toLocaleString()}
                           </StatNumber>
                         </Stat>
                       )}
-                    </StatGroup>
+                    </SimpleGrid>
 
                     {/* Profit Margin */}
                     {(currentUser.role === 'admin' || currentUser.role === 'superAdmin') && (
                       <Box mt={4} pt={4} borderTop="1px solid" borderColor={borderColor}>
-                        <HStack justify="space-between">
-                          <Text fontWeight="medium">Profit Margin:</Text>
-                          <Badge colorScheme="teal" fontSize="md" px={3} py={1}>
-                            ₦{((product.sellingPrice || 0) - (product.costPrice || 0)).toLocaleString()}
-                            {' '}({(((product.sellingPrice - product.costPrice) / product.costPrice) * 100).toFixed(1)}%)
-                          </Badge>
-                        </HStack>
+                        <VStack spacing={2} align="stretch">
+                          <HStack justify="space-between" flexWrap="wrap">
+                            <Text fontWeight="medium" fontSize={{ base: 'sm', md: 'md' }}>Profit Margin:</Text>
+                            <Badge colorScheme="teal" fontSize={{ base: 'sm', md: 'md' }} px={{ base: 2, md: 3 }} py={1}>
+                              ₦{((product.sellingPrice || 0) - (product.costPrice || 0)).toLocaleString()}
+                              {' '}({(((product.sellingPrice - product.costPrice) / product.costPrice) * 100).toFixed(1)}%)
+                            </Badge>
+                          </HStack>
+                        </VStack>
                       </Box>
                     )}
                   </Card>
 
                   {/* Description */}
                   <Box>
-                    <Heading size="md" mb={3}>Description</Heading>
-                    <Text color={textColor} fontSize="md" lineHeight="tall">
+                    <Heading size={{ base: 'sm', md: 'md' }} mb={{ base: 2, md: 3 }}>Description</Heading>
+                    <Text color={textColor} fontSize={{ base: 'sm', md: 'md' }} lineHeight="tall">
                       {showFullDescription || product.description?.length <= 200
                         ? product.description
                         : `${product.description?.substring(0, 200)}...`}
@@ -452,13 +508,13 @@ export default function ProductDetails() {
                   {/* Tags */}
                   {product.tags && product.tags.length > 0 && (
                     <Box>
-                      <Heading size="md" mb={3}>Tags</Heading>
-                      <Wrap>
+                      <Heading size={{ base: 'sm', md: 'md' }} mb={{ base: 2, md: 3 }}>Tags</Heading>
+                      <Wrap spacing={{ base: 2, md: 3 }}>
                         {product.tags.map((tag, index) => (
                           <WrapItem key={index}>
-                            <Tag size="lg" colorScheme="blue" borderRadius="full">
+                            <Tag size={{ base: 'md', md: 'lg' }} colorScheme="blue" borderRadius="full">
                               <TagLeftIcon as={FiTag} />
-                              <TagLabel>{tag}</TagLabel>
+                              <TagLabel fontSize={{ base: 'xs', md: 'sm' }}>{tag}</TagLabel>
                             </Tag>
                           </WrapItem>
                         ))}
@@ -468,26 +524,26 @@ export default function ProductDetails() {
 
                   {/* Additional Information */}
                   <Box>
-                    <Heading size="md" mb={3}>Additional Information</Heading>
-                    <TableContainer>
+                    <Heading size={{ base: 'sm', md: 'md' }} mb={{ base: 2, md: 3 }}>Additional Information</Heading>
+                    <Box overflowX="auto">
                       <Table size="sm" variant="simple">
                         <Tbody>
                           <Tr>
-                            <Td fontWeight="medium" color={mutedColor}>Product ID</Td>
-                            <Td>{product._id || product.id}</Td>
+                            <Td fontWeight="medium" color={mutedColor} fontSize={{ base: 'xs', md: 'sm' }} px={{ base: 2, md: 4 }} py={{ base: 2, md: 3 }}>Product ID</Td>
+                            <Td fontSize={{ base: 'xs', md: 'sm' }} px={{ base: 2, md: 4 }} py={{ base: 2, md: 3 }}>{product._id || product.id}</Td>
                           </Tr>
                           <Tr>
-                            <Td fontWeight="medium" color={mutedColor}>Created Date</Td>
-                            <Td>{formatMdbDate(product.createdAt)}</Td>
+                            <Td fontWeight="medium" color={mutedColor} fontSize={{ base: 'xs', md: 'sm' }} px={{ base: 2, md: 4 }} py={{ base: 2, md: 3 }}>Created Date</Td>
+                            <Td fontSize={{ base: 'xs', md: 'sm' }} px={{ base: 2, md: 4 }} py={{ base: 2, md: 3 }}>{formatMdbDate(product.createdAt)}</Td>
                           </Tr>
                           <Tr>
-                            <Td fontWeight="medium" color={mutedColor}>Last Updated</Td>
-                            <Td>{formatMdbDate(product.updatedAt)}</Td>
+                            <Td fontWeight="medium" color={mutedColor} fontSize={{ base: 'xs', md: 'sm' }} px={{ base: 2, md: 4 }} py={{ base: 2, md: 3 }}>Last Updated</Td>
+                            <Td fontSize={{ base: 'xs', md: 'sm' }} px={{ base: 2, md: 4 }} py={{ base: 2, md: 3 }}>{formatMdbDate(product.updatedAt)}</Td>
                           </Tr>
                           {product.merchantId && (
                             <Tr>
-                              <Td fontWeight="medium" color={mutedColor}>Merchant</Td>
-                              <Td>
+                              <Td fontWeight="medium" color={mutedColor} fontSize={{ base: 'xs', md: 'sm' }} px={{ base: 2, md: 4 }} py={{ base: 2, md: 3 }}>Merchant</Td>
+                              <Td fontSize={{ base: 'xs', md: 'sm' }} px={{ base: 2, md: 4 }} py={{ base: 2, md: 3 }}>
                                 {typeof product.merchantId === 'object'
                                   ? product.merchantId.name
                                   : product.merchantId}
@@ -496,8 +552,8 @@ export default function ProductDetails() {
                           )}
                           {product.productId?.brand && (
                             <Tr>
-                              <Td fontWeight="medium" color={mutedColor}>Brand</Td>
-                              <Td>
+                              <Td fontWeight="medium" color={mutedColor} fontSize={{ base: 'xs', md: 'sm' }} px={{ base: 2, md: 4 }} py={{ base: 2, md: 3 }}>Brand</Td>
+                              <Td fontSize={{ base: 'xs', md: 'sm' }} px={{ base: 2, md: 4 }} py={{ base: 2, md: 3 }}>
                                 {typeof product.productId.brand === 'object'
                                   ? product.productId.brand.name
                                   : product.productId.brand}
@@ -506,7 +562,7 @@ export default function ProductDetails() {
                           )}
                         </Tbody>
                       </Table>
-                    </TableContainer>
+                    </Box>
                   </Box>
                 </VStack>
               </GridItem>
